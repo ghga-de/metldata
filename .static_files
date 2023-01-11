@@ -17,11 +17,9 @@ scripts/script_utils/cli.py
 scripts/update_static_files.py
 scripts/license_checker.py
 scripts/get_package_name.py
-scripts/update_config_docs.py
 scripts/check_mandatory_and_static_files.py
 scripts/README.md
 
-.github/workflows/check_config_docs.yaml
 .github/workflows/check_mandatory_and_static_files.yaml
 .github/workflows/static_code_analysis.yaml
 .github/workflows/unit_and_int_tests.yaml
@@ -40,6 +38,3 @@ pytest.ini
 LICENSE
 requirements.txt
 setup.py
-
-.static_files
-.mandatory_files
