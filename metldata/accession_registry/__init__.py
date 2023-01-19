@@ -12,23 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-"""Config Parameter Modeling and Parsing"""
-
-from pathlib import Path
-
-from pydantic import BaseSettings, Field
-
-
-class Config(BaseSettings):
-    """Config parameters and their defaults."""
-
-    metadata_model: Path = Field(
-        ..., description="The path to the metadata model defined in LinkML."
-    )
-    submission_store_dir: Path = Field(
-        ..., description="The directory where the submission JSONs will be stored."
-    )
-    source_events_dir: Path = Field(
-        ..., description="The directory to which source events are published as JSON."
-    )
+"""Generates and persists accession numbers."""

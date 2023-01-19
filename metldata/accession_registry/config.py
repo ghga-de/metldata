@@ -15,20 +15,8 @@
 
 """Config Parameter Modeling and Parsing"""
 
-from pathlib import Path
-
-from pydantic import BaseSettings, Field
+from hexkit.providers.mongodb import MongoDbConfig
 
 
-class Config(BaseSettings):
+class Config(MongoDbConfig):
     """Config parameters and their defaults."""
-
-    metadata_model: Path = Field(
-        ..., description="The path to the metadata model defined in LinkML."
-    )
-    submission_store_dir: Path = Field(
-        ..., description="The directory where the submission JSONs will be stored."
-    )
-    source_events_dir: Path = Field(
-        ..., description="The directory to which source events are published as JSON."
-    )
