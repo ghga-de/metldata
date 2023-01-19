@@ -13,8 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utils for Fixture handling"""
+"""Config Parameter Modeling and Parsing"""
 
 from pathlib import Path
 
-BASE_DIR = Path(__file__).parent.resolve()
+from ghga_service_chassis_lib.config import config_from_yaml
+from pydantic import BaseSettings, Field
+
+
+# Please adapt config prefix and remove unnecessary config bases:
+@config_from_yaml(prefix="metldata")
+class Config(BaseSettings):
+    """Config parameters and their defaults."""
+
+    metadata_model: Path = Field(
+        ..., description="The path to the metadata model defined in LinkML."
+    )
+    submission_store_dir: Path = Field(
+        ..., description="The directory where the submission JSONs will be stored."
+    )
+    source_events_dir: Path = Field(
+        ..., description="The directory to which source events are published as JSON."
+    )
