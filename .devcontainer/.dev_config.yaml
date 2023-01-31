@@ -1,1 +1,7 @@
 # Please only mention the non-default settings here:
+
+metadata_model: /workspace/example_data/test_model.yaml
+
+accession_registry_path: /path/to/accession_registry.txt
+submission_store_dir: /path/to/submission/store/dir
+source_events_dir: /path/to/source/event/dir

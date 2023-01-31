@@ -15,8 +15,14 @@
 
 """Config Parameter Modeling and Parsing"""
 
-from pydantic import BaseSettings
+from pathlib import Path
+
+from pydantic import BaseSettings, Field
 
 
 class Config(BaseSettings):
     """Config parameters and their defaults."""
+
+    accession_registry_path: Path = Field(
+        ..., description="A file for storing the already registered accesions."
+    )
