@@ -15,8 +15,12 @@
 
 """Config Parameter Modeling and Parsing"""
 
-from pydantic import BaseSettings
+from hexkit.config import config_from_yaml
+
+from metldata.accession_registry.config import Config as AccessionRegistryConfig
+from metldata.submission_store.config import Config as SubmissionStoreConfig
 
 
-class Config(BaseSettings):
+@config_from_yaml("metldata")
+class Config(AccessionRegistryConfig, SubmissionStoreConfig):
     """Config parameters and their defaults."""
