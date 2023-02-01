@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.177.0/containers/python-3-postgres
 // Update the VARIANT arg in docker-compose.yml to pick a Python version: 3, 3.8, 3.7, 3.6
 {
-	"name": "my-microservice",
+	"name": "metldata",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspace",
@@ -71,9 +71,11 @@
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode",
 	"features": {
-		"docker-in-docker": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest",
-			"moby": true
+			"enableNonRootDocker": "true",
+			"moby": true,
+			"azureDnsAutoDetection": false
 		}
 	}
 }

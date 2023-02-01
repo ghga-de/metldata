@@ -1,9 +1,7 @@
 # Please only mention the non-default settings here:
 
-rabbitmq_host: rabbitmq
-rabbitmq_port: 5672
-s3_endpoint_url: http://localstack:4566
-s3_access_key_id: test
-s3_secret_access_key: test
+metadata_model: /workspace/example_data/test_model.yaml
 
-language: Greek
+accession_registry_path: /path/to/accession_registry.txt
+submission_store_dir: /path/to/submission/store/dir
+source_events_dir: /path/to/source/event/dir

@@ -1,4 +1,4 @@
-# Copyright 2021 - 2022 Universität Tübingen, DKFZ and EMBL
+# Copyright 2021 - 2023 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-"""Used to define the location of the main FastAPI app object."""
+"""Config Parameter Modeling and Parsing"""
 
-# flake8: noqa
-# pylint: skip-file
+from hexkit.config import config_from_yaml
 
-# Please adapt to package structure:
-from my_microservice.api.main import app
+from metldata.accession_registry.config import Config as AccessionRegistryConfig
+from metldata.submission_store.config import Config as SubmissionStoreConfig
+
+
+@config_from_yaml(prefix="metldata")
+class Config(AccessionRegistryConfig, SubmissionStoreConfig):
+    """Config parameters and their defaults."""
