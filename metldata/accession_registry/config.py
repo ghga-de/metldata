@@ -15,9 +15,9 @@
 
 """Config Parameter Modeling and Parsing"""
 
-from metldata.accession_registry.accession_registry import AccessionRegistryConfig
+from metldata.accession_registry.accession_handler import AccessionHandlerConfig
 from metldata.accession_registry.accession_store import AccessionStoreConfig
 
 
-class Config(AccessionRegistryConfig, AccessionStoreConfig):
+class Config(AccessionHandlerConfig, AccessionStoreConfig):
     """Config parameters and their defaults."""

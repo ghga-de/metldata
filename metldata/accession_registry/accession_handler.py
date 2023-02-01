@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""Main module of this subpackage."""
+"""Handling of the accession handler."""
 
 import secrets
 from typing import Iterable
@@ -24,7 +24,7 @@ from pydantic import BaseSettings, Field
 from metldata.accession_registry.accession_store import AccessionStore
 
 
-class AccessionRegistryConfig(BaseSettings):
+class AccessionHandlerConfig(BaseSettings):
     """Config parameters and their defaults."""
 
     prefix_mapping: dict[str, str] = Field(
@@ -41,8 +41,8 @@ class AccessionRegistryConfig(BaseSettings):
     suffix_length: int = Field(8, description="Length of the numeric ID suffix.")
 
 
-class AccessionRegistry:
-    """Main class handling the accession registry."""
+class AccessionHandler:
+    """Main class handling the accession handler."""
 
     class UnkownResourceTypeError(RuntimeError):
         """Raised when a resource type is specified that is unkown."""
@@ -61,7 +61,7 @@ class AccessionRegistry:
         """Raised when a the generation of a new accession failed."""
 
     def __init__(
-        self, *, config: AccessionRegistryConfig, accession_store: AccessionStore
+        self, *, config: AccessionHandlerConfig, accession_store: AccessionStore
     ):
         """Initialize with config."""
 

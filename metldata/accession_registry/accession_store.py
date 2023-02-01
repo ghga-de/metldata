@@ -49,7 +49,7 @@ class AccessionStore:
 
         with open(self._config.accession_store_path, "r", encoding="utf-8") as store:
             for existing_accession in store.readlines():
-                if accession == existing_accession:
+                if accession == existing_accession.strip():
                     return True
 
         return False
@@ -65,4 +65,4 @@ class AccessionStore:
             raise self.AccessionAlreadyExistsError(accession=accession)
 
         with open(self._config.accession_store_path, "a", encoding="utf-8") as store:
-            store.write(accession)
+            store.write(f"{accession}\n")

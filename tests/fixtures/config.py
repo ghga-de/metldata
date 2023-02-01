@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-from tempfile import TemporaryDirectory, TemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from typing import Generator
 
 import pytest
@@ -33,15 +33,15 @@ PREFIX_MAPPING = {
 
 @pytest.fixture
 def config_fixture() -> Generator[Config, None, None]:
-    """Generate a test Config file."""
+    """Generate a test config."""
 
     with TemporaryDirectory() as submission_store_dir:
         with TemporaryDirectory() as source_events_dir:
-            with TemporaryFile() as accession_store_path:
+            with NamedTemporaryFile() as accession_store_path:
                 yield Config(
                     metadata_model=TEST_METADATA_MODEL,
                     submission_store_dir=submission_store_dir,
                     source_events_dir=source_events_dir,
-                    accession_store_path=accession_store_path,
+                    accession_store_path=accession_store_path.name,
                     prefix_mapping=PREFIX_MAPPING,
                 )
