@@ -15,14 +15,9 @@
 
 """Config Parameter Modeling and Parsing"""
 
-from pathlib import Path
+from metldata.accession_registry.accession_registry import AccessionRegistryConfig
+from metldata.accession_registry.accession_store import AccessionStoreConfig
 
-from pydantic import BaseSettings, Field
 
-
-class Config(BaseSettings):
+class Config(AccessionRegistryConfig, AccessionStoreConfig):
     """Config parameters and their defaults."""
-
-    accession_registry_path: Path = Field(
-        ..., description="A file for storing the already registered accesions."
-    )
