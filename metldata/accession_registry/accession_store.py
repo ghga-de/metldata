@@ -55,7 +55,7 @@ class AccessionStore:
         return False
 
     def save(self, *, accession: str) -> None:
-        """Save a new accessions.
+        """Save a new accession.
 
         Raises:
             AccessionAlreadyExistsError: If the given accession already exists.
