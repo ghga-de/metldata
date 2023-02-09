@@ -22,5 +22,5 @@ from metldata.submission_store.config import Config as SubmissionStoreConfig
 
 
 @config_from_yaml(prefix="metldata")
-class Config(AccessionHandlerConfig, SubmissionStoreConfig):
+class Config(AccessionRegistryConfig, SubmissionStoreConfig):
     """Config parameters and their defaults."""
