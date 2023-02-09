@@ -3,20 +3,20 @@
   "description": "Modifies the orginal Settings class provided by the user",
   "type": "object",
   "properties": {
-    "metadata_model": {
-      "title": "Metadata Model",
-      "description": "The path to the metadata model defined in LinkML.",
-      "env_names": [
-        "metldata_metadata_model"
-      ],
-      "type": "string",
-      "format": "path"
-    },
     "submission_store_dir": {
       "title": "Submission Store Dir",
       "description": "The directory where the submission JSONs will be stored.",
       "env_names": [
         "metldata_submission_store_dir"
+      ],
+      "type": "string",
+      "format": "path"
+    },
+    "metadata_model": {
+      "title": "Metadata Model",
+      "description": "The path to the metadata model defined in LinkML.",
+      "env_names": [
+        "metldata_metadata_model"
       ],
       "type": "string",
       "format": "path"
@@ -32,7 +32,7 @@
     },
     "accession_store_path": {
       "title": "Accession Store Path",
-      "description": "A file for storing the already registered accesions.",
+      "description": "A file for storing the already registered accessions.",
       "env_names": [
         "metldata_accession_store_path"
       ],
@@ -67,8 +67,8 @@
     }
   },
   "required": [
-    "metadata_model",
     "submission_store_dir",
+    "metadata_model",
     "source_events_dir",
     "accession_store_path",
     "prefix_mapping"

@@ -19,16 +19,6 @@ subsets:
     description: |
       Subset of properties that are considered to be restricted.
       Every property that is not marked as restricted can be seen as public.
-  essential:
-    description: >-
-      Subset of properties that are considered to be essential for the functionality of
-      GHGA.
-  recommended:
-    description: >-
-      Subset of properties that are considered to be of importance for FAIR data sharing.
-  optional:
-    description: >-
-      Subset of properties that are considered to be optional.
 
 classes:
   named thing:
@@ -39,6 +29,11 @@ classes:
     slots:
       - accession
       - alias
+    slot_usage:
+      accession:
+        required: true
+      alias:
+        required: true
 
   material entity:
     is_a: named thing
@@ -68,21 +63,21 @@ classes:
       type:
         description: >-
           The type of Experiment.
+        required: true
       has sample:
         description: >-
           The Sample entity associated with this Experiment.
         range: sample
         multivalued: true
         required: true
-        inlined: true
-        inlined_as_list: true
+        inlined: false
       has file:
         description: >-
           One or more Files entities that are generated as output of this Experiment.
         range: file
         multivalued: true
-        inlined: true
-        inlined_as_list: true
+        required: true
+        inlined: false
 
   sample:
     is_a: named thing
@@ -114,17 +109,17 @@ classes:
       A file is an object that contains information generated from a process, either an
       Experiment or an Analysis.
     slots:
-      - name
+      - filename
       - format
       - size
       - checksum
     slot_usage:
       alias:
         required: true
-      name:
-        description: >-
-          The given filename.
+      filename:
         required: true
+        in_subset:
+          - restricted
       format:
         required: true
       checksum:
@@ -138,37 +133,29 @@ classes:
       A Dataset is a collection of Files that is prepared for distribution
       and is tied to a Data Access Policy.
     slots:
-      - has experiment
-      - has sample
       - has file
     slot_usage:
-      alias:
-        required: true
       has file:
         description: >-
           One or more File entities that collectively are part of this Dataset.
         range: file
         required: true
         multivalued: true
-        inlined: true
-        inlined_as_list: true
+        inlined: false
 
   submission:
+    tree_root: true
     description: >-
       A grouping entity that represents information about one or more entities.
       A submission can be considered as a set of inter-related (and inter-connected)
       entities that represent a data submission to GHGA.
     slots:
-      - id
       - has sample
       - has experiment
       - has file
       - has dataset
 
     slot_usage:
-      id:
-        description: >-
-          A internal unique identifier for the Submission.
       has sample:
         description: >-
           Information about one or more Sample entities associated with this submission.
@@ -181,6 +168,7 @@ classes:
           Information about one or more Experiment entities associated with this submission.
         range: experiment
         multivalued: true
+        required: true
         inlined: true
         inlined_as_list: true
       has file:
@@ -202,59 +190,46 @@ slots:
   accession:
     description: An identifier used to access this entity.
     identifier: true
-    required: true
-    in_subset:
-      - essential
+
+  name:
+    description: >-
+      An entity name.
 
   alias:
     description: The alias for an entity.
-    required: true
-    in_subset:
-      - essential
-      - restricted
 
   type:
     description: The type of an entity.
-    in_subset:
-      - essential
-      # Note: Not to be confused with rdf:type
+    # Note: Not to be confused with rdf:type
 
   description:
     description: Description of an entity.
-    in_subset:
-      - essential
 
   has sample:
     description: The sample associated with an entity.
     range: sample
-    in_subset:
-      - essential
-      - restricted
+    required: true
 
   has experiment:
     description: The experiment associated with an entity.
     range: experiment
-    in_subset:
-      - essential
-      - restricted
 
   has file:
     description: >-
       The file associated with an entity.
     range: file
-    in_subset:
-      - essential
-      - restricted
 
   has dataset:
     description: The Dataset associated with an entity.
     range: dataset
 
+  filename:
+    description: >-
+      The given filename.
+
   format:
     description: >-
       The format of the file: BAM, SAM, CRAM, BAI, etc.
-    in_subset:
-      - essential
     range: file format enum
 
   size:
@@ -268,8 +243,6 @@ slots:
       The receiving system recomputes the checksum based upon the received data and compares this
       value with the one sent with the data. If the two values are the same, the receiver has some confidence
       that the data was received correctly.
-    in_subset:
-      - essential
 
 enums:
   file format enum:
