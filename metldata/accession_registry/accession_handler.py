@@ -85,7 +85,7 @@ class AccessionHandler:
 
         prefix = self._config.prefix_mapping[resource_type]
         suffix = "".join(
-            [str(secrets.randbelow(10)) for _ in range(self._config.suffix_length)]
+            str(secrets.randbelow(10)) for _ in range(self._config.suffix_length)
         )
 
         return prefix + suffix
