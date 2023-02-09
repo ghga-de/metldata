@@ -92,7 +92,7 @@ class AccessionHandler:
 
     def get_accession(self, *, resource_type: str) -> str:
         """
-        Generates and registeres a new accession for a resource of the specified type.
+        Generates and registers a new accession for a resource of the specified type.
         """
 
         for _ in range(10):
