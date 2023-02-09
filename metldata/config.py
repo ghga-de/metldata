@@ -18,7 +18,7 @@
 from hexkit.config import config_from_yaml
 
 from metldata.accession_registry.config import Config as AccessionRegistryConfig
-from metldata.submission_store.config import Config as SubmissionStoreConfig
+from metldata.submission_registry.config import Config as SubmissionStoreConfig
 
 
 @config_from_yaml(prefix="metldata")
