@@ -25,7 +25,7 @@ class AccessionStoreConfig(BaseSettings):
     """Config parameters and their defaults."""
 
     accession_store_path: Path = Field(
-        ..., description="A file for storing the already registered accesions."
+        ..., description="A file for storing the already registered accessions."
     )
 
 
