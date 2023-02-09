@@ -50,7 +50,7 @@ def test_get_accession_happy(config_fixture: Config):  # noqa: F811
 
 
 def test_accession_store_happy(config_fixture: Config):  # noqa: F811
-    """Test accession handler happy path."""
+    """Test accession store happy path."""
 
     expected_accessions = ["accession001", "accession002"]
 
