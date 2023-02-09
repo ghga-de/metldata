@@ -66,7 +66,7 @@ def test_accession_store_happy(config_fixture: Config):  # noqa: F811
 
 
 def test_accession_store_unkown_accession(config_fixture: Config):  # noqa: F811
-    """Test accession handler happy path."""
+    """Test accession store happy path."""
 
     unkown_accession = "accession003"
 
