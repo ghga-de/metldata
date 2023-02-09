@@ -45,7 +45,7 @@
       "example": {
         "file": "GHGAF",
         "experiment": "GHGAE",
-        "sample": "GHGAF",
+        "sample": "GHGAS",
         "dataset": "GHGAD"
       },
       "env_names": [

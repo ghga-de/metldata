@@ -33,7 +33,7 @@ class AccessionHandlerConfig(BaseSettings):
         example={
             "file": "GHGAF",
             "experiment": "GHGAE",
-            "sample": "GHGAF",
+            "sample": "GHGAS",
             "dataset": "GHGAD",
         },
     )

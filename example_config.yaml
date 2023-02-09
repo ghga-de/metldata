@@ -4,7 +4,7 @@ prefix_mapping:
   dataset: GHGAD
   experiment: GHGAE
   file: GHGAF
-  sample: GHGAF
+  sample: GHGAS
 source_events_dir: /path/to/source/event/dir
 submission_store_dir: /path/to/submission/store/dir
 suffix_length: 8

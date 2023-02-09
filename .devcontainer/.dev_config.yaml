@@ -4,7 +4,7 @@ metadata_model: /workspace/example_data/test_model.yaml
 prefix_mapping:
   file: GHGAF
   experiment: GHGAE
-  sample: GHGAF
+  sample: GHGAS
   dataset: GHGAD
 
 accession_store_path: /path/to/accession_store.txt

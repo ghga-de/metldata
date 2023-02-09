@@ -26,7 +26,7 @@ TEST_METADATA_MODEL = BASE_DIR.parent.parent / "example_data" / "test_model.yaml
 PREFIX_MAPPING = {
     "file": "GHGAF",
     "experiment": "GHGAE",
-    "sample": "GHGAF",
+    "sample": "GHGAS",
     "dataset": "GHGAD",
 }
 
