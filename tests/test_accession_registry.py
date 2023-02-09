@@ -33,7 +33,7 @@ def test_get_accession_happy(config_fixture: Config):  # noqa: F811
     accessions = []
     for resource_type in config_fixture.prefix_mapping:
         for _ in range(10):
-            # generate 10 accession for each resource type
+            # generate 10 accessions for each resource type
             expected_prefix = config_fixture.prefix_mapping[resource_type]
             expected_length = len(expected_prefix) + config_fixture.suffix_length
 
@@ -50,7 +50,7 @@ def test_get_accession_happy(config_fixture: Config):  # noqa: F811
 
 
 def test_accession_store_happy(config_fixture: Config):  # noqa: F811
-    """Test accession handler happy path."""
+    """Test accession store happy path."""
 
     expected_accessions = ["accession001", "accession002"]
 
@@ -66,7 +66,7 @@ def test_accession_store_happy(config_fixture: Config):  # noqa: F811
 
 
 def test_accession_store_unkown_accession(config_fixture: Config):  # noqa: F811
-    """Test accession handler happy path."""
+    """Test accession store happy path."""
 
     unkown_accession = "accession003"
 

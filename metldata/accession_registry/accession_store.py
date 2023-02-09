@@ -25,7 +25,7 @@ class AccessionStoreConfig(BaseSettings):
     """Config parameters and their defaults."""
 
     accession_store_path: Path = Field(
-        ..., description="A file for storing the already registered accesions."
+        ..., description="A file for storing the already registered accessions."
     )
 
 
@@ -48,14 +48,14 @@ class AccessionStore:
         """Checks whether the given accession is already in use."""
 
         with open(self._config.accession_store_path, "r", encoding="utf-8") as store:
-            for existing_accession in store.readlines():
+            for existing_accession in store:
                 if accession == existing_accession.strip():
                     return True
 
         return False
 
     def save(self, *, accession: str) -> None:
-        """Save a new accessions.
+        """Save a new accession.
 
         Raises:
             AccessionAlreadyExistsError: If the given accession already exists.

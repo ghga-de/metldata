@@ -79,20 +79,20 @@ class AccessionHandler:
             )
 
     def _generate_accession(self, *, resource_type: str) -> str:
-        """Generate a new submission."""
+        """Generate a new accession."""
 
         self._assert_resource_type_exists(resource_type=resource_type)
 
         prefix = self._config.prefix_mapping[resource_type]
         suffix = "".join(
-            [str(secrets.randbelow(10)) for _ in range(self._config.suffix_length)]
+            str(secrets.randbelow(10)) for _ in range(self._config.suffix_length)
         )
 
         return prefix + suffix
 
     def get_accession(self, *, resource_type: str) -> str:
         """
-        Generates and registeres a new accession for a resource of the specified type.
+        Generates and registers a new accession for a resource of the specified type.
         """
 
         for _ in range(10):

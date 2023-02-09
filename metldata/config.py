@@ -17,10 +17,10 @@
 
 from hexkit.config import config_from_yaml
 
-from metldata.accession_registry.config import Config as AccessionHandlerConfig
+from metldata.accession_registry.config import Config as AccessionRegistryConfig
 from metldata.submission_store.config import Config as SubmissionStoreConfig
 
 
 @config_from_yaml(prefix="metldata")
-class Config(AccessionHandlerConfig, SubmissionStoreConfig):
+class Config(AccessionRegistryConfig, SubmissionStoreConfig):
     """Config parameters and their defaults."""
