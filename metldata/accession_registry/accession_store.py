@@ -48,7 +48,7 @@ class AccessionStore:
         """Checks whether the given accession is already in use."""
 
         with open(self._config.accession_store_path, "r", encoding="utf-8") as store:
-            for existing_accession in store.readlines():
+            for existing_accession in store:
                 if accession == existing_accession.strip():
                     return True
 
