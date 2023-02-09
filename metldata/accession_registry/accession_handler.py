@@ -79,7 +79,7 @@ class AccessionHandler:
             )
 
     def _generate_accession(self, *, resource_type: str) -> str:
-        """Generate a new submission."""
+        """Generate a new accession."""
 
         self._assert_resource_type_exists(resource_type=resource_type)
 
