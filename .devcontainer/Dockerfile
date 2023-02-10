@@ -2,9 +2,6 @@ FROM mcr.microsoft.com/vscode/devcontainers/python:3.9-bullseye
 
 ENV PYTHONUNBUFFERED 1
 
-# Name of the python package, overwitten in docker-compose.yaml
-ARG USER_UID=my_microservice
-
 # Update args in docker-compose.yaml to set the UID/GID of the "vscode" user.
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
