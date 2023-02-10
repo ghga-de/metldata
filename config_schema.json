@@ -32,7 +32,7 @@
     },
     "accession_store_path": {
       "title": "Accession Store Path",
-      "description": "A file for storing the already registered accesions.",
+      "description": "A file for storing the already registered accessions.",
       "env_names": [
         "metldata_accession_store_path"
       ],
