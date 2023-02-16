@@ -1,13 +1,15 @@
 id: https://w3id.org/Minimal-Model
 name: Minimal-Model
 version: 0.9.0
+prefixes:
+  linkml: https://w3id.org/linkml/
 imports:
   - linkml:types
 
 default_range: string
 
 classes:
-  file:
+  File:
     aliases: ["file object"]
     description: >-
       A file is an object that contains information generated from a process, either an
@@ -21,6 +23,7 @@ classes:
     slot_usage:
       alias:
         required: true
+        identifier: true
       filename:
         required: true
       format:
@@ -30,7 +33,7 @@ classes:
       size:
         required: true
 
-  submission:
+  Submission:
     tree_root: true
     description: >-
       A grouping entity that represents information about one or more entities.
@@ -43,7 +46,7 @@ classes:
       has file:
         description: >-
           Information about one or more File entities associated with this submission.
-        range: file
+        required: true
         multivalued: true
         inlined: true
         inlined_as_list: true
@@ -58,7 +61,7 @@ slots:
   has file:
     description: >-
       The file associated with an entity.
-    range: file
+    range: File
 
   filename:
     description: >-

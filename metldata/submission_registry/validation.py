@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 from linkml_runtime.utils.schemaview import SchemaView
+from linkml_validator.models import ValidationMessage
 from linkml_validator.validator import Validator
 
 
@@ -35,7 +36,7 @@ def check_metadata_model_assumption(*, model_path: Path) -> None:
     schema_view = SchemaView(schema=str(model_path))
 
     # has a submission class that is the tree root:
-    submission_class = schema_view.get_class(class_name="submission", imports=False)
+    submission_class = schema_view.get_class(class_name="Submission", imports=False)
 
     if submission_class is None:
         raise MetadataModelAssumptionError(
@@ -54,6 +55,20 @@ class MetadataValidator:
     class ValidationError(RuntimeError):
         """Raised when the validation of metadata against the provided model fails."""
 
+        def __init__(self, *, issues: list[ValidationMessage]):
+            """Initializes with list of issues."""
+
+            self.issues = issues
+
+            message = "Validation failed due to following issues: " + ", ".join(
+                (
+                    f"in field '{issue.field}' with value '{issue.value}': {issue.message}"
+                    + f" ({issue.severity})"
+                )
+                for issue in self.issues
+            )
+            super().__init__(message)
+
     def __init__(self, *, model_path: Path):
         """Initialize with a linkml model."""
 
@@ -61,11 +76,22 @@ class MetadataValidator:
 
         self._validator = Validator(schema=str(model_path))
 
-    def validate(self, metadata: dict[str, Any]):
-        """Validate metadata against the provided model."""
+    def validate(self, metadata: dict[str, Any]) -> None:
+        """Validate metadata against the provided model.
+
+        Raises:
+            ValidationError: When validation failed.
+        """
 
         validation_report = self._validator.validate(
-            metadata, target_class="submission"
+            metadata, target_class="Submission"
         )
 
-        return validation_report
+        if not validation_report.valid:
+            issues = [
+                message
+                for result in validation_report.validation_results
+                if not result.valid and result.validation_messages is not None
+                for message in result.validation_messages
+            ]
+            raise self.ValidationError(issues=issues)

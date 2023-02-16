@@ -1,15 +1,15 @@
-# Submission class is missing
-
 id: https://w3id.org/Minimal-Model
 name: Minimal-Model
 version: 0.9.0
+prefixes:
+  linkml: https://w3id.org/linkml/
 imports:
   - linkml:types
 
 default_range: string
 
 classes:
-  file:
+  File:
     aliases: ["file object"]
     description: >-
       A file is an object that contains information generated from a process, either an
@@ -23,6 +23,7 @@ classes:
     slot_usage:
       alias:
         required: true
+        identifier: true
       filename:
         required: true
       format:
@@ -38,11 +39,6 @@ slots:
 
   description:
     description: Description of an entity.
-
-  has file:
-    description: >-
-      The file associated with an entity.
-    range: file
 
   filename:
     description: >-
