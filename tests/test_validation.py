@@ -21,12 +21,14 @@ from typing import Any
 
 import pytest
 
-from metldata.submission_registry.validation import (
+from metldata.submission_registry.metadata_validator import (
     MetadataModelAssumptionError,
     MetadataValidator,
+    MetadataValidatorConfig,
     check_metadata_model_assumption,
 )
 
+from .fixtures.metadata import INVALID_METADATA_EXAMPLES, VALID_METADATA_EXAMPLES
 from .fixtures.metadata_models import INVALID_METADATA_MODELS, VALID_METADATA_MODELS
 
 
@@ -38,70 +40,10 @@ from .fixtures.metadata_models import INVALID_METADATA_MODELS, VALID_METADATA_MO
 def test_metadata_model_assumption_checking(model_path: Path, is_valid: bool):
     """Test the assumptions regarding the metadata model are correctly checked."""
 
-    with nullcontext() if is_valid else pytest.raises(MetadataModelAssumptionError):
+    with nullcontext() if is_valid else pytest.raises(  # type:ignore
+        MetadataModelAssumptionError
+    ):
         check_metadata_model_assumption(model_path=model_path)
-
-
-VALID_FILE_EXAMPLES = [
-    {
-        "alias": "file001",
-        "filename": "file001.txt",
-        "format": "txt",
-        "checksum": "40b971c2b26ffb22db3558d1c27e20f7",
-        "size": 15347,
-    },
-    {
-        "alias": "file002",
-        "filename": "file002.txt",
-        "format": "txt",
-        "checksum": "f051753bbb3869485b66b45139fac10b",
-        "size": 27653,
-    },
-]
-INVALID_FILE_EXAMPLES = [
-    {
-        "alias": "file001",
-        "filename": "file001.txt",
-        "format": "invalid",  # invalid
-        "checksum": "40b971c2b26ffb22db3558d1c27e20f7",
-        "size": 15347,
-    },
-    {
-        "alias": "file002",
-        "filename": "file002.txt",
-        "format": "txt",
-        "checksum": "f051753bbb3869485b66b45139fac10b",
-        "size": 3234.23424,  # invalid
-    },
-    {
-        "alias": "file003",
-        # filename missing
-        "format": "txt",
-        "checksum": "f051753bbb3869485b66b45139fac10b",
-        "size": 1123,
-    },
-    {
-        "alias": "file002",
-        "filename": "file002.txt",
-        "format": "txt",
-        "checksum": "f051753bbb3869485b66b45139fac10b",
-        "size": 1123,
-        "creation_date": "Thu Feb 16 13:15:50 UTC 2023",  # additional field
-    },
-]
-
-VALID_METADATA_EXAMPLES = [
-    {"has_file": [VALID_FILE_EXAMPLES[0]]},
-    {"has_file": VALID_FILE_EXAMPLES},
-]
-
-INVALID_METADATA_EXAMPLES = [
-    {},  # missing field
-    {"has_file": VALID_FILE_EXAMPLES[0]},  # single file where list expected
-] + [
-    {"has_file": [VALID_FILE_EXAMPLES[0], invalid_file]}
-    for invalid_file in INVALID_FILE_EXAMPLES
-]
 
 
 @pytest.mark.parametrize(
@@ -112,9 +54,10 @@ INVALID_METADATA_EXAMPLES = [
 def test_validate_against_model(metadata: dict[str, Any], is_valid: bool):
     """Test the validation of metadata against a model."""
 
-    validator = MetadataValidator(model_path=VALID_METADATA_MODELS[0])
+    config = MetadataValidatorConfig(metadata_model=VALID_METADATA_MODELS[0])
+    validator = MetadataValidator(config=config)
 
-    with nullcontext() if is_valid else pytest.raises(
+    with nullcontext() if is_valid else pytest.raises(  # type:ignore
         MetadataValidator.ValidationError
     ):
         validator.validate(metadata)

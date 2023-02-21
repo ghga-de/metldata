@@ -45,14 +45,18 @@ class StatusChange(BaseModel):
     new_status: SubmissionStatus
 
 
-class SubmissionCreation(BaseModel):
-    """Essential data for creating a submission."""
+class SubmissionHeader(BaseModel):
+    """Basic information provided for a submission."""
 
     title: str = Field(..., description="A descriptive title for this submission.")
     description: Optional[str] = Field(None, description="An optional description.")
 
-    content: dict[str, Any] = Field(
-        ..., description="The metadata content of the submission."
+
+class SubmissionCreation(SubmissionHeader):
+    """Essential data for creating a submission."""
+
+    content: Optional[dict[str, Any]] = Field(
+        None, description="The metadata content of the submission. "
     )
 
 
@@ -67,3 +71,16 @@ class Submission(SubmissionCreation):
         ],
         description="A history of status changes.",
     )
+
+    @property
+    def current_status(self) -> SubmissionStatus:
+        """Extract the current submission status from the status history."""
+
+        if len(self.status_history) == 0:
+            raise RuntimeError("Status history is empty.")
+
+        sorted_history = sorted(
+            self.status_history, key=lambda status_change: status_change.timestamp
+        )
+
+        return sorted_history[-1].new_status

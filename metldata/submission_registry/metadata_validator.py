@@ -22,6 +22,15 @@ from typing import Any
 from linkml_runtime.utils.schemaview import SchemaView
 from linkml_validator.models import ValidationMessage
 from linkml_validator.validator import Validator
+from pydantic import BaseSettings, Field
+
+
+class MetadataValidatorConfig(BaseSettings):
+    """Config parameters and their defaults."""
+
+    metadata_model: Path = Field(
+        ..., description="The path to the metadata model defined in LinkML."
+    )
 
 
 class MetadataModelAssumptionError(RuntimeError):
@@ -69,12 +78,12 @@ class MetadataValidator:
             )
             super().__init__(message)
 
-    def __init__(self, *, model_path: Path):
+    def __init__(self, *, config: MetadataValidatorConfig):
         """Initialize with a linkml model."""
 
-        check_metadata_model_assumption(model_path=model_path)
+        check_metadata_model_assumption(model_path=config.metadata_model)
 
-        self._validator = Validator(schema=str(model_path))
+        self._validator = Validator(schema=str(config.metadata_model))
 
     def validate(self, metadata: dict[str, Any]) -> None:
         """Validate metadata against the provided model.

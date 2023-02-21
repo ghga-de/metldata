@@ -21,6 +21,7 @@ from metldata.accession_registry.config import Config as AccessionRegistryConfig
 from metldata.submission_registry.config import Config as SubmissionStoreConfig
 
 
+# pylint: disable=too-many-ancestors
 @config_from_yaml(prefix="metldata")
 class Config(AccessionRegistryConfig, SubmissionStoreConfig):
     """Config parameters and their defaults."""

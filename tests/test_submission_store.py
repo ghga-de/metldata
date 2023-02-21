@@ -18,12 +18,12 @@
 import pytest
 
 from metldata.config import Config
-from metldata.submission_registry.models import SubmissionCreation
+from metldata.submission_registry import models
 from metldata.submission_registry.submission_store import SubmissionStore
 
 from .fixtures.config import config_fixture  # noqa: F401
 
-EXAMPLE_SUBMISSION = SubmissionCreation(
+EXAMPLE_SUBMISSION = models.SubmissionCreation(
     title="test submission", content={"test": "test"}
 )
 

@@ -22,7 +22,8 @@ from uuid import uuid4
 
 from pydantic import BaseSettings, Field
 
-from metldata.submission_registry.models import Submission, SubmissionCreation
+from metldata.submission_registry import models
+from metldata.submission_registry.utils import save_submission_as_json
 
 
 class SubmissionStoreConfig(BaseSettings):
@@ -63,14 +64,13 @@ class SubmissionStore:
 
         return str(uuid4())
 
-    def _save(self, *, submission: Submission) -> None:
+    def _save(self, *, submission: models.Submission) -> None:
         """Save a submission to file."""
 
         json_path = self._get_submission_json_path(submission_id=submission.id)
-        with open(json_path, "w", encoding="utf-8") as file:
-            file.write(submission.json(indent=4))
+        save_submission_as_json(submission=submission, json_path=json_path)
 
-    def get_by_id(self, submission_id: str) -> Submission:
+    def get_by_id(self, submission_id: str) -> models.Submission:
         """Get an existing submission by its id.
 
         Raises:
@@ -85,19 +85,19 @@ class SubmissionStore:
         with open(json_path, "r", encoding="utf-8") as file:
             submission_dict = json.load(file)
 
-        return Submission(**submission_dict)
+        return models.Submission(**submission_dict)
 
-    def insert_new(self, *, submission: SubmissionCreation) -> Submission:
+    def insert_new(self, *, submission: models.SubmissionCreation) -> models.Submission:
         """Save an new submission. Return submission including its assigned ID."""
 
         submission_id = self._generate_new_submission_id()
-        submission_with_id = Submission(id=submission_id, **submission.dict())
+        submission_with_id = models.Submission(id=submission_id, **submission.dict())
 
         self._save(submission=submission_with_id)
 
         return submission_with_id
 
-    def update_existing(self, *, submission: Submission) -> None:
+    def update_existing(self, *, submission: models.Submission) -> None:
         """Update an existing submission."""
 
         existing_submission = self.get_by_id(submission_id=submission.id)

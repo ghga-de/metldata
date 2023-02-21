@@ -33,6 +33,21 @@ classes:
       size:
         required: true
 
+  Dataset:
+    description: >-
+      A Dataset is a collection of Files.
+    slots:
+      - alias
+      - has file
+    slot_usage:
+      alias:
+        required: true
+        identifier: true
+      has file:
+        required: true
+        multivalued: true
+        inlined: false
+
   Submission:
     tree_root: true
     description: >-
@@ -41,11 +56,15 @@ classes:
       entities that represent a data submission to GHGA.
     slots:
       - has file
+      - has dataset
 
     slot_usage:
       has file:
-        description: >-
-          Information about one or more File entities associated with this submission.
+        required: true
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      has dataset:
         required: true
         multivalued: true
         inlined: true
@@ -62,6 +81,11 @@ slots:
     description: >-
       The file associated with an entity.
     range: File
+
+  has dataset:
+    description: >-
+      The dataset associated with an entity.
+    range: Dataset
 
   filename:
     description: >-

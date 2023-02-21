@@ -12,17 +12,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-"""Config Parameter Modeling and Parsing"""
+"""Uility Collection"""
 
-from metldata.submission_registry.event_publisher import EventPublisherConfig
-from metldata.submission_registry.metadata_validator import MetadataValidatorConfig
-from metldata.submission_registry.submission_store import SubmissionStoreConfig
+from pathlib import Path
+
+from metldata.submission_registry import models
 
 
-class Config(
-    SubmissionStoreConfig,
-    MetadataValidatorConfig,
-    EventPublisherConfig,
-):
-    """Config parameters and their defaults."""
+def save_submission_as_json(*, submission: models.Submission, json_path: Path) -> None:
+    """Save a submission as JSON."""
+
+    with open(json_path, "w", encoding="utf-8") as file:
+        file.write(submission.json(indent=4))
