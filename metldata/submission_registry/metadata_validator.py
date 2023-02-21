@@ -16,21 +16,17 @@
 
 """Logic to validate submission metadata based on a LinkML model."""
 
-from pathlib import Path
 from typing import Any
 
 from linkml_runtime.utils.schemaview import SchemaView
 from linkml_validator.models import ValidationMessage
 from linkml_validator.validator import Validator
-from pydantic import BaseSettings, Field
+
+from metldata.shared.config import MetadataModelConfig
 
 
-class MetadataValidatorConfig(BaseSettings):
+class MetadataValidatorConfig(MetadataModelConfig):
     """Config parameters and their defaults."""
-
-    metadata_model: Path = Field(
-        ..., description="The path to the metadata model defined in LinkML."
-    )
 
 
 class MetadataModelAssumptionError(RuntimeError):
