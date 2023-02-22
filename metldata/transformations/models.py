@@ -33,7 +33,10 @@ class InboundReference(BaseModel):
             + " local class."
         ),
     )
-    remote_reference_origin: str = Field(
+    remote_target: str = Field(
+        ..., description="The name of the class targeted by this reference."
+    )
+    remote_path: str = Field(
         ..., description="The location of the reference origin in the remote class."
     )
 
