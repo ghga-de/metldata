@@ -16,6 +16,7 @@
 
 """Logic to validate submission metadata based on a LinkML model."""
 
+from pathlib import Path
 from typing import Any
 
 from linkml_runtime.utils.schemaview import SchemaView
