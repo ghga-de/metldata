@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""Metadata examples valid against the minimal model."""
+"""Valid and invalid metadata examples using the minimal model."""
 
 from typing import Any
 

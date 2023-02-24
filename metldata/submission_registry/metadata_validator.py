@@ -59,7 +59,7 @@ def check_metadata_model_assumption(*, model_path: Path) -> None:
 
 
 class MetadataValidator:
-    """Validating metadata against a linkml model."""
+    """Validating metadata against a LinkML model."""
 
     class ValidationError(RuntimeError):
         """Raised when the validation of metadata against the provided model fails."""
@@ -79,7 +79,7 @@ class MetadataValidator:
             super().__init__(message)
 
     def __init__(self, *, config: MetadataValidatorConfig):
-        """Initialize with a linkml model."""
+        """Initialize the validator with a LinkML model."""
 
         check_metadata_model_assumption(model_path=config.metadata_model)
 

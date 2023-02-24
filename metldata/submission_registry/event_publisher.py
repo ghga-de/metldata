@@ -39,7 +39,7 @@ def get_source_event_path(*, submission_id: str, source_events_dir: Path) -> Pat
 
 
 class EventPublisher:
-    """Ends publication of source events."""
+    """Handles publication of source events."""
 
     def __init__(
         self,
@@ -51,7 +51,7 @@ class EventPublisher:
         self._config = config
 
     def publish_submission(self, submission: models.Submission):
-        """Published the current submission as source events"""
+        """Publish the current submission as source event"""
 
         if submission.content is None:
             raise ValueError("Submission content must be defined.")

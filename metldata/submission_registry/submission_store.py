@@ -42,8 +42,7 @@ class SubmissionStore:
 
         def __init__(self, *, submission_id: str):
             message = (
-                "The submission with the following that id does not exist: "
-                + submission_id
+                "The submission with the following ID does not exist: " + submission_id
             )
             super().__init__(message)
 
@@ -60,27 +59,42 @@ class SubmissionStore:
 
     @staticmethod
     def _generate_new_submission_id():
-        """Generate a new submission id."""
+        """Generate a new submission ID."""
 
         return str(uuid4())
 
     def _save(self, *, submission: models.Submission) -> None:
-        """Save a submission to file."""
+        """Save a submission to a JSON file."""
 
         json_path = self._get_submission_json_path(submission_id=submission.id)
         save_submission_as_json(submission=submission, json_path=json_path)
 
-    def get_by_id(self, submission_id: str) -> models.Submission:
-        """Get an existing submission by its id.
+    def exists(self, *, submission_id: str) -> bool:
+        """Check whether a submission with the specified ID exists."""
+
+        json_path = self._get_submission_json_path(submission_id=submission_id)
+        return json_path.exists()
+
+    def _assert_exists(self, *, submission_id: str):
+        """Assert that a submission with the specified ID exists.
 
         Raises:
             SubmissionDoesNotExistError: Raised when the submission does not exist.
         """
 
-        json_path = self._get_submission_json_path(submission_id=submission_id)
-
-        if not json_path.exists():
+        if not self.exists(submission_id=submission_id):
             raise self.SubmissionDoesNotExistError(submission_id=submission_id)
+
+    def get_by_id(self, submission_id: str) -> models.Submission:
+        """Get an existing submission by its ID.
+
+        Raises:
+            SubmissionDoesNotExistError: Raised when the submission does not exist.
+        """
+
+        self._assert_exists(submission_id=submission_id)
+
+        json_path = self._get_submission_json_path(submission_id=submission_id)
 
         with open(json_path, "r", encoding="utf-8") as file:
             submission_dict = json.load(file)
@@ -88,7 +102,7 @@ class SubmissionStore:
         return models.Submission(**submission_dict)
 
     def insert_new(self, *, submission: models.SubmissionCreation) -> models.Submission:
-        """Save an new submission. Return submission including its assigned ID."""
+        """Save a new submission. Return submission including its assigned ID."""
 
         submission_id = self._generate_new_submission_id()
         submission_with_id = models.Submission(id=submission_id, **submission.dict())
@@ -98,10 +112,11 @@ class SubmissionStore:
         return submission_with_id
 
     def update_existing(self, *, submission: models.Submission) -> None:
-        """Update an existing submission."""
+        """Update an existing submission.
 
-        existing_submission = self.get_by_id(submission_id=submission.id)
-        if submission.id != existing_submission.id:
-            raise ValueError("The submission id cannot be changed.")
+        Raises:
+            SubmissionDoesNotExistError: Raised when the submission does not exist.
+        """
 
+        self._assert_exists(submission_id=submission.id)
         self._save(submission=submission)

@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).parent.resolve()
 
 
 def does_event_exist(*, submission_id: str, source_events_dir: Path) -> bool:
-    """Checks whether an event for the submission with the specified id exists."""
+    """Checks whether an event for the submission with the specified ID exists."""
 
     json_path = get_source_event_path(
         submission_id=submission_id, source_events_dir=source_events_dir
@@ -37,8 +37,7 @@ def check_source_event(*, expected_content: models.Submission, source_events_dir
     """Check the content of a source event.
 
     Raises:
-        AssertionError: if it does not match the expectations.
-        EventNotPublishedError: if the event was not yet published.
+        AssertionError: if it was not yet published or does not match the expectations.
     """
 
     assert does_event_exist(

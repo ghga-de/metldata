@@ -75,7 +75,7 @@ class SubmissionRegistry:
 
         Raises:
             SubmissionRegistry.SubmissionDoesNotExistError:
-                when no submission exists for the specified id.
+                when no submission with the specified ID exists.
             SubmissionRegistry.StatusError:
                 when the submission does not have the expected status.
         """
@@ -106,7 +106,7 @@ class SubmissionRegistry:
 
         Raises:
             SubmissionRegistry.SubmissionDoesNotExistError:
-                when no submission exists for the specified id.
+                when no submission with the specified ID exists.
         """
 
         return self._submission_store.get_by_id(id_)
@@ -116,7 +116,7 @@ class SubmissionRegistry:
     ) -> None:
         """Insert or update the content of a pending submission.
         The metadata is validated against the model, persisted in the submission store,
-        and finally published as source events.
+        and finally published as source event.
 
         Raises:
             SubmissionRegistry.SubmissionDoesNotExistError:

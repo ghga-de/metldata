@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Testing the accession handler."""
+"""Testing the event publisher."""
 
 from ghga_service_chassis_lib.utils import now_as_utc
 
@@ -26,8 +26,7 @@ from .fixtures.utils import check_source_event
 
 
 def test_happy(config_fixture: Config):  # noqa: F811
-    """Test the happy path of inserting, querying, and updating a submission using
-    the submission store."""
+    """Test the happy path of publishing a submission."""
 
     event_publisher = EventPublisher(config=config_fixture)
 
