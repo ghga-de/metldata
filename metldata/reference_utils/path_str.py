@@ -185,3 +185,15 @@ def string_element_to_object(string_element: str) -> ReferencePathElement:
     source, slot, target = get_element_components(string_element=string_element)
 
     return ReferencePathElement(type_=type_, source=source, slot=slot, target=target)
+
+
+def path_str_to_object_elements(path_str: str) -> list[ReferencePathElement]:
+    """Translates a path string into a list of object-based elements."""
+
+    validate_path_str_characters(path_str=path_str)
+    validate_path_str_format(path_str=path_str)
+
+    string_elements = get_string_elements(path_str=path_str)
+    return [
+        string_element_to_object(string_element) for string_element in string_elements
+    ]

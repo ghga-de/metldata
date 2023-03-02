@@ -21,6 +21,7 @@ from typing import Optional
 
 import pytest
 
+from metldata.reference_utils.path import ReferencePath
 from metldata.reference_utils.path_elements import (
     ReferencePathElement,
     ReferencePathElementType,
@@ -32,6 +33,7 @@ from metldata.reference_utils.path_str import (
     get_element_type,
     get_string_elements,
     get_target_class,
+    path_str_to_object_elements,
     split_first_element,
     string_element_to_object,
     validate_path_str_characters,
@@ -251,3 +253,156 @@ def test_string_element_to_object(
 
     observed_object = string_element_to_object(string_element)
     assert observed_object == expected_object
+
+
+@pytest.mark.parametrize(
+    "path_str, expected_elements",
+    [
+        (
+            "class_a(has_class_b)>class_b",
+            [
+                ReferencePathElement(
+                    type_=ReferencePathElementType.ACTIVE,
+                    source="class_a",
+                    slot="has_class_b",
+                    target="class_b",
+                )
+            ],
+        ),
+        (
+            "class_a<(has_class_a)class_b",
+            [
+                ReferencePathElement(
+                    type_=ReferencePathElementType.PASSIVE,
+                    source="class_a",
+                    slot="has_class_a",
+                    target="class_b",
+                )
+            ],
+        ),
+        (
+            "class_a(has_class_b)>class_b(has_class_c)>class_c",
+            [
+                ReferencePathElement(
+                    type_=ReferencePathElementType.ACTIVE,
+                    source="class_a",
+                    slot="has_class_b",
+                    target="class_b",
+                ),
+                ReferencePathElement(
+                    type_=ReferencePathElementType.ACTIVE,
+                    source="class_b",
+                    slot="has_class_c",
+                    target="class_c",
+                ),
+            ],
+        ),
+        (
+            "class_a(has_class_b)>class_b<(has_class_b)class_c",
+            [
+                ReferencePathElement(
+                    type_=ReferencePathElementType.ACTIVE,
+                    source="class_a",
+                    slot="has_class_b",
+                    target="class_b",
+                ),
+                ReferencePathElement(
+                    type_=ReferencePathElementType.PASSIVE,
+                    source="class_b",
+                    slot="has_class_b",
+                    target="class_c",
+                ),
+            ],
+        ),
+    ],
+)
+def test_path_str_to_object_elements(
+    path_str: str, expected_elements: ReferencePathElement
+):
+    """Test the path_str_to_object_elements method."""
+
+    observed_elements = path_str_to_object_elements(path_str)
+    assert observed_elements == expected_elements
+
+
+@pytest.mark.parametrize(
+    "path_str, expected_elements, expected_source, expected_target",
+    [
+        (
+            "class_a(has_class_b)>class_b",
+            [
+                ReferencePathElement(
+                    type_=ReferencePathElementType.ACTIVE,
+                    source="class_a",
+                    slot="has_class_b",
+                    target="class_b",
+                )
+            ],
+            "class_a",
+            "class_b",
+        ),
+        (
+            "class_a<(has_class_a)class_b",
+            [
+                ReferencePathElement(
+                    type_=ReferencePathElementType.PASSIVE,
+                    source="class_a",
+                    slot="has_class_a",
+                    target="class_b",
+                )
+            ],
+            "class_a",
+            "class_b",
+        ),
+        (
+            "class_a(has_class_b)>class_b(has_class_c)>class_c",
+            [
+                ReferencePathElement(
+                    type_=ReferencePathElementType.ACTIVE,
+                    source="class_a",
+                    slot="has_class_b",
+                    target="class_b",
+                ),
+                ReferencePathElement(
+                    type_=ReferencePathElementType.ACTIVE,
+                    source="class_b",
+                    slot="has_class_c",
+                    target="class_c",
+                ),
+            ],
+            "class_a",
+            "class_c",
+        ),
+        (
+            "class_a(has_class_b)>class_b<(has_class_b)class_c",
+            [
+                ReferencePathElement(
+                    type_=ReferencePathElementType.ACTIVE,
+                    source="class_a",
+                    slot="has_class_b",
+                    target="class_b",
+                ),
+                ReferencePathElement(
+                    type_=ReferencePathElementType.PASSIVE,
+                    source="class_b",
+                    slot="has_class_b",
+                    target="class_c",
+                ),
+            ],
+            "class_a",
+            "class_c",
+        ),
+    ],
+)
+def test_reference_path(
+    path_str: str,
+    expected_elements: ReferencePathElement,
+    expected_source: str,
+    expected_target: str,
+):
+    """Test the path_str_to_object_elements method."""
+
+    observed_path = ReferencePath(path_str=path_str)
+    assert observed_path.elements == expected_elements
+    assert observed_path.source == expected_source
+    assert observed_path.target == expected_target

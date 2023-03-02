@@ -16,6 +16,11 @@
 
 """Logic for handling reference paths."""
 
+from metldata.reference_utils.path_str import (
+    clean_path_str,
+    path_str_to_object_elements,
+)
+
 
 class ReferencePath:
     """A model describing the path of a reference between classes of a metadata model.
@@ -52,7 +57,15 @@ class ReferencePath:
 
     The elements of a ReferencePath are stored in the "elements" attribute as a list
     of ReferencePathElement objects that are optimized for programmatic use.
+
+    The "source" attribute provides the source class of the path while the
+    "target" attribute provides the target class of the path.
     """
 
-    def __init__(self, path_str: str):
-        """Construct reference path from a string based representation."""
+    def __init__(self, *, path_str: str):
+        """Construct reference path from a string-based representation."""
+
+        self.path_str = clean_path_str(path_str=path_str)
+        self.elements = path_str_to_object_elements(path_str=self.path_str)
+        self.source = self.elements[0].source
+        self.target = self.elements[-1].target
