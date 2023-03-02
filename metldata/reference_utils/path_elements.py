@@ -16,8 +16,9 @@
 
 """Data models"""
 
-from pydantic import BaseModel, Field
 from enum import Enum
+
+from pydantic import BaseModel, Field
 
 
 class ReferencePathElementType(Enum):

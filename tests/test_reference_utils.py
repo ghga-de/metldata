@@ -21,14 +21,22 @@ from typing import Optional
 
 import pytest
 
+from metldata.reference_utils.path_elements import (
+    ReferencePathElement,
+    ReferencePathElementType,
+)
 from metldata.reference_utils.path_str import (
     ValidationError,
-    validate_path_str_characters,
-    validate_path_str_format,
     extract_first_element,
+    get_element_components,
+    get_element_type,
+    get_string_elements,
     get_target_class,
     split_first_element,
-    get_string_elements,
+    string_element_to_object,
+    validate_path_str_characters,
+    validate_path_str_format,
+    validate_string_element,
 )
 
 
@@ -160,3 +168,86 @@ def test_get_string_elements(path_str: str, expected_elements: list[str]):
 
     observed_elements = get_string_elements(path_str=path_str)
     assert observed_elements == expected_elements
+
+
+@pytest.mark.parametrize(
+    "string_element, is_valid",
+    [
+        ("class_a(has_class_b)>class_b", True),
+        ("class_a<(has_class_a)class_b", True),
+        ("class_a<(has_class_a)>class_b", False),
+        ("class_a>class_b", False),
+        ("class_a(has_class_b)>class_b(has_class_c)>class_c", False),
+    ],
+)
+def test_validate_string_element(string_element: str, is_valid: bool):
+    """Test the validate_string_element method."""
+
+    with nullcontext() if is_valid else pytest.raises(ValidationError):
+        validate_string_element(string_element)
+
+
+@pytest.mark.parametrize(
+    "string_element, expected_type",
+    [
+        ("class_a(has_class_b)>class_b", ReferencePathElementType.ACTIVE),
+        ("class_a<(has_class_a)class_b", ReferencePathElementType.PASSIVE),
+    ],
+)
+def test_get_element_type(string_element: str, expected_type: ReferencePathElementType):
+    """Test the get_element_type method."""
+
+    observed_type = get_element_type(string_element=string_element)
+    assert observed_type == expected_type
+
+
+@pytest.mark.parametrize(
+    "string_element, expected_source, expected_slot, expected_target",
+    [
+        ("class_a(has_class_b)>class_b", "class_a", "has_class_b", "class_b"),
+        ("class_a<(has_class_a)class_b", "class_a", "has_class_a", "class_b"),
+    ],
+)
+def test_get_element_components(
+    string_element: str, expected_source: str, expected_slot: str, expected_target: str
+):
+    """Test the get_element_components method."""
+
+    observed_source, observed_slot, observed_target = get_element_components(
+        string_element=string_element
+    )
+    assert observed_source == expected_source
+    assert observed_slot == expected_slot
+    assert observed_target == expected_target
+
+
+@pytest.mark.parametrize(
+    "string_element, expected_object",
+    [
+        (
+            "class_a(has_class_b)>class_b",
+            ReferencePathElement(
+                type_=ReferencePathElementType.ACTIVE,
+                source="class_a",
+                slot="has_class_b",
+                target="class_b",
+            ),
+        ),
+        (
+            "class_a<(has_class_a)class_b",
+            ReferencePathElement(
+                type_=ReferencePathElementType.PASSIVE,
+                source="class_a",
+                slot="has_class_a",
+                target="class_b",
+            ),
+        ),
+    ],
+)
+def test_string_element_to_object(
+    string_element: str, expected_object: ReferencePathElement
+):
+    """Test the string_element_to_object method."""
+
+    observed_object = string_element_to_object(string_element)
+    assert observed_object == expected_object

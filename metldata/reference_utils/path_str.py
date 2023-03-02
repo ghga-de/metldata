@@ -19,6 +19,11 @@
 import re
 from typing import Optional
 
+from metldata.reference_utils.path_elements import (
+    ReferencePathElement,
+    ReferencePathElementType,
+)
+
 NAME_PATTERN = r"[A-Za-z_]+\w*"
 ACTIVE_ARROW_PATTERN = rf"\({NAME_PATTERN}\)>"
 PASSIVE_ARROW_PATTERN = rf"<\({NAME_PATTERN}\)"
@@ -57,6 +62,20 @@ def validate_path_str_format(path_str: str) -> None:
     if not re.match(PATH_PATTERN, path_str):
         raise ValidationError(
             f"The following path string has an invalid format: {path_str}"
+        )
+
+
+def validate_string_element(string_element: str) -> None:
+    """Validates the format of a string-based path element.
+
+    Raises:
+        ValidationError: if invalid.
+    """
+
+    if not re.match(rf"^{ELEMENT_PATTERN}$", string_element):
+        raise ValidationError(
+            "The following string-based path element has an invalid format: "
+            + string_element
         )
 
 
@@ -119,10 +138,50 @@ def get_string_elements(*, path_str: str) -> list[str]:
 
     # extract one element at a time:
     while True:
-        element, remaining_path = split_first_element(path_str=remaining_path)
+        element, remaining_path = split_first_element(  # type: ignore
+            path_str=remaining_path
+        )
         elements.append(element)
 
         if not remaining_path:
             break
 
     return elements
+
+
+def get_element_type(*, string_element: str) -> ReferencePathElementType:
+    """Infers the type of the provided string-based element."""
+
+    validate_string_element(string_element)
+
+    return (
+        ReferencePathElementType.ACTIVE
+        if ">" in string_element
+        else ReferencePathElementType.PASSIVE
+    )
+
+
+def get_element_components(*, string_element: str) -> tuple[str, str, str]:
+    """Returns a tuple of the source, the slot, and the target of the string-based path
+    element."""
+
+    # remove the angle:
+    string_element_cleaned = string_element.replace(">", "").replace("<", "")
+
+    # extract the source:
+    source, slot_and_target = string_element_cleaned.split("(")
+
+    # extract slot and target:
+    slot, target = slot_and_target.split(")")
+
+    return source, slot, target
+
+
+def string_element_to_object(string_element: str) -> ReferencePathElement:
+    """Translates a string-based path element into an object-based representation."""
+
+    validate_string_element(string_element)
+    type_ = get_element_type(string_element=string_element)
+    source, slot, target = get_element_components(string_element=string_element)
+
+    return ReferencePathElement(type_=type_, source=source, slot=slot, target=target)
