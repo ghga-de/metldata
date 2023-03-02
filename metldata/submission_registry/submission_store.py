@@ -42,8 +42,7 @@ class SubmissionStore:
 
         def __init__(self, *, submission_id: str):
             message = (
-                "The submission with the following that id does not exist: "
-                + submission_id
+                "The submission with the following ID does not exist: " + submission_id
             )
             super().__init__(message)
 
@@ -60,12 +59,12 @@ class SubmissionStore:
 
     @staticmethod
     def _generate_new_submission_id():
-        """Generate a new submission id."""
+        """Generate a new submission ID."""
 
         return str(uuid4())
 
     def _save(self, *, submission: models.Submission) -> None:
-        """Save a submission to file."""
+        """Save a submission to a JSON file."""
 
         json_path = self._get_submission_json_path(submission_id=submission.id)
         save_submission_as_json(submission=submission, json_path=json_path)

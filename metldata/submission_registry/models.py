@@ -17,6 +17,7 @@
 """Data models"""
 
 from enum import Enum
+from operator import attrgetter
 from typing import Any, Optional
 
 from ghga_service_chassis_lib.utils import DateTimeUTC, now_as_utc
@@ -79,8 +80,6 @@ class Submission(SubmissionCreation):
         if len(self.status_history) == 0:
             raise RuntimeError("Status history is empty.")
 
-        sorted_history = sorted(
-            self.status_history, key=lambda status_change: status_change.timestamp
-        )
+        sorted_history = sorted(self.status_history, key=attrgetter("timestamp"))
 
         return sorted_history[-1].new_status
