@@ -20,13 +20,14 @@ from contextlib import nullcontext
 from typing import Optional
 
 import pytest
+from pydantic import BaseModel
 
-from metldata.reference_utils.path import ReferencePath
-from metldata.reference_utils.path_elements import (
+from metldata.reference.path import ReferencePath
+from metldata.reference.path_elements import (
     ReferencePathElement,
     ReferencePathElementType,
 )
-from metldata.reference_utils.path_str import (
+from metldata.reference.path_str import (
     ValidationError,
     extract_first_element,
     get_element_components,
@@ -400,9 +401,36 @@ def test_reference_path(
     expected_source: str,
     expected_target: str,
 ):
-    """Test the path_str_to_object_elements method."""
+    """Test the ReferencePath class."""
 
     observed_path = ReferencePath(path_str=path_str)
     assert observed_path.elements == expected_elements
     assert observed_path.source == expected_source
     assert observed_path.target == expected_target
+
+
+@pytest.mark.parametrize(
+    "path_str, is_valid",
+    [
+        ("class_a(has_class_b)>class_b", True),
+        ("class_a<(has_class_a)class_b", True),
+        ("class_a(has_class_b)>class_b(has_class_c)>class_c", True),
+        (12312, False),
+        ("class_a<(has_class_b)>class_b", False),
+        ("(has_class_b)>class_b(has_class_c)>class_c", False),
+    ],
+)
+def test_reference_path_pydantic(path_str: str, is_valid: bool):
+    """Test the ReferencePath class when used with pydantic."""
+
+    class ExampleModel(BaseModel):
+        """Some example model."""
+
+        path: ReferencePath
+
+    with nullcontext() if is_valid else pytest.raises(ValueError):
+        observed_path = ExampleModel(path=path_str).path  # type: ignore
+
+    if is_valid:
+        expected_path = ReferencePath(path_str=path_str)
+        assert observed_path == expected_path

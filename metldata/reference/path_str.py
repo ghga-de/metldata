@@ -19,7 +19,7 @@
 import re
 from typing import Optional
 
-from metldata.reference_utils.path_elements import (
+from metldata.reference.path_elements import (
     ReferencePathElement,
     ReferencePathElementType,
 )

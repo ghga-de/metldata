@@ -16,7 +16,9 @@
 
 """Logic for handling reference paths."""
 
-from metldata.reference_utils.path_str import (
+from metldata.reference.path_str import (
+    PATH_PATTERN,
+    ValidationError,
     clean_path_str,
     path_str_to_object_elements,
 )
@@ -69,3 +71,35 @@ class ReferencePath:
         self.elements = path_str_to_object_elements(path_str=self.path_str)
         self.source = self.elements[0].source
         self.target = self.elements[-1].target
+
+    @classmethod
+    def validate(cls, value) -> "ReferencePath":
+        """A validator for pydantic."""
+
+        if not isinstance(value, str):
+            raise ValueError("A string is required.")
+
+        try:
+            return cls(path_str=value)
+        except ValidationError as error:
+            raise ValueError(str(error)) from ValidationError
+
+    @classmethod
+    def __get_validators__(cls):
+        """To get validators for pydantic"""
+
+        yield cls.validate
+
+    @classmethod
+    def __modify_schema__(cls, field_schema: dict):
+        """Modify the field schema for pydantic."""
+
+        field_schema.update(type="string", pattern=PATH_PATTERN)
+
+    def __eq__(self, other: object):
+        """For comparisons."""
+
+        if not isinstance(other, ReferencePath):
+            return NotImplemented
+
+        return self.path_str == other.path_str
