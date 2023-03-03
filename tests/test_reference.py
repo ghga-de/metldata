@@ -62,7 +62,7 @@ from metldata.reference.reference import InferredReference
 def test_validate_path_str_characters(path_str: str, is_valid: bool):
     """Test the validate_path_str_characters method."""
 
-    with nullcontext() if is_valid else pytest.raises(ValidationError):
+    with nullcontext() if is_valid else pytest.raises(ValidationError):  # type: ignore
         validate_path_str_characters(path_str)
 
 
@@ -90,7 +90,7 @@ def test_validate_path_str_characters(path_str: str, is_valid: bool):
 def test_validate_path_str_format(path_str: str, is_valid: bool):
     """Test the validate_path_str_format method."""
 
-    with nullcontext() if is_valid else pytest.raises(ValidationError):
+    with nullcontext() if is_valid else pytest.raises(ValidationError):  # type: ignore
         validate_path_str_format(path_str)
 
 
@@ -188,7 +188,7 @@ def test_get_string_elements(path_str: str, expected_elements: list[str]):
 def test_validate_string_element(string_element: str, is_valid: bool):
     """Test the validate_string_element method."""
 
-    with nullcontext() if is_valid else pytest.raises(ValidationError):
+    with nullcontext() if is_valid else pytest.raises(ValidationError):  # type: ignore
         validate_string_element(string_element)
 
 
@@ -430,8 +430,8 @@ def test_reference_path_pydantic(path_str: str, is_valid: bool):
 
         path: ReferencePath
 
-    with nullcontext() if is_valid else pytest.raises(ValueError):
-        observed_path = ExampleModel(path=path_str).path  # type: ignore
+    with nullcontext() if is_valid else pytest.raises(ValueError):  # type: ignore
+        observed_path = ExampleModel(path=path_str).path
 
     if is_valid:
         expected_path = ReferencePath(path_str=path_str)
@@ -487,6 +487,6 @@ def test_reference_map_config():
         ),
     ]
 
-    config = ReferenceMapConfig(inferred_ref_map=inferred_ref_map)  # type: ignore
+    config = ReferenceMapConfig(inferred_ref_map=inferred_ref_map)
     observed_refs = config.inferred_references
     assert expected_refs == observed_refs
