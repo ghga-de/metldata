@@ -76,6 +76,9 @@ class ReferencePath:
     def validate(cls, value) -> "ReferencePath":
         """A validator for pydantic."""
 
+        if isinstance(value, cls):
+            return value
+
         if not isinstance(value, str):
             raise ValueError("A string is required.")
 

@@ -22,6 +22,7 @@ from typing import Optional
 import pytest
 from pydantic import BaseModel
 
+from metldata.reference.config import ReferenceMapConfig
 from metldata.reference.path import ReferencePath
 from metldata.reference.path_elements import (
     ReferencePathElement,
@@ -41,6 +42,7 @@ from metldata.reference.path_str import (
     validate_path_str_format,
     validate_string_element,
 )
+from metldata.reference.reference import InferredReference
 
 
 @pytest.mark.parametrize(
@@ -434,3 +436,57 @@ def test_reference_path_pydantic(path_str: str, is_valid: bool):
     if is_valid:
         expected_path = ReferencePath(path_str=path_str)
         assert observed_path == expected_path
+
+
+def test_reference_map_config():
+    """Test the ReferenceMapConfig class."""
+
+    inferred_ref_map = {
+        "class_a": {
+            "has_class_d": {
+                "path": "class_a(has_class_b)>class_b(has_class_d)>class_d",
+                "multivalued": False,
+            },
+            "has_class_c": {
+                "path": "class_a(has_class_b)>class_b<(has_class_c)class_c",
+                "multivalued": True,
+            },
+        },
+        "class_b": {
+            "has_class_c": {
+                "path": "class_b<(has_class_c)class_c",
+                "multivalued": True,
+            }
+        },
+    }
+    expected_refs = [
+        InferredReference(
+            source="class_a",
+            target="class_d",
+            path=ReferencePath(
+                path_str="class_a(has_class_b)>class_b(has_class_d)>class_d"
+            ),
+            new_slot="has_class_d",
+            multivalued=False,
+        ),
+        InferredReference(
+            source="class_a",
+            target="class_c",
+            path=ReferencePath(
+                path_str="class_a(has_class_b)>class_b<(has_class_c)class_c"
+            ),
+            new_slot="has_class_c",
+            multivalued=True,
+        ),
+        InferredReference(
+            source="class_b",
+            target="class_c",
+            path=ReferencePath(path_str="class_b<(has_class_c)class_c"),
+            new_slot="has_class_c",
+            multivalued=True,
+        ),
+    ]
+
+    config = ReferenceMapConfig(inferred_ref_map=inferred_ref_map)  # type: ignore
+    observed_refs = config.inferred_references
+    assert expected_refs == observed_refs
