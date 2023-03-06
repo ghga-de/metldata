@@ -141,14 +141,11 @@ def get_string_elements(*, path_str: str) -> list[str]:
     remaining_path = path_str
 
     # extract one element at a time:
-    while True:
+    while remaining_path:
         element, remaining_path = split_first_element(  # type: ignore
             path_str=remaining_path
         )
         elements.append(element)
-
-        if not remaining_path:
-            break
 
     return elements
 
