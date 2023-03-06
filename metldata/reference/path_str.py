@@ -115,7 +115,7 @@ def split_first_element(*, path_str: str) -> tuple[str, Optional[str]]:
     """Return a tuple of the first element and the remaining path string.
     Thereby, the target class of the first element is set as the source class of the
     remaining path.
-    The second field is none if the provided path only contained one element.
+    The second element is None if the provided path only contained one element.
     """
 
     first_element = extract_first_element(path_str=path_str)
