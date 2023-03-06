@@ -29,7 +29,7 @@ ACTIVE_ARROW_PATTERN = rf"\({NAME_PATTERN}\)>"
 PASSIVE_ARROW_PATTERN = rf"<\({NAME_PATTERN}\)"
 ARROW_PATTERN = rf"(({ACTIVE_ARROW_PATTERN})|({PASSIVE_ARROW_PATTERN}))"
 ELEMENT_PATTERN = rf"{NAME_PATTERN}{ARROW_PATTERN}{NAME_PATTERN}"
-PATH_RAW_CHAR_PATTERN = r"^[\w \n_><\(\)]+$"
+PATH_RAW_CHAR_PATTERN = r"^[\w \n><\(\)]+$"
 PATH_PATTERN = (
     rf"^{NAME_PATTERN}{ARROW_PATTERN}({NAME_PATTERN}{ARROW_PATTERN})*{NAME_PATTERN}$"
 )
@@ -80,9 +80,9 @@ def validate_string_element(string_element: str) -> None:
 
 
 def clean_path_str(path_str: str) -> str:
-    """Cleanup whitespaces and newlines."""
+    """Cleanup whitespaces, newlines, etc."""
 
-    return path_str.replace(" ", "").replace("\n", "")
+    return "".join(path_str.split())
 
 
 def extract_first_element(*, path_str: str) -> str:

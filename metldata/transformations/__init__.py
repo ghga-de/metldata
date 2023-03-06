@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-"""Handels transformations of the source events to generate artifacts."""
+"""Handles transformations of the source events to generate artifacts."""

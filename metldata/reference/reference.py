@@ -22,7 +22,7 @@ from metldata.reference.path import ReferencePath
 
 
 class ReferenceDetails(BaseModel):
-    """A base model for describing a inferred reference that is based on existing
+    """A base model for describing an inferred reference that is based on existing
     references."""
 
     path: ReferencePath = Field(
@@ -35,7 +35,8 @@ class ReferenceDetails(BaseModel):
 
 
 class InferredReference(ReferenceDetails):
-    """A model for describing a inferred reference that is based on existing references."""
+    """A model for describing an inferred reference that is based on existing
+    references."""
 
     source: str = Field(
         ..., description="The source class to which this reference should be added."

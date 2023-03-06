@@ -345,6 +345,21 @@ def test_path_str_to_object_elements(
             "class_b",
         ),
         (
+            """class_a
+                (has_class_b) >
+                class_b""",  # containing whitespaces
+            [
+                ReferencePathElement(
+                    type_=ReferencePathElementType.ACTIVE,
+                    source="class_a",
+                    slot="has_class_b",
+                    target="class_b",
+                )
+            ],
+            "class_a",
+            "class_b",
+        ),
+        (
             "class_a<(has_class_a)class_b",
             [
                 ReferencePathElement(
