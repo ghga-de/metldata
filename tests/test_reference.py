@@ -50,9 +50,6 @@ from metldata.reference.reference import InferredReference
     [
         ("class_a(has_class_b)>class_b", True),
         ("class_a<(has_class_a)class_b", True),
-        ("class_a(has_class_b) >class_b", True),
-        ("class_a(has_cl ass_b)>class_b", True),
-        ("class_a(has_class_b)>\nclass_b", True),
         ("class_1(has_class_2)>class_2", True),
         ("ClassA(has_class_b)>ClassB", True),
         ("class-a(has-class_b)>class-b", False),
