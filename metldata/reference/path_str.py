@@ -24,7 +24,7 @@ from metldata.reference.path_elements import (
     ReferencePathElementType,
 )
 
-NAME_PATTERN = r"[A-Za-z_]+\w*"
+NAME_PATTERN = r"(?!\d)\w+"
 ACTIVE_ARROW_PATTERN = rf"\({NAME_PATTERN}\)>"
 PASSIVE_ARROW_PATTERN = rf"<\({NAME_PATTERN}\)"
 ARROW_PATTERN = rf"(({ACTIVE_ARROW_PATTERN})|({PASSIVE_ARROW_PATTERN}))"
