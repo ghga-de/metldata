@@ -13,33 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Config Parameter Modeling and Parsing"""
+"""Testing the metadata validator."""
 
+from contextlib import nullcontext
 from pathlib import Path
 
-from pydantic import BaseSettings, Field, validator
+import pytest
 
 from metldata.model_utils.model_validator import (
     MetadataModelAssumptionError,
     check_metadata_model_assumption,
 )
+from tests.fixtures.metadata_models import (
+    INVALID_METADATA_MODELS,
+    VALID_METADATA_MODELS,
+)
 
 
-class MetadataModelConfig(BaseSettings):
-    """Config parameters and their defaults."""
+@pytest.mark.parametrize(
+    "model_path, is_valid",
+    [(valid_model, True) for valid_model in VALID_METADATA_MODELS]
+    + [(invalid_model, False) for invalid_model in INVALID_METADATA_MODELS],
+)
+def test_metadata_model_assumption_checking(model_path: Path, is_valid: bool):
+    """Test the assumptions regarding the metadata model are correctly checked."""
 
-    metadata_model: Path = Field(
-        ..., description="The path to the metadata model defined in LinkML."
-    )
-
-    @validator("metadata_model", pre=False)
-    @classmethod
-    def _validate_model_assumptions(cls, value: Path) -> Path:
-        """Check the basic assumptions made about the metadata model."""
-
-        try:
-            check_metadata_model_assumption(model_path=value)
-        except MetadataModelAssumptionError as error:
-            raise ValueError() from error
-
-        return value
+    with nullcontext() if is_valid else pytest.raises(  # type:ignore
+        MetadataModelAssumptionError
+    ):
+        check_metadata_model_assumption(model_path=model_path)
