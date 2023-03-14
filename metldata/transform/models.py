@@ -26,6 +26,9 @@ JSON = dict[str, Any]
 class Transformation(BaseModel):
     """Model describing a metadata transformation."""
 
+    config: BaseModel = Field(
+        ..., description="Configuration parameters consumed by this transformation."
+    )
     model: JSON = Field(..., description="The model of the input metadata.")
     model_assumptions: list[Callable[[JSON], None]] = Field(
         ...,
