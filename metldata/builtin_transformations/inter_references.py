@@ -13,3 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+"""A transformation to infer references based on existing ones in the metadata model."""
