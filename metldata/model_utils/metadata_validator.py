@@ -16,43 +16,17 @@
 
 """Logic to validate submission metadata based on a LinkML model."""
 
-from pathlib import Path
 from typing import Any
 
-from linkml_runtime.utils.schemaview import SchemaView
 from linkml_validator.models import ValidationMessage
 from linkml_validator.validator import Validator
 
-from metldata.shared.config import MetadataModelConfig
+from metldata.model_utils.config import MetadataModelConfig
+from metldata.model_utils.model_validator import check_metadata_model_assumption
 
 
 class MetadataValidatorConfig(MetadataModelConfig):
     """Config parameters and their defaults."""
-
-
-class MetadataModelAssumptionError(RuntimeError):
-    """Raised when the basic assumptions that metldata makes about the metadata model
-    are not met"""
-
-
-def check_metadata_model_assumption(*, model_path: Path) -> None:
-    """Check that the basic assumptions that metldata makes about the metadata model
-    are met. Raises a MetadataModelAssumptionError otherwise."""
-
-    schema_view = SchemaView(schema=str(model_path))
-
-    # has a submission class that is the tree root:
-    submission_class = schema_view.get_class(class_name="Submission", imports=False)
-
-    if submission_class is None:
-        raise MetadataModelAssumptionError(
-            "A submission class is required but does not exist."
-        )
-
-    if not submission_class.tree_root:
-        raise MetadataModelAssumptionError(
-            "The submission class must have the tree_root property set to true."
-        )
 
 
 class MetadataValidator:

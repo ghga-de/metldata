@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-"""A transformation to infer references based on existing ones in the metadata model."""
+"""Utilities for handling metadata models."""

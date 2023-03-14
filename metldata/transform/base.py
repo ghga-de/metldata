@@ -21,20 +21,25 @@ from typing import Any
 
 from pydantic import BaseModel
 
+# shortcut:
+# pylint: disable=unused-import
+from metldata.model_utils.model_validator import (
+    MetadataModelAssumptionError,  # noqa: F401
+)
+
 Json = dict[str, Any]
+
+
+class MetadataModelTransformationError(RuntimeError):
+    """Raised when a transformation failed when applied to the metadata model."""
+
+
+class MetadataTransformationError(RuntimeError):
+    """Raised when a transformation failed when applied to metadata."""
 
 
 class TransformationBase(ABC):
     """A base class specifying the interface of transformations."""
-
-    class MetadataModelAssumptionError(RuntimeError):
-        """Raised when assumptions that are made about the metadata model are not met"""
-
-    class MetadataModelTransformationError(RuntimeError):
-        """Raised when a transformation failed when applied to the metadata model."""
-
-    class MetadataTransformationError(RuntimeError):
-        """Raised when a transformation failed when applied to metadata."""
 
     # contains the transformed model:
     transformed_model: Json
@@ -43,12 +48,12 @@ class TransformationBase(ABC):
     def __init__(self, *, model: Json, config: BaseModel):
         """Initialize the transformation with transformation-specific config params and
         the metadata model. The transformed model will be immediately available in the
-        `transformed_model` attribute (may be a property).
+        `transformed_model` attribute.
 
         Raises:
-            TransformationBase.MetadataModelAssumptionError:
+            MetadataModelAssumptionError:
                 if assumptions about the metadata model are not met.
-            TransformationBase.MetadataModelTransformationError:
+            MetadataModelTransformationError:
                 if the transformation of the metadata model fails.
         """
         ...
@@ -58,7 +63,7 @@ class TransformationBase(ABC):
         """Transforms metadata and returns it.
 
         Raises:
-            TransformationBase.MetadataTransformationError:
+            MetadataTransformationError:
                 if the transformation of the metadata fails.
         """
         ...

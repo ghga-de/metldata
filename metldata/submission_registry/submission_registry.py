@@ -20,9 +20,9 @@ from typing import Any
 
 from ghga_service_chassis_lib.utils import now_as_utc
 
+from metldata.model_utils.metadata_validator import MetadataValidator
 from metldata.submission_registry import models
 from metldata.submission_registry.event_publisher import EventPublisher
-from metldata.submission_registry.metadata_validator import MetadataValidator
 from metldata.submission_registry.submission_store import SubmissionStore
 
 
