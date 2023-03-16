@@ -16,26 +16,57 @@
 
 """Logic to check basic assumption about the metadata model."""
 
+from metldata.model_utils.anchors import InvalidAnchorPointError, get_anchor_points
 from metldata.model_utils.essentials import ROOT_CLASS, MetadataModel
 
 
 class MetadataModelAssumptionError(RuntimeError):
-    """Raised when the assumptions about the metadata model are not met"""
+    """Raised when the assumptions about the metadata model are not met."""
 
 
-def check_metadata_model_assumption(model: MetadataModel) -> None:
-    """Check that the basic assumptions that metldata makes about the metadata model
-    are met. Raises a MetadataModelAssumptionError otherwise."""
+def check_root_class_existence(model: MetadataModel) -> None:
+    """Check the existence of a root class that is called ROOT_CLASS.
+
+    Raises:
+        MetadataModelAssumptionError: if validation fails.
+    """
 
     # has a tree root called ROOT_CLASS:
-    submission_class = model.schema_view.get_class(class_name=ROOT_CLASS, imports=False)
+    root_class = model.schema_view.get_class(class_name=ROOT_CLASS)
 
-    if submission_class is None:
+    if root_class is None:
         raise MetadataModelAssumptionError(
             "A submission class is required but does not exist."
         )
 
-    if not submission_class.tree_root:
+    if not root_class.tree_root:
         raise MetadataModelAssumptionError(
             "The submission class must have the tree_root property set to true."
         )
+
+
+def check_anchor_points(model: MetadataModel) -> None:
+    """Checks the anchor points of the root class.
+
+    Raises:
+        MetadataModelAssumptionError: if validation fails.
+    """
+
+    try:
+        _ = get_anchor_points(model=model)
+    except InvalidAnchorPointError as error:
+        raise MetadataModelAssumptionError(
+            f"The model has invalid anchor points: {error}"
+        ) from error
+
+
+def check_metadata_model_assumption(model: MetadataModel) -> None:
+    """Check that the basic assumptions that metldata makes about the metadata model
+    are met. Raises a MetadataModelAssumptionError otherwise.
+
+    Raises:
+        MetadataModelAssumptionError: if validation fails.
+    """
+
+    check_root_class_existence(model=model)
+    check_anchor_points(model=model)

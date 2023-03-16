@@ -62,7 +62,7 @@ classes:
       has file:
         required: true
         multivalued: true
-        inlined: false
+        inlined: true
       has dataset:
         required: true
         multivalued: true

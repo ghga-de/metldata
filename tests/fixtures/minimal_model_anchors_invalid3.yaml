@@ -61,7 +61,7 @@ classes:
     slot_usage:
       has file:
         required: true
-        multivalued: true
+        multivalued: false
         inlined: false
       has dataset:
         required: true

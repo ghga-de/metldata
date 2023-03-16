@@ -18,9 +18,19 @@
 
 from tests.fixtures.utils import BASE_DIR
 
-VALID_METADATA_MODELS = [BASE_DIR / "minimal_model.yaml"]
+MINIMAL_VALID_METADATA_MODEL = BASE_DIR / "minimal_model.yaml"
+VALID_METADATA_MODELS = [MINIMAL_VALID_METADATA_MODEL]
 
-INVALID_METADATA_MODELS = [
-    BASE_DIR / "minimal_model_invalid1.yaml",
-    BASE_DIR / "minimal_model_invalid2.yaml",
+ROOT_CLASS_INVALID_MODELS = [
+    BASE_DIR / "minimal_model_root_class_invalid1.yaml",
+    BASE_DIR / "minimal_model_root_class_invalid2.yaml",
 ]
+
+ANCHORS_INVALID_MODELS = [
+    BASE_DIR / "minimal_model_anchors_invalid1.yaml",
+    BASE_DIR / "minimal_model_anchors_invalid2.yaml",
+    BASE_DIR / "minimal_model_anchors_invalid3.yaml",
+    BASE_DIR / "minimal_model_anchors_invalid4.yaml",
+]
+
+INVALID_METADATA_MODELS = ROOT_CLASS_INVALID_MODELS + ANCHORS_INVALID_MODELS

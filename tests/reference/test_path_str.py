@@ -39,7 +39,6 @@ from metldata.reference.path_str import (
     validate_path_str_format,
     validate_string_element,
 )
-from metldata.reference.reference import InferredReference
 
 
 @pytest.mark.parametrize(

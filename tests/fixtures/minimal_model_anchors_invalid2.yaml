@@ -63,6 +63,7 @@ classes:
         required: true
         multivalued: true
         inlined: false
+        inlined_as_list: true
       has dataset:
         required: true
         multivalued: true

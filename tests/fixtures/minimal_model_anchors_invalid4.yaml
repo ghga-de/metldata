@@ -60,7 +60,7 @@ classes:
 
     slot_usage:
       has file:
-        required: true
+        required: false
         multivalued: true
         inlined: false
       has dataset:
