@@ -20,10 +20,8 @@ from typing import Any
 
 import pytest
 
-from metldata.model_utils.metadata_validator import (
-    MetadataValidator,
-    MetadataValidatorConfig,
-)
+from metldata.model_utils.essentials import MetadataModel
+from metldata.model_utils.metadata_validator import MetadataValidator
 from tests.fixtures.metadata import INVALID_METADATA_EXAMPLES, VALID_METADATA_EXAMPLES
 from tests.fixtures.metadata_models import VALID_METADATA_MODELS
 
@@ -36,8 +34,8 @@ from tests.fixtures.metadata_models import VALID_METADATA_MODELS
 def test_validate_against_model(metadata: dict[str, Any], is_valid: bool):
     """Test the validation of metadata against a model."""
 
-    config = MetadataValidatorConfig(metadata_model=VALID_METADATA_MODELS[0])
-    validator = MetadataValidator(config=config)
+    model = MetadataModel.init_from_path(VALID_METADATA_MODELS[0])
+    validator = MetadataValidator(model=model)
 
     with nullcontext() if is_valid else pytest.raises(  # type:ignore
         MetadataValidator.ValidationError

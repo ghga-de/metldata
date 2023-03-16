@@ -21,12 +21,7 @@ from typing import Any
 from linkml_validator.models import ValidationMessage
 from linkml_validator.validator import Validator
 
-from metldata.model_utils.assumptions import check_metadata_model_assumption
-from metldata.model_utils.config import MetadataModelConfig
-
-
-class MetadataValidatorConfig(MetadataModelConfig):
-    """Config parameters and their defaults."""
+from metldata.model_utils.essentials import MetadataModel
 
 
 class MetadataValidator:
@@ -49,12 +44,10 @@ class MetadataValidator:
             )
             super().__init__(message)
 
-    def __init__(self, *, config: MetadataValidatorConfig):
-        """Initialize the validator with a LinkML model."""
+    def __init__(self, *, model: MetadataModel):
+        """Initialize the validator with a metadata model."""
 
-        check_metadata_model_assumption(model_path=config.metadata_model)
-
-        self._validator = Validator(schema=str(config.metadata_model))
+        self._model = model
 
     def validate(self, metadata: dict[str, Any]) -> None:
         """Validate metadata against the provided model.
@@ -63,15 +56,15 @@ class MetadataValidator:
             ValidationError: When validation failed.
         """
 
-        validation_report = self._validator.validate(
-            metadata, target_class="Submission"
-        )
+        with self._model.temporary_yaml_path() as model_path:
+            validator = Validator(schema=str(model_path))
+            validation_report = validator.validate(metadata, target_class="Submission")
 
-        if not validation_report.valid:
-            issues = [
-                message
-                for result in validation_report.validation_results
-                if not result.valid and result.validation_messages is not None
-                for message in result.validation_messages
-            ]
-            raise self.ValidationError(issues=issues)
+            if not validation_report.valid:
+                issues = [
+                    message
+                    for result in validation_report.validation_results
+                    if not result.valid and result.validation_messages is not None
+                    for message in result.validation_messages
+                ]
+                raise self.ValidationError(issues=issues)

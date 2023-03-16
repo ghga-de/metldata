@@ -35,11 +35,10 @@ def test_happy(config_fixture: Config):  # noqa: F811
 
     # inject dependencies:
     submission_store = SubmissionStore(config=config_fixture)
-    metadata_validator = MetadataValidator(config=config_fixture)
     event_publisher = EventPublisher(config=config_fixture)
     submission_registry = SubmissionRegistry(
+        config=config_fixture,
         submission_store=submission_store,
-        metadata_validator=metadata_validator,
         event_publisher=event_publisher,
     )
 
@@ -107,11 +106,10 @@ def test_failed_content_validation(config_fixture: Config):  # noqa: F811
 
     # inject dependencies:
     submission_store = SubmissionStore(config=config_fixture)
-    metadata_validator = MetadataValidator(config=config_fixture)
     event_publisher = EventPublisher(config=config_fixture)
     submission_registry = SubmissionRegistry(
+        config=config_fixture,
         submission_store=submission_store,
-        metadata_validator=metadata_validator,
         event_publisher=event_publisher,
     )
 
@@ -139,11 +137,10 @@ def test_update_after_completion(config_fixture: Config):  # noqa: F811
 
     # inject dependencies:
     submission_store = SubmissionStore(config=config_fixture)
-    metadata_validator = MetadataValidator(config=config_fixture)
     event_publisher = EventPublisher(config=config_fixture)
     submission_registry = SubmissionRegistry(
+        config=config_fixture,
         submission_store=submission_store,
-        metadata_validator=metadata_validator,
         event_publisher=event_publisher,
     )
 

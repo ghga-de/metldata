@@ -38,7 +38,7 @@ def config_fixture() -> Generator[Config, None, None]:
         with TemporaryDirectory() as source_events_dir:
             with NamedTemporaryFile() as accession_store_path:
                 yield Config(
-                    metadata_model=VALID_METADATA_MODELS[0],
+                    metadata_model_path=VALID_METADATA_MODELS[0],
                     submission_store_dir=submission_store_dir,
                     source_events_dir=source_events_dir,
                     accession_store_path=accession_store_path.name,

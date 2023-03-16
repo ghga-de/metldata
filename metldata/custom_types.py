@@ -12,17 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-"""Config Parameter Modeling and Parsing"""
+"""A collection of custom types."""
 
-from metldata.submission_registry.event_publisher import EventPublisherConfig
-from metldata.submission_registry.submission_registry import SubmissionRegistryConfig
-from metldata.submission_registry.submission_store import SubmissionStoreConfig
+from typing import Any
 
-
-class Config(
-    SubmissionStoreConfig,
-    SubmissionRegistryConfig,
-    EventPublisherConfig,
-):
-    """Config parameters and their defaults."""
+Json = dict[str, Any]

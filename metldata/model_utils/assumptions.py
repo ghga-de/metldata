@@ -16,25 +16,19 @@
 
 """Logic to check basic assumption about the metadata model."""
 
-from pathlib import Path
-
-from linkml_runtime.utils.schemaview import SchemaView
-
-ROOT_CLASS = "Submission"
+from metldata.model_utils.essentials import ROOT_CLASS, MetadataModel
 
 
 class MetadataModelAssumptionError(RuntimeError):
     """Raised when the assumptions about the metadata model are not met"""
 
 
-def check_metadata_model_assumption(*, model_path: Path) -> None:
+def check_metadata_model_assumption(model: MetadataModel) -> None:
     """Check that the basic assumptions that metldata makes about the metadata model
     are met. Raises a MetadataModelAssumptionError otherwise."""
 
-    schema_view = SchemaView(schema=str(model_path))
-
     # has a tree root called ROOT_CLASS:
-    submission_class = schema_view.get_class(class_name=ROOT_CLASS, imports=False)
+    submission_class = model.schema_view.get_class(class_name=ROOT_CLASS, imports=False)
 
     if submission_class is None:
         raise MetadataModelAssumptionError(

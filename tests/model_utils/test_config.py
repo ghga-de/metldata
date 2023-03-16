@@ -39,4 +39,4 @@ def test_config(model_path: Path, is_valid: bool):
     with nullcontext() if is_valid else pytest.raises(  # type:ignore
         ValidationError
     ):
-        MetadataModelConfig(metadata_model=model_path)
+        MetadataModelConfig(metadata_model_path=model_path)

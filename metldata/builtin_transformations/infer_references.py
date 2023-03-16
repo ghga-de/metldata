@@ -16,15 +16,9 @@
 
 """A transformation to infer references based on existing ones in the metadata model."""
 
-from metldata.transform.base import (
-    TransformationBase,
-    Json,
-    MetadataModelAssumptionError,
-    MetadataModelTransformationError,
-)
-
 from metldata.reference.config import ReferenceMapConfig
 from metldata.reference.reference import InferredReference
+from metldata.transform.base import Json, TransformationBase
 
 
 def transform_metadata_model(
