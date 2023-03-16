@@ -43,10 +43,10 @@ class MetadataModel(SchemaDefinition):
         return cls(**model_json)
 
     @property
-    def schema_view(self) -> SchemaView:
+    def schema_view(self) -> "ExportableSchemaView":
         """Get a schema view instance from the metadata model."""
 
-        return SchemaView(self)
+        return ExportableSchemaView(self)
 
     @contextmanager
     def temporary_yaml_path(self) -> Generator[Path, None, None]:
@@ -62,3 +62,14 @@ class MetadataModel(SchemaDefinition):
             yaml.safe_dump(model_json, file)
             file.flush()
             yield Path(file.name)
+
+
+class ExportableSchemaView(SchemaView):
+    """Extend the SchemaView by adding a method to exporting a MetadataModel."""
+
+    def export_model(self) -> MetadataModel:
+        """Export a MetadataModel."""
+
+        model_json = dataclasses.asdict(self.copy_schema())
+
+        return MetadataModel(**model_json)

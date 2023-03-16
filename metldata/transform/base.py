@@ -24,6 +24,7 @@ from pydantic import BaseModel
 # pylint: disable=unused-import
 from metldata.custom_types import Json
 from metldata.model_utils.assumptions import MetadataModelAssumptionError  # noqa: F401
+from metldata.model_utils.essentials import MetadataModel
 
 
 class MetadataModelTransformationError(RuntimeError):
@@ -38,10 +39,10 @@ class TransformationBase(ABC):
     """A base class specifying the interface of transformations."""
 
     # contains the transformed model:
-    transformed_model: Json
+    transformed_model: MetadataModel
 
     @abstractmethod
-    def __init__(self, *, model: Json, config: BaseModel):
+    def __init__(self, *, model: MetadataModel, config: BaseModel):
         """Initialize the transformation with transformation-specific config params and
         the metadata model. The transformed model will be immediately available in the
         `transformed_model` attribute.

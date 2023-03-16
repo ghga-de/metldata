@@ -19,11 +19,21 @@ model. The slot in the root that links to a specific class is called the anchor 
 that class. This module provides logic for handling these anchor points.
 """
 
+from typing import Optional
+
 from linkml_runtime import SchemaView
 from linkml_runtime.linkml_model import SlotDefinition
 from pydantic import BaseModel, Field
 
 from metldata.model_utils.essentials import ROOT_CLASS, MetadataModel
+
+
+class InvalidAnchorPointError(RuntimeError):
+    """Raised when an anchor point defined in a model is invalid."""
+
+
+class AnchorPointNotFoundError(RuntimeError):
+    """Raised when no anchor point was found for a specific class."""
 
 
 class AnchorPoint(BaseModel):
@@ -41,10 +51,6 @@ class AnchorPoint(BaseModel):
         """Pydantic Configs."""
 
         frozen = True
-
-
-class InvalidAnchorPointError(RuntimeError):
-    """Raised when an anchor point defined in a model is invalid."""
 
 
 def check_root_slot(slot: SlotDefinition):
@@ -121,3 +127,52 @@ def get_anchor_points(*, model: MetadataModel) -> set[AnchorPoint]:
         )
         for root_slot in root_slots
     }
+
+
+def filter_anchor_points(
+    anchor_points_by_target: dict[str, AnchorPoint], classes_of_interest: set[str]
+) -> dict[str, AnchorPoint]:
+    """Filter the provided anchor points by a list of classes of interest."""
+
+    # check if anchor points exists for all classes:
+    classes_without_anchor_points = classes_of_interest.difference(
+        set(anchor_points_by_target.keys())
+    )
+    if classes_without_anchor_points:
+        raise AnchorPointNotFoundError(
+            "Following classes have no anchor points: "
+            + ", ".join(classes_without_anchor_points)
+        )
+
+    return {
+        class_name: anchor_point
+        for class_name, anchor_point in anchor_points_by_target.items()
+        if class_name in classes_of_interest
+    }
+
+
+def get_anchors_by_target(
+    *, model=MetadataModel, classes_of_interest: Optional[set[str]]
+) -> dict[str, AnchorPoint]:
+    """Get a dictionary with the keys corresponding to class names and
+        the values corresponding to anchor points. The anchor points can be filtered
+        by specifing an optional list of classes of interest.
+
+    Raises:
+        AnchorPointNotFoundError:
+            if no anchor point was found for one or more of the specified classes.
+    """
+
+    anchor_points = get_anchor_points(model=model)
+
+    anchor_points_by_target = {
+        anchor_point.target_class: anchor_point for anchor_point in anchor_points
+    }
+
+    if classes_of_interest is not None:
+        anchor_points_by_target = filter_anchor_points(
+            anchor_points_by_target=anchor_points_by_target,
+            classes_of_interest=classes_of_interest,
+        )
+
+    return anchor_points_by_target

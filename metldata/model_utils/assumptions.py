@@ -60,7 +60,7 @@ def check_anchor_points(model: MetadataModel) -> None:
         ) from error
 
 
-def check_metadata_model_assumption(model: MetadataModel) -> None:
+def check_basic_model_assumption(model: MetadataModel) -> None:
     """Check that the basic assumptions that metldata makes about the metadata model
     are met. Raises a MetadataModelAssumptionError otherwise.
 

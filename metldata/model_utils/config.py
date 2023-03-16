@@ -21,7 +21,7 @@ from pydantic import BaseSettings, Field, validator
 
 from metldata.model_utils.assumptions import (
     MetadataModelAssumptionError,
-    check_metadata_model_assumption,
+    check_basic_model_assumption,
 )
 from metldata.model_utils.essentials import MetadataModel
 
@@ -40,7 +40,7 @@ class MetadataModelConfig(BaseSettings):
 
         try:
             metadata_model = MetadataModel.init_from_path(value)
-            check_metadata_model_assumption(metadata_model)
+            check_basic_model_assumption(metadata_model)
         except MetadataModelAssumptionError as error:
             raise ValueError() from error
 

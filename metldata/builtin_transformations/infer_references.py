@@ -16,14 +16,47 @@
 
 """A transformation to infer references based on existing ones in the metadata model."""
 
+from linkml_runtime.linkml_model.meta import SlotDefinition
+
+from metldata.model_utils.assumptions import check_basic_model_assumption
+from metldata.model_utils.essentials import MetadataModel
+from metldata.model_utils.manipulate import add_slot_if_not_exists, upsert_class_slot
 from metldata.reference.config import ReferenceMapConfig
 from metldata.reference.reference import InferredReference
 from metldata.transform.base import Json, TransformationBase
 
 
+def inferred_reference_to_slot(reference: InferredReference) -> SlotDefinition:
+    """Convert an inferred reference into a slot definition to be mounted on the
+    source class."""
+
+    return SlotDefinition(
+        name=reference.new_slot,
+        range=reference.target,
+        multivalued=reference.multivalued,
+    )
+
+
+def add_reference_to_model(
+    *, model: MetadataModel, reference: InferredReference
+) -> MetadataModel:
+    """Get a modified copy of the provided model with the inferred reference being
+    added."""
+
+    new_slot = inferred_reference_to_slot(reference)
+
+    schema_view = model.schema_view
+    schema_view = add_slot_if_not_exists(schema_view=schema_view, new_slot=new_slot)
+    schema_view = upsert_class_slot(
+        schema_view=schema_view, class_name=reference.source, new_slot=new_slot
+    )
+
+    return schema_view.export_model()
+
+
 def transform_metadata_model(
-    *, model: Json, references_to_infer: list[InferredReference]
-) -> Json:
+    *, model: MetadataModel, references: list[InferredReference]
+) -> MetadataModel:
     """Transform the metadata model and return the tranformed one.
 
     Raises:
@@ -31,20 +64,10 @@ def transform_metadata_model(
                 if the transformation of the metadata model fails.
     """
 
-    raise NotImplementedError()
+    for reference in references:
+        model = add_reference_to_model(model=model, reference=reference)
 
-
-def check_model_assumptions(
-    *, model: Json, references_to_infer: list[InferredReference]
-) -> Json:
-    """Check whether the assumptions made about the metadata model are met.
-
-    Raises:
-        MetadataModelAssumptionError:
-            if assumptions about the metadata model are not met.
-    """
-
-    raise NotImplementedError()
+    return model
 
 
 class ReferenceInferenceConfig(ReferenceMapConfig):
@@ -55,7 +78,7 @@ class ReferenceInferenceTransformation(TransformationBase):
     """A transformation to infer references based on existing ones in the metadata
     model."""
 
-    def __init__(self, *, model: Json, config: ReferenceInferenceConfig):
+    def __init__(self, *, model: MetadataModel, config: ReferenceInferenceConfig):
         """Initialize the transformation with transformation-specific config params and
         the metadata model. The transformed model will be immediately available in the
         `transformed_model` attribute (may be a property).
@@ -70,12 +93,10 @@ class ReferenceInferenceTransformation(TransformationBase):
         self._original_model = model
         self._references_to_infer = config.inferred_references
 
-        check_model_assumptions(
-            model=self._original_model, references_to_infer=self._references_to_infer
-        )
+        check_basic_model_assumption(model=model)
 
         self.transformed_model = transform_metadata_model(
-            model=self._original_model, references_to_infer=self._references_to_infer
+            model=self._original_model, references=self._references_to_infer
         )
 
     def transform_metadata(self, metadata: Json) -> Json:

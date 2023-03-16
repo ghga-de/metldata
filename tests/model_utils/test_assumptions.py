@@ -22,7 +22,7 @@ import pytest
 
 from metldata.model_utils.assumptions import (
     MetadataModelAssumptionError,
-    check_metadata_model_assumption,
+    check_basic_model_assumption,
 )
 from metldata.model_utils.essentials import MetadataModel
 from tests.fixtures.metadata_models import (
@@ -44,4 +44,4 @@ def test_metadata_model_assumption_checking(model_path: Path, is_valid: bool):
     ):
 
         model = MetadataModel.init_from_path(model_path)
-        check_metadata_model_assumption(model)
+        check_basic_model_assumption(model)
