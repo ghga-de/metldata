@@ -19,7 +19,7 @@ from pathlib import Path
 
 from pydantic import BaseSettings, Field, validator
 
-from metldata.model_utils.model_validator import (
+from metldata.model_utils.assumptions import (
     MetadataModelAssumptionError,
     check_metadata_model_assumption,
 )

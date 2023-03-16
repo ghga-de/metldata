@@ -21,8 +21,8 @@ from typing import Any
 from linkml_validator.models import ValidationMessage
 from linkml_validator.validator import Validator
 
+from metldata.model_utils.assumptions import check_metadata_model_assumption
 from metldata.model_utils.config import MetadataModelConfig
-from metldata.model_utils.model_validator import check_metadata_model_assumption
 
 
 class MetadataValidatorConfig(MetadataModelConfig):

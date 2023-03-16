@@ -23,9 +23,7 @@ from pydantic import BaseModel
 
 # shortcut:
 # pylint: disable=unused-import
-from metldata.model_utils.model_validator import (
-    MetadataModelAssumptionError,  # noqa: F401
-)
+from metldata.model_utils.assumptions import MetadataModelAssumptionError  # noqa: F401
 
 Json = dict[str, Any]
 
