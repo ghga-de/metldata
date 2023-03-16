@@ -20,6 +20,8 @@ from pathlib import Path
 
 from linkml_runtime.utils.schemaview import SchemaView
 
+ROOT_CLASS = "Submission"
+
 
 class MetadataModelAssumptionError(RuntimeError):
     """Raised when the assumptions about the metadata model are not met"""
@@ -31,8 +33,8 @@ def check_metadata_model_assumption(*, model_path: Path) -> None:
 
     schema_view = SchemaView(schema=str(model_path))
 
-    # has a submission class that is the tree root:
-    submission_class = schema_view.get_class(class_name="Submission", imports=False)
+    # has a tree root called ROOT_CLASS:
+    submission_class = schema_view.get_class(class_name=ROOT_CLASS, imports=False)
 
     if submission_class is None:
         raise MetadataModelAssumptionError(
