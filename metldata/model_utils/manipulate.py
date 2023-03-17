@@ -82,8 +82,11 @@ def upsert_class_slot(
     else:
         class_.slot_usage = {new_slot.name: new_slot}
 
-    # add updated class to schema view copy:
+    # add updated class and a global definition of the slot to a copy of schema view:
     schema_view_copy = deepcopy(schema_view)
+    schema_view_copy = add_slot_if_not_exists(
+        schema_view=schema_view_copy, new_slot=new_slot
+    )
     schema_view_copy.add_class(class_)
 
     return schema_view_copy
