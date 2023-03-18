@@ -47,7 +47,8 @@ classes:
           Information about one or more File entities associated with this submission.
         required: true
         multivalued: true
-        inlined: false
+        inlined: true
+        inlined_as_list: false
 
 slots:
   alias:

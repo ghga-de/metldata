@@ -28,12 +28,17 @@ from metldata.model_utils.manipulate import (
 from metldata.model_utils.anchors import AnchorPoint, get_anchors_by_target
 from metldata.reference.config import ReferenceMapConfig
 from metldata.reference.reference import InferredReference
+from metldata.reference.path_elements import ReferencePathElement
 from metldata.transform.base import (
     Json,
     TransformationBase,
     MetadataModelTransformationError,
     MetadataTransformationError,
 )
+
+
+class PathElementResolutionError(RuntimeError):
+    """Raised when a path element cannot be resolved."""
 
 
 def inferred_reference_to_slot(reference: InferredReference) -> SlotDefinition:
@@ -75,6 +80,66 @@ def add_reference_to_model(
     return schema_view.export_model()
 
 
+def resolve_path_element_target_ids(
+    *, source_resource: Json, path_element: ReferencePathElement
+) -> list[str]:
+    """Resolve a reference path element applied to a metadata resource.
+
+    Returns:
+        A list of target IDs that are targeted by the path element in context of the
+        provided source resource.
+
+    Raises:
+        PathElementResolutionError:
+            if the path element cannot be resolved.
+    """
+
+    target_ids = source_resource.get(path_element.slot)
+
+    if target_ids is None:
+        raise PathElementResolutionError(
+            f"Cannot resolve path element '{path_element}' because the slot"
+            + f" '{path_element.slot}' is not present in the source resource"
+            + f" '{source_resource}'."
+        )
+
+    # convert single value to list:
+    if not isinstance(target_ids, list):
+        target_ids = [target_ids]
+
+    # check that all values are strings:
+    if not all(isinstance(value, str) for value in target_ids):
+        raise PathElementResolutionError(
+            f"Cannot resolve path element '{path_element}' because the slot"
+            + f" '{path_element.slot}' of resource '{source_resource}' contains"
+            + f" non-string values."
+        )
+
+    return target_ids
+
+
+def resolve_path_element(
+    *,
+    source_resource: Json,
+    global_metadata: Json,
+    path_element: ReferencePathElement,
+    anchor_points: dict[AnchorPoint],
+) -> list[Json]:
+    """Resolve a reference path element applied to a metadata resource.
+
+    Returns:
+        A list of metadata resources that are targeted by the path element.
+
+    Raises:
+        PathElementResolutionError:
+            if the path element cannot be resolved.
+    """
+
+    target_ids = resolve_path_element_target_ids(
+        source_resource=source_resource, path_element=path_element
+    )
+
+
 def transform_metadata_model(
     *, model: MetadataModel, references: list[InferredReference]
 ) -> MetadataModel:
@@ -91,16 +156,16 @@ def transform_metadata_model(
     return model
 
 
-def modify_metadata_entry(
-    entry: Json,
+def modify_metadata_resource(
+    resource: Json,
     global_metadata: Json,
     reference: InferredReference,
     anchor_points: dict[AnchorPoint],
 ) -> Json:
-    """Modify a metadata entry based on an inferred reference.
+    """Modify a metadata resource based on an inferred reference.
 
     Args:
-        entry: The metadata entry to modify.
+        resource: The metadata resource to modify.
         global_metadata: The global metadata context to look up references in.
         reference: The inferred reference.
         anchor_points: The anchor points of the metadata model.

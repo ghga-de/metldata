@@ -98,19 +98,23 @@ classes:
       has file:
         required: true
         multivalued: true
-        inlined: false
+        inlined: true
+        inlined_as_list: false
       has dataset:
         required: true
         multivalued: true
-        inlined: false
+        inlined: true
+        inlined_as_list: false
       has sample:
         required: true
         multivalued: true
-        inlined: false
+        inlined: true
+        inlined_as_list: false
       has experiment:
         required: true
         multivalued: true
-        inlined: false
+        inlined: true
+        inlined_as_list: false
 
 slots:
   alias:

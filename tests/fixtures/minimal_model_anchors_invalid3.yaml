@@ -62,11 +62,13 @@ classes:
       has file:
         required: true
         multivalued: false
-        inlined: false
+        inlined: true
+        inlined_as_list: false
       has dataset:
         required: true
         multivalued: true
-        inlined: false
+        inlined: true
+        inlined_as_list: false
 
 slots:
   alias:

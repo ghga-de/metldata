@@ -19,18 +19,24 @@ model. The slot in the root that links to a specific class is called the anchor 
 that class. This module provides logic for handling these anchor points.
 """
 
+from copy import deepcopy
 from typing import Optional
 
 from linkml_runtime import SchemaView
 from linkml_runtime.linkml_model import SlotDefinition
 from pydantic import BaseModel, Field
 
+from metldata.custom_types import Json
 from metldata.model_utils.essentials import ROOT_CLASS, MetadataModel
 from metldata.model_utils.identifieres import get_class_identifiers
 
 
 class InvalidAnchorPointError(RuntimeError):
     """Raised when an anchor point defined in a model is invalid."""
+
+
+class MetadataAnchorMissmatchError(RuntimeError):
+    """Raised when the provided metadata does not match the expected anchor points."""
 
 
 class AnchorPointNotFoundError(RuntimeError):
@@ -41,7 +47,7 @@ class AnchorPoint(BaseModel):
     """A model for describing an anchor point for the specified target class."""
 
     target_class: str = Field(..., description="The name of the class to be targeted.")
-    target_identifier: str = Field(
+    identifier_slot: str = Field(
         ...,
         description=(
             "The name of the slot in the target class that is used as identifier."
@@ -62,7 +68,7 @@ class AnchorPoint(BaseModel):
 
 def check_root_slot(slot: SlotDefinition):
     """Make sure that the given root slot is a valid anchor point. Validates that the
-    slot is multivalued and required but not inlined.
+    slot is multivalued, required, and inlined but not inlined as list.
 
     Raises:
         InvalidAnchorPointError: if validation fails.
@@ -78,10 +84,10 @@ def check_root_slot(slot: SlotDefinition):
             f"The inlined attribute for slot '{slot.name}' is not defined."
         )
 
-    if slot.inlined:
+    if not slot.inlined:
         raise InvalidAnchorPointError(
-            f"The inlined attribute for slot '{slot.name}' is set to True,"
-            + " however, slots in the root class may not be inlined."
+            f"The inlined attribute for slot '{slot.name}' is set to False,"
+            + " however, slots in the root class must be inlined."
         )
 
     if slot.inlined_as_list:
@@ -141,7 +147,7 @@ def get_anchor_points(*, model: MetadataModel) -> set[AnchorPoint]:
         anchor_point.add(
             AnchorPoint(
                 target_class=target_class,
-                target_identifier=identifier,
+                identifier_slot=identifier,
                 root_slot=root_slot.name,
             )
         )
@@ -172,7 +178,7 @@ def filter_anchor_points(
 
 
 def get_anchors_by_target(
-    *, model=MetadataModel, classes_of_interest: Optional[set[str]]
+    *, model=MetadataModel, classes_of_interest: Optional[set[str]] = None
 ) -> dict[str, AnchorPoint]:
     """Get a dictionary with the keys corresponding to class names and
         the values corresponding to anchor points. The anchor points can be filtered
@@ -196,3 +202,47 @@ def get_anchors_by_target(
         )
 
     return anchor_points_by_target
+
+
+def add_identifier_to_anchored_resource(
+    resource: Json,
+    identifier: str,
+    identifier_slot: str,
+) -> Json:
+    """Anchored resources have no identifier slot. This function adds the identifier."""
+
+    return {**resource, identifier_slot: identifier}
+
+
+def lookup_resource_by_identifier(
+    class_name: str,
+    identifier: str,
+    global_metadata: Json,
+    anchor_points_by_target: dict[str, AnchorPoint],
+) -> Json:
+    """Lookup a resource of the given class in the provided global metadata by its
+    identifier."""
+
+    anchor_point = anchor_points_by_target[class_name]
+
+    if anchor_point.root_slot not in global_metadata:
+        raise MetadataAnchorMissmatchError(
+            f"Could not find root slot of the anchor point '{anchor_point.root_slot}'"
+            + f" in the global metadata."
+        )
+
+    resources = global_metadata[anchor_point.root_slot]
+
+    if identifier not in resources:
+        raise MetadataAnchorMissmatchError(
+            f"Could not find resource with identifier '{identifier}' of class"
+            + f" '{class_name}' in the global metadata."
+        )
+
+    target_resource = resources[identifier]
+
+    return add_identifier_to_anchored_resource(
+        resource=target_resource,
+        identifier=identifier,
+        identifier_slot=anchor_point.identifier_slot,
+    )
