@@ -36,8 +36,12 @@ def test_get_anchor_points_happy():
     """Test the happy path of using the get_anchor_points function."""
 
     expected_anchor_points = {
-        AnchorPoint(target_class="File", root_slot="has file"),
-        AnchorPoint(target_class="Dataset", root_slot="has dataset"),
+        AnchorPoint(
+            target_class="File", target_identifier="alias", root_slot="has file"
+        ),
+        AnchorPoint(
+            target_class="Dataset", target_identifier="alias", root_slot="has dataset"
+        ),
     }
 
     model = MetadataModel.init_from_path(MINIMAL_VALID_METADATA_MODEL)

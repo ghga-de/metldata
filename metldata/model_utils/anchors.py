@@ -26,6 +26,7 @@ from linkml_runtime.linkml_model import SlotDefinition
 from pydantic import BaseModel, Field
 
 from metldata.model_utils.essentials import ROOT_CLASS, MetadataModel
+from metldata.model_utils.identifieres import get_class_identifiers
 
 
 class InvalidAnchorPointError(RuntimeError):
@@ -40,6 +41,12 @@ class AnchorPoint(BaseModel):
     """A model for describing an anchor point for the specified target class."""
 
     target_class: str = Field(..., description="The name of the class to be targeted.")
+    target_identifier: str = Field(
+        ...,
+        description=(
+            "The name of the slot in the target class that is used as identifier."
+        ),
+    )
     root_slot: str = Field(
         ...,
         description=(
@@ -113,6 +120,8 @@ def get_slot_target_class(*, slot: SlotDefinition, schema_view: SchemaView) -> s
 def get_anchor_points(*, model: MetadataModel) -> set[AnchorPoint]:
     """Get all anchor points of the specified model."""
 
+    identifiers_by_class = get_class_identifiers(model=model)
+
     schema_view = model.schema_view
     root_slots = schema_view.class_induced_slots(class_name=ROOT_CLASS)
 
@@ -120,13 +129,24 @@ def get_anchor_points(*, model: MetadataModel) -> set[AnchorPoint]:
     for root_slot in root_slots:
         check_root_slot(root_slot)
 
-    return {
-        AnchorPoint(
-            target_class=get_slot_target_class(slot=root_slot, schema_view=schema_view),
-            root_slot=root_slot.name,
+    anchor_point: set[AnchorPoint] = set()
+    for root_slot in root_slots:
+        target_class = get_slot_target_class(slot=root_slot, schema_view=schema_view)
+        identifier = identifiers_by_class[target_class]
+        if not identifier:
+            raise InvalidAnchorPointError(
+                f"The class '{target_class}' has no identifier defined."
+            )
+
+        anchor_point.add(
+            AnchorPoint(
+                target_class=target_class,
+                target_identifier=identifier,
+                root_slot=root_slot.name,
+            )
         )
-        for root_slot in root_slots
-    }
+
+    return anchor_point
 
 
 def filter_anchor_points(

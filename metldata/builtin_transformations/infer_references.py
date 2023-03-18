@@ -20,10 +20,20 @@ from linkml_runtime.linkml_model.meta import SlotDefinition
 
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
-from metldata.model_utils.manipulate import add_slot_if_not_exists, upsert_class_slot
+from metldata.model_utils.manipulate import (
+    add_slot_if_not_exists,
+    upsert_class_slot,
+    ModelManipulationError,
+)
+from metldata.model_utils.anchors import AnchorPoint, get_anchors_by_target
 from metldata.reference.config import ReferenceMapConfig
 from metldata.reference.reference import InferredReference
-from metldata.transform.base import Json, TransformationBase
+from metldata.transform.base import (
+    Json,
+    TransformationBase,
+    MetadataModelTransformationError,
+    MetadataTransformationError,
+)
 
 
 def inferred_reference_to_slot(reference: InferredReference) -> SlotDefinition:
@@ -41,15 +51,26 @@ def add_reference_to_model(
     *, model: MetadataModel, reference: InferredReference
 ) -> MetadataModel:
     """Get a modified copy of the provided model with the inferred reference being
-    added."""
+    added.
+
+    Raises:
+            MetadataModelTransformationError:
+                if the transformation of the metadata model fails.
+    """
 
     new_slot = inferred_reference_to_slot(reference)
 
     schema_view = model.schema_view
-    schema_view = add_slot_if_not_exists(schema_view=schema_view, new_slot=new_slot)
-    schema_view = upsert_class_slot(
-        schema_view=schema_view, class_name=reference.source, new_slot=new_slot
-    )
+    try:
+        schema_view = add_slot_if_not_exists(schema_view=schema_view, new_slot=new_slot)
+        schema_view = upsert_class_slot(
+            schema_view=schema_view, class_name=reference.source, new_slot=new_slot
+        )
+    except ModelManipulationError as error:
+        raise MetadataModelTransformationError(
+            f"Failed to add the inferred reference '{reference}' to the metadata"
+            + " model.: {error}"
+        ) from error
 
     return schema_view.export_model()
 
@@ -68,6 +89,57 @@ def transform_metadata_model(
         model = add_reference_to_model(model=model, reference=reference)
 
     return model
+
+
+def modify_metadata_entry(
+    entry: Json,
+    global_metadata: Json,
+    reference: InferredReference,
+    anchor_points: dict[AnchorPoint],
+) -> Json:
+    """Modify a metadata entry based on an inferred reference.
+
+    Args:
+        entry: The metadata entry to modify.
+        global_metadata: The global metadata context to look up references in.
+        reference: The inferred reference.
+        anchor_points: The anchor points of the metadata model.
+
+    Raises:
+        MetadataTransformationError:
+            if the transformation of the metadata fails.
+    """
+
+
+def add_reference_to_metadata(
+    *, metadata: Json, reference: InferredReference, anchor_points: dict[AnchorPoint]
+) -> Json:
+    """Transform metadata by adding an inferred reference.
+
+    Raises:
+            MetadataTransformationError:
+                if the transformation of the metadata fails.
+    """
+
+
+def transform_metadata(
+    *, metadata: Json, model: MetadataModel, references: InferredReference
+) -> Json:
+    """Transform metadata and return the transformed one.
+
+    Raises:
+        MetadataTransformationError:
+            if the transformation of the metadata fails.
+    """
+
+    anchor_points = get_anchors_by_target(model=model)
+
+    for reference in references:
+        metadata = add_reference_to_metadata(
+            metadata=metadata, reference=reference, anchor_points=anchor_points
+        )
+
+    return metadata
 
 
 class ReferenceInferenceConfig(ReferenceMapConfig):
