@@ -30,15 +30,15 @@ def test_transformation_active_happy():
     config = ReferenceInferenceConfig(
         inferred_ref_map={
             "Experiment": {
-                "has file": {
-                    "path": "Experiment(has sample)>Sample(has file)>File",
+                "has_file": {
+                    "path": "Experiment(has_sample)>Sample(has_file)>File",
                     "multivalued": True,
                 }
             }
         }
     )
 
-    original_model = MetadataModel.init_from_path(ADVANCED_VALID_METADATA_MODEL)
+    original_model = ADVANCED_VALID_METADATA_MODEL
     transformation = ReferenceInferenceTransformation(
         model=original_model, config=config
     )
@@ -47,7 +47,7 @@ def test_transformation_active_happy():
     # check that the new slot exists:
     transformed_schema_view = transformed_model.schema_view
     new_slot = transformed_schema_view.induced_slot(
-        slot_name="has file", class_name="Experiment"
+        slot_name="has_file", class_name="Experiment"
     )
     assert new_slot.range == "File"
 
@@ -58,15 +58,15 @@ def test_transformation_passive_happy():
     config = ReferenceInferenceConfig(
         inferred_ref_map={
             "File": {
-                "has dataset": {
-                    "path": "File<(has file)Dataset",
+                "has_dataset": {
+                    "path": "File<(has_file)Dataset",
                     "multivalued": True,
                 }
             }
         }
     )
 
-    original_model = MetadataModel.init_from_path(ADVANCED_VALID_METADATA_MODEL)
+    original_model = ADVANCED_VALID_METADATA_MODEL
     transformation = ReferenceInferenceTransformation(
         model=original_model, config=config
     )
@@ -75,7 +75,7 @@ def test_transformation_passive_happy():
     # check that the new slot exists:
     transformed_schema_view = transformed_model.schema_view
     new_slot = transformed_schema_view.induced_slot(
-        slot_name="has dataset", class_name="File"
+        slot_name="has_dataset", class_name="File"
     )
     assert new_slot.range == "Dataset"
 
@@ -87,15 +87,15 @@ def test_transformation_complex_happy():
     config = ReferenceInferenceConfig(
         inferred_ref_map={
             "Dataset": {
-                "has sample": {
-                    "path": "Dataset(has file)>File<(has file)Sample",
+                "has_sample": {
+                    "path": "Dataset(has_file)>File<(has_file)Sample",
                     "multivalued": True,
                 }
             }
         }
     )
 
-    original_model = MetadataModel.init_from_path(ADVANCED_VALID_METADATA_MODEL)
+    original_model = ADVANCED_VALID_METADATA_MODEL
     transformation = ReferenceInferenceTransformation(
         model=original_model, config=config
     )
@@ -104,6 +104,6 @@ def test_transformation_complex_happy():
     # check that the new slot exists:
     transformed_schema_view = transformed_model.schema_view
     new_slot = transformed_schema_view.induced_slot(
-        slot_name="has sample", class_name="Dataset"
+        slot_name="has_sample", class_name="Dataset"
     )
     assert new_slot.range == "Sample"

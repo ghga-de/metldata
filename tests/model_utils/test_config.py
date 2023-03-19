@@ -16,12 +16,12 @@
 """Testing the metadata validator."""
 
 from contextlib import nullcontext
-from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
 
 from metldata.model_utils.config import MetadataModelConfig
+from metldata.model_utils.essentials import MetadataModel
 from tests.fixtures.metadata_models import (
     INVALID_METADATA_MODELS,
     VALID_METADATA_MODELS,
@@ -29,14 +29,15 @@ from tests.fixtures.metadata_models import (
 
 
 @pytest.mark.parametrize(
-    "model_path, is_valid",
+    "model, is_valid",
     [(valid_model, True) for valid_model in VALID_METADATA_MODELS]
     + [(invalid_model, False) for invalid_model in INVALID_METADATA_MODELS],
 )
-def test_config(model_path: Path, is_valid: bool):
+def test_config(model: MetadataModel, is_valid: bool):
     """Test with valid and invalid model."""
 
-    with nullcontext() if is_valid else pytest.raises(  # type:ignore
-        ValidationError
-    ):
-        MetadataModelConfig(metadata_model_path=model_path)
+    with model.temporary_yaml_path() as model_path:
+        with nullcontext() if is_valid else pytest.raises(  # type:ignore
+            ValidationError
+        ):
+            MetadataModelConfig(metadata_model_path=model_path)

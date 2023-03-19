@@ -19,9 +19,6 @@ model. The slot in the root that links to a specific class is called the anchor 
 that class. This module provides logic for handling these anchor points.
 """
 
-from copy import deepcopy
-from typing import Optional
-
 from linkml_runtime import SchemaView
 from linkml_runtime.linkml_model import SlotDefinition
 from pydantic import BaseModel, Field
@@ -37,6 +34,10 @@ class InvalidAnchorPointError(RuntimeError):
 
 class MetadataAnchorMissmatchError(RuntimeError):
     """Raised when the provided metadata does not match the expected anchor points."""
+
+
+class MetadataResourceNotFoundError(RuntimeError):
+    """Raised when a resource could not be found in the metadata."""
 
 
 class AnchorPointNotFoundError(RuntimeError):
@@ -155,6 +156,15 @@ def get_anchor_points(*, model: MetadataModel) -> set[AnchorPoint]:
     return anchor_point
 
 
+def get_anchors_by_target(*, model=MetadataModel) -> dict[str, AnchorPoint]:
+    """Get a dictionary with the keys corresponding to class names and the values
+    corresponding to anchor points."""
+
+    anchor_points = get_anchor_points(model=model)
+
+    return {anchor_point.target_class: anchor_point for anchor_point in anchor_points}
+
+
 def filter_anchor_points(
     anchor_points_by_target: dict[str, AnchorPoint], classes_of_interest: set[str]
 ) -> dict[str, AnchorPoint]:
@@ -177,33 +187,6 @@ def filter_anchor_points(
     }
 
 
-def get_anchors_by_target(
-    *, model=MetadataModel, classes_of_interest: Optional[set[str]] = None
-) -> dict[str, AnchorPoint]:
-    """Get a dictionary with the keys corresponding to class names and
-        the values corresponding to anchor points. The anchor points can be filtered
-        by specifing an optional list of classes of interest.
-
-    Raises:
-        AnchorPointNotFoundError:
-            if no anchor point was found for one or more of the specified classes.
-    """
-
-    anchor_points = get_anchor_points(model=model)
-
-    anchor_points_by_target = {
-        anchor_point.target_class: anchor_point for anchor_point in anchor_points
-    }
-
-    if classes_of_interest is not None:
-        anchor_points_by_target = filter_anchor_points(
-            anchor_points_by_target=anchor_points_by_target,
-            classes_of_interest=classes_of_interest,
-        )
-
-    return anchor_points_by_target
-
-
 def add_identifier_to_anchored_resource(
     resource: Json,
     identifier: str,
@@ -221,20 +204,27 @@ def lookup_resource_by_identifier(
     anchor_points_by_target: dict[str, AnchorPoint],
 ) -> Json:
     """Lookup a resource of the given class in the provided global metadata by its
-    identifier."""
+    identifier.
+
+    Raises:
+        MetadataAnchorMissmatchError:
+            if the provided metadata does not match the expected anchor points.
+        MetadataResourceNotFoundError:
+            if the resource with the given identifier could not be found.
+    """
 
     anchor_point = anchor_points_by_target[class_name]
 
     if anchor_point.root_slot not in global_metadata:
         raise MetadataAnchorMissmatchError(
             f"Could not find root slot of the anchor point '{anchor_point.root_slot}'"
-            + f" in the global metadata."
+            + " in the global metadata."
         )
 
     resources = global_metadata[anchor_point.root_slot]
 
     if identifier not in resources:
-        raise MetadataAnchorMissmatchError(
+        raise MetadataResourceNotFoundError(
             f"Could not find resource with identifier '{identifier}' of class"
             + f" '{class_name}' in the global metadata."
         )

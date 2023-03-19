@@ -16,9 +16,7 @@
 
 """Test the idenifiers module."""
 
-from metldata.model_utils.essentials import MetadataModel
 from metldata.model_utils.identifieres import get_class_identifiers
-
 from tests.fixtures.metadata_models import MINIMAL_VALID_METADATA_MODEL
 
 
@@ -27,7 +25,6 @@ def test_get_class_identifiers_happy():
 
     expected_identifiers = {"File": "alias", "Dataset": "alias"}
 
-    model = MetadataModel.init_from_path(MINIMAL_VALID_METADATA_MODEL)
-    observed_identifiers = get_class_identifiers(model=model)
+    observed_identifiers = get_class_identifiers(model=MINIMAL_VALID_METADATA_MODEL)
 
     assert observed_identifiers == expected_identifiers

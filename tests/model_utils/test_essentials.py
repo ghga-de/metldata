@@ -16,16 +16,21 @@
 
 """Test the essentials module."""
 
+from copy import deepcopy
+
 from linkml_runtime import SchemaView
 
 from metldata.model_utils.essentials import MetadataModel
-from tests.fixtures.metadata_models import MINIMAL_VALID_METADATA_MODEL
+from tests.fixtures.metadata_models import (
+    MINIMAL_VALID_METADATA_MODEL,
+    VALID_MINIMAL_MODEL_EXAMPLE_PATH,
+)
 
 
 def test_metadata_model_from_path():
     """Test the MetadataModel creation from path."""
 
-    model = MetadataModel.init_from_path(MINIMAL_VALID_METADATA_MODEL)
+    model = MetadataModel.init_from_path(VALID_MINIMAL_MODEL_EXAMPLE_PATH)
 
     assert model.name == "Minimal-Model"
 
@@ -33,8 +38,7 @@ def test_metadata_model_from_path():
 def test_metadata_model_get_schema_view():
     """Test getting a schema view from a MetadataModel."""
 
-    model = MetadataModel.init_from_path(MINIMAL_VALID_METADATA_MODEL)
-    schema_view = model.schema_view
+    schema_view = MINIMAL_VALID_METADATA_MODEL.schema_view
 
     assert isinstance(schema_view, SchemaView)
 
@@ -42,7 +46,7 @@ def test_metadata_model_get_schema_view():
 def test_metadata_model_temporary_yaml():
     """Test getting a temporary yaml file from a MetadataModel."""
 
-    model = MetadataModel.init_from_path(MINIMAL_VALID_METADATA_MODEL)
+    model = deepcopy(MINIMAL_VALID_METADATA_MODEL)
 
     # modify the model:
     model.name = "Test-Model-Modified"

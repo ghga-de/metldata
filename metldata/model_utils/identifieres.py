@@ -31,7 +31,7 @@ def get_class_identifiers(model: MetadataModel) -> dict[str, Optional[str]]:
 
     schema_view = model.schema_view
 
-    identifiers_by_class: dict[str, str] = {}
+    identifiers_by_class: dict[str, Optional[str]] = {}
     for class_name in schema_view.all_classes():
         if class_name == ROOT_CLASS:
             continue  # Root class does not have an identifier

@@ -18,22 +18,21 @@
 
 from linkml_runtime.linkml_model.meta import SlotDefinition
 
+from metldata.model_utils.anchors import AnchorPoint, get_anchors_by_target
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
 from metldata.model_utils.manipulate import (
+    ModelManipulationError,
     add_slot_if_not_exists,
     upsert_class_slot,
-    ModelManipulationError,
 )
-from metldata.model_utils.anchors import AnchorPoint, get_anchors_by_target
 from metldata.reference.config import ReferenceMapConfig
-from metldata.reference.reference import InferredReference
 from metldata.reference.path_elements import ReferencePathElement
+from metldata.reference.reference import InferredReference
 from metldata.transform.base import (
     Json,
-    TransformationBase,
     MetadataModelTransformationError,
-    MetadataTransformationError,
+    TransformationBase,
 )
 
 
@@ -112,7 +111,7 @@ def resolve_path_element_target_ids(
         raise PathElementResolutionError(
             f"Cannot resolve path element '{path_element}' because the slot"
             + f" '{path_element.slot}' of resource '{source_resource}' contains"
-            + f" non-string values."
+            + " non-string values."
         )
 
     return target_ids
@@ -138,6 +137,8 @@ def resolve_path_element(
     target_ids = resolve_path_element_target_ids(
         source_resource=source_resource, path_element=path_element
     )
+
+    raise NotImplementedError()
 
 
 def transform_metadata_model(

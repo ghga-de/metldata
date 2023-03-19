@@ -16,7 +16,6 @@
 """Testing the assumptions module."""
 
 from contextlib import nullcontext
-from pathlib import Path
 
 import pytest
 
@@ -32,16 +31,14 @@ from tests.fixtures.metadata_models import (
 
 
 @pytest.mark.parametrize(
-    "model_path, is_valid",
+    "model, is_valid",
     [(valid_model, True) for valid_model in VALID_METADATA_MODELS]
     + [(invalid_model, False) for invalid_model in INVALID_METADATA_MODELS],
 )
-def test_metadata_model_assumption_checking(model_path: Path, is_valid: bool):
+def test_metadata_model_assumption_checking(model: MetadataModel, is_valid: bool):
     """Test the assumptions regarding the metadata model are correctly checked."""
 
     with nullcontext() if is_valid else pytest.raises(  # type:ignore
         MetadataModelAssumptionError
     ):
-
-        model = MetadataModel.init_from_path(model_path)
         check_basic_model_assumption(model)

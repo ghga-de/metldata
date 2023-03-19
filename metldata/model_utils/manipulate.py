@@ -67,26 +67,28 @@ def upsert_class_slot(
     if not class_:
         raise ClassNotFoundError(class_name=class_name)
 
-    if class_.slots:
-        if new_slot.name not in [str(slot) for slot in class_.slots]:
-            class_.slots.append(new_slot.name)
+    class_copy = deepcopy(class_)
+
+    if class_copy.slots:
+        if new_slot.name not in [str(slot) for slot in class_copy.slots]:
+            class_copy.slots.append(new_slot.name)
     else:
-        class_.slots = [new_slot.name]
+        class_copy.slots = [new_slot.name]
 
     # update slot usage:
-    if class_.slot_usage:
-        if isinstance(class_.slot_usage, dict):
-            class_.slot_usage[new_slot.name] = new_slot
+    if class_copy.slot_usage:
+        if isinstance(class_copy.slot_usage, dict):
+            class_copy.slot_usage[new_slot.name] = new_slot
         else:
             raise RuntimeError(f"Unexpected slot usage for class '{class_name}'")
     else:
-        class_.slot_usage = {new_slot.name: new_slot}
+        class_copy.slot_usage = {new_slot.name: new_slot}
 
     # add updated class and a global definition of the slot to a copy of schema view:
     schema_view_copy = deepcopy(schema_view)
     schema_view_copy = add_slot_if_not_exists(
         schema_view=schema_view_copy, new_slot=new_slot
     )
-    schema_view_copy.add_class(class_)
+    schema_view_copy.add_class(class_copy)
 
     return schema_view_copy

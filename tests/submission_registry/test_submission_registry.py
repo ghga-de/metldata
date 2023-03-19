@@ -25,7 +25,10 @@ from metldata.submission_registry.event_publisher import EventPublisher
 from metldata.submission_registry.submission_registry import SubmissionRegistry
 from metldata.submission_registry.submission_store import SubmissionStore
 from tests.fixtures.config import config_fixture  # noqa: F401
-from tests.fixtures.metadata import INVALID_METADATA_EXAMPLES, VALID_METADATA_EXAMPLES
+from tests.fixtures.metadata import (
+    INVALID_MINIMAL_METADATA_EXAMPLES,
+    VALID_MINIMAL_METADATA_EXAMPLES,
+)
 from tests.fixtures.utils import check_source_event, does_event_exist
 
 
@@ -59,7 +62,7 @@ def test_happy(config_fixture: Config):  # noqa: F811
     )
 
     # provide content:
-    submission_content = VALID_METADATA_EXAMPLES[0]
+    submission_content = VALID_MINIMAL_METADATA_EXAMPLES[0]
     submission_registry.upsert_submission_content(
         submission_id=submission_id, content=submission_content
     )
@@ -70,7 +73,7 @@ def test_happy(config_fixture: Config):  # noqa: F811
     assert observed_submission.current_status == models.SubmissionStatus.PENDING
 
     # update content:
-    submission_content_updated = VALID_METADATA_EXAMPLES[1]
+    submission_content_updated = VALID_MINIMAL_METADATA_EXAMPLES[1]
     submission_registry.upsert_submission_content(
         submission_id=submission_id, content=submission_content_updated
     )
@@ -120,7 +123,7 @@ def test_failed_content_validation(config_fixture: Config):  # noqa: F811
     observed_submission_original = submission_store.get_by_id(submission_id)
 
     # provide invalid content:
-    submission_content = INVALID_METADATA_EXAMPLES[0]
+    submission_content = INVALID_MINIMAL_METADATA_EXAMPLES[0]
     with pytest.raises(SubmissionRegistry.ValidationError):
         submission_registry.upsert_submission_content(
             submission_id=submission_id, content=submission_content
@@ -148,7 +151,7 @@ def test_update_after_completion(config_fixture: Config):  # noqa: F811
     submission_id = submission_registry.init_submission(header=submission_header)
 
     # provide content:
-    submission_content = VALID_METADATA_EXAMPLES[0]
+    submission_content = VALID_MINIMAL_METADATA_EXAMPLES[0]
     submission_registry.upsert_submission_content(
         submission_id=submission_id, content=submission_content
     )
@@ -160,7 +163,7 @@ def test_update_after_completion(config_fixture: Config):  # noqa: F811
     submission_registry.complete_submission(id_=submission_id)
 
     # try to update content:
-    submission_content_updated = VALID_METADATA_EXAMPLES[1]
+    submission_content_updated = VALID_MINIMAL_METADATA_EXAMPLES[1]
     with pytest.raises(SubmissionRegistry.StatusError):
         submission_registry.upsert_submission_content(
             submission_id=submission_id, content=submission_content_updated
