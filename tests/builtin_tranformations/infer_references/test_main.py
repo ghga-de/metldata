@@ -16,7 +16,7 @@
 
 """Test the infer_references module."""
 
-from metldata.builtin_transformations.infer_references import (
+from metldata.builtin_transformations.infer_references.main import (
     ReferenceInferenceConfig,
     ReferenceInferenceTransformation,
 )

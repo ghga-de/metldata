@@ -18,7 +18,10 @@
 
 from pydantic import BaseSettings, Field
 
-from metldata.reference.reference import InferredReference, ReferenceDetails
+from metldata.builtin_transformations.infer_references.reference import (
+    InferredReference,
+    ReferenceDetails,
+)
 
 
 class ReferenceMapConfig(BaseSettings):

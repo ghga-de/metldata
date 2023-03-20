@@ -23,21 +23,12 @@ from linkml_runtime import SchemaView
 from linkml_runtime.linkml_model import SlotDefinition
 from pydantic import BaseModel, Field
 
-from metldata.custom_types import Json
 from metldata.model_utils.essentials import ROOT_CLASS, MetadataModel
 from metldata.model_utils.identifieres import get_class_identifiers
 
 
 class InvalidAnchorPointError(RuntimeError):
     """Raised when an anchor point defined in a model is invalid."""
-
-
-class MetadataAnchorMissmatchError(RuntimeError):
-    """Raised when the provided metadata does not match the expected anchor points."""
-
-
-class MetadataResourceNotFoundError(RuntimeError):
-    """Raised when a resource could not be found in the metadata."""
 
 
 class AnchorPointNotFoundError(RuntimeError):
@@ -185,59 +176,6 @@ def filter_anchor_points(
         for class_name, anchor_point in anchor_points_by_target.items()
         if class_name in classes_of_interest
     }
-
-
-def add_identifier_to_anchored_resource(
-    *,
-    resource: Json,
-    identifier: str,
-    identifier_slot: str,
-) -> Json:
-    """Anchored resources have no identifier slot. This function adds the identifier."""
-
-    return {**resource, identifier_slot: identifier}
-
-
-def lookup_resource_by_identifier(
-    *,
-    class_name: str,
-    identifier: str,
-    global_metadata: Json,
-    anchor_points_by_target: dict[str, AnchorPoint],
-) -> Json:
-    """Lookup a resource of the given class in the provided global metadata by its
-    identifier.
-
-    Raises:
-        MetadataAnchorMissmatchError:
-            if the provided metadata does not match the expected anchor points.
-        MetadataResourceNotFoundError:
-            if the resource with the given identifier could not be found.
-    """
-
-    anchor_point = anchor_points_by_target[class_name]
-
-    if anchor_point.root_slot not in global_metadata:
-        raise MetadataAnchorMissmatchError(
-            f"Could not find root slot of the anchor point '{anchor_point.root_slot}'"
-            + " in the global metadata."
-        )
-
-    resources = global_metadata[anchor_point.root_slot]
-
-    if identifier not in resources:
-        raise MetadataResourceNotFoundError(
-            f"Could not find resource with identifier '{identifier}' of class"
-            + f" '{class_name}' in the global metadata."
-        )
-
-    target_resource = resources[identifier]
-
-    return add_identifier_to_anchored_resource(
-        resource=target_resource,
-        identifier=identifier,
-        identifier_slot=anchor_point.identifier_slot,
-    )
 
 
 def lookup_anchor_point(

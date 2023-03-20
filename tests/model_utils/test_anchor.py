@@ -23,15 +23,12 @@ from metldata.model_utils.anchors import (
     AnchorPoint,
     AnchorPointNotFoundError,
     InvalidAnchorPointError,
-    MetadataResourceNotFoundError,
     filter_anchor_points,
     get_anchor_points,
     get_anchors_points_by_target,
     lookup_anchor_point,
-    lookup_resource_by_identifier,
 )
 from metldata.model_utils.essentials import MetadataModel
-from tests.fixtures.metadata import VALID_MINIMAL_METADATA_EXAMPLE
 from tests.fixtures.metadata_models import (
     ANCHORS_INVALID_MODELS,
     MINIMAL_VALID_METADATA_MODEL,
@@ -110,45 +107,6 @@ def test_filter_anchor_points_non_existing_class():
         _ = filter_anchor_points(
             anchor_points_by_target=EXAMPLE_ANCHOR_POINTS_BY_TARGET,
             classes_of_interest=classes_of_interest,
-        )
-
-
-def test_lookup_resource_by_identifier_happy():
-    """Test the happy path of using the lookup_resource_by_identifier function."""
-
-    identifier = "test_sample_01_R1"
-    expected_resource = VALID_MINIMAL_METADATA_EXAMPLE["has_file"][identifier]
-    expected_resource["alias"] = identifier
-
-    anchor_points_by_target = get_anchors_points_by_target(
-        model=MINIMAL_VALID_METADATA_MODEL
-    )
-    observed_resource = lookup_resource_by_identifier(
-        class_name="File",
-        global_metadata=VALID_MINIMAL_METADATA_EXAMPLE,
-        identifier=identifier,
-        anchor_points_by_target=anchor_points_by_target,
-    )
-
-    assert observed_resource == expected_resource
-
-
-def test_lookup_resource_by_identifier_not_exist():
-    """Test the using the lookup_resource_by_identifier function with an identifier
-    that does not exist."""
-
-    identifier = "non_existing_identifier"
-
-    anchor_points_by_target = get_anchors_points_by_target(
-        model=MINIMAL_VALID_METADATA_MODEL
-    )
-
-    with pytest.raises(MetadataResourceNotFoundError):
-        _ = lookup_resource_by_identifier(
-            class_name="File",
-            global_metadata=VALID_MINIMAL_METADATA_EXAMPLE,
-            identifier=identifier,
-            anchor_points_by_target=anchor_points_by_target,
         )
 
 

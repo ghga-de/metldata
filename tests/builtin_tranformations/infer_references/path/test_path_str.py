@@ -21,11 +21,11 @@ from typing import Optional
 
 import pytest
 
-from metldata.reference.path_elements import (
+from metldata.builtin_transformations.infer_references.path.path_elements import (
     ReferencePathElement,
     ReferencePathElementType,
 )
-from metldata.reference.path_str import (
+from metldata.builtin_transformations.infer_references.path.path_str import (
     ValidationError,
     extract_first_element,
     get_element_components,

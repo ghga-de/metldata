@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-"""Test the reference sub-package."""
+"""A transformation to infer references based on existing ones in the metadata model."""

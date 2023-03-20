@@ -21,8 +21,8 @@ from contextlib import nullcontext
 import pytest
 from pydantic import BaseModel
 
-from metldata.reference.path import ReferencePath
-from metldata.reference.path_elements import (
+from metldata.builtin_transformations.infer_references.path.path import ReferencePath
+from metldata.builtin_transformations.infer_references.path.path_elements import (
     ReferencePathElement,
     ReferencePathElementType,
 )
