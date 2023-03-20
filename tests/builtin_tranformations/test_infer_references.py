@@ -20,7 +20,6 @@ from metldata.builtin_transformations.infer_references import (
     ReferenceInferenceConfig,
     ReferenceInferenceTransformation,
 )
-from metldata.model_utils.essentials import MetadataModel
 from tests.fixtures.metadata_models import ADVANCED_VALID_METADATA_MODEL
 
 

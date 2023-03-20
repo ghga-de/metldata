@@ -24,25 +24,33 @@ from linkml_validator.validator import Validator
 from metldata.model_utils.essentials import MetadataModel
 
 
+class InvalidMetadataError(RuntimeError):
+    """Raised when the metadata is invalid."""
+
+
+class MetadataValidationError(InvalidMetadataError):
+    """Raised when the validation of metadata against the provided model fails."""
+
+    def __init__(self, *, issues: list[ValidationMessage]):
+        """Initializes with list of issues."""
+
+        self.issues = issues
+
+        message = "Validation failed due to following issues: " + ", ".join(
+            (
+                f"in field '{issue.field}' with value '{issue.value}': {issue.message}"
+                + f" ({issue.severity})"
+            )
+            for issue in self.issues
+        )
+        super().__init__(message)
+
+
 class MetadataValidator:
     """Validating metadata against a LinkML model."""
 
-    class ValidationError(RuntimeError):
-        """Raised when the validation of metadata against the provided model fails."""
-
-        def __init__(self, *, issues: list[ValidationMessage]):
-            """Initializes with list of issues."""
-
-            self.issues = issues
-
-            message = "Validation failed due to following issues: " + ", ".join(
-                (
-                    f"in field '{issue.field}' with value '{issue.value}': {issue.message}"
-                    + f" ({issue.severity})"
-                )
-                for issue in self.issues
-            )
-            super().__init__(message)
+    # error shortcuts:
+    ValidationError = MetadataValidationError
 
     def __init__(self, *, model: MetadataModel):
         """Initialize the validator with a metadata model."""
@@ -67,4 +75,4 @@ class MetadataValidator:
                     if not result.valid and result.validation_messages is not None
                     for message in result.validation_messages
                 ]
-                raise self.ValidationError(issues=issues)
+                raise MetadataValidationError(issues=issues)

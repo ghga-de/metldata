@@ -16,7 +16,6 @@
 
 """Test the anchor module."""
 
-from pathlib import Path
 
 import pytest
 
@@ -27,9 +26,11 @@ from metldata.model_utils.anchors import (
     MetadataResourceNotFoundError,
     filter_anchor_points,
     get_anchor_points,
-    get_anchors_by_target,
+    get_anchors_points_by_target,
+    lookup_anchor_point,
     lookup_resource_by_identifier,
 )
+from metldata.model_utils.essentials import MetadataModel
 from tests.fixtures.metadata import VALID_MINIMAL_METADATA_EXAMPLE
 from tests.fixtures.metadata_models import (
     ANCHORS_INVALID_MODELS,
@@ -64,7 +65,7 @@ def test_get_anchor_points_happy():
 
 
 @pytest.mark.parametrize("invalid_model", ANCHORS_INVALID_MODELS)
-def test_get_anchor_points_invalid(invalid_model: Path):
+def test_get_anchor_points_invalid(invalid_model: MetadataModel):
     """Test the get_anchor_points function for models with invalid anchor points."""
 
     with pytest.raises(InvalidAnchorPointError):
@@ -76,7 +77,9 @@ def test_get_anchor_points_by_target_happy():
 
     expected_anchor_points = EXAMPLE_ANCHOR_POINTS_BY_TARGET
 
-    observed_anchor_points = get_anchors_by_target(model=MINIMAL_VALID_METADATA_MODEL)
+    observed_anchor_points = get_anchors_points_by_target(
+        model=MINIMAL_VALID_METADATA_MODEL
+    )
 
     assert observed_anchor_points == expected_anchor_points
 
@@ -117,7 +120,9 @@ def test_lookup_resource_by_identifier_happy():
     expected_resource = VALID_MINIMAL_METADATA_EXAMPLE["has_file"][identifier]
     expected_resource["alias"] = identifier
 
-    anchor_points_by_target = get_anchors_by_target(model=MINIMAL_VALID_METADATA_MODEL)
+    anchor_points_by_target = get_anchors_points_by_target(
+        model=MINIMAL_VALID_METADATA_MODEL
+    )
     observed_resource = lookup_resource_by_identifier(
         class_name="File",
         global_metadata=VALID_MINIMAL_METADATA_EXAMPLE,
@@ -134,7 +139,9 @@ def test_lookup_resource_by_identifier_not_exist():
 
     identifier = "non_existing_identifier"
 
-    anchor_points_by_target = get_anchors_by_target(model=MINIMAL_VALID_METADATA_MODEL)
+    anchor_points_by_target = get_anchors_points_by_target(
+        model=MINIMAL_VALID_METADATA_MODEL
+    )
 
     with pytest.raises(MetadataResourceNotFoundError):
         _ = lookup_resource_by_identifier(
@@ -142,4 +149,28 @@ def test_lookup_resource_by_identifier_not_exist():
             global_metadata=VALID_MINIMAL_METADATA_EXAMPLE,
             identifier=identifier,
             anchor_points_by_target=anchor_points_by_target,
+        )
+
+
+def test_lookup_anchor_point_happy():
+    """Test the happy path of using the lookup_anchor_point function."""
+
+    class_name = "File"
+    expected_anchor_point = EXAMPLE_ANCHOR_POINTS_BY_TARGET[class_name]
+
+    observed_anchor_point = lookup_anchor_point(
+        class_name=class_name, anchor_points_by_target=EXAMPLE_ANCHOR_POINTS_BY_TARGET
+    )
+
+    assert observed_anchor_point == expected_anchor_point
+
+
+def test_lookup_anchor_point_not_found():
+    """Test the using the lookup_anchor_point function with a class name that does
+    not exist."""
+
+    with pytest.raises(AnchorPointNotFoundError):
+        _ = lookup_anchor_point(
+            class_name="NonExisting",
+            anchor_points_by_target=EXAMPLE_ANCHOR_POINTS_BY_TARGET,
         )

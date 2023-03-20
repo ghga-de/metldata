@@ -156,7 +156,7 @@ def get_anchor_points(*, model: MetadataModel) -> set[AnchorPoint]:
     return anchor_point
 
 
-def get_anchors_by_target(*, model=MetadataModel) -> dict[str, AnchorPoint]:
+def get_anchors_points_by_target(*, model: MetadataModel) -> dict[str, AnchorPoint]:
     """Get a dictionary with the keys corresponding to class names and the values
     corresponding to anchor points."""
 
@@ -166,7 +166,7 @@ def get_anchors_by_target(*, model=MetadataModel) -> dict[str, AnchorPoint]:
 
 
 def filter_anchor_points(
-    anchor_points_by_target: dict[str, AnchorPoint], classes_of_interest: set[str]
+    *, anchor_points_by_target: dict[str, AnchorPoint], classes_of_interest: set[str]
 ) -> dict[str, AnchorPoint]:
     """Filter the provided anchor points by a list of classes of interest."""
 
@@ -188,6 +188,7 @@ def filter_anchor_points(
 
 
 def add_identifier_to_anchored_resource(
+    *,
     resource: Json,
     identifier: str,
     identifier_slot: str,
@@ -198,6 +199,7 @@ def add_identifier_to_anchored_resource(
 
 
 def lookup_resource_by_identifier(
+    *,
     class_name: str,
     identifier: str,
     global_metadata: Json,
@@ -236,3 +238,18 @@ def lookup_resource_by_identifier(
         identifier=identifier,
         identifier_slot=anchor_point.identifier_slot,
     )
+
+
+def lookup_anchor_point(
+    *, class_name: str, anchor_points_by_target: dict[str, AnchorPoint]
+) -> AnchorPoint:
+    """Lookup the anchor point for the given class."""
+
+    anchor_point = anchor_points_by_target.get(class_name)
+
+    if anchor_point is None:
+        raise AnchorPointNotFoundError(
+            f"Cannot find anchor point class '{class_name}'."
+        )
+
+    return anchor_point
