@@ -24,7 +24,7 @@ from metldata.builtin_transformations.infer_references.reference import (
 )
 
 
-class ReferenceMapConfig(BaseSettings):
+class ReferenceInferenceConfig(BaseSettings):
     """Config containing inferred references for all classes of a metadata model in a
     dictionary-based representation and the option to translate that reference map into
     a list of InferredReferences."""

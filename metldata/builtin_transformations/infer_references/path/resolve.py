@@ -22,6 +22,7 @@ from metldata.builtin_transformations.infer_references.path.path_elements import
     ReferencePathElement,
     ReferencePathElementType,
 )
+from metldata.custom_types import Json
 from metldata.metadata_utils import (
     ForeignIdLookUpError,
     MetadataResourceNotFoundError,
@@ -35,7 +36,6 @@ from metldata.model_utils.anchors import (
     AnchorPointNotFoundError,
     lookup_anchor_point,
 )
-from metldata.transform.base import Json
 
 
 class PathElementResolutionError(RuntimeError):

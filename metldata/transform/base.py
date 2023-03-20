@@ -17,12 +17,14 @@
 """Models to describe transformations."""
 
 from abc import ABC, abstractmethod
+from typing import Callable, Generic, TypeVar
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-# shortcut:
-# pylint: disable=unused-import
 from metldata.custom_types import Json
+
+# shortcuts:
+# pylint: disable=unused-import
 from metldata.model_utils.assumptions import MetadataModelAssumptionError  # noqa: F401
 from metldata.model_utils.essentials import MetadataModel
 
@@ -35,32 +37,61 @@ class MetadataTransformationError(RuntimeError):
     """Raised when a transformation failed when applied to metadata."""
 
 
-class TransformationBase(ABC):
-    """A base class specifying the interface of transformations."""
+Config = TypeVar("Config", bound=BaseModel)
 
-    # contains the transformed model:
-    transformed_model: MetadataModel
+
+class MetadataTranformator(ABC, Generic[Config]):
+    """A base class for a metadata transformator."""
+
+    def __init__(
+        self,
+        *,
+        config: Config,
+        original_model: MetadataModel,
+        transformed_model: MetadataModel
+    ):
+        """Initialize the transformator with config params, the original model, and the
+        transformed model."""
+
+        self._config = config
+        self._original_model = original_model
+        self._transformed_model = transformed_model
 
     @abstractmethod
-    def __init__(self, *, model: MetadataModel, config: BaseModel):
-        """Initialize the transformation with transformation-specific config params and
-        the metadata model. The transformed model will be immediately available in the
-        `transformed_model` attribute.
-
-        Raises:
-            MetadataModelAssumptionError:
-                if assumptions about the metadata model are not met.
-            MetadataModelTransformationError:
-                if the transformation of the metadata model fails.
-        """
-        ...
-
-    @abstractmethod
-    def transform_metadata(self, metadata: Json) -> Json:
-        """Transforms metadata and returns it.
+    def transform(self, *, metadata: Json) -> Json:
+        """Transforms metadata.
 
         Raises:
             MetadataTransformationError:
-                if the transformation of the metadata fails.
+                if the transformation fails.
         """
         ...
+
+
+class TransformationDefintion(BaseModel, Generic[Config]):
+    """A model for describing a transformation."""
+
+    config: type[Config] = Field(
+        ..., description="The config model of the transformation."
+    )
+    check_model_assumptions: Callable[[MetadataModel, Config], None] = Field(
+        ...,
+        description=(
+            "A function that checks the assumptions made about the input model."
+            "Raises a MetadataModelAssumptionError if the assumptions are not met."
+        ),
+    )
+    transform_model: Callable[[MetadataModel, Config], MetadataModel] = Field(
+        ...,
+        description=(
+            "A function to transforms the model. Raises a MetadataModelTransformationError"
+            "if the transformation fails."
+        ),
+    )
+    metadata_transformator_factory: type[MetadataTranformator[Config]] = Field(
+        ...,
+        description=(
+            "A class for transforming metadata. Raises a MetadataTransformationError"
+            "if the transformation fails."
+        ),
+    )

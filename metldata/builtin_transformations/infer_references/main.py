@@ -16,57 +16,71 @@
 
 """A transformation to infer references based on existing ones in the metadata model."""
 
-from metldata.builtin_transformations.infer_references.config import ReferenceMapConfig
+from metldata.builtin_transformations.infer_references.config import (
+    ReferenceInferenceConfig,
+)
 from metldata.builtin_transformations.infer_references.metadata_transform import (
-    transform_metadata,
+    add_references_to_metadata,
 )
 from metldata.builtin_transformations.infer_references.model_transform import (
-    transform_metadata_model,
+    add_references_to_model,
 )
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.base import Json, TransformationBase
+from metldata.transform.base import Json, MetadataTranformator, TransformationDefintion
 
 
-class ReferenceInferenceConfig(ReferenceMapConfig):
-    """Config parameters and their defaults."""
+class ReferenceInferenceMetadataTranformator(MetadataTranformator):
+    """A transformator that inferes references in metadata based on existing once."""
 
-
-class ReferenceInferenceTransformation(TransformationBase):
-    """A transformation to infer references based on existing ones in the metadata
-    model."""
-
-    def __init__(self, *, model: MetadataModel, config: ReferenceInferenceConfig):
-        """Initialize the transformation with transformation-specific config params and
-        the metadata model. The transformed model will be immediately available in the
-        `transformed_model` attribute (may be a property).
-
-        Raises:
-            MetadataModelAssumptionError:
-                if assumptions about the metadata model are not met.
-            MetadataModelTransformationError:
-                if the transformation of the metadata model fails.
-        """
-
-        self._original_model = model
-        self._inferred_references = config.inferred_references
-
-        check_basic_model_assumption(model=model)
-
-        self.transformed_model = transform_metadata_model(
-            model=self._original_model, references=self._inferred_references
-        )
-
-    def transform_metadata(self, metadata: Json) -> Json:
-        """Transforms metadata and returns it.
+    def transform(self, *, metadata: Json) -> Json:
+        """Transforms metadata.
 
         Raises:
             MetadataTransformationError:
-                if the transformation of the metadata fails.
+                if the transformation fails.
         """
 
-        return transform_metadata(
+        return add_references_to_metadata(
             metadata=metadata,
-            model=self.transformed_model,
-            references=self._inferred_references,
+            model=self._original_model,
+            references=self._config.inferred_references,
         )
+
+
+def check_model_assumptions(
+    model: MetadataModel,
+    config: ReferenceInferenceConfig,  # pylint: disable=unused-argument
+) -> None:
+    """Check the assumptions of the model.
+
+    Raises:
+        MetadataModelAssumptionError:
+            if the model does not fulfill the assumptions.
+    """
+
+    check_basic_model_assumption(model=model)
+
+
+def transform_model(
+    model: MetadataModel, config: ReferenceInferenceConfig
+) -> MetadataModel:
+    """Transform the metadata model.
+
+    Raises:
+        MetadataModelTransformationError:
+            if the transformation fails.
+    """
+
+    return add_references_to_model(
+        model=model,
+        references=config.inferred_references,
+    )
+
+
+reference_inference_transformation = TransformationDefintion[ReferenceInferenceConfig](
+    config=ReferenceInferenceConfig,
+    check_model_assumptions=check_model_assumptions,
+    transform_model=transform_model,
+    metadata_transformator_factory=ReferenceInferenceMetadataTranformator,
+)

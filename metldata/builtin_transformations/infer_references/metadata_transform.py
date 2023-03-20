@@ -152,7 +152,7 @@ def add_reference_to_metadata(
     return metadata_copy
 
 
-def transform_metadata(
+def add_references_to_metadata(
     *, metadata: Json, model: MetadataModel, references: list[InferredReference]
 ) -> Json:
     """Transform metadata and return the transformed one.
