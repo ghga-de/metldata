@@ -17,6 +17,7 @@
 """Basic constants and logic related to models."""
 
 import dataclasses
+import json
 from contextlib import contextmanager
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -48,6 +49,11 @@ class MetadataModel(SchemaDefinition):
 
         return ExportableSchemaView(self)
 
+    def as_dict(self):
+        """Get a dictionary representation of the model."""
+
+        return dataclasses.asdict(self)
+
     @contextmanager
     def temporary_yaml_path(self) -> Generator[Path, None, None]:
         """Returns a context manager that creates a temporary yaml file containing the
@@ -58,10 +64,15 @@ class MetadataModel(SchemaDefinition):
         """
 
         with NamedTemporaryFile(mode="w", encoding="utf-8") as file:
-            model_json = dataclasses.asdict(self)
+            model_json = self.as_dict()
             yaml.safe_dump(model_json, file)
             file.flush()
             yield Path(file.name)
+
+    def __hash__(self):
+        """Return a hash of the model."""
+
+        return hash(json.dumps(self.as_dict()))
 
 
 class ExportableSchemaView(SchemaView):
