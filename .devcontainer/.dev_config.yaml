@@ -1,6 +1,6 @@
 # Please only mention the non-default settings here:
 
-metadata_model_path: /workspace/example_data/test_model.yaml
+metadata_model_path: /workspace/tests/fixtures/example_models/advanced_model.yaml
 prefix_mapping:
   file: GHGAF
   experiment: GHGAE
