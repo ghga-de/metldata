@@ -17,12 +17,9 @@
 
 from pathlib import Path
 
-from pydantic import BaseSettings, Field, validator
+from pydantic import BaseSettings, Field
 
-from metldata.model_utils.assumptions import (
-    MetadataModelAssumptionError,
-    check_basic_model_assumption,
-)
+from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
 
 
@@ -33,21 +30,10 @@ class MetadataModelConfig(BaseSettings):
         ..., description="The path to the metadata model defined in LinkML."
     )
 
-    @validator("metadata_model_path", pre=False)
-    @classmethod
-    def _validate_model_assumptions(cls, value: Path) -> Path:
-        """Check the basic assumptions made about the metadata model."""
-
-        try:
-            metadata_model = MetadataModel.init_from_path(value)
-            check_basic_model_assumption(metadata_model)
-        except MetadataModelAssumptionError as error:
-            raise ValueError() from error
-
-        return value
-
     @property
     def metadata_model(self) -> MetadataModel:
-        """Load the model from the path."""
+        """Load the model from the path and check basic assumptions."""
 
-        return MetadataModel.init_from_path(self.metadata_model_path)
+        model = MetadataModel.init_from_path(self.metadata_model_path)
+        check_basic_model_assumption(model)
+        return model

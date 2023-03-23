@@ -145,7 +145,6 @@ def resolve_target_ids_passive_element(  # noqa: C901
     # lookup the target resources:
     target_ids_of_interest: set[str] = set()
     for target_id, target_resource in target_resources_by_dict.items():
-
         referenced_source_ids = lookup_foreign_ids(
             resource=target_resource, slot=path_element.slot
         )
