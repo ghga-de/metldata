@@ -43,3 +43,8 @@ has_experiment:
     has_sample:
       - test_sample_01
       - test_sample_02
+    has_file:
+      - test_sample_01_R1
+      - test_sample_01_R2
+      - test_sample_02_R1
+      - test_sample_02_R2

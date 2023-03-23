@@ -72,6 +72,7 @@ classes:
       - alias
       - description
       - has_sample
+      - has_file
     slot_usage:
       alias:
         required: true
@@ -80,6 +81,11 @@ classes:
         required: true
       has_sample:
         required: true
+        multivalued: true
+        inlined: false
+      has_file:
+        required: true
+        range: File
         multivalued: true
         inlined: false
 

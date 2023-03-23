@@ -38,6 +38,8 @@ def inferred_reference_to_slot(reference: InferredReference) -> SlotDefinition:
         name=reference.new_slot,
         range=reference.target,
         multivalued=reference.multivalued,
+        inlined=False,
+        required=True,
     )
 
 

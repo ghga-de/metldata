@@ -17,6 +17,7 @@
 """Models to describe transformations."""
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Callable, Generic, TypeVar
 
 from pydantic import BaseModel, Field
@@ -40,8 +41,8 @@ class MetadataTransformationError(RuntimeError):
 Config = TypeVar("Config", bound=BaseModel)
 
 
-class MetadataTranformator(ABC, Generic[Config]):
-    """A base class for a metadata transformator."""
+class MetadataTransformer(ABC, Generic[Config]):
+    """A base class for a metadata transformer."""
 
     def __init__(
         self,
@@ -50,7 +51,7 @@ class MetadataTranformator(ABC, Generic[Config]):
         original_model: MetadataModel,
         transformed_model: MetadataModel
     ):
-        """Initialize the transformator with config params, the original model, and the
+        """Initialize the transformer with config params, the original model, and the
         transformed model."""
 
         self._config = config
@@ -68,7 +69,8 @@ class MetadataTranformator(ABC, Generic[Config]):
         ...
 
 
-class TransformationDefintion(BaseModel, Generic[Config]):
+@dataclass(frozen=True)
+class TransformationDefintion(Generic[Config]):
     """A model for describing a transformation."""
 
     config: type[Config] = Field(
@@ -88,7 +90,7 @@ class TransformationDefintion(BaseModel, Generic[Config]):
             "if the transformation fails."
         ),
     )
-    metadata_transformator_factory: type[MetadataTranformator[Config]] = Field(
+    metadata_transformer_factory: type[MetadataTransformer[Config]] = Field(
         ...,
         description=(
             "A class for transforming metadata. Raises a MetadataTransformationError"

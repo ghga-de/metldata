@@ -49,7 +49,7 @@ class TransformationHandler:
         self.transformed_model = self._definition.transform_model(
             self._original_model, self._config
         )
-        self._metadata_transformator = self._definition.metadata_transformator_factory(
+        self._metadata_transformer = self._definition.metadata_transformer_factory(
             config=self._config,
             original_model=self._original_model,
             transformed_model=self.transformed_model,
@@ -73,7 +73,7 @@ class TransformationHandler:
         """
 
         self._original_metadata_validator.validate(metadata)
-        transformed_metadata = self._metadata_transformator.transform(metadata=metadata)
+        transformed_metadata = self._metadata_transformer.transform(metadata=metadata)
         self._transformed_metadata_validator.validate(transformed_metadata)
 
         return transformed_metadata

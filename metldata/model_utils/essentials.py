@@ -19,6 +19,7 @@
 import dataclasses
 import json
 from contextlib import contextmanager
+from copy import deepcopy
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Generator
@@ -49,10 +50,61 @@ class MetadataModel(SchemaDefinition):
 
         return ExportableSchemaView(self)
 
-    def as_dict(self):
-        """Get a dictionary representation of the model."""
+    def copy(self) -> "MetadataModel":
+        """Copy the model."""
 
-        return dataclasses.asdict(self)
+        return deepcopy(self)
+
+    def __eq__(self, other: object):
+        """For comparisons."""
+
+        if not isinstance(other, MetadataModel):
+            return NotImplemented
+
+        return self.as_dict() == other.as_dict()
+
+    # pylint: disable=too-many-nested-blocks,too-many-branches
+    def as_dict(self, essential: bool = True):  # noqa: C901
+        """Get a dictionary representation of the model. If essential set to True, the
+        dictionary will be cleaned of all fields that are not essential."""
+
+        model_dict = dataclasses.asdict(self)
+
+        if essential:
+            if "classes" in model_dict:
+                for class_ in model_dict["classes"].values():
+                    if "from_schema" in class_:
+                        del class_["from_schema"]
+                    if "slot_usage" in class_:
+                        for slot in class_["slot_usage"].values():
+                            if "domain_of" in slot:
+                                del slot["domain_of"]
+            if "slots" in model_dict:
+                for slot in model_dict["slots"].values():
+                    if "from_schema" in slot:
+                        del slot["from_schema"]
+            if "enums" in model_dict:
+                for enum in model_dict["enums"].values():
+                    if "from_schema" in enum:
+                        del enum["from_schema"]
+
+        return model_dict
+
+    def as_json(self) -> str:
+        """Get a json representation of the model."""
+
+        return json.dumps(self.as_dict(essential=True), indent=2)
+
+    def as_yaml(self) -> str:
+        """Get a yaml representation of the model."""
+
+        return yaml.safe_dump(self.as_dict(essential=True))
+
+    def write_yaml(self, path: Path) -> None:
+        """Write the model to a yaml file."""
+
+        with open(path, "w", encoding="utf-8") as file:
+            yaml.safe_dump(self.as_dict(essential=True), file)
 
     @contextmanager
     def temporary_yaml_path(self) -> Generator[Path, None, None]:
@@ -72,7 +124,7 @@ class MetadataModel(SchemaDefinition):
     def __hash__(self):
         """Return a hash of the model."""
 
-        return hash(json.dumps(self.as_dict()))
+        return hash(self.as_json())
 
 
 class ExportableSchemaView(SchemaView):

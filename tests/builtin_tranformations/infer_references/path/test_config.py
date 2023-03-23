@@ -16,15 +16,17 @@
 
 """Test reference utils."""
 
-from metldata.builtin_transformations.infer_references.config import ReferenceMapConfig
+from metldata.builtin_transformations.infer_references.config import (
+    ReferenceInferenceConfig,
+)
 from metldata.builtin_transformations.infer_references.path.path import ReferencePath
 from metldata.builtin_transformations.infer_references.reference import (
     InferredReference,
 )
 
 
-def test_reference_map_config():
-    """Test the ReferenceMapConfig class."""
+def test_config():
+    """Test the ReferenceInferenceConfig class."""
 
     inferred_ref_map = {
         "class_a": {
@@ -72,6 +74,6 @@ def test_reference_map_config():
         ),
     ]
 
-    config = ReferenceMapConfig(inferred_ref_map=inferred_ref_map)
+    config = ReferenceInferenceConfig(inferred_ref_map=inferred_ref_map)
     observed_refs = config.inferred_references
     assert expected_refs == observed_refs

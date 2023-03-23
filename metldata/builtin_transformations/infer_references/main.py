@@ -27,11 +27,13 @@ from metldata.builtin_transformations.infer_references.model_transform import (
 )
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.base import Json, MetadataTranformator, TransformationDefintion
+from metldata.transform.base import Json, MetadataTransformer, TransformationDefintion
 
 
-class ReferenceInferenceMetadataTranformator(MetadataTranformator):
-    """A transformator that inferes references in metadata based on existing once."""
+class ReferenceInferenceMetadataTransformer(
+    MetadataTransformer[ReferenceInferenceConfig]
+):
+    """A transformer that infers references in metadata based on existing once."""
 
     def transform(self, *, metadata: Json) -> Json:
         """Transforms metadata.
@@ -82,5 +84,5 @@ reference_inference_transformation = TransformationDefintion[ReferenceInferenceC
     config=ReferenceInferenceConfig,
     check_model_assumptions=check_model_assumptions,
     transform_model=transform_model,
-    metadata_transformator_factory=ReferenceInferenceMetadataTranformator,
+    metadata_transformer_factory=ReferenceInferenceMetadataTransformer,
 )

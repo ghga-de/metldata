@@ -23,7 +23,13 @@ from metldata.builtin_transformations.infer_references.path.resolve import (
 from metldata.builtin_transformations.infer_references.reference import (
     InferredReference,
 )
-from metldata.metadata_utils import SelfIdLookUpError, lookup_self_id
+from metldata.metadata_utils import (
+    MetadataResourceNotFoundError,
+    SelfIdLookUpError,
+    convert_list_to_inlined_dict,
+    lookup_resource_by_identifier,
+    lookup_self_id,
+)
 from metldata.model_utils.anchors import (
     AnchorPoint,
     AnchorPointNotFoundError,
@@ -127,16 +133,32 @@ def add_reference_to_metadata(
             + " point could not be found."
         ) from error
 
-    source_resources = metadata.get(source_anchor_point.root_slot)
+    source_ids = metadata.get(source_anchor_point.root_slot)
 
-    if not source_resources:
+    if not source_ids:
         raise MetadataTransformationError(
             f"Cannot add reference '{reference}' to metadata because the source anchor"
             + f" point '{source_anchor_point.root_slot}' does not exist in the"
             + " metadata."
         )
 
-    modified_source_resources = [
+    try:
+        source_resources = [
+            lookup_resource_by_identifier(
+                class_name=reference.source,
+                global_metadata=metadata,
+                identifier=source_id,
+                anchor_points_by_target=anchor_points_by_target,
+            )
+            for source_id in source_ids
+        ]
+    except MetadataResourceNotFoundError as error:
+        raise MetadataTransformationError(
+            f"Cannot add reference '{reference}' to metadata because not all source"
+            + " resources could be found in the metadata."
+        ) from error
+
+    modified_resources_as_list = [
         add_reference_to_metadata_resource(
             resource=source_resource,
             global_metadata=metadata,
@@ -146,8 +168,13 @@ def add_reference_to_metadata(
         for source_resource in source_resources
     ]
 
+    modified_resources_as_dict = convert_list_to_inlined_dict(
+        resources=modified_resources_as_list,
+        identifier_slot=source_anchor_point.identifier_slot,
+    )
+
     metadata_copy = metadata.copy()
-    metadata_copy[source_anchor_point.root_slot] = modified_source_resources
+    metadata_copy[source_anchor_point.root_slot] = modified_resources_as_dict
 
     return metadata_copy
 

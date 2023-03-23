@@ -17,6 +17,7 @@
 """Utilities for handling metadata."""
 
 
+from copy import deepcopy
 from typing import cast
 
 from metldata.custom_types import Json
@@ -138,3 +139,17 @@ def lookup_resource_by_identifier(
         identifier=identifier,
         identifier_slot=anchor_point.identifier_slot,
     )
+
+
+def convert_list_to_inlined_dict(
+    *, resources: list[Json], identifier_slot: str
+) -> dict[str, Json]:
+    """Convert a list of resources of same type into a dictionary representation, i.e.
+    to "inlined_as_list=false" format."""
+
+    resources_by_identifier: dict[str, Json] = {}
+    for resource in deepcopy(resources):
+        identifier = resource.pop(identifier_slot)
+        resources_by_identifier[identifier] = resource
+
+    return resources_by_identifier
