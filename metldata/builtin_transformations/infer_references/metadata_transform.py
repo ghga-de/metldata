@@ -87,10 +87,10 @@ def add_reference_to_metadata_resource(
     )
 
     # get IDs of final target resources:
-    target_ids: list[str] = []
+    target_ids: set[str] = set()
     for target_resource in target_resources:
         try:
-            target_ids.append(
+            target_ids.add(
                 lookup_self_id(
                     resource=target_resource,
                     identifier_slot=target_anchor_point.identifier_slot,
@@ -105,7 +105,7 @@ def add_reference_to_metadata_resource(
 
     # add the target IDs to the source resource:
     resource_copy = resource.copy()
-    resource_copy[reference.new_slot] = target_ids
+    resource_copy[reference.new_slot] = sorted(list(target_ids))
 
     return resource_copy
 

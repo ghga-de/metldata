@@ -60,7 +60,7 @@ def lookup_self_id(*, resource: Json, identifier_slot: str):
     return self_id
 
 
-def lookup_foreign_ids(*, resource: Json, slot: str) -> list[str]:
+def lookup_foreign_ids(*, resource: Json, slot: str) -> set[str]:
     """Lookup foreing IDs referenced by the specified resource using the specified
     slot."""
 
@@ -83,7 +83,8 @@ def lookup_foreign_ids(*, resource: Json, slot: str) -> list[str]:
             + f" '{resource}' contains non-string values."
         )
 
-    foreign_ids = cast(list[str], foreign_ids)
+    foreign_ids = set(foreign_ids)
+    foreign_ids = cast(set[str], foreign_ids)
 
     return foreign_ids
 

@@ -44,7 +44,7 @@ class PathElementResolutionError(RuntimeError):
 
 def resolve_target_ids_active_element(
     *, source_resource: Json, path_element: ReferencePathElement
-) -> list[str]:
+) -> set[str]:
     """Resolve an active reference path element applied to a metadata resource.
 
     Args:
@@ -76,13 +76,13 @@ def resolve_target_ids_active_element(
     return target_ids
 
 
-def resolve_target_ids_passive_element(
+def resolve_target_ids_passive_element(  # noqa: C901
     *,
     source_resource: Json,
     path_element: ReferencePathElement,
     global_metadata: Json,
     anchor_points_by_target: dict[str, AnchorPoint],
-) -> list[str]:
+) -> set[str]:
     """Resolve a passive reference path element applied to a metadata resource.
 
     Args:
@@ -115,6 +115,17 @@ def resolve_target_ids_passive_element(
         ) from error
 
     try:
+        target_anchor_point = lookup_anchor_point(
+            class_name=path_element.target,
+            anchor_points_by_target=anchor_points_by_target,
+        )
+    except AnchorPointNotFoundError as error:
+        raise PathElementResolutionError(
+            "Cannot resolve path element because of a missing anchor point for"
+            + f" target class '{path_element.target}'."
+        ) from error
+
+    try:
         source_idenifier = lookup_self_id(
             resource=source_resource,
             identifier_slot=source_anchor_point.identifier_slot,
@@ -124,22 +135,23 @@ def resolve_target_ids_passive_element(
             f"Cannot resolve path element: '{error}'"
         ) from error
 
-    # lookup the target resources:
-    target_ids_of_interest: list[str] = []
-    for target_id in global_metadata[path_element.target]:
-        target_resource = lookup_resource_by_identifier(
-            class_name=path_element.target,
-            identifier=target_id,
-            global_metadata=global_metadata,
-            anchor_points_by_target=anchor_points_by_target,
+    target_resources_by_dict = global_metadata.get(target_anchor_point.root_slot)
+    if target_resources_by_dict is None:
+        raise PathElementResolutionError(
+            "Cannot resolve path element: No target resources found for"
+            + f" root slot '{target_anchor_point.root_slot}'."
         )
+
+    # lookup the target resources:
+    target_ids_of_interest: set[str] = set()
+    for target_id, target_resource in target_resources_by_dict.items():
 
         referenced_source_ids = lookup_foreign_ids(
             resource=target_resource, slot=path_element.slot
         )
 
         if source_idenifier in referenced_source_ids:
-            target_ids_of_interest.append(target_id)
+            target_ids_of_interest.add(target_id)
 
     return target_ids_of_interest
 
