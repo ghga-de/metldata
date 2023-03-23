@@ -18,8 +18,8 @@
 from contextlib import nullcontext
 
 import pytest
-from pydantic import ValidationError
 
+from metldata.model_utils.assumptions import MetadataModelAssumptionError
 from metldata.model_utils.config import MetadataModelConfig
 from metldata.model_utils.essentials import MetadataModel
 from tests.fixtures.metadata_models import (
@@ -38,6 +38,7 @@ def test_config(model: MetadataModel, is_valid: bool):
 
     with model.temporary_yaml_path() as model_path:
         with nullcontext() if is_valid else pytest.raises(  # type:ignore
-            ValidationError
+            MetadataModelAssumptionError
         ):
-            MetadataModelConfig(metadata_model_path=model_path)
+            config = MetadataModelConfig(metadata_model_path=model_path)
+            _ = config.metadata_model
