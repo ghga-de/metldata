@@ -105,7 +105,7 @@ def add_reference_to_metadata_resource(
 
     # add the target IDs to the source resource:
     resource_copy = resource.copy()
-    resource_copy[reference.new_slot] = sorted(list(target_ids))
+    resource_copy[reference.new_slot] = sorted(target_ids)
 
     return resource_copy
 
