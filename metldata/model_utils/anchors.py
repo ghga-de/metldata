@@ -24,7 +24,7 @@ from linkml_runtime.linkml_model import SlotDefinition
 from pydantic import BaseModel, Field
 
 from metldata.model_utils.essentials import ROOT_CLASS, MetadataModel
-from metldata.model_utils.identifieres import get_class_identifiers
+from metldata.model_utils.identifiers import get_class_identifiers
 
 
 class InvalidAnchorPointError(RuntimeError):

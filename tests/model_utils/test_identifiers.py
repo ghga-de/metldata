@@ -16,7 +16,7 @@
 
 """Test the identifiers module."""
 
-from metldata.model_utils.identifieres import get_class_identifiers
+from metldata.model_utils.identifiers import get_class_identifiers
 from tests.fixtures.metadata_models import MINIMAL_VALID_METADATA_MODEL
 
 
