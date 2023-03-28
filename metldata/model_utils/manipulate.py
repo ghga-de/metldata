@@ -70,7 +70,7 @@ def upsert_class_slot(
     class_copy = deepcopy(class_)
 
     if class_copy.slots:
-        if new_slot.name not in [str(slot) for slot in class_copy.slots]:
+        if all(str(slot) != new_slot.name for slot in class_copy.slots):
             class_copy.slots.append(new_slot.name)
     else:
         class_copy.slots = [new_slot.name]
