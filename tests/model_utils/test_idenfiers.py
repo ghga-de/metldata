@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""Test the idenifiers module."""
+"""Test the identifiers module."""
 
 from metldata.model_utils.identifieres import get_class_identifiers
 from tests.fixtures.metadata_models import MINIMAL_VALID_METADATA_MODEL
