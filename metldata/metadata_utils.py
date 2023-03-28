@@ -148,9 +148,9 @@ def convert_list_to_inlined_dict(
     """Convert a list of resources of same type into a dictionary representation, i.e.
     to "inlined_as_list=false" format."""
 
-    resources_by_identifier: dict[str, Json] = {}
-    for resource in deepcopy(resources):
-        identifier = resource.pop(identifier_slot)
-        resources_by_identifier[identifier] = resource
-
-    return resources_by_identifier
+    return {
+        resource[identifier_slot]: {
+            slot: resource[slot] for slot in resource if slot != identifier_slot
+        }
+        for resource in resources
+    }
