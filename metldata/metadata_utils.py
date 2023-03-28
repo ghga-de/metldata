@@ -16,8 +16,6 @@
 
 """Utilities for handling metadata."""
 
-
-from copy import deepcopy
 from typing import cast
 
 from metldata.custom_types import Json
