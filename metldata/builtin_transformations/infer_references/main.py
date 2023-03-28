@@ -27,7 +27,7 @@ from metldata.builtin_transformations.infer_references.model_transform import (
 )
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.base import Json, MetadataTransformer, TransformationDefintion
+from metldata.transform.base import Json, MetadataTransformer, TransformationDefinition
 
 
 class ReferenceInferenceMetadataTransformer(
@@ -80,7 +80,7 @@ def transform_model(
     )
 
 
-reference_inference_transformation = TransformationDefintion[ReferenceInferenceConfig](
+reference_inference_transformation = TransformationDefinition[ReferenceInferenceConfig](
     config=ReferenceInferenceConfig,
     check_model_assumptions=check_model_assumptions,
     transform_model=transform_model,

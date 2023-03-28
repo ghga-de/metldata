@@ -74,8 +74,7 @@ def add_reference_to_model(
 def add_references_to_model(
     *, model: MetadataModel, references: list[InferredReference]
 ) -> MetadataModel:
-    """Transform the metadata model and return the tranformed one.
-
+    """Transform the metadata model and return the transformed one.
     Raises:
             MetadataModelTransformationError:
                 if the transformation of the metadata model fails.

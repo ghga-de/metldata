@@ -27,7 +27,7 @@ from metldata.model_utils.essentials import MetadataModel
 from metldata.transform.base import (
     MetadataModelAssumptionError,
     MetadataModelTransformationError,
-    TransformationDefintion,
+    TransformationDefinition,
 )
 from metldata.transform.handling import TransformationHandler
 from tests.fixtures.metadata_models import ADVANCED_VALID_METADATA_MODEL
@@ -54,7 +54,7 @@ def test_transformation_handler_assumption_error():
         """A function that always raises a MetadataModelAssumptionError."""
         raise MetadataModelAssumptionError
 
-    transformation = TransformationDefintion(
+    transformation = TransformationDefinition(
         config=reference_inference_transformation.config,
         check_model_assumptions=always_failing_assumptions,
         transform_model=reference_inference_transformation.transform_model,
@@ -79,7 +79,7 @@ def test_transformation_handler_model_transformation_error():
         """A function that always raises a MetadataModelTransformationError."""
         raise MetadataModelTransformationError
 
-    transformation = TransformationDefintion(
+    transformation = TransformationDefinition(
         config=reference_inference_transformation.config,
         check_model_assumptions=reference_inference_transformation.check_model_assumptions,
         transform_model=always_failing_transformation,

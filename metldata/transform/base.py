@@ -70,7 +70,7 @@ class MetadataTransformer(ABC, Generic[Config]):
 
 
 @dataclass(frozen=True)
-class TransformationDefintion(Generic[Config]):
+class TransformationDefinition(Generic[Config]):
     """A model for describing a transformation."""
 
     config: type[Config] = Field(

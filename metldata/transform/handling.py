@@ -19,7 +19,7 @@
 from metldata.custom_types import Json
 from metldata.model_utils.essentials import MetadataModel
 from metldata.model_utils.metadata_validator import MetadataValidator
-from metldata.transform.base import Config, TransformationDefintion
+from metldata.transform.base import Config, TransformationDefinition
 
 
 class TransformationHandler:
@@ -27,7 +27,7 @@ class TransformationHandler:
 
     def __init__(
         self,
-        transformation_definition: TransformationDefintion[Config],
+        transformation_definition: TransformationDefinition[Config],
         transformation_config: Config,
         original_model: MetadataModel,
     ):
