@@ -65,7 +65,7 @@ def add_reference_to_model(
     except ModelManipulationError as error:
         raise MetadataModelTransformationError(
             f"Failed to add the inferred reference '{reference}' to the metadata"
-            + " model.: {error}"
+            + f" model.: {error}"
         ) from error
 
     return schema_view.export_model()
