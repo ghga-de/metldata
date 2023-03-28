@@ -126,7 +126,7 @@ def resolve_target_ids_passive_element(  # noqa: C901
         ) from error
 
     try:
-        source_idenifier = lookup_self_id(
+        source_identifier = lookup_self_id(
             resource=source_resource,
             identifier_slot=source_anchor_point.identifier_slot,
         )
@@ -149,7 +149,7 @@ def resolve_target_ids_passive_element(  # noqa: C901
             resource=target_resource, slot=path_element.slot
         )
 
-        if source_idenifier in referenced_source_ids:
+        if source_identifier in referenced_source_ids:
             target_ids_of_interest.add(target_id)
 
     return target_ids_of_interest
@@ -186,7 +186,7 @@ def resolve_path_element(
 
     if not target_ids:
         raise PathElementResolutionError(
-            f"Cannot resolve path element  for source resource '{source_resource}'"
+            f"Cannot resolve path element for source resource '{source_resource}'"
             + " because no target resources were found."
         )
 
@@ -230,7 +230,7 @@ def resolve_reference_for_metadata_resource(
 
     Raises:
         PathElementResolutionError:
-            if the reference resoltion fails.
+            if the reference resolution fails.
     """
 
     source_resources = [resource]
