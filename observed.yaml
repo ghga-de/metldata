@@ -269,8 +269,8 @@ classes:
         usage_slot_name: null
         values_from: []
     slots:
-    - alias
-    - has_file
+      - alias
+      - has_file
     source: null
     status: null
     string_serialization: null
@@ -759,10 +759,10 @@ classes:
         usage_slot_name: null
         values_from: []
     slots:
-    - alias
-    - description
-    - has_sample
-    - has_file
+      - alias
+      - description
+      - has_sample
+      - has_file
     source: null
     status: null
     string_serialization: null
@@ -797,7 +797,8 @@ classes:
     deprecated: null
     deprecated_element_has_exact_replacement: null
     deprecated_element_has_possible_replacement: null
-    description: A file is an object that contains information generated from a process,
+    description:
+      A file is an object that contains information generated from a process,
       either an Experiment or an Analysis.
     disjoint_with: []
     exact_mappings: []
@@ -1358,11 +1359,11 @@ classes:
         usage_slot_name: null
         values_from: []
     slots:
-    - alias
-    - filename
-    - format
-    - size
-    - checksum
+      - alias
+      - filename
+      - format
+      - size
+      - checksum
     source: null
     status: null
     string_serialization: null
@@ -1745,9 +1746,9 @@ classes:
         usage_slot_name: null
         values_from: []
     slots:
-    - alias
-    - description
-    - has_file
+      - alias
+      - description
+      - has_file
     source: null
     status: null
     string_serialization: null
@@ -1782,7 +1783,8 @@ classes:
     deprecated: null
     deprecated_element_has_exact_replacement: null
     deprecated_element_has_possible_replacement: null
-    description: A grouping entity that represents information about one or more entities.
+    description:
+      A grouping entity that represents information about one or more entities.
       A submission can be considered as a set of inter-related (and inter-connected)
       entities that represent a data submission to GHGA.
     disjoint_with: []
@@ -2238,10 +2240,10 @@ classes:
         usage_slot_name: null
         values_from: []
     slots:
-    - has_file
-    - has_dataset
-    - has_sample
-    - has_experiment
+      - has_file
+      - has_dataset
+      - has_sample
+      - has_experiment
     source: null
     status: null
     string_serialization: null
@@ -2584,7 +2586,8 @@ enums:
         deprecated: null
         deprecated_element_has_exact_replacement: null
         deprecated_element_has_possible_replacement: null
-        description: Standard flowgram format used to encode results of pyrosequencing
+        description:
+          Standard flowgram format used to encode results of pyrosequencing
           from the 454 Life Sciences platform.
         exact_mappings: []
         examples: []
@@ -2728,7 +2731,7 @@ id: https://w3id.org/Minimal-Model
 id_prefixes: []
 imported_from: null
 imports:
-- linkml:types
+  - linkml:types
 in_language: null
 in_subset: []
 keywords: []
@@ -2877,11 +2880,12 @@ slots:
     deprecated: null
     deprecated_element_has_exact_replacement: null
     deprecated_element_has_possible_replacement: null
-    description: A computed value which depends on the contents of a block of data
+    description:
+      A computed value which depends on the contents of a block of data
       and which is transmitted or stored along with the data in order to detect corruption
       of the data. The receiving system recomputes the checksum based upon the received
       data and compares this value with the one sent with the data. If the two values
-      are the same, the receiver has_some confidence that the data was received correctly.
+      are the same, the receiver has some confidence that the data was received correctly.
     designates_type: null
     disjoint_with: []
     domain: null
@@ -3199,7 +3203,7 @@ slots:
     deprecated: null
     deprecated_element_has_exact_replacement: null
     deprecated_element_has_possible_replacement: null
-    description: 'The format of the file: BAM, SAM, CRAM, BAI, etc.'
+    description: "The format of the file: BAM, SAM, CRAM, BAI, etc."
     designates_type: null
     disjoint_with: []
     domain: null

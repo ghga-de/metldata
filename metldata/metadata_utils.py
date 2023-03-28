@@ -32,7 +32,7 @@ class ForeignIdLookUpError(RuntimeError):
     """Raised when a foreign id cannot be looked up."""
 
 
-class MetadataAnchorMissmatchError(RuntimeError):
+class MetadataAnchorMismatchError(RuntimeError):
     """Raised when the provided metadata does not match the expected anchor points."""
 
 
@@ -61,7 +61,7 @@ def lookup_self_id(*, resource: Json, identifier_slot: str):
 
 
 def lookup_foreign_ids(*, resource: Json, slot: str) -> set[str]:
-    """Lookup foreing IDs referenced by the specified resource using the specified
+    """Lookup foreign IDs referenced by the specified resource using the specified
     slot."""
 
     foreign_ids = resource.get(slot)
@@ -120,7 +120,7 @@ def lookup_resource_by_identifier(
     anchor_point = anchor_points_by_target[class_name]
 
     if anchor_point.root_slot not in global_metadata:
-        raise MetadataAnchorMissmatchError(
+        raise MetadataAnchorMismatchError(
             f"Could not find root slot of the anchor point '{anchor_point.root_slot}'"
             + " in the global metadata."
         )

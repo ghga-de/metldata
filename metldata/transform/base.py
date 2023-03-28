@@ -86,8 +86,8 @@ class TransformationDefinition(Generic[Config]):
     transform_model: Callable[[MetadataModel, Config], MetadataModel] = Field(
         ...,
         description=(
-            "A function to transforms the model. Raises a MetadataModelTransformationError"
-            "if the transformation fails."
+            "A function to transform the model. Raises a"
+            + " MetadataModelTransformationError if the transformation fails."
         ),
     )
     metadata_transformer_factory: type[MetadataTransformer[Config]] = Field(

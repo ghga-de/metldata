@@ -14,8 +14,7 @@
 # limitations under the License.
 #
 
-"""Logic to check basic assumption about the metadata model."""
-
+"""Logic to check basic assumptions about the metadata model."""
 from metldata.model_utils.anchors import InvalidAnchorPointError, get_anchor_points
 from metldata.model_utils.essentials import ROOT_CLASS, MetadataModel
 
@@ -25,7 +24,7 @@ class MetadataModelAssumptionError(RuntimeError):
 
 
 def check_root_class_existence(model: MetadataModel) -> None:
-    """Check the existence of a root class that is called ROOT_CLASS.
+    """Check the existence of a root class that is called as defined in ROOT_CLASS.
 
     Raises:
         MetadataModelAssumptionError: if validation fails.
@@ -36,12 +35,11 @@ def check_root_class_existence(model: MetadataModel) -> None:
 
     if root_class is None:
         raise MetadataModelAssumptionError(
-            "A submission class is required but does not exist."
+            f"A {ROOT_CLASS} class is required but does not exist."
         )
-
     if not root_class.tree_root:
         raise MetadataModelAssumptionError(
-            "The submission class must have the tree_root property set to true."
+            f"The {ROOT_CLASS} class must have the tree_root property set to true."
         )
 
 

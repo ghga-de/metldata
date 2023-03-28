@@ -16,6 +16,8 @@
 
 """Basic constants and logic related to models."""
 
+from __future__ import annotations
+
 import dataclasses
 import json
 from contextlib import contextmanager
@@ -36,7 +38,7 @@ class MetadataModel(SchemaDefinition):
     """A dataclass for describing metadata models."""
 
     @classmethod
-    def init_from_path(cls, model_path: Path) -> "MetadataModel":
+    def init_from_path(cls, model_path: Path) -> MetadataModel:
         """Initialize from a model file in yaml format."""
 
         with open(model_path, "r", encoding="utf-8") as file:
@@ -45,12 +47,12 @@ class MetadataModel(SchemaDefinition):
         return cls(**model_json)
 
     @property
-    def schema_view(self) -> "ExportableSchemaView":
+    def schema_view(self) -> ExportableSchemaView:
         """Get a schema view instance from the metadata model."""
 
         return ExportableSchemaView(self)
 
-    def copy(self) -> "MetadataModel":
+    def copy(self) -> MetadataModel:
         """Copy the model."""
 
         return deepcopy(self)
@@ -109,7 +111,7 @@ class MetadataModel(SchemaDefinition):
     @contextmanager
     def temporary_yaml_path(self) -> Generator[Path, None, None]:
         """Returns a context manager that creates a temporary yaml file containing the
-        model and returns its path on __enter__ and deletes it on __enter__.
+        model and returns its path on __enter__ and deletes it on __exit__.
 
         This is required because some tools in the linkml schema ecosystem only support
         working with paths to yaml file and not with in-memory representations.
@@ -128,7 +130,7 @@ class MetadataModel(SchemaDefinition):
 
 
 class ExportableSchemaView(SchemaView):
-    """Extend the SchemaView by adding a method to exporting a MetadataModel."""
+    """Extend the SchemaView by adding a method for exporting a MetadataModel."""
 
     def export_model(self) -> MetadataModel:
         """Export a MetadataModel."""

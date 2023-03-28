@@ -163,12 +163,12 @@ def filter_anchor_points(
 
     # check if anchor points exists for all classes:
     classes_without_anchor_points = classes_of_interest.difference(
-        set(anchor_points_by_target.keys())
+        anchor_points_by_target.keys()
     )
     if classes_without_anchor_points:
         raise AnchorPointNotFoundError(
             "Following classes have no anchor points: "
-            + ", ".join(classes_without_anchor_points)
+            + ", ".join(sorted(classes_without_anchor_points))
         )
 
     return {

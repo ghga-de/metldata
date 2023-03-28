@@ -25,7 +25,7 @@ from metldata.model_utils.essentials import ExportableSchemaView
 
 
 class ModelManipulationError(RuntimeError):
-    """A base for exception occuring in the context of model manipulations."""
+    """A base for exception occurring in the context of model manipulations."""
 
 
 class ClassNotFoundError(ModelManipulationError):
@@ -40,7 +40,7 @@ def add_slot_if_not_exists(
     schema_view: ExportableSchemaView, new_slot: SlotDefinition
 ) -> ExportableSchemaView:
     """Add the new slot only if it does not exist and return a modified copy of the
-    provided schema view. If it does already exist, the schema view is return
+    provided schema view. If it does already exist, the schema view is returned
     unmodified."""
 
     if not schema_view.get_slot(slot_name=new_slot.name):
@@ -55,7 +55,7 @@ def add_slot_if_not_exists(
 def upsert_class_slot(
     schema_view: ExportableSchemaView, class_name: str, new_slot: SlotDefinition
 ) -> ExportableSchemaView:
-    """Insert a new or update and existing slot of a class.
+    """Insert a new or update an existing slot of a class.
 
     Raises:
         ClassNotFoundError: if the specified class does not exist.
@@ -77,10 +77,9 @@ def upsert_class_slot(
 
     # update slot usage:
     if class_copy.slot_usage:
-        if isinstance(class_copy.slot_usage, dict):
-            class_copy.slot_usage[new_slot.name] = new_slot
-        else:
+        if not isinstance(class_copy.slot_usage, dict):
             raise RuntimeError(f"Unexpected slot usage for class '{class_name}'")
+        class_copy.slot_usage[new_slot.name] = new_slot
     else:
         class_copy.slot_usage = {new_slot.name: new_slot}
 

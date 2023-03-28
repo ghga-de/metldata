@@ -39,7 +39,7 @@ def test_accession_store_happy(config_fixture: Config):  # noqa: F811
 def test_accession_store_unkown_accession(config_fixture: Config):  # noqa: F811
     """Test accession store happy path."""
 
-    unkown_accession = "accession003"
+    unknown_accession = "accession003"
 
     accession_store = AccessionStore(config=config_fixture)
-    assert not accession_store.exists(accession=unkown_accession)
+    assert not accession_store.exists(accession=unknown_accession)
