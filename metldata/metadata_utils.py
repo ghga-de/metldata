@@ -19,7 +19,7 @@
 from typing import cast
 
 from metldata.custom_types import Json
-from metldata.model_utils.anchors import AnchorPoint
+from metldata.model_utils.anchors import AnchorPoint, lookup_anchor_point
 
 
 class SelfIdLookUpError(RuntimeError):
@@ -115,7 +115,9 @@ def lookup_resource_by_identifier(
             if the resource with the given identifier could not be found.
     """
 
-    anchor_point = anchor_points_by_target[class_name]
+    anchor_point = lookup_anchor_point(
+        class_name=class_name, anchor_points_by_target=anchor_points_by_target
+    )
 
     if anchor_point.root_slot not in global_metadata:
         raise MetadataAnchorMismatchError(
@@ -147,8 +149,75 @@ def convert_list_to_inlined_dict(
     to "inlined_as_list=false" format."""
 
     return {
-        resource[identifier_slot]: {
+        lookup_self_id(resource=resource, identifier_slot=identifier_slot): {
             slot: resource[slot] for slot in resource if slot != identifier_slot
         }
         for resource in resources
     }
+
+
+def convert_inlined_dict_to_list(
+    *, resources: dict[str, Json], identifier_slot: str
+) -> list[Json]:
+    """Convert a dictionary representation of resources into a list representation, i.e.
+    to "inlined_as_list=true" format."""
+
+    return [
+        add_identifier_to_anchored_resource(
+            resource=resource, identifier=identifier, identifier_slot=identifier_slot
+        )
+        for identifier, resource in resources.items()
+    ]
+
+
+def get_resources_of_class(
+    *,
+    class_name: str,
+    global_metadata: Json,
+    anchor_points_by_target: dict[str, AnchorPoint],
+) -> list[Json]:
+    """Get all instances of the given class from the provided global metadata.
+
+    Raises:
+        MetadataAnchorMissmatchError:
+            if the provided metadata does not match the expected anchor points.
+    """
+
+    anchor_point = lookup_anchor_point(
+        class_name=class_name, anchor_points_by_target=anchor_points_by_target
+    )
+
+    if anchor_point.root_slot not in global_metadata:
+        raise MetadataAnchorMismatchError(
+            f"Could not find root slot of the anchor point '{anchor_point.root_slot}'"
+            + " in the global metadata."
+        )
+
+    resources_as_dict = global_metadata[anchor_point.root_slot]
+
+    resources_as_list = convert_inlined_dict_to_list(
+        resources=resources_as_dict, identifier_slot=anchor_point.identifier_slot
+    )
+
+    return resources_as_list
+
+
+def update_resources_in_metadata(
+    *,
+    resources: list[Json],
+    class_name: str,
+    global_metadata: Json,
+    anchor_points_by_target: dict[str, AnchorPoint],
+) -> Json:
+    """Update the provided global metadata with the provided resources of the given
+    class. Returns a copy of the updated metadata."""
+
+    anchor_point = lookup_anchor_point(
+        class_name=class_name, anchor_points_by_target=anchor_points_by_target
+    )
+
+    resources_as_dict = convert_list_to_inlined_dict(
+        resources=resources, identifier_slot=anchor_point.identifier_slot
+    )
+
+    return {**global_metadata, anchor_point.root_slot: resources_as_dict}
