@@ -30,9 +30,10 @@ def get_class_identifier(model: MetadataModel, class_name: str) -> Optional[str]
 
     schema_view = model.schema_view
 
-    for slot_defs in schema_view.class_induced_slots(class_name=class_name):
-        if slot_defs.identifier:
-            return str(slot_defs.name)
+    for slot_name in schema_view.class_slots(class_name=class_name):
+        slot_def = schema_view.induced_slot(slot_name=slot_name, class_name=class_name)
+        if slot_def.identifier:
+            return str(slot_def.name)
 
     return None
 
@@ -51,6 +52,9 @@ def get_class_identifiers(model: MetadataModel) -> dict[str, Optional[str]]:
     for class_name in schema_view.all_classes():
         if class_name == ROOT_CLASS:
             continue  # Root class does not have an identifier
+        class_def = schema_view.get_class(class_name=class_name)
+        if class_def.mixin or class_def.abstract:
+            continue  # Mixins and abstract classes do not have an identifier
         identifier = get_class_identifier(model=model, class_name=class_name)
         identifiers_by_class[class_name] = identifier
 
