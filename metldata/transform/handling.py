@@ -16,10 +16,18 @@
 
 """Logic for handling Transformation."""
 
+from pydantic import BaseModel, Field
 from metldata.custom_types import Json
 from metldata.model_utils.essentials import MetadataModel
 from metldata.model_utils.metadata_validator import MetadataValidator
-from metldata.transform.base import Config, TransformationDefinition
+from metldata.transform.base import (
+    Config,
+    TransformationDefinition,
+    WorkflowDefinition,
+    WorkflowConfig,
+    WorkflowStepBase,
+    WorkflowBase,
+)
 
 
 class TransformationHandler:
@@ -77,3 +85,31 @@ class TransformationHandler:
         self._transformed_metadata_validator.validate(transformed_metadata)
 
         return transformed_metadata
+
+
+class ResolvedWorkflowStep(WorkflowStepBase):
+    """A resolved workflow step contains a transformation handler."""
+
+    name: str
+    transformation_handler: TransformationHandler
+
+
+class ResolvedWorkflow(WorkflowBase):
+    """A resolved workflow contains a list of resolved workflow steps."""
+
+    steps: list[ResolvedWorkflowStep]
+    workflow_config: WorkflowConfig
+
+
+class WorkflowHandler:
+    """Used for executing workflows described in a WorkflowDefinition."""
+
+    def __init__(
+        workflow_definition: WorkflowDefinition,
+        workflow_config: WorkflowConfig,
+        original_model: MetadataModel,
+    ):
+        """Initialize the WorkflowHandler with a workflow deinition, a matching
+        config, and a metadata model. The workflow definition is translated into a
+        resolved workflow.
+        """

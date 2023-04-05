@@ -14,13 +14,13 @@
 # limitations under the License.
 #
 
-"""Models to describe transformations."""
+"""Models to describe transformations and workflows."""
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Callable, Generic, TypeVar
+from typing import Optional, Callable, Generic, TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator, root_validator, create_model
 
 from metldata.custom_types import Json
 
@@ -49,7 +49,7 @@ class MetadataTransformer(ABC, Generic[Config]):
         *,
         config: Config,
         original_model: MetadataModel,
-        transformed_model: MetadataModel
+        transformed_model: MetadataModel,
     ):
         """Initialize the transformer with config params, the original model, and the
         transformed model."""
@@ -97,3 +97,124 @@ class TransformationDefinition(Generic[Config]):
             "if the transformation fails."
         ),
     )
+
+
+class WorkflowConfig(BaseModel, ABC):
+    """A base class for workflow configs."""
+
+
+class WorkflowStepBase(BaseModel, ABC):
+    """A base class for workflow steps."""
+
+    description: str = Field(..., description="A description of the step.")
+    input: Optional[str] = Field(
+        ...,
+        description=(
+            "The name of the workflow step from which the output is used as input"
+            " for this step. If this is the first step, set to None."
+        ),
+    )
+
+
+class WorkflowStep(WorkflowStepBase):
+    """A single step in a transformation workflow."""
+
+    transformation_def: TransformationDefinition = Field(
+        ...,
+        description="The transformation to be executed in this step.",
+    )
+
+
+class WorkflowBase(BaseModel, ABC):
+    """A base class for workflow definitions."""
+
+    description: str = Field(..., description="A description of the workflow.")
+    artifacts: dict[str, str] = Field(
+        ...,
+        description=(
+            "A dictionary of artifacts that are output by this workflow."
+            + " The keys are the names of the artifacts, and the values are the names"
+            + " of the workflow steps that output them."
+        ),
+    )
+
+
+class WorkflowDefinition(WorkflowBase):
+    """A definition of a transformation workflow."""
+
+    steps: dict[str, WorkflowStep] = Field(
+        ...,
+        description=(
+            "A dictionary of workflow steps. The keys are the names of the steps, and"
+            + " the values are the workflow steps themselves."
+        ),
+    )
+
+    # pylint: disable=no-self-argument
+    @validator("steps", pre=False)
+    def validate_step_references(
+        cls, steps: dict[str, WorkflowStep]
+    ) -> dict[str, WorkflowStep]:
+        """Validate that workflow steps reference other existing other steps as input.
+        There should be exactly one step with input=None.
+        """
+
+        step_with_no_input_found = False
+
+        for step_name, step in steps.copy().items():
+            if step.input is None:
+                if step_with_no_input_found:
+                    raise ValueError(
+                        "There should be exactly one step with input=None. But multiple"
+                        + " were found."
+                    )
+                step_with_no_input_found = True
+                continue
+            if step.input not in steps:
+                raise ValueError(
+                    f"Step {step.input} referenced in step {step_name} is not defined."
+                )
+
+        if not step_with_no_input_found:
+            raise ValueError(
+                "There should be exactly one step with input=None but none was found."
+            )
+
+        return steps
+
+    @root_validator(pre=False)
+    def validate_artifact_references(cls, values):
+        """Validate that artifacts reference existing workflow steps."""
+
+        steps = values.get("steps")
+        if steps is None:
+            raise ValueError("Steps are undefined.")
+        artifacts = values.get("artifacts")
+        if artifacts is None:
+            raise ValueError("Artifacts are undefined.")
+
+        for artifact_name, step_name in artifacts.items():
+            if step_name not in steps:
+                raise ValueError(
+                    f"Step {step_name} referenced in artifact {artifact_name} is not defined."
+                )
+
+        return values
+
+    @property
+    def config_cls(self) -> type[BaseModel]:
+        """Get a config model containing the config requirements from all workflow
+        steps."""
+
+        step_configs = {
+            step_name: (step.transformation_def.config_cls, ...)
+            for step_name, step in self.steps.items()
+        }
+
+        config_cls = create_model(
+            "SpecificWorkflowConfig",
+            **step_configs,
+            __base__=WorkflowConfig,
+        )
+
+        return config_cls

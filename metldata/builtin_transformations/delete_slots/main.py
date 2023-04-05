@@ -29,7 +29,11 @@ from metldata.builtin_transformations.delete_slots.model_transform import (
 from metldata.model_utils.anchors import get_anchors_points_by_target
 from metldata.model_utils.assumptions import check_anchor_points
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.base import Json, MetadataTransformer, TransformationDefinition
+from metldata.transform.base import (
+    Json,
+    MetadataTransformer,
+    TransformationDefinition,
+)
 
 
 def check_model_assumptions(model: MetadataModel, config: SlotDeletionConfig):
