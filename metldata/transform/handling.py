@@ -17,6 +17,7 @@
 """Logic for handling Transformation."""
 
 from pydantic import BaseModel, Field
+from sqlalchemy import desc
 from metldata.custom_types import Json
 from metldata.model_utils.essentials import MetadataModel
 from metldata.model_utils.metadata_validator import MetadataValidator
@@ -25,9 +26,26 @@ from metldata.transform.base import (
     TransformationDefinition,
     WorkflowDefinition,
     WorkflowConfig,
-    WorkflowStepBase,
-    WorkflowBase,
+    WorkflowStep,
 )
+
+
+class WorkflowConfigMissmatchError(RuntimeError):
+    """Raised when the provided workflow config does not match the config class of the
+    workflow definition.
+    """
+
+    def __init__(
+        self, workflow_definition: WorkflowDefinition, workflow_config: Config
+    ):
+        """Initialize the error with the workflow definition and the config."""
+
+        message = (
+            f"The config {workflow_config} is not an instance of the config class "
+            f"{workflow_definition.config_cls} of the workflow definition "
+            f"{workflow_definition}."
+        )
+        super().__init__(message)
 
 
 class TransformationHandler:
@@ -87,24 +105,104 @@ class TransformationHandler:
         return transformed_metadata
 
 
-class ResolvedWorkflowStep(WorkflowStepBase):
+class ResolvedWorkflowStep(WorkflowStep):
     """A resolved workflow step contains a transformation handler."""
 
-    name: str
     transformation_handler: TransformationHandler
 
+    class Config:
+        """Config for ResolvedWorkflowStep."""
 
-class ResolvedWorkflow(WorkflowBase):
+        arbitrary_types_allowed = True
+
+
+class ResolvedWorkflow(WorkflowDefinition):
     """A resolved workflow contains a list of resolved workflow steps."""
 
     steps: list[ResolvedWorkflowStep]
     workflow_config: WorkflowConfig
 
 
+def check_workflow_config(
+    *, workflow_definition: WorkflowDefinition, workflow_config: WorkflowConfig
+):
+    """Checks if the config is an instance of the config class of the workflow
+    definition.
+
+    Raises:
+        WorkflowConfigMissmatchError:
+    """
+
+    if not isinstance(workflow_config, workflow_definition.config_cls):
+        raise WorkflowConfigMissmatchError(
+            workflow_definition=workflow_definition, workflow_config=workflow_config
+        )
+
+
+def resolve_workflow_step(
+    *,
+    workflow_step: WorkflowStep,
+    step_name: str,
+    workflow_definition: WorkflowDefinition,
+    workflow_config: WorkflowConfig,
+    original_model: MetadataModel,
+) -> ResolvedWorkflowStep:
+    """Translates a workflow step given a workflow definition and a workflow config
+    into a resolved workflow step.
+    """
+
+    check_workflow_config(
+        workflow_definition=workflow_definition, workflow_config=workflow_config
+    )
+
+    transformation_handler = TransformationHandler(
+        transformation_definition=workflow_step.transformation_definition,
+        transformation_config=step_name,
+        original_model=original_model,
+    )
+    return ResolvedWorkflowStep(
+        transformation_handler=transformation_handler,
+        input=workflow_step.input,
+        description=workflow_step.description,
+    )
+
+
+def resolve_workflow(
+    workflow_definition: WorkflowDefinition,
+    original_model: MetadataModel,
+    workflow_config: WorkflowConfig,
+) -> ResolvedWorkflow:
+    """Translates a workflow definition given an input model and a workflow config into
+    a resolved workflow.
+    """
+
+    check_workflow_config(
+        workflow_definition=workflow_definition, workflow_config=workflow_config
+    )
+
+    resolved_steps: dict[str, ResolvedWorkflowStep] = []
+    for step_name, workflow_step in workflow_definition.steps.items():
+        resolve_workflow_step(
+            workflow_step=workflow_step,
+            step_name=step_name,
+            workflow_definition=workflow_definition,
+            workflow_config=workflow_config,
+            original_model=original_model,
+        )
+
+    return ResolvedWorkflow(
+        steps=resolved_steps,
+        workflow_config=workflow_config,
+        description=workflow_definition.description,
+        artifacts=workflow_definition.artifacts,
+    )
+
+
 class WorkflowHandler:
     """Used for executing workflows described in a WorkflowDefinition."""
 
     def __init__(
+        self,
         workflow_definition: WorkflowDefinition,
         workflow_config: WorkflowConfig,
         original_model: MetadataModel,
@@ -113,3 +211,9 @@ class WorkflowHandler:
         config, and a metadata model. The workflow definition is translated into a
         resolved workflow.
         """
+
+        self._resolved_workflow = resolve_workflow(
+            workflow_definition=workflow_definition,
+            original_model=original_model,
+            workflow_config=workflow_config,
+        )

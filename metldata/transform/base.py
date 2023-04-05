@@ -103,10 +103,14 @@ class WorkflowConfig(BaseModel, ABC):
     """A base class for workflow configs."""
 
 
-class WorkflowStepBase(BaseModel, ABC):
-    """A base class for workflow steps."""
+class WorkflowStep(BaseModel):
+    """A single step in a transformation workflow."""
 
     description: str = Field(..., description="A description of the step.")
+    transformation_definition: TransformationDefinition = Field(
+        ...,
+        description="The transformation to be executed in this step.",
+    )
     input: Optional[str] = Field(
         ...,
         description=(
@@ -115,38 +119,29 @@ class WorkflowStepBase(BaseModel, ABC):
         ),
     )
 
+    class Config:
+        """Config for the workflow step."""
 
-class WorkflowStep(WorkflowStepBase):
-    """A single step in a transformation workflow."""
-
-    transformation_def: TransformationDefinition = Field(
-        ...,
-        description="The transformation to be executed in this step.",
-    )
+        frozen = True
 
 
-class WorkflowBase(BaseModel, ABC):
-    """A base class for workflow definitions."""
+class WorkflowDefinition(BaseModel):
+    """A definition of a transformation workflow."""
 
     description: str = Field(..., description="A description of the workflow.")
+    steps: dict[str, WorkflowStep] = Field(
+        ...,
+        description=(
+            "A dictionary of workflow steps. The keys are the names of the steps, and"
+            + " the values are the workflow steps themselves."
+        ),
+    )
     artifacts: dict[str, str] = Field(
         ...,
         description=(
             "A dictionary of artifacts that are output by this workflow."
             + " The keys are the names of the artifacts, and the values are the names"
             + " of the workflow steps that output them."
-        ),
-    )
-
-
-class WorkflowDefinition(WorkflowBase):
-    """A definition of a transformation workflow."""
-
-    steps: dict[str, WorkflowStep] = Field(
-        ...,
-        description=(
-            "A dictionary of workflow steps. The keys are the names of the steps, and"
-            + " the values are the workflow steps themselves."
         ),
     )
 
@@ -206,8 +201,11 @@ class WorkflowDefinition(WorkflowBase):
         """Get a config model containing the config requirements from all workflow
         steps."""
 
+        if hasattr(self, "_config_cls"):
+            return self._config_cls  # type: ignore
+
         step_configs = {
-            step_name: (step.transformation_def.config_cls, ...)
+            step_name: (step.transformation_definition.config_cls, ...)
             for step_name, step in self.steps.items()
         }
 
@@ -217,4 +215,42 @@ class WorkflowDefinition(WorkflowBase):
             __base__=WorkflowConfig,
         )
 
+        # pylint: disable=attribute-defined-outside-init
+        self._config_cls = config_cls
+
         return config_cls
+
+    @property
+    def step_order(self) -> list[str]:
+        """Get a list of step names in the order in which the steps should be executed."""
+
+        if hasattr(self, "_step_order"):
+            return self._step_order
+
+        step_order = list(self.steps.keys())
+        for _ in range(1000):
+            # try to come up with a seqeuence of steps that satisfies all dependencies:
+            for step_name in step_order:
+                dependency = self.steps[step_name].input
+                if dependency:
+                    # check if the dependency is before the current step in the
+                    # step order, if so, move the current step after the dependency:
+                    self_position = step_order.index(step_name)
+                    dependency_position = step_order.index(dependency)
+                    if dependency_position > self_position:
+                        step_order.remove(step_name)
+                        step_order.insert(dependency_position + 1, step_name)
+                        break
+            else:
+                # if we get here, we have found a valid step order and return it:
+                return step_order
+
+        raise RuntimeError(
+            "Exceeded number of tries to resolve the step order."
+            + " This is likely due to a circular dependency."
+        )
+
+    class Config:
+        """Config for the workflow step."""
+
+        frozen = True
