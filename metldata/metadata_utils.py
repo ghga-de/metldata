@@ -179,7 +179,7 @@ def get_resources_of_class(
     """Get all instances of the given class from the provided global metadata.
 
     Raises:
-        MetadataAnchorMissmatchError:
+        MetadataAnchorMismatchError:
             if the provided metadata does not match the expected anchor points.
     """
 
