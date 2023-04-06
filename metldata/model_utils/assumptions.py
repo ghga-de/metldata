@@ -42,7 +42,7 @@ def check_class_exists(model: MetadataModel, class_name: str) -> None:
 
     if class_ is None:
         raise MetadataModelAssumptionError(
-            f"A class called {class_name} is required but does not exist."
+            f"A class called '{class_name}' is required but does not exist."
         )
 
 
@@ -50,8 +50,8 @@ def check_class_slot_exists(
     model: MetadataModel, class_name: str, slot_name: str, ignore_parents: bool = False
 ) -> None:
     """Check that a class with the given name exists and that it has a slot with the
-    given name. If ignore parents is set to True, slots that are inherited from parent
-    or mixinins are ignored.
+    given name. If ignore_parents is set to True, slots that are inherited from parent
+    classes or mixins are ignored.
 
     Raises:
         MetadataModelAssumptionError: if validation fails.
@@ -65,11 +65,12 @@ def check_class_slot_exists(
 
     if slot_name not in all_slots:
         raise MetadataModelAssumptionError(
-            f"A slot called {slot_name} is required but does not exist"
-            + f" in the {class_name} class."
+            f"A slot called '{slot_name}' is required but does not exist"
+            + f" in the '{class_name}' class."
             " Inherited slots are ignored."
             if ignore_parents
-            else ""
+            else "f"A slot called '{slot_name}' is required but does not exist"
+            + f" in the '{class_name}' class or its parents classes and mixins."
         )
 
 
@@ -96,7 +97,7 @@ def check_root_class_existence(model: MetadataModel) -> None:
 def check_anchor_points(
     model: MetadataModel, classes: Optional[list[str]] = None
 ) -> None:
-    """Checks the anchor points of the root class. If classes is specified, make sure
+    """Checks the anchor points of the root class. If classes is specified, also checks
     that anchor points for the classes exist.
 
     Raises:

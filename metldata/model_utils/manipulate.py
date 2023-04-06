@@ -107,12 +107,12 @@ def upsert_class_slot(
 def delete_class_slot(
     schema_view: ExportableSchemaView, class_name: str, slot_name: str
 ) -> ExportableSchemaView:
-    """Delete a slot from a class. Please not the slot may not be inherited but must be
+    """Delete a slot from a class. This slot may not be inherited but must be
     a slot of the class itself.
 
     Raises:
         ClassNotFoundError: if the specified class does not exist.
-        ClassSlotNotFoundError: if the specified slot does not exist in the specified
+        ClassSlotNotFoundError: if the specified slot does not exist in the specified class.
     """
 
     class_ = schema_view.get_class(class_name=class_name)

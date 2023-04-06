@@ -41,7 +41,7 @@ def delete_class_slot(
     slot_name: str,
     anchor_points_by_target: dict[str, AnchorPoint],
 ) -> Json:
-    """Delete a slot from a class the provided metadata. Returns a modified copy of
+    """Delete a slot from a class in the provided metadata. Returns a modified copy of
     the metadata."""
 
     resources = get_resources_of_class(
