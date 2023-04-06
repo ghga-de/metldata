@@ -109,7 +109,7 @@ def lookup_resource_by_identifier(
     identifier.
 
     Raises:
-        MetadataAnchorMissmatchError:
+        MetadataAnchorMismatchError:
             if the provided metadata does not match the expected anchor points.
         MetadataResourceNotFoundError:
             if the resource with the given identifier could not be found.
@@ -195,7 +195,7 @@ def get_resources_of_class(
 
     return convert_inlined_dict_to_list(
         resources=global_metadata[anchor_point.root_slot],
-        identifier_slot=anchor_point.identifier_slot
+        identifier_slot=anchor_point.identifier_slot,
     )
 
 
