@@ -34,7 +34,7 @@ from metldata.transform.base import Json, MetadataTransformer, TransformationDef
 class ReferenceInferenceMetadataTransformer(
     MetadataTransformer[ReferenceInferenceConfig]
 ):
-    """A transformer that infers references in metadata based on existing once."""
+    """A transformer that infers references in metadata based on existing ones."""
 
     def __init__(
         self,
