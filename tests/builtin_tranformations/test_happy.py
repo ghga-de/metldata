@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""Test the infer_references module."""
+"""Test the builtin transformations using pre-defined test cases."""
 
 import pytest
 
