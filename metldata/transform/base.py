@@ -18,9 +18,9 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional, Callable, Generic, TypeVar
+from typing import Callable, Generic, Optional, TypeVar
 
-from pydantic import BaseModel, Field, validator, root_validator, create_model
+from pydantic import BaseModel, Field, create_model, root_validator, validator
 
 from metldata.custom_types import Json
 
@@ -103,14 +103,10 @@ class WorkflowConfig(BaseModel, ABC):
     """A base class for workflow configs."""
 
 
-class WorkflowStep(BaseModel):
-    """A single step in a transformation workflow."""
+class WorkflowStepBase(BaseModel, ABC):
+    """A base class for workflow steps."""
 
     description: str = Field(..., description="A description of the step.")
-    transformation_definition: TransformationDefinition = Field(
-        ...,
-        description="The transformation to be executed in this step.",
-    )
     input: Optional[str] = Field(
         ...,
         description=(
@@ -123,6 +119,15 @@ class WorkflowStep(BaseModel):
         """Config for the workflow step."""
 
         frozen = True
+
+
+class WorkflowStep(WorkflowStepBase):
+    """A single step in a transformation workflow."""
+
+    transformation_definition: TransformationDefinition = Field(
+        ...,
+        description="The transformation to be executed in this step.",
+    )
 
 
 class WorkflowDefinition(BaseModel):
@@ -201,9 +206,6 @@ class WorkflowDefinition(BaseModel):
         """Get a config model containing the config requirements from all workflow
         steps."""
 
-        if hasattr(self, "_config_cls"):
-            return self._config_cls  # type: ignore
-
         step_configs = {
             step_name: (step.transformation_definition.config_cls, ...)
             for step_name, step in self.steps.items()
@@ -215,17 +217,11 @@ class WorkflowDefinition(BaseModel):
             __base__=WorkflowConfig,
         )
 
-        # pylint: disable=attribute-defined-outside-init
-        self._config_cls = config_cls
-
         return config_cls
 
     @property
     def step_order(self) -> list[str]:
         """Get a list of step names in the order in which the steps should be executed."""
-
-        if hasattr(self, "_step_order"):
-            return self._step_order
 
         step_order = list(self.steps.keys())
         for _ in range(1000):

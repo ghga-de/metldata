@@ -16,16 +16,15 @@
 
 """Test the base module."""
 
-from audioop import add
+
 import pytest
 from pydantic import ValidationError
 
+from metldata.builtin_transformations.delete_slots import slot_deletion_transformation
 from metldata.builtin_transformations.infer_references import (
     reference_inference_transformation,
 )
-from metldata.builtin_transformations.delete_slots import slot_deletion_transformation
 from metldata.transform.base import WorkflowDefinition, WorkflowStep
-
 from tests.fixtures.workflows import EXAMPLE_WORKFLOW_DEFINITION
 
 

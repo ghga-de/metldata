@@ -16,17 +16,18 @@
 
 """Logic for handling Transformation."""
 
-from pydantic import BaseModel, Field
-from sqlalchemy import desc
+from pydantic import BaseModel
+
 from metldata.custom_types import Json
 from metldata.model_utils.essentials import MetadataModel
 from metldata.model_utils.metadata_validator import MetadataValidator
 from metldata.transform.base import (
     Config,
     TransformationDefinition,
-    WorkflowDefinition,
     WorkflowConfig,
+    WorkflowDefinition,
     WorkflowStep,
+    WorkflowStepBase,
 )
 
 
@@ -105,7 +106,7 @@ class TransformationHandler:
         return transformed_metadata
 
 
-class ResolvedWorkflowStep(WorkflowStep):
+class ResolvedWorkflowStep(WorkflowStepBase):
     """A resolved workflow step contains a transformation handler."""
 
     transformation_handler: TransformationHandler
@@ -119,7 +120,7 @@ class ResolvedWorkflowStep(WorkflowStep):
 class ResolvedWorkflow(WorkflowDefinition):
     """A resolved workflow contains a list of resolved workflow steps."""
 
-    steps: list[ResolvedWorkflowStep]
+    steps: dict[str, ResolvedWorkflowStep]
     workflow_config: WorkflowConfig
 
 
@@ -133,7 +134,7 @@ def check_workflow_config(
         WorkflowConfigMissmatchError:
     """
 
-    if not isinstance(workflow_config, workflow_definition.config_cls):
+    if workflow_config.schema_json() == workflow_definition.schema_json():
         raise WorkflowConfigMissmatchError(
             workflow_definition=workflow_definition, workflow_config=workflow_config
         )
@@ -155,9 +156,10 @@ def resolve_workflow_step(
         workflow_definition=workflow_definition, workflow_config=workflow_config
     )
 
+    transformation_config: BaseModel = getattr(workflow_config, step_name)
     transformation_handler = TransformationHandler(
         transformation_definition=workflow_step.transformation_definition,
-        transformation_config=step_name,
+        transformation_config=transformation_config,
         original_model=original_model,
     )
     return ResolvedWorkflowStep(
@@ -180,14 +182,23 @@ def resolve_workflow(
         workflow_definition=workflow_definition, workflow_config=workflow_config
     )
 
-    resolved_steps: dict[str, ResolvedWorkflowStep] = []
-    for step_name, workflow_step in workflow_definition.steps.items():
-        resolve_workflow_step(
+    resolved_steps: dict[str, ResolvedWorkflowStep] = {}
+    for step_name in workflow_definition.step_order:
+        workflow_step = workflow_definition.steps[step_name]
+        input_model = (
+            original_model
+            if workflow_step.input is None
+            else resolved_steps[
+                workflow_step.input
+            ].transformation_handler.transformed_model
+        )
+
+        resolved_steps[step_name] = resolve_workflow_step(
             workflow_step=workflow_step,
             step_name=step_name,
             workflow_definition=workflow_definition,
             workflow_config=workflow_config,
-            original_model=original_model,
+            original_model=input_model,
         )
 
     return ResolvedWorkflow(
@@ -196,6 +207,17 @@ def resolve_workflow(
         description=workflow_definition.description,
         artifacts=workflow_definition.artifacts,
     )
+
+
+def get_model_artifacts_from_resolved_workflow(resolved_workflow: ResolvedWorkflow):
+    """Returns a dictionary of models for artifacts produced by resolved workflow."""
+
+    return {
+        artifact_name: resolved_workflow.steps[
+            step_name
+        ].transformation_handler.transformed_model
+        for artifact_name, step_name in resolved_workflow.artifacts.items()
+    }
 
 
 class WorkflowHandler:
@@ -217,3 +239,25 @@ class WorkflowHandler:
             original_model=original_model,
             workflow_config=workflow_config,
         )
+
+        self.artifact_models = get_model_artifacts_from_resolved_workflow(
+            self._resolved_workflow
+        )
+
+    def run(self, *, metadata: Json) -> dict[str, Json]:
+        """Run the workflow definition on metadata to generate artifacts."""
+
+        transformed_metadata: dict[str, Json] = {}
+        for step_name in self._resolved_workflow.step_order:
+            step = self._resolved_workflow.steps[step_name]
+            input_metadata = (
+                metadata if step.input is None else transformed_metadata[step.input]
+            )
+            transformed_metadata[
+                step_name
+            ] = step.transformation_handler.transform_metadata(input_metadata)
+
+        return {
+            artifact_name: transformed_metadata[step_name]
+            for artifact_name, step_name in self._resolved_workflow.artifacts.items()
+        }
