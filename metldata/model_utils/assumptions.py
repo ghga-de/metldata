@@ -65,8 +65,8 @@ def check_class_slot_exists(
 
     if slot_name not in all_slots:
         raise MetadataModelAssumptionError(
-            f"A slot called {slot_name} is required but does not exist"
-            + f" in the {class_name} class."
+            f"A slot called '{slot_name}' is required but does not exist"
+            + f" in the '{class_name}' class."
             " Inherited slots are ignored."
             if ignore_parents
             else ""
