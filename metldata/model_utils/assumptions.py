@@ -96,7 +96,7 @@ def check_root_class_existence(model: MetadataModel) -> None:
 def check_anchor_points(
     model: MetadataModel, classes: Optional[list[str]] = None
 ) -> None:
-    """Checks the anchor points of the root class. If classes is specified, make sure
+    """Checks the anchor points of the root class. If classes is specified, also checks
     that anchor points for the classes exist.
 
     Raises:
