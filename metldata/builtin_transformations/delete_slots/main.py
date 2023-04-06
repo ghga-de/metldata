@@ -36,7 +36,7 @@ def check_model_assumptions(model: MetadataModel, config: SlotDeletionConfig):
     """Check that the classes and slots specified in the config exist in the model."""
 
     check_model_class_slots(model=model, class_slots=config.slots_to_delete)
-    check_anchor_points(model=model, classes=list(config.slots_to_delete.keys()))
+    check_anchor_points(model=model, classes=list(config.slots_to_delete))
 
 
 def transform_model(model: MetadataModel, config: SlotDeletionConfig) -> MetadataModel:
