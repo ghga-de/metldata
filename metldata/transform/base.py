@@ -202,7 +202,7 @@ class WorkflowDefinition(BaseModel):
         return values
 
     @property
-    def config_cls(self) -> type[BaseModel]:
+    def config_cls(self) -> type[WorkflowConfig]:
         """Get a config model containing the config requirements from all workflow
         steps."""
 
@@ -211,7 +211,7 @@ class WorkflowDefinition(BaseModel):
             for step_name, step in self.steps.items()
         }
 
-        config_cls = create_model(
+        config_cls = create_model(  # type: ignore
             "SpecificWorkflowConfig",
             **step_configs,
             __base__=WorkflowConfig,

@@ -120,7 +120,7 @@ class ResolvedWorkflowStep(WorkflowStepBase):
 class ResolvedWorkflow(WorkflowDefinition):
     """A resolved workflow contains a list of resolved workflow steps."""
 
-    steps: dict[str, ResolvedWorkflowStep]
+    steps: dict[str, ResolvedWorkflowStep]  # type: ignore
     workflow_config: WorkflowConfig
 
 
