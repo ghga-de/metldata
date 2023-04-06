@@ -42,7 +42,7 @@ def check_class_exists(model: MetadataModel, class_name: str) -> None:
 
     if class_ is None:
         raise MetadataModelAssumptionError(
-            f"A class called {class_name} is required but does not exist."
+            f"A class called '{class_name}' is required but does not exist."
         )
 
 
