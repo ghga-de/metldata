@@ -50,8 +50,8 @@ def check_class_slot_exists(
     model: MetadataModel, class_name: str, slot_name: str, ignore_parents: bool = False
 ) -> None:
     """Check that a class with the given name exists and that it has a slot with the
-    given name. If ignore parents is set to True, slots that are inherited from parent
-    or mixinins are ignored.
+    given name. If ignore_parents is set to True, slots that are inherited from parent
+    classes or mixins are ignored.
 
     Raises:
         MetadataModelAssumptionError: if validation fails.
