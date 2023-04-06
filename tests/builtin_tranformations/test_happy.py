@@ -49,7 +49,7 @@ def test_model_transformations(
 def test_metadata_transformations(
     test_case: TransformationTestCase,
 ):
-    """Test the happy path of transforming a metadata."""
+    """Test the happy path of transforming metadata for a model."""
 
     handler = TransformationHandler(
         transformation_definition=test_case.transformation_definition,
