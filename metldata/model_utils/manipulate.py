@@ -112,7 +112,7 @@ def delete_class_slot(
 
     Raises:
         ClassNotFoundError: if the specified class does not exist.
-        ClassSlotNotFoundError: if the specified slot does not exist in the specified
+        ClassSlotNotFoundError: if the specified slot does not exist in the specified class.
     """
 
     class_ = schema_view.get_class(class_name=class_name)
