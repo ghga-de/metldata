@@ -193,13 +193,10 @@ def get_resources_of_class(
             + " in the global metadata."
         )
 
-    resources_as_dict = global_metadata[anchor_point.root_slot]
-
-    resources_as_list = convert_inlined_dict_to_list(
-        resources=resources_as_dict, identifier_slot=anchor_point.identifier_slot
+    return convert_inlined_dict_to_list(
+        resources=global_metadata[anchor_point.root_slot],
+        identifier_slot=anchor_point.identifier_slot
     )
-
-    return resources_as_list
 
 
 def update_resources_in_metadata(
