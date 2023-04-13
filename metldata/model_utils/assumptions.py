@@ -69,7 +69,7 @@ def check_class_slot_exists(
             + f" in the '{class_name}' class."
             " Inherited slots are ignored."
             if ignore_parents
-            else "f"A slot called '{slot_name}' is required but does not exist"
+            else f"A slot called '{slot_name}' is required but does not exist"
             + f" in the '{class_name}' class or its parents classes and mixins."
         )
 
