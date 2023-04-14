@@ -223,7 +223,7 @@ class WorkflowDefinition(BaseModel):
     def step_order(self) -> list[str]:
         """Get a list of step names in the order in which the steps should be executed."""
 
-        step_order = list(self.steps.keys())
+        step_order = list(self.steps)
         for _ in range(1000):
             # try to come up with a seqeuence of steps that satisfies all dependencies:
             for step_name in step_order:
