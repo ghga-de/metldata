@@ -161,7 +161,7 @@ class WorkflowDefinition(BaseModel):
 
         step_with_no_input_found = False
 
-        for step_name, step in steps.copy().items():
+        for step_name, step in steps.items():
             if step.input is None:
                 if step_with_no_input_found:
                     raise ValueError(
