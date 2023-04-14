@@ -155,7 +155,7 @@ class WorkflowDefinition(BaseModel):
     def validate_step_references(
         cls, steps: dict[str, WorkflowStep]
     ) -> dict[str, WorkflowStep]:
-        """Validate that workflow steps reference other existing other steps as input.
+        """Validate that workflow steps reference other existing steps as input.
         There should be exactly one step with input=None.
         """
 
