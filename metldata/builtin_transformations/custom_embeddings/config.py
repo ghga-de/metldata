@@ -18,12 +18,20 @@
 
 from pydantic import BaseSettings, Field
 
+from metldata.builtin_transformations.custom_embeddings.embedding_profile import (
+    EmbeddingProfile,
+)
+
 
 class CustomEmbeddingConfig(BaseSettings):
     """Config to describe profiles for custom embeddings of classes from a metadata
     model."""
 
-    embedding_profiles: dict[str,] = Field(
+    embedding_profiles: dict[str, EmbeddingProfile] = Field(
         ...,
-        description="A dictionary of custom embedding profiles for classes from a metadata model.",
+        description=(
+            "A dictionary of custom embedding profiles for classes from a metadata"
+            + " model. The keys are the names of the classes after embedding."
+            + " The values are the embedding profiles for the embedded classes."
+        ),
     )
