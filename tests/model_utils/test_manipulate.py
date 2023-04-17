@@ -25,6 +25,7 @@ from metldata.model_utils.manipulate import (
     add_slot_if_not_exists,
     delete_class_slot,
     upsert_class_slot,
+    add_slot_usage_annotation,
 )
 from tests.fixtures.metadata_models import MINIMAL_VALID_METADATA_MODEL
 
@@ -160,3 +161,32 @@ def test_delete_class_slot_slot_not_exists():
         delete_class_slot(
             schema_view=original_schema_view, class_name=class_name, slot_name=slot_name
         )
+
+
+def test_add_slot_usage_annotation():
+    """Test the happy path of using add_slot_usage_annotation."""
+
+    class_name = "Dataset"
+    slot_name = "has_file"
+    annotation_key = "usage"
+    annotation_value = "required"
+
+    original_model = MINIMAL_VALID_METADATA_MODEL
+    original_schema_view = original_model.schema_view
+
+    updated_schema_view = add_slot_usage_annotation(
+        schema_view=original_schema_view,
+        class_name=class_name,
+        slot_name=slot_name,
+        annotation_key=annotation_key,
+        annotation_value=annotation_value,
+    )
+
+    # check that annotations are correctly compiled to yaml level:
+    model_dict = updated_schema_view.export_model().as_dict()
+    assert (
+        model_dict["classes"][class_name]["slot_usage"][slot_name]["annotations"][
+            annotation_key
+        ]["value"]
+        == annotation_value
+    )

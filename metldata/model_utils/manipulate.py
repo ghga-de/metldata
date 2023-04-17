@@ -18,10 +18,14 @@
 the standard linkml SchemaView class."""
 
 from copy import deepcopy
+from typing import Optional, Union
 
-from linkml_runtime.linkml_model.meta import SlotDefinition
+from linkml_runtime.linkml_model.meta import SlotDefinition, ClassDefinition
+from regex import F
 
+from metldata.model_utils.anchors import AnchorPoint
 from metldata.model_utils.essentials import ExportableSchemaView
+from metldata.model_utils.assumptions import ROOT_CLASS
 
 
 class ModelManipulationError(RuntimeError):
@@ -144,3 +148,67 @@ def delete_class_slot(
     schema_view_copy.add_class(class_copy)
 
     return schema_view_copy
+
+
+def add_slot_usage_annotation(
+    *,
+    schema_view: ExportableSchemaView,
+    slot_name: str,
+    class_name: str,
+    annotation_key: str,
+    annotation_value: Union[str, bool, int, float],
+) -> ExportableSchemaView:
+    """Add annotations to a slot in the context of a class.
+    For more details see:
+    https://linkml.io/linkml/schemas/metadata.html#arbitrary-annotations
+    """
+
+    class_ = schema_view.get_class(class_name=class_name)
+
+    if not class_:
+        raise ClassNotFoundError(class_name=class_name)
+
+    class_copy = deepcopy(class_)
+
+    if class_copy.slot_usage:
+        if not isinstance(class_copy.slot_usage, dict):
+            raise RuntimeError(f"Unexpected slot usage for class '{class_name}'")
+        if slot_name not in class_copy.slot_usage:
+            raise ClassSlotNotFoundError(class_name=class_name, slot_name=slot_name)
+
+        slot_usage = class_copy.slot_usage[slot_name]
+
+        if slot_usage.annotations:
+            slot_usage.annotations[annotation_key] = annotation_value
+        else:
+            slot_usage.annotations = {annotation_key: annotation_value}
+
+    # add updated class to a copy of schema view:
+    schema_view_copy = deepcopy(schema_view)
+    schema_view_copy.add_class(class_copy)
+
+    return schema_view_copy
+
+def _get_root_class(*, schema_view: ExportableSchemaView) -> ClassDefinition:
+    """A helper function to get the root class of the model."""
+    
+        root_class = schema_view.get_class(class_name=ROOT_CLASS)
+    
+        if not root_class:
+            raise ClassNotFoundError(class_name=ROOT_CLASS)
+    
+        return root_class
+
+
+def add_anchor_point(*, schema_view: ExportableSchemaView, anchor_point: AnchorPoint, description: Optional[str]= None) -> ExportableSchemaView:
+    """Add an anchor point for a class to the tree root of the model."""
+
+    class_ = schema_view.get_class(class_name=anchor_point.target_class)
+
+    if not class_:
+        raise ClassNotFoundError(class_name=anchor_point.target_class)
+    
+    root_slot_definition = SlotDefinition(name=anchor_point.root_slot, range=anchor_point.target_class, multivalued=True, required=True, inlined=True, inlined_as_list=False, description=description)
+
+    root_class = _get_root_class(schema_view=schema_view)
+    return upsert_class_slot(schema_view=schema_view, class_name=root_class.name, new_slot=root_slot_definition)

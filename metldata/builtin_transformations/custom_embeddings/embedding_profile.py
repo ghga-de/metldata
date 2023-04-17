@@ -17,6 +17,7 @@
 """Logic for defining embedding profiles."""
 
 from __future__ import annotations
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -30,8 +31,12 @@ class EmbeddingProfile(BaseModel):
     in the source class.
     """
 
+    embedded_class: str = Field(..., description="The name of the embedded class.")
     source_class: str = Field(
         ..., description="The class to which the this embedding profile applies."
+    )
+    description: Optional[str] = Field(
+        ..., description="Description of the embedded class."
     )
     embedded_references: dict[str, EmbeddingProfile] = Field(
         ...,

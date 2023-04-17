@@ -27,11 +27,9 @@ class CustomEmbeddingConfig(BaseSettings):
     """Config to describe profiles for custom embeddings of classes from a metadata
     model."""
 
-    embedding_profiles: dict[str, EmbeddingProfile] = Field(
+    embedding_profiles: list[EmbeddingProfile] = Field(
         ...,
         description=(
-            "A dictionary of custom embedding profiles for classes from a metadata"
-            + " model. The keys are the names of the classes after embedding."
-            + " The values are the embedding profiles for the embedded classes."
+            "A list of custom embedding profiles for classes from a metadata model."
         ),
     )
