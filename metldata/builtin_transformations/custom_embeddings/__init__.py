@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""A transformation to infer references based on existing ones in the metadata model."""
+"""A transformation to generate custom embeddings for classes of a metadata model."""
 
 
 # shortcuts:

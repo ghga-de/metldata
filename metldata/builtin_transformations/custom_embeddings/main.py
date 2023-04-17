@@ -14,4 +14,85 @@
 # limitations under the License.
 #
 
-"""A transformation to infer references based on existing ones in the metadata model."""
+"""A transformation to generate custom embeddings for classes of a metadata model."""
+
+from metldata.builtin_transformations.custom_embeddings.model_transform import (
+    add_custom_embedded_classes,
+)
+from metldata.builtin_transformations.custom_embeddings.config import (
+    CustomEmbeddingConfig,
+)
+from metldata.model_utils.anchors import get_anchors_points_by_target
+from metldata.model_utils.assumptions import check_basic_model_assumption
+from metldata.model_utils.essentials import MetadataModel
+from metldata.transform.base import Json, MetadataTransformer, TransformationDefinition
+
+
+class CustomEmbeddingMetadataTransformer(MetadataTransformer[CustomEmbeddingConfig]):
+    """A transformer that generates custom embedding for classes of a metadata model."""
+
+    def __init__(
+        self,
+        config: CustomEmbeddingConfig,
+        original_model: MetadataModel,
+        transformed_model: MetadataModel,
+    ):
+        """Initialize the transformer."""
+
+        super().__init__(
+            config=config,
+            original_model=original_model,
+            transformed_model=transformed_model,
+        )
+
+        self._anchor_points_by_target = get_anchors_points_by_target(
+            model=self._original_model
+        )
+
+    def transform(self, *, metadata: Json) -> Json:
+        """Transforms metadata.
+
+        Raises:
+            MetadataTransformationError:
+                if the transformation fails.
+        """
+
+        raise NotImplementedError
+
+
+def check_model_assumptions(
+    model: MetadataModel,
+    config: CustomEmbeddingConfig,  # pylint: disable=unused-argument
+) -> None:
+    """Check the assumptions of the model.
+
+    Raises:
+        MetadataModelAssumptionError:
+            if the model does not fulfill the assumptions.
+    """
+
+    check_basic_model_assumption(model=model)
+
+
+def transform_model(
+    model: MetadataModel, config: CustomEmbeddingConfig
+) -> MetadataModel:
+    """Transform the metadata model.
+
+    Raises:
+        MetadataModelTransformationError:
+            if the transformation fails.
+    """
+
+    return add_custom_embedded_classes(
+        model=model,
+        embedding_profiles=config.embedding_profiles,
+    )
+
+
+custom_embedding_transformation = TransformationDefinition[CustomEmbeddingConfig](
+    config_cls=CustomEmbeddingConfig,
+    check_model_assumptions=check_model_assumptions,
+    transform_model=transform_model,
+    metadata_transformer_factory=CustomEmbeddingMetadataTransformer,
+)
