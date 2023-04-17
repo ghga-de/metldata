@@ -17,34 +17,60 @@
 """Logic for transforming metadata models."""
 
 from copy import deepcopy
-from typing import Any, cast
-from stringcase import snakecase
-
+from typing import Any, Union, cast
 
 from linkml_runtime.linkml_model.meta import ClassDefinition, SlotDefinition
+from stringcase import snakecase
 
 from metldata.builtin_transformations.custom_embeddings.embedding_profile import (
     EmbeddingProfile,
 )
 from metldata.model_utils.anchors import AnchorPoint, get_anchors_points_by_target
 from metldata.model_utils.essentials import ExportableSchemaView, MetadataModel
-from metldata.model_utils.manipulate import add_slot_usage_annotation, add_anchor_point
 from metldata.model_utils.identifiers import get_class_identifier
+from metldata.model_utils.manipulate import add_anchor_point, add_slot_usage_annotation
 from metldata.transform.base import MetadataModelTransformationError
 
 
-def get_slot_in_context_of_class(
-    *, schema_view: ExportableSchemaView, slot_name: str, class_name: str
-):
-    """Get the definition of slot in context of a class based on the slot_usage of that
-    class. If the slot is not defined in slot usage, return an empty slot definition."""
+def update_embedded_reference_slot(
+    *,
+    schema_view: ExportableSchemaView,
+    source_class_name: str,
+    reference_slot_name: str,
+    target: Union[str, EmbeddingProfile],
+) -> SlotDefinition:
+    """Update the slot definition of an embedded reference."""
+
+    slot_definition = schema_view.induced_slot(
+        slot_name=reference_slot_name, class_name=source_class_name
+    )
+
+    # make sure that the range is in line with the embedding profile:
+    expected_target_class = (
+        target.source_class if isinstance(target, EmbeddingProfile) else target
+    )
+    if slot_definition.range != expected_target_class:
+        raise MetadataModelTransformationError(
+            f"Range of slot '{reference_slot_name}' in class"
+            + f"'{source_class_name}' does not match the of embedding"
+            + " profile"
+        )
+
+    # update the range if the target is another embedded class:
+    if isinstance(target, EmbeddingProfile):
+        slot_definition.range = target.embedded_class
+
+    # set the target slot to inlined:
+    slot_definition.inlined = True
+    slot_definition.inlined_as_list = True
+
+    return slot_definition
 
 
 def generated_embedded_class(
     *,
     schema_view: ExportableSchemaView,
     embedding_profile: EmbeddingProfile,
-    anchor_points_by_target: dict[str, AnchorPoint],
 ) -> ClassDefinition:
     """Generate an embedded class from an embedding profile."""
 
@@ -71,37 +97,22 @@ def generated_embedded_class(
         )
     embedded_class.slot_usage = cast(dict[str, Any], embedded_class.slot_usage)
 
-    # mark slots that point to embedded references as inlined:
     for (
-        target_slot_name,
-        target_embedding_profile,
+        reference_slot_name,
+        target,
     ) in embedding_profile.embedded_references.items():
-        # Extract the target slot definition from the slot_usage of the embedded class,
-        # if it is not defined there, create a new empty slot definition and add it to
-        # the slot_usage of the embedded class:
-        target_slot_definition = embedded_class.slot_usage.get(target_slot_name)
-        if not target_slot_definition:
-            if not target_slot_name in embedded_class.slots:
-                raise MetadataModelTransformationError(
-                    f"Could not find slot {target_slot_name} in class {class_to_embed.name}"
-                )
-            if not schema_view.get_slot(slot_name=target_slot_name):
-                raise MetadataModelTransformationError(
-                    f"Could not find slot {target_slot_name} in model"
-                )
-            target_slot_definition = SlotDefinition(name=target_slot_name)
-            embedded_class.slot_usage[target_slot_name] = target_slot_definition
-
-        if not isinstance(target_slot_definition, SlotDefinition):
-            raise RuntimeError(  # This should never happen
-                f"The values of slot_usage of class '{embedding_profile.source_class}'"
-                + f" are not of type SlotDefinition"
+        if reference_slot_name not in embedded_class.slots:
+            raise MetadataModelTransformationError(
+                f"Slot '{reference_slot_name}' not found in class"
+                + f" '{embedding_profile.source_class}'."
             )
-        target_slot_definition = cast(SlotDefinition, target_slot_definition)
 
-        # set the target slot to inlined:
-        target_slot_definition.inlined = True
-        target_slot_definition.inlined_as_list = True
+        embedded_class.slot_usage[reference_slot_name] = update_embedded_reference_slot(
+            schema_view=schema_view,
+            source_class_name=embedding_profile.source_class,
+            reference_slot_name=reference_slot_name,
+            target=target,
+        )
 
     return embedded_class
 
@@ -114,13 +125,11 @@ def add_custom_embedded_class(
 ) -> MetadataModel:
     """Add a custom embedded class to a metadata model."""
 
-    embedded_class = generated_embedded_class(
-        model=model,
-        embedding_profile=embedding_profile,
-        anchor_points_by_target=anchor_points_by_target,
-    )
-
     schema_view = model.schema_view
+    embedded_class = generated_embedded_class(
+        schema_view=schema_view,
+        embedding_profile=embedding_profile,
+    )
     schema_view.add_class(embedded_class)
 
     # add anchor point for embedded class:
@@ -138,7 +147,18 @@ def add_custom_embedded_class(
     )
     schema_view = add_anchor_point(schema_view=schema_view, anchor_point=anchor_point)
 
-    return schema_view.export_model()
+    model_modified = schema_view.export_model()
+
+    # also prepare embedded classes for references:
+    for target in embedding_profile.embedded_references.values():
+        if isinstance(target, EmbeddingProfile):
+            model_modified = add_custom_embedded_class(
+                model=model_modified,
+                embedding_profile=target,
+                anchor_points_by_target=anchor_points_by_target,
+            )
+
+    return model_modified
 
 
 def mark_anchored_classes_as_hidden(

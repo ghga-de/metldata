@@ -23,9 +23,9 @@ from metldata.model_utils.manipulate import (
     ClassNotFoundError,
     ClassSlotNotFoundError,
     add_slot_if_not_exists,
+    add_slot_usage_annotation,
     delete_class_slot,
     upsert_class_slot,
-    add_slot_usage_annotation,
 )
 from tests.fixtures.metadata_models import MINIMAL_VALID_METADATA_MODEL
 

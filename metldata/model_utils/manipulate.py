@@ -20,12 +20,11 @@ the standard linkml SchemaView class."""
 from copy import deepcopy
 from typing import Optional, Union
 
-from linkml_runtime.linkml_model.meta import SlotDefinition, ClassDefinition
-from regex import F
+from linkml_runtime.linkml_model.meta import ClassDefinition, SlotDefinition
 
 from metldata.model_utils.anchors import AnchorPoint
-from metldata.model_utils.essentials import ExportableSchemaView
 from metldata.model_utils.assumptions import ROOT_CLASS
+from metldata.model_utils.essentials import ExportableSchemaView
 
 
 class ModelManipulationError(RuntimeError):
@@ -189,26 +188,44 @@ def add_slot_usage_annotation(
 
     return schema_view_copy
 
+
 def _get_root_class(*, schema_view: ExportableSchemaView) -> ClassDefinition:
     """A helper function to get the root class of the model."""
-    
-        root_class = schema_view.get_class(class_name=ROOT_CLASS)
-    
-        if not root_class:
-            raise ClassNotFoundError(class_name=ROOT_CLASS)
-    
-        return root_class
+
+    root_class = schema_view.get_class(class_name=ROOT_CLASS)
+
+    if not root_class:
+        raise ClassNotFoundError(class_name=ROOT_CLASS)
+
+    return root_class
 
 
-def add_anchor_point(*, schema_view: ExportableSchemaView, anchor_point: AnchorPoint, description: Optional[str]= None) -> ExportableSchemaView:
+def add_anchor_point(
+    *,
+    schema_view: ExportableSchemaView,
+    anchor_point: AnchorPoint,
+    description: Optional[str] = None,
+) -> ExportableSchemaView:
     """Add an anchor point for a class to the tree root of the model."""
 
     class_ = schema_view.get_class(class_name=anchor_point.target_class)
 
     if not class_:
         raise ClassNotFoundError(class_name=anchor_point.target_class)
-    
-    root_slot_definition = SlotDefinition(name=anchor_point.root_slot, range=anchor_point.target_class, multivalued=True, required=True, inlined=True, inlined_as_list=False, description=description)
+
+    root_slot_definition = SlotDefinition(
+        name=anchor_point.root_slot,
+        range=anchor_point.target_class,
+        multivalued=True,
+        required=True,
+        inlined=True,
+        inlined_as_list=False,
+        description=description,
+    )
 
     root_class = _get_root_class(schema_view=schema_view)
-    return upsert_class_slot(schema_view=schema_view, class_name=root_class.name, new_slot=root_slot_definition)
+    return upsert_class_slot(
+        schema_view=schema_view,
+        class_name=root_class.name,
+        new_slot=root_slot_definition,
+    )

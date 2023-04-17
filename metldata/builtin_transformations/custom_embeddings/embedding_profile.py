@@ -17,7 +17,8 @@
 """Logic for defining embedding profiles."""
 
 from __future__ import annotations
-from typing import Optional
+
+from typing import Optional, Union
 
 from pydantic import BaseModel, Field
 
@@ -38,12 +39,13 @@ class EmbeddingProfile(BaseModel):
     description: Optional[str] = Field(
         ..., description="Description of the embedded class."
     )
-    embedded_references: dict[str, EmbeddingProfile] = Field(
+    embedded_references: dict[str, Union[str, EmbeddingProfile]] = Field(
         ...,
         description=(
             "The references embedded into the target class."
             + "The keys are the names of slots in the target class that are used for "
-            + " the references to other classes. The values are the embedding profiles"
-            + " for the referenced classes."
+            + " the references to other classes. The values are either the names of the"
+            + " references classes or another embedding profiles if a custom embedding"
+            + " will be applied to the referenced classes, too."
         ),
     )
