@@ -19,6 +19,9 @@
 from metldata.builtin_transformations.custom_embeddings.config import (
     CustomEmbeddingConfig,
 )
+from metldata.builtin_transformations.custom_embeddings.metadata_transform import (
+    add_custom_embeddings_to_metadata,
+)
 from metldata.builtin_transformations.custom_embeddings.model_transform import (
     add_custom_embedded_classes,
 )
@@ -57,7 +60,12 @@ class CustomEmbeddingMetadataTransformer(MetadataTransformer[CustomEmbeddingConf
                 if the transformation fails.
         """
 
-        raise NotImplementedError
+        return add_custom_embeddings_to_metadata(
+            metadata=metadata,
+            embedding_profiles=self._config.embedding_profiles,
+            model=self._original_model,
+            anchor_points_by_target=self._anchor_points_by_target,
+        )
 
 
 def check_model_assumptions(

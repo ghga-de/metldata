@@ -41,6 +41,11 @@ from metldata.model_utils.manipulate import (
 from metldata.transform.base import MetadataModelTransformationError
 
 
+def get_embedding_profile_root_slot(embedding_profile: EmbeddingProfile) -> str:
+    """Get the root slot for an embedding profile."""
+    return snakecase(embedding_profile.embedded_class)
+
+
 def get_embedded_reference_slot(
     *,
     class_: ClassDefinition,
@@ -81,7 +86,8 @@ def get_embedded_reference_slot(
 
     # set the target slot to inlined:
     slot_definition.inlined = True
-    slot_definition.inlined_as_list = True
+    if induced_slot_definition.multivalued:
+        slot_definition.inlined_as_list = True
 
     return slot_definition
 
@@ -148,7 +154,7 @@ def add_anchor_point_for_embedded_class(
             f"Could not find identifier slot for class {embedding_profile.source_class}"
         )
     anchor_point = AnchorPoint(
-        root_slot=snakecase(embedding_profile.embedded_class),
+        root_slot=get_embedding_profile_root_slot(embedding_profile=embedding_profile),
         target_class=embedding_profile.embedded_class,
         identifier_slot=identifier_slot,
     )
