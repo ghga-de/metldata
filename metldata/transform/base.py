@@ -155,13 +155,13 @@ class WorkflowDefinition(BaseModel):
     def validate_step_references(
         cls, steps: dict[str, WorkflowStep]
     ) -> dict[str, WorkflowStep]:
-        """Validate that workflow steps reference other existing other steps as input.
+        """Validate that workflow steps reference other existing steps as input.
         There should be exactly one step with input=None.
         """
 
         step_with_no_input_found = False
 
-        for step_name, step in steps.copy().items():
+        for step_name, step in steps.items():
             if step.input is None:
                 if step_with_no_input_found:
                     raise ValueError(
@@ -223,7 +223,7 @@ class WorkflowDefinition(BaseModel):
     def step_order(self) -> list[str]:
         """Get a list of step names in the order in which the steps should be executed."""
 
-        step_order = list(self.steps.keys())
+        step_order = list(self.steps)
         for _ in range(1000):
             # try to come up with a seqeuence of steps that satisfies all dependencies:
             for step_name in step_order:
