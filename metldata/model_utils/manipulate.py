@@ -115,6 +115,9 @@ def upsert_class_slot(
     )
     schema_view_copy.add_class(class_copy)
 
+    # workaround for a problem in linkml-runtime after converting slot usage to dict:
+    schema_view_copy = schema_view_copy.export_model().schema_view
+
     return schema_view_copy
 
 
