@@ -20,11 +20,13 @@ the standard linkml SchemaView class."""
 from copy import deepcopy
 from typing import Optional, Union
 
+import jsonasobj2
 from linkml_runtime.linkml_model.meta import ClassDefinition, SlotDefinition
 
 from metldata.model_utils.anchors import AnchorPoint
 from metldata.model_utils.assumptions import ROOT_CLASS
 from metldata.model_utils.essentials import ExportableSchemaView
+from metldata.model_utils.identifiers import get_class_identifier
 
 
 class ModelManipulationError(RuntimeError):
@@ -48,6 +50,19 @@ class ClassSlotNotFoundError(ModelManipulationError):
             + " metadata model."
         )
         super().__init__(message)
+
+
+def get_normalized_slot_usage(*, class_: ClassDefinition) -> dict[str, SlotDefinition]:
+    """Get a normalized slot usage dictionary from a class definition."""
+
+    if class_.slot_usage:
+        if isinstance(class_.slot_usage, jsonasobj2.JsonObj):
+            return jsonasobj2.as_dict(class_.slot_usage)
+        if isinstance(class_.slot_usage, dict):
+            return deepcopy(class_.slot_usage)
+        raise RuntimeError(f"Unexpected slot usage for class '{class_.name}'")
+
+    return {}
 
 
 def add_slot_if_not_exists(
@@ -77,12 +92,12 @@ def upsert_class_slot(
 
     class_ = schema_view.get_class(class_name=class_name)
 
-    # add slot to list of slots used by the class:
     if not class_:
         raise ClassNotFoundError(class_name=class_name)
 
     class_copy = deepcopy(class_)
 
+    # add slot to list of slots used by the class:
     if class_copy.slots:
         if all(str(slot) != new_slot.name for slot in class_copy.slots):
             class_copy.slots.append(new_slot.name)
@@ -90,12 +105,8 @@ def upsert_class_slot(
         class_copy.slots = [new_slot.name]
 
     # update slot usage:
-    if class_copy.slot_usage:
-        if not isinstance(class_copy.slot_usage, dict):
-            raise RuntimeError(f"Unexpected slot usage for class '{class_name}'")
-        class_copy.slot_usage[new_slot.name] = new_slot
-    else:
-        class_copy.slot_usage = {new_slot.name: new_slot}
+    class_copy.slot_usage = get_normalized_slot_usage(class_=class_copy)
+    class_copy.slot_usage[new_slot.name] = new_slot
 
     # add updated class and a global definition of the slot to a copy of schema view:
     schema_view_copy = deepcopy(schema_view)
@@ -136,11 +147,9 @@ def delete_class_slot(
     class_copy.slots = all_slots_modified
 
     # update slot usage:
-    if class_copy.slot_usage:
-        if not isinstance(class_copy.slot_usage, dict):
-            raise RuntimeError(f"Unexpected slot usage for class '{class_name}'")
-        if slot_name in class_copy.slot_usage:
-            del class_copy.slot_usage[slot_name]
+    class_copy.slot_usage = get_normalized_slot_usage(class_=class_copy)
+    if slot_name in class_copy.slot_usage:
+        del class_copy.slot_usage[slot_name]
 
     # add updated class to a copy of schema view:
     schema_view_copy = deepcopy(schema_view)
@@ -169,18 +178,19 @@ def add_slot_usage_annotation(
 
     class_copy = deepcopy(class_)
 
-    if class_copy.slot_usage:
-        if not isinstance(class_copy.slot_usage, dict):
-            raise RuntimeError(f"Unexpected slot usage for class '{class_name}'")
-        if slot_name not in class_copy.slot_usage:
-            raise ClassSlotNotFoundError(class_name=class_name, slot_name=slot_name)
+    if not class_copy.slots or slot_name not in class_copy.slots:
+        raise ClassSlotNotFoundError(class_name=class_name, slot_name=slot_name)
 
-        slot_usage = class_copy.slot_usage[slot_name]
+    class_copy.slot_usage = get_normalized_slot_usage(class_=class_copy)
+    if slot_name not in class_copy.slot_usage:
+        class_copy.slot_usage[slot_name] = SlotDefinition(name=slot_name)
 
-        if slot_usage.annotations:
-            slot_usage.annotations[annotation_key] = annotation_value
-        else:
-            slot_usage.annotations = {annotation_key: annotation_value}
+    slot_usage = class_copy.slot_usage[slot_name]
+
+    if slot_usage.annotations:
+        slot_usage.annotations[annotation_key] = annotation_value
+    else:
+        slot_usage.annotations = {annotation_key: annotation_value}
 
     # add updated class to a copy of schema view:
     schema_view_copy = deepcopy(schema_view)
@@ -229,3 +239,41 @@ def add_anchor_point(
         class_name=root_class.name,
         new_slot=root_slot_definition,
     )
+
+
+def disable_identifier_slot(
+    *, schema_view: ExportableSchemaView, class_name: str
+) -> ExportableSchemaView:
+    """Disable the identifier for a class. This will not remove the identifier slot
+    but will set its 'identifier' property to False.
+    """
+
+    identifier_slot_name = get_class_identifier(
+        model=schema_view.export_model(), class_name=class_name
+    )
+
+    if not identifier_slot_name:
+        return schema_view
+
+    class_ = schema_view.get_class(class_name=class_name)
+
+    if not class_:
+        raise ClassNotFoundError(class_name=class_name)
+
+    class_copy = deepcopy(class_)
+
+    class_copy.slot_usage = get_normalized_slot_usage(class_=class_copy)
+
+    if identifier_slot_name in class_copy.slot_usage:
+        identifier_slot_definition = class_copy.slot_usage[identifier_slot_name]
+        identifier_slot_definition.identifier = False
+    else:
+        identifier_slot_definition = SlotDefinition(
+            name=identifier_slot_name, identifier=False
+        )
+        class_copy.slot_usage[identifier_slot_name] = identifier_slot_definition
+
+    schema_view_modified = deepcopy(schema_view)
+    schema_view_modified.add_class(class_copy)
+
+    return schema_view_modified

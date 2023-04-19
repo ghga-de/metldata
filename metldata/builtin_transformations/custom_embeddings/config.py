@@ -16,7 +16,7 @@
 
 """Models used to describe embedding profiles."""
 
-from pydantic import BaseSettings, Field
+from pydantic import BaseSettings, Field, validator
 
 from metldata.builtin_transformations.custom_embeddings.embedding_profile import (
     EmbeddingProfile,
@@ -33,3 +33,23 @@ class CustomEmbeddingConfig(BaseSettings):
             "A list of custom embedding profiles for classes from a metadata model."
         ),
     )
+
+    # pylint: disable=no-self-argument
+    @validator("embedding_profiles")
+    def check_embedding_profiles_unique(
+        cls,
+        value: list[EmbeddingProfile],
+    ) -> list[EmbeddingProfile]:
+        """Check that names for embedded classes are unique among the embedding_profiles."""
+
+        embedded_classes: list[str] = []
+        for profile in value:
+            embedded_classes.append(profile.embedded_class)
+            for referenced_profile in profile.embedded_references.values():
+                if isinstance(referenced_profile, EmbeddingProfile):
+                    embedded_classes.append(referenced_profile.embedded_class)
+
+        if len(embedded_classes) != len(set(embedded_classes)):
+            raise ValueError("Names for embedded classes must be unique.")
+
+        return value

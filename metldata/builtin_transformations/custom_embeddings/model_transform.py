@@ -17,7 +17,7 @@
 """Logic for transforming metadata models."""
 
 from copy import deepcopy
-from typing import Any, Union, cast
+from typing import Union
 
 from linkml_runtime.linkml_model.meta import ClassDefinition, SlotDefinition
 from stringcase import snakecase
@@ -26,33 +26,52 @@ from metldata.builtin_transformations.custom_embeddings.embedding_profile import
     EmbeddingProfile,
 )
 from metldata.model_utils.anchors import AnchorPoint, get_anchors_points_by_target
-from metldata.model_utils.essentials import ExportableSchemaView, MetadataModel
+from metldata.model_utils.essentials import (
+    ROOT_CLASS,
+    ExportableSchemaView,
+    MetadataModel,
+)
 from metldata.model_utils.identifiers import get_class_identifier
-from metldata.model_utils.manipulate import add_anchor_point, add_slot_usage_annotation
+from metldata.model_utils.manipulate import (
+    add_anchor_point,
+    add_slot_usage_annotation,
+    disable_identifier_slot,
+    get_normalized_slot_usage,
+)
 from metldata.transform.base import MetadataModelTransformationError
 
 
-def update_embedded_reference_slot(
+def get_embedded_reference_slot(
     *,
+    class_: ClassDefinition,
     schema_view: ExportableSchemaView,
-    source_class_name: str,
     reference_slot_name: str,
     target: Union[str, EmbeddingProfile],
 ) -> SlotDefinition:
     """Update the slot definition of an embedded reference."""
 
-    slot_definition = schema_view.induced_slot(
-        slot_name=reference_slot_name, class_name=source_class_name
-    )
+    if not class_.slots or reference_slot_name not in class_.slots:
+        raise MetadataModelTransformationError(
+            f"Class '{class_.name}' does not have the slot '{reference_slot_name}'"
+        )
+
+    slot_usage = get_normalized_slot_usage(class_=class_)
+    if reference_slot_name in slot_usage:
+        slot_definition = slot_usage[reference_slot_name]
+    else:
+        slot_definition = SlotDefinition(name=reference_slot_name)
 
     # make sure that the range is in line with the embedding profile:
     expected_target_class = (
         target.source_class if isinstance(target, EmbeddingProfile) else target
     )
-    if slot_definition.range != expected_target_class:
+    induced_slot_definition = schema_view.induced_slot(
+        slot_name=reference_slot_name, class_name=class_.name
+    )
+    if induced_slot_definition.range != expected_target_class:
         raise MetadataModelTransformationError(
             f"Range of slot '{reference_slot_name}' in class"
-            + f"'{source_class_name}' does not match the of embedding"
+            + f" '{class_.name}' does not match the of embedding"
             + " profile"
         )
 
@@ -91,11 +110,7 @@ def generated_embedded_class(
     if not embedded_class.slot_usage:
         embedded_class.slot_usage = {}
 
-    if not isinstance(embedded_class.slot_usage, dict):
-        raise RuntimeError(  # This should never happen
-            f"slot_usage of class '{embedding_profile.source_class}' is not a dict"
-        )
-    embedded_class.slot_usage = cast(dict[str, Any], embedded_class.slot_usage)
+    embedded_class.slot_usage = get_normalized_slot_usage(class_=embedded_class)
 
     for (
         reference_slot_name,
@@ -107,9 +122,9 @@ def generated_embedded_class(
                 + f" '{embedding_profile.source_class}'."
             )
 
-        embedded_class.slot_usage[reference_slot_name] = update_embedded_reference_slot(
+        embedded_class.slot_usage[reference_slot_name] = get_embedded_reference_slot(
+            class_=class_to_embed,
             schema_view=schema_view,
-            source_class_name=embedding_profile.source_class,
             reference_slot_name=reference_slot_name,
             target=target,
         )
@@ -117,25 +132,17 @@ def generated_embedded_class(
     return embedded_class
 
 
-def add_custom_embedded_class(
+def add_anchor_point_for_embedded_class(
     *,
-    model: MetadataModel,
+    schema_view: ExportableSchemaView,
     embedding_profile: EmbeddingProfile,
-    anchor_points_by_target: dict[str, AnchorPoint],
-) -> MetadataModel:
-    """Add a custom embedded class to a metadata model."""
+) -> ExportableSchemaView:
+    """Add an anchor point for an embedded class to the schema view."""
 
-    schema_view = model.schema_view
-    embedded_class = generated_embedded_class(
-        schema_view=schema_view,
-        embedding_profile=embedding_profile,
-    )
-    schema_view.add_class(embedded_class)
-
-    # add anchor point for embedded class:
     identifier_slot = get_class_identifier(
-        model=model, class_name=embedding_profile.source_class
+        model=schema_view.export_model(), class_name=embedding_profile.source_class
     )
+
     if not identifier_slot:
         raise MetadataModelTransformationError(
             f"Could not find identifier slot for class {embedding_profile.source_class}"
@@ -145,7 +152,43 @@ def add_custom_embedded_class(
         target_class=embedding_profile.embedded_class,
         identifier_slot=identifier_slot,
     )
-    schema_view = add_anchor_point(schema_view=schema_view, anchor_point=anchor_point)
+
+    schema_view = add_anchor_point(
+        schema_view=schema_view,
+        anchor_point=anchor_point,
+        description=embedding_profile.description,
+    )
+
+    return schema_view
+
+
+def add_custom_embedded_class(
+    *,
+    model: MetadataModel,
+    embedding_profile: EmbeddingProfile,
+    anchor_points_by_target: dict[str, AnchorPoint],
+    include_anchor_point: bool = True,
+) -> MetadataModel:
+    """Add a custom embedded class to a metadata model.
+    If no anchor point is needed, specify `include_anchor_point=False`.
+    """
+
+    schema_view = model.schema_view
+    embedded_class = generated_embedded_class(
+        schema_view=schema_view,
+        embedding_profile=embedding_profile,
+    )
+    schema_view.add_class(embedded_class)
+
+    # add anchor point for embedded class:
+    if include_anchor_point:
+        schema_view = add_anchor_point_for_embedded_class(
+            schema_view=schema_view, embedding_profile=embedding_profile
+        )
+    else:
+        schema_view = disable_identifier_slot(
+            schema_view=schema_view, class_name=embedded_class.name
+        )
 
     model_modified = schema_view.export_model()
 
@@ -156,6 +199,7 @@ def add_custom_embedded_class(
                 model=model_modified,
                 embedding_profile=target,
                 anchor_points_by_target=anchor_points_by_target,
+                include_anchor_point=False,
             )
 
     return model_modified
@@ -172,7 +216,7 @@ def mark_anchored_classes_as_hidden(
         schema_view = add_slot_usage_annotation(
             schema_view=schema_view,
             slot_name=anchor_point.root_slot,
-            class_name=anchor_point.target_class,
+            class_name=ROOT_CLASS,
             annotation_key="hidden",
             annotation_value=True,
         )

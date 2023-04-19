@@ -19,12 +19,14 @@
 import pytest
 from linkml_runtime.linkml_model.meta import SlotDefinition
 
+from metldata.model_utils.identifiers import get_class_identifier
 from metldata.model_utils.manipulate import (
     ClassNotFoundError,
     ClassSlotNotFoundError,
     add_slot_if_not_exists,
     add_slot_usage_annotation,
     delete_class_slot,
+    disable_identifier_slot,
     upsert_class_slot,
 )
 from tests.fixtures.metadata_models import MINIMAL_VALID_METADATA_MODEL
@@ -190,3 +192,21 @@ def test_add_slot_usage_annotation():
         ]["value"]
         == annotation_value
     )
+
+
+def test_disable_identifier_slot():
+    """Test the happy path of using disable_identifier_slot."""
+
+    class_name = "Dataset"
+
+    original_model = MINIMAL_VALID_METADATA_MODEL
+    original_schema_view = original_model.schema_view
+
+    updated_schema_view = disable_identifier_slot(
+        schema_view=original_schema_view,
+        class_name=class_name,
+    )
+    updated_model = updated_schema_view.export_model()
+
+    # check that the slot is correctly disabled:
+    assert get_class_identifier(model=updated_model, class_name=class_name) is None
