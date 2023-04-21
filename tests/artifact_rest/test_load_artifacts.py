@@ -17,6 +17,7 @@
 """Test the load_artifacts module"""
 
 import pytest
+from hexkit.protocols.dao import DaoFactoryProtocol
 from hexkit.providers.mongodb.testutils import mongodb_fixture, MongoDbFixture
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
@@ -28,13 +29,15 @@ from tests.fixtures.metadata import VALID_MINIMAL_METADATA_EXAMPLE
 from tests.fixtures.artifact_info import MINIMAL_ARTIFACT_INFO
 
 
-@pytest.mark.asyncio
-async def test_load_artifact_resources(mongodb_fixture: MongoDbFixture):
-    """Test happy path of using load_artifact_resources."""
+async def load_example_artifact_resources(
+    dao_factory: DaoFactoryProtocol,
+) -> ArtifactDaoCollection:
+    """Load the example artifact using the load_artifact_resources function and
+    returns a ArtifactDaoCollection for accessing the resources."""
 
     # construct the dao collection:
     dao_collection = await ArtifactDaoCollection.construct(
-        dao_factory=mongodb_fixture.dao_factory,
+        dao_factory=dao_factory,
         artifact_infos=[MINIMAL_ARTIFACT_INFO],
     )
 
@@ -43,6 +46,17 @@ async def test_load_artifact_resources(mongodb_fixture: MongoDbFixture):
         artifact_content=VALID_MINIMAL_METADATA_EXAMPLE,
         artifact_info=MINIMAL_ARTIFACT_INFO,
         dao_collection=dao_collection,
+    )
+
+    return dao_collection
+
+
+@pytest.mark.asyncio
+async def test_load_artifact_resources(mongodb_fixture: MongoDbFixture):
+    """Test happy path of using load_artifact_resources function."""
+
+    dao_collection = await load_example_artifact_resources(
+        dao_factory=mongodb_fixture.dao_factory,
     )
 
     # check that artifact resources have been persisted to the database by testing for
