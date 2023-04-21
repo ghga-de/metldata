@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""Logic for handling information required for querying artifacts."""
+"""Logic for handling information on artifacts."""
 
 import json
 from typing import Optional
@@ -26,65 +26,12 @@ from pydantic import BaseModel, Field, validator
 
 from metldata.custom_types import Json
 from metldata.model_utils.anchors import (
-    AnchorPoint,
     get_anchors_points_by_target,
     lookup_anchor_point,
 )
+from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResourceClass
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
-
-
-class QueriableMetadataClass(BaseModel):
-    """Model to describe a metadata class of an artifact that can be queried."""
-
-    name: str = Field(..., description="The name of the metadata class.")
-    description: Optional[str] = Field(
-        None, description="A description of the metadata class."
-    )
-    anchor_point: AnchorPoint = Field(
-        ..., description="The anchor point for this metadata class."
-    )
-    json_schema: Json = Field(
-        ..., description="The JSON schema for this metadata class."
-    )
-
-
-class ArtifactQueryInfo(BaseModel):
-    """Model to describe general information on an artifact.
-    Please note, it does not contain actual artifact instances derived from specific
-    metadata.
-    """
-
-    name: str = Field(..., description="The name of the artifact.")
-    description: str = Field(..., description="A description of the artifact.")
-
-    queriable_classes: dict[str, QueriableMetadataClass] = Field(
-        ...,
-        description=(
-            "A dictionary of metadata classes that can be queried for this artifact."
-            + " The keys are the name of the metadata classes. The values are the"
-            + " corresponding metadata class models."
-        ),
-    )
-
-    # pylint: disable=no-self-argument
-    @validator("queriable_classes")
-    def check_queriable_class_names(
-        cls, value: dict[str, QueriableMetadataClass]
-    ) -> dict[str, QueriableMetadataClass]:
-        """Check if the keys of the `queriable_classes` dictionary correspond to the
-        names of the metadata classes.
-        """
-
-        for class_name, queriable_class in value.items():
-            if class_name != queriable_class.name:
-                raise ValueError(
-                    f"Key '{class_name}' of 'queriable_classes' does not match"
-                    + f" the name '{queriable_class.name}' of the corresponding"
-                    + " metadata class."
-                )
-
-        return value
 
 
 def is_class_hidden(*, class_definition: ClassDefinition) -> bool:
@@ -113,9 +60,10 @@ def is_class_hidden(*, class_definition: ClassDefinition) -> bool:
     return False
 
 
-def get_queriable_metadata_class_names(*, model: MetadataModel) -> list[str]:
-    """Get the names of all metadata classes that can be queried from a metadata model.
-    Metadata are annotated as `hidden` are excluded from the list.
+def get_resource_class_names(*, model: MetadataModel) -> list[str]:
+    """Get the names of all classes from a metadata model.
+    Only anchored classes are considered. Classes that are annotated as `hidden`
+    are ignored.
     """
 
     anchored_class_names = get_anchors_points_by_target(model=model).keys()
@@ -148,46 +96,46 @@ def load_description_for_class(
     return model.schema_view.get_class(class_name, strict=True).description
 
 
-def load_queriable_metadata_classes(
-    *, model: MetadataModel
-) -> dict[str, QueriableMetadataClass]:
-    """Load all metadata classes that can be queried from a metadata model.
+def load_resource_classes(*, model: MetadataModel) -> dict[str, ArtifactResourceClass]:
+    """Load all classes from a metadata model.
+    Only anchored classes are considered. Classes that are annotated as `hidden`
+    are ignored.
 
     Args:
         model: The metadata model.
 
     Returns:
-        A dictionary of metadata classes that can be queried for this artifact.
+        A dictionary of resource classes for this artifact.
         The keys are the name of the metadata classes. The values are the
         corresponding metadata class models.
     """
 
     anchor_points_by_target = get_anchors_points_by_target(model=model)
 
-    queriable_class_names = get_queriable_metadata_class_names(model=model)
+    resource_class_names = get_resource_class_names(model=model)
 
     return {
-        queriable_class_name: QueriableMetadataClass(
-            name=queriable_class_name,
+        resource_class_name: ArtifactResourceClass(
+            name=resource_class_name,
             description=load_description_for_class(
-                model=model, class_name=queriable_class_name
+                model=model, class_name=resource_class_name
             ),
             anchor_point=lookup_anchor_point(
-                class_name=queriable_class_name,
+                class_name=resource_class_name,
                 anchor_points_by_target=anchor_points_by_target,
             ),
             json_schema=load_json_schema_for_class(
-                model=model, class_name=queriable_class_name
+                model=model, class_name=resource_class_name
             ),
         )
-        for queriable_class_name in queriable_class_names
+        for resource_class_name in resource_class_names
     }
 
 
-def load_artifact_query_info(
+def load_artifact_info(
     *, name: str, description: str, model: MetadataModel
-) -> ArtifactQueryInfo:
-    """Load artifact query info from a metadata model.
+) -> ArtifactInfo:
+    """Load artifact info from a metadata model.
 
     Args:
         name: The name of the artifact.
@@ -195,15 +143,28 @@ def load_artifact_query_info(
         model: The metadata model for the artifact.
 
     Returns:
-        The artifact query info model.
+        The artifact info model.
     """
 
     check_basic_model_assumption(model)
 
-    queriable_classes = load_queriable_metadata_classes(model=model)
+    resource_classes = load_resource_classes(model=model)
 
-    return ArtifactQueryInfo(
+    return ArtifactInfo(
         name=name,
         description=description,
-        queriable_classes=queriable_classes,
+        resource_classes=resource_classes,
     )
+
+
+def get_artifact_info_dict(
+    *, artifact_infos: list[ArtifactInfo]
+) -> dict[str, ArtifactInfo]:
+    """Build a dictionary from artifact name to artifact info."""
+
+    # check if artifact names are unique:
+    artifact_names = [artifact_info.name for artifact_info in artifact_infos]
+    if len(artifact_names) != len(set(artifact_names)):
+        raise ValueError("Artifact names must be unique.")
+
+    return {artifact_info.name: artifact_info for artifact_info in artifact_infos}

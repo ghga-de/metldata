@@ -32,7 +32,7 @@ class SubmissionStatus(Enum):
     CANCELED = "canceled"
     COMPLETED = "completed"
     DEPRECATED_PREPUBLICATION = "deprecated-prepublication"
-    EMPTIED_PREPUBLICATION = "emptyied-prepublication"
+    EMPTIED_PREPUBLICATION = "emptied-prepublication"
     PUBLISHED = "published"
     DEPRECATED_POSTPUBLICATION = "deprecated-postpublication"
     HIDDEN_POSTPUBLICATION = "hidden-postpublication"

@@ -14,14 +14,22 @@
 # limitations under the License.
 #
 
-"""Example of ArtifactQueryInfo objects."""
+"""Example of ArtifactInfo objects."""
 
-from metldata.artifacts_rest.artifact_info import load_artifact_query_info
+from metldata.artifacts_rest.artifact_info import load_artifact_info
 from tests.fixtures.workflows import EXAMPLE_ARTIFACT_MODELS
+from tests.fixtures.metadata_models import VALID_MINIMAL_METADATA_MODEL
 
-# artifact query infos for the example workflow:
-EXAMPLE_ARTIFACT_QUERY_INFOS = [
-    load_artifact_query_info(
+# artifact info for the minimal valid metadata model:
+MINIMAL_ARTIFACT_INFO = load_artifact_info(
+    name="minimal_valid_metadata_model",
+    description="This is a minimal valid metadata model.",
+    model=VALID_MINIMAL_METADATA_MODEL,
+)
+
+# artifact infos for the example workflow:
+EXAMPLE_ARTIFACT_INFOS = [
+    load_artifact_info(
         name=artifact_name, description=artifact_name, model=artifact_model
     )
     for artifact_name, artifact_model in EXAMPLE_ARTIFACT_MODELS.items()

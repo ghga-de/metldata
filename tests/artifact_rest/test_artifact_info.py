@@ -16,25 +16,23 @@
 
 """Test the artifact_info module."""
 
-from metldata.artifacts_rest.artifact_info import load_artifact_query_info
-from tests.fixtures.metadata_models import MINIMAL_VALID_METADATA_MODEL
+from metldata.artifacts_rest.artifact_info import load_artifact_info
+from tests.fixtures.metadata_models import VALID_MINIMAL_METADATA_MODEL
 
 
-def test_load_artifact_query_info():
-    """Test happy path of using load_artifact_query_info."""
+def test_load_artifact_info():
+    """Test happy path of using load_artifact_info."""
 
     exptected_artifact_name = "test_artifact"
     exptected_artifact_description = "This is a test artifact."
-    expected_queriable_class_names = {"File", "Dataset"}
+    expected_resource_class_names = {"File", "Dataset"}
 
-    artifact_query_info = load_artifact_query_info(
-        model=MINIMAL_VALID_METADATA_MODEL,
+    artifact_info = load_artifact_info(
+        model=VALID_MINIMAL_METADATA_MODEL,
         name=exptected_artifact_name,
         description=exptected_artifact_description,
     )
 
-    assert artifact_query_info.name == exptected_artifact_name
-    assert artifact_query_info.description == exptected_artifact_description
-    assert (
-        artifact_query_info.queriable_classes.keys() == expected_queriable_class_names
-    )
+    assert artifact_info.name == exptected_artifact_name
+    assert artifact_info.description == exptected_artifact_description
+    assert artifact_info.resource_classes.keys() == expected_resource_class_names
