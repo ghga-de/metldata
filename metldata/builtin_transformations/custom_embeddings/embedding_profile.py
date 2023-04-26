@@ -24,7 +24,7 @@ from pydantic import BaseModel, Field
 
 
 class EmbeddingProfile(BaseModel):
-    """A model for describing an profile for embedding referenced classes into a class
+    """A model for describing a profile for embedding referenced classes into a class
     of interest of a metadata model. Please note, only the embedding for anchored
     classes that are referenced by this source class can be changed. All anchored
     classes are assumed to be non-embedded by default. The embedding profile can be used
