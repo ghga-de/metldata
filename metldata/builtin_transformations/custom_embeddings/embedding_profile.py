@@ -47,7 +47,7 @@ class EmbeddingProfile(BaseModel):
             "The references embedded into the target class."
             + "The keys are the names of slots in the target class that are used for "
             + " the references to other classes. The values are either the names of the"
-            + " references classes or another embedding profiles if a custom embedding"
+            + " referenced classes or other embedding profiles if a custom embedding"
             + " will be applied to the referenced classes, too."
         ),
     )
