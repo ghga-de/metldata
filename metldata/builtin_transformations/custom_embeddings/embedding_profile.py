@@ -37,7 +37,7 @@ class EmbeddingProfile(BaseModel):
         ..., description="The class to which the this embedding profile applies."
     )
     description: Optional[str] = Field(
-        ..., description="Description of the embedded class."
+        ..., description="Description of the transformed class with embeddings."
     )
     embedded_references: dict[str, Union[str, EmbeddingProfile]] = Field(
         ...,
