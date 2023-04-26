@@ -23,6 +23,20 @@ from metldata.builtin_transformations.custom_embeddings.embedding_profile import
 )
 
 
+def _get_target_class_names(*, embedding_profile: EmbeddingProfile) -> list[str]:
+    """A function to get the names of the target classes from an embedding profile
+    including nested embedding profiles."""
+
+    embedded_classes = [embedding_profile.target_class]
+    for referenced_profile in embedding_profile.embedded_references.values():
+        if isinstance(referenced_profile, EmbeddingProfile):
+            embedded_classes.extend(
+                _get_target_class_names(embedding_profile=referenced_profile)
+            )
+
+    return embedded_classes
+
+
 class CustomEmbeddingConfig(BaseSettings):
     """Config to describe profiles for custom embeddings of classes from a metadata
     model."""
@@ -42,12 +56,11 @@ class CustomEmbeddingConfig(BaseSettings):
     ) -> list[EmbeddingProfile]:
         """Check that names for embedded classes are unique among the embedding_profiles."""
 
-        embedded_classes: list[str] = []
-        for profile in value:
-            embedded_classes.append(profile.target_class)
-            for referenced_profile in profile.embedded_references.values():
-                if isinstance(referenced_profile, EmbeddingProfile):
-                    embedded_classes.append(referenced_profile.target_class)
+        embedded_classes = [
+            embedded_class
+            for profile in value
+            for embedded_class in _get_target_class_names(embedding_profile=profile)
+        ]
 
         if len(embedded_classes) != len(set(embedded_classes)):
             raise ValueError("Names for embedded classes must be unique.")
