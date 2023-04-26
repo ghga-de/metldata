@@ -76,8 +76,8 @@ def get_embedded_reference_slot(
     if induced_slot_definition.range != expected_target_class:
         raise MetadataModelTransformationError(
             f"Range of slot '{reference_slot_name}' in class"
-            + f" '{class_.name}' does not match the of embedding"
-            + " profile"
+            + f" '{class_.name}' does not match the reference specified in the"
+            + " embedding profile"
         )
 
     # update the range if the target is another embedded class:
