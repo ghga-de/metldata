@@ -43,7 +43,7 @@ from metldata.transform.base import MetadataModelTransformationError
 
 def get_embedding_profile_root_slot(embedding_profile: EmbeddingProfile) -> str:
     """Get the root slot for an embedding profile."""
-    return snakecase(embedding_profile.embedded_class)
+    return snakecase(embedding_profile.target_class)
 
 
 def get_embedded_reference_slot(
@@ -82,7 +82,7 @@ def get_embedded_reference_slot(
 
     # update the range if the target is another embedded class:
     if isinstance(target, EmbeddingProfile):
-        slot_definition.range = target.embedded_class
+        slot_definition.range = target.target_class
 
     # set the target slot to inlined:
     slot_definition.inlined = True
@@ -108,7 +108,7 @@ def generated_embedded_class(
     embedded_class = deepcopy(class_to_embed)
 
     # rename the class:
-    embedded_class.name = embedding_profile.embedded_class
+    embedded_class.name = embedding_profile.target_class
 
     if not embedded_class.slots:
         embedded_class.slots = []
@@ -155,7 +155,7 @@ def add_anchor_point_for_embedded_class(
         )
     anchor_point = AnchorPoint(
         root_slot=get_embedding_profile_root_slot(embedding_profile=embedding_profile),
-        target_class=embedding_profile.embedded_class,
+        target_class=embedding_profile.target_class,
         identifier_slot=identifier_slot,
     )
 

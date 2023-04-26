@@ -44,10 +44,10 @@ class CustomEmbeddingConfig(BaseSettings):
 
         embedded_classes: list[str] = []
         for profile in value:
-            embedded_classes.append(profile.embedded_class)
+            embedded_classes.append(profile.target_class)
             for referenced_profile in profile.embedded_references.values():
                 if isinstance(referenced_profile, EmbeddingProfile):
-                    embedded_classes.append(referenced_profile.embedded_class)
+                    embedded_classes.append(referenced_profile.target_class)
 
         if len(embedded_classes) != len(set(embedded_classes)):
             raise ValueError("Names for embedded classes must be unique.")

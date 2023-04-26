@@ -173,20 +173,20 @@ def add_custom_embedding_to_metadata(
         anchor_points_by_target=anchor_points_by_target,
     )
     embedded_class_anchor_point = AnchorPoint(
-        target_class=embedding_profile.embedded_class,
+        target_class=embedding_profile.target_class,
         identifier_slot=source_class_anchor_point.identifier_slot,
         root_slot=get_embedding_profile_root_slot(embedding_profile=embedding_profile),
     )
     anchor_points_by_target_modified = anchor_points_by_target.copy()
     anchor_points_by_target_modified[
-        embedding_profile.embedded_class
+        embedding_profile.target_class
     ] = embedded_class_anchor_point
     metadata_modified = metadata.copy()
     metadata_modified[embedded_class_anchor_point.root_slot] = {}
 
     return update_resources_in_metadata(
         resources=resources,
-        class_name=embedding_profile.embedded_class,
+        class_name=embedding_profile.target_class,
         global_metadata=metadata_modified,
         anchor_points_by_target=anchor_points_by_target_modified,
     )

@@ -32,7 +32,9 @@ class EmbeddingProfile(BaseModel):
     in the source class.
     """
 
-    embedded_class: str = Field(..., description="The name of the transformed class with embeddings.")
+    target_class: str = Field(
+        ..., description="The name of the transformed class with embeddings."
+    )
     source_class: str = Field(
         ..., description="The class to which the this embedding profile applies."
     )
