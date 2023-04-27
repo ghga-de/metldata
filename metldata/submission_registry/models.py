@@ -20,7 +20,7 @@ from enum import Enum
 from operator import attrgetter
 from typing import Any, Optional
 
-from ghga_service_chassis_lib.utils import DateTimeUTC, now_as_utc
+from ghga_service_commons.utils.utc_dates import DateTimeUTC, now_as_utc
 from pydantic import BaseModel, Field
 
 
