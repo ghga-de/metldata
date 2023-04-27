@@ -28,8 +28,8 @@ from metldata.model_utils.assumptions import (
 from metldata.model_utils.essentials import MetadataModel
 from tests.fixtures.metadata_models import (
     INVALID_METADATA_MODELS,
-    VALID_MINIMAL_METADATA_MODEL,
     VALID_METADATA_MODELS,
+    VALID_MINIMAL_METADATA_MODEL,
 )
 
 

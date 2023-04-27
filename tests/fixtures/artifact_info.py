@@ -17,12 +17,12 @@
 """Example of ArtifactInfo objects."""
 
 from metldata.artifacts_rest.artifact_info import load_artifact_info
-from tests.fixtures.workflows import EXAMPLE_ARTIFACT_MODELS
 from tests.fixtures.metadata_models import VALID_MINIMAL_METADATA_MODEL
+from tests.fixtures.workflows import EXAMPLE_ARTIFACT_MODELS
 
 # artifact info for the minimal valid metadata model:
 MINIMAL_ARTIFACT_INFO = load_artifact_info(
-    name="minimal_valid_metadata_model",
+    name="valid_minimal_metadata_model",
     description="This is a minimal valid metadata model.",
     model=VALID_MINIMAL_METADATA_MODEL,
 )

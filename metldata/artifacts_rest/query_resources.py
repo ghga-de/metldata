@@ -18,8 +18,8 @@
 
 from hexkit.protocols.dao import ResourceNotFoundError
 
-from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResource
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
+from metldata.artifacts_rest.models import ArtifactResource
 
 
 class ArtifactResourceNotFoundError(RuntimeError):

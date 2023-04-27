@@ -22,14 +22,13 @@ from typing import Optional
 from linkml.generators.jsonschemagen import JsonSchemaGenerator
 from linkml_runtime.linkml_model.annotations import Annotation
 from linkml_runtime.linkml_model.meta import ClassDefinition, ClassDefinitionName
-from pydantic import BaseModel, Field, validator
 
+from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResourceClass
 from metldata.custom_types import Json
 from metldata.model_utils.anchors import (
     get_anchors_points_by_target,
     lookup_anchor_point,
 )
-from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResourceClass
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
 

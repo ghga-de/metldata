@@ -19,17 +19,15 @@
 from fastapi import HTTPException
 from fastapi.routing import APIRouter
 from hexkit.protocols.dao import DaoFactoryProtocol
-from pydantic import Json
-from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 
+from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
+from metldata.artifacts_rest.artifact_info import get_artifact_info_dict
 from metldata.artifacts_rest.models import ArtifactInfo
-from metldata.artifacts_rest.artifact_info import (
-    get_artifact_info_dict,
-)
 from metldata.artifacts_rest.query_resources import (
     ArtifactResourceNotFoundError,
     query_artifact_resource,
 )
+from metldata.custom_types import Json
 
 
 async def rest_api_factory(
@@ -68,7 +66,9 @@ async def rest_api_factory(
 
         return artifact_info
 
-    @router.get("/artifacts/{artifact_name}/class/{class_name}/resources/{resource_id}")
+    @router.get(
+        "/artifacts/{artifact_name}/classes/{class_name}/resources/{resource_id}"
+    )
     async def get_artifact_resource(
         artifact_name: str, class_name: str, resource_id: str
     ) -> Json:

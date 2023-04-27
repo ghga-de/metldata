@@ -17,9 +17,10 @@
 """Data models."""
 
 from typing import Optional
-from pydantic import BaseModel, Field, validator
-from metldata.custom_types import Json
 
+from pydantic import BaseModel, Field, validator
+
+from metldata.custom_types import Json
 from metldata.model_utils.anchors import AnchorPoint
 
 

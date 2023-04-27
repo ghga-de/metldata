@@ -173,7 +173,7 @@ def test_add_slot_usage_annotation():
     annotation_key = "usage"
     annotation_value = "required"
 
-    original_model = MINIMAL_VALID_METADATA_MODEL
+    original_model = VALID_MINIMAL_METADATA_MODEL
     original_schema_view = original_model.schema_view
 
     updated_schema_view = add_slot_usage_annotation(
@@ -199,7 +199,7 @@ def test_disable_identifier_slot():
 
     class_name = "Dataset"
 
-    original_model = MINIMAL_VALID_METADATA_MODEL
+    original_model = VALID_MINIMAL_METADATA_MODEL
     original_schema_view = original_model.schema_view
 
     updated_schema_view = disable_identifier_slot(

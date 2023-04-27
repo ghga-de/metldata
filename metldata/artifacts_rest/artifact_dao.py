@@ -16,15 +16,13 @@
 
 """DAO for managing artifacts."""
 
-from pydantic import BaseModel, Field
 from hexkit.protocols.dao import DaoFactoryProtocol, DaoNaturalId
+from typing_extensions import TypeAlias
 
-from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResource
 from metldata.artifacts_rest.artifact_info import get_artifact_info_dict
-from metldata.custom_types import Json
+from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResource
 
-
-ArtifactResourceDao = DaoNaturalId[ArtifactResource]
+ArtifactResourceDao: TypeAlias = DaoNaturalId[ArtifactResource]
 
 
 class DaoNotFoundError(RuntimeError):
@@ -91,5 +89,7 @@ class ArtifactDaoCollection:
 
         try:
             return self._artifact_daos[artifact_name][class_name]
-        except KeyError:
-            raise DaoNotFoundError(artifact_name=artifact_name, class_name=class_name)
+        except KeyError as error:
+            raise DaoNotFoundError(
+                artifact_name=artifact_name, class_name=class_name
+            ) from error

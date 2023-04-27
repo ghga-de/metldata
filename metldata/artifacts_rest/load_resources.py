@@ -18,13 +18,12 @@
 
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
-from metldata.artifacts_rest.artifact_info import ArtifactInfo
-from metldata.custom_types import Json
 from metldata.artifacts_rest.models import (
     ArtifactInfo,
-    ArtifactResourceClass,
     ArtifactResource,
+    ArtifactResourceClass,
 )
+from metldata.custom_types import Json
 from metldata.metadata_utils import get_resources_of_class, lookup_self_id
 
 
