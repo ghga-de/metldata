@@ -39,7 +39,7 @@ ROOT_CLASS = "Submission"
 def schema_view_from_model(model: MetadataModel) -> SchemaView:
     """Get a schema view instance from the metadata model."""
 
-    return SchemaView(model)
+    return ExportableSchemaView(model)
 
 
 class MetadataModel(SchemaDefinition):
