@@ -22,6 +22,7 @@ import dataclasses
 import json
 from contextlib import contextmanager
 from copy import deepcopy
+from functools import lru_cache
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Generator
@@ -32,6 +33,13 @@ from linkml_runtime.linkml_model import SchemaDefinition
 
 # The name of the root class of a model:
 ROOT_CLASS = "Submission"
+
+
+@lru_cache
+def schema_view_from_model(model: MetadataModel) -> SchemaView:
+    """Get a schema view instance from the metadata model."""
+
+    return SchemaView(model)
 
 
 class MetadataModel(SchemaDefinition):
@@ -50,7 +58,7 @@ class MetadataModel(SchemaDefinition):
     def schema_view(self) -> ExportableSchemaView:
         """Get a schema view instance from the metadata model."""
 
-        return ExportableSchemaView(self)
+        return schema_view_from_model(self)  # type: ignore
 
     def copy(self) -> MetadataModel:
         """Copy the model."""
