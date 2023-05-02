@@ -59,7 +59,7 @@ class MetadataModel(SchemaDefinition):
     def schema_view(self) -> ExportableSchemaView:
         """Get a schema view instance from the metadata model."""
 
-        return schema_view_from_model(self)  # type: ignore
+        return schema_view_from_model(self)
 
     def copy(self) -> MetadataModel:
         """Copy the model."""
