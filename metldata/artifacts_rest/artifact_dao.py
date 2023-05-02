@@ -35,7 +35,7 @@ class DaoNotFoundError(RuntimeError):
 
 
 class ArtifactDaoCollection:
-    """A collection of DAO for managing artifacts and their resources."""
+    """A collection of DAOs for managing artifacts and their resources."""
 
     @classmethod
     async def construct(
