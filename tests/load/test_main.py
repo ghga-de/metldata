@@ -14,34 +14,36 @@
 # limitations under the License.
 #
 
-"""Test the api modules."""
+"""Test the main modules."""
 
 import pytest
 from ghga_service_commons.api.testing import AsyncTestClient
-from hexkit.protocols.dao import DaoFactoryProtocol
+from hexkit.protocols.dao import ResourceNotFoundError
 from hexkit.providers.mongodb.testutils import mongodb_fixture  # noqa: F401
 from hexkit.providers.mongodb.testutils import MongoDbFixture
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.models import ArtifactInfo
-from metldata.load.api import get_app
 from metldata.load.auth import generate_token, generate_token_and_hash
 from metldata.load.config import ArtifactLoaderAPIConfig
+from metldata.load.main import get_app
 from tests.fixtures.artifact_info import EXAMPLE_ARTIFACT_INFOS
 from tests.fixtures.workflows import EXAMPLE_ARTIFACTS
 
 
 async def get_configured_client(
-    dao_factory: DaoFactoryProtocol,
+    mongodb_fixture: MongoDbFixture,  # noqa: F811
     artifact_infos: list[ArtifactInfo],
 ) -> tuple[AsyncTestClient, str]:
     """Get a tuple of a configured test client together with a corresponding token."""
 
     token, token_hash = generate_token_and_hash()
     config = ArtifactLoaderAPIConfig(
-        artifact_infos=artifact_infos, loader_token_hashes=[token_hash]
+        artifact_infos=artifact_infos,
+        loader_token_hashes=[token_hash],
+        **mongodb_fixture.config.dict(),
     )
-    app = await get_app(config=config, dao_factory=dao_factory)
+    app = await get_app(config=config, dao_factory=mongodb_fixture.dao_factory)
     client = AsyncTestClient(app)
     return client, token
 
@@ -53,7 +55,7 @@ async def test_load_artifacts_endpoint_happy(
     """Test the happy path of using the load artifacts endpoint."""
 
     client, token = await get_configured_client(
-        dao_factory=mongodb_fixture.dao_factory, artifact_infos=EXAMPLE_ARTIFACT_INFOS
+        mongodb_fixture=mongodb_fixture, artifact_infos=EXAMPLE_ARTIFACT_INFOS
     )
 
     # load example artifacts resources:
@@ -88,6 +90,18 @@ async def test_load_artifacts_endpoint_happy(
     observed_resource = await dao.get_by_id(expected_resource_id)
     assert observed_resource.content == expected_resource_content
 
+    # resubmit an empty request:
+    response = await client.post(
+        "/rpc/load-artifacts",
+        json={},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+
+    # confirm that example resource was deleted:
+    with pytest.raises(ResourceNotFoundError):
+        await dao.get_by_id(expected_resource_id)
+
 
 @pytest.mark.asyncio
 async def test_load_artifacts_endpoint_invalid_resources(
@@ -96,7 +110,7 @@ async def test_load_artifacts_endpoint_invalid_resources(
     """Test using the load artifacts endpoint with resources of unknown artifacts."""
 
     client, token = await get_configured_client(
-        dao_factory=mongodb_fixture.dao_factory, artifact_infos=EXAMPLE_ARTIFACT_INFOS
+        mongodb_fixture=mongodb_fixture, artifact_infos=EXAMPLE_ARTIFACT_INFOS
     )
 
     # load example artifacts resources:
@@ -119,7 +133,7 @@ async def test_load_artifacts_endpoint_invalid_token(
 
     invalid_token = generate_token()
     client, _ = await get_configured_client(
-        dao_factory=mongodb_fixture.dao_factory, artifact_infos=EXAMPLE_ARTIFACT_INFOS
+        mongodb_fixture=mongodb_fixture, artifact_infos=EXAMPLE_ARTIFACT_INFOS
     )
 
     # load artifact resources with invalid token:

@@ -16,12 +16,11 @@
 
 """API for loading artifacts into running services."""
 
-from typing import Optional
+from typing import Callable, Coroutine, Optional
 
-from fastapi import Depends, FastAPI, HTTPException, Security
+from fastapi import Depends, HTTPException, Security
 from fastapi.routing import APIRouter
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from ghga_service_commons.api import configure_app
 from ghga_service_commons.auth.context import AuthContextProtocol
 from ghga_service_commons.auth.policies import require_auth_context_using_credentials
 from hexkit.protocols.dao import DaoFactoryProtocol
@@ -31,7 +30,6 @@ from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.artifact_info import get_artifact_info_dict
 from metldata.artifacts_rest.models import ArtifactInfo
 from metldata.load.auth import check_token
-from metldata.load.config import ArtifactLoaderAPIConfig
 from metldata.load.load import (
     ArtifactResourcesInvalid,
     check_artifact_resources,
@@ -73,7 +71,8 @@ async def rest_api_factory(
     *,
     artifact_infos: list[ArtifactInfo],
     dao_factory: DaoFactoryProtocol,
-    token_hashes: list[str]
+    token_hashes: list[str],
+    clear_database: Callable[[], Coroutine[None, None, None]]
 ) -> APIRouter:
     """Return a router for an API for loading artifacts."""
 
@@ -111,6 +110,8 @@ async def rest_api_factory(
         except ArtifactResourcesInvalid as error:
             raise HTTPException(status_code=400, detail=str(error)) from error
 
+        await clear_database()
+
         await load_artifacts_using_dao(
             artifact_resources=artifact_resources,
             artifact_info_dict=artifact_info_dict,
@@ -118,25 +119,3 @@ async def rest_api_factory(
         )
 
     return router
-
-
-async def get_app(
-    config: ArtifactLoaderAPIConfig, dao_factory: DaoFactoryProtocol
-) -> FastAPI:
-    """Get the FastAPI app for loading artifacts. Performs dependency injection."""
-
-    app = FastAPI(
-        title="Artifacts Loader",
-        description="Load artifacts into running services.",
-    )
-    configure_app(app=app, config=config)
-
-    api_router = await rest_api_factory(
-        artifact_infos=config.artifact_infos,
-        dao_factory=dao_factory,
-        token_hashes=config.loader_token_hashes,
-    )
-
-    app.include_router(api_router)
-
-    return app

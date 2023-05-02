@@ -17,12 +17,13 @@
 """Config parameters and their defaults."""
 
 from ghga_service_commons.api import ApiConfigBase
+from hexkit.providers.mongodb import MongoDbConfig
 from pydantic import Field
 
 from metldata.artifacts_rest.config import ArtifactsRestConfig
 
 
-class ArtifactLoaderAPIConfig(ArtifactsRestConfig, ApiConfigBase):
+class ArtifactLoaderAPIConfig(ArtifactsRestConfig, ApiConfigBase, MongoDbConfig):
     """Config settings and their defaults."""
 
     loader_token_hashes: list[str] = Field(
