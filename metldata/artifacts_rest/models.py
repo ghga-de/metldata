@@ -62,7 +62,7 @@ class ArtifactInfo(BaseModel):
         ...,
         description=(
             "A dictionary of resource classes for this artifact."
-            + " The keys are the name of the classes. The values are the"
+            + " The keys are the names of the classes. The values are the"
             + " corresponding class models."
         ),
     )
