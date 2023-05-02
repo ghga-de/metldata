@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""Test the factory module."""
+"""Test the api_factory module."""
 
 
 import httpx

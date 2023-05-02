@@ -109,16 +109,16 @@ def test_subset_json_schema_for_class():
 def test_load_artifact_info():
     """Test happy path of using load_artifact_info."""
 
-    exptected_artifact_name = "test_artifact"
-    exptected_artifact_description = "This is a test artifact."
+    expected_artifact_name = "test_artifact"
+    expected_artifact_description = "This is a test artifact."
     expected_resource_class_names = {"File", "Dataset"}
 
     artifact_info = load_artifact_info(
         model=VALID_MINIMAL_METADATA_MODEL,
-        name=exptected_artifact_name,
-        description=exptected_artifact_description,
+        name=expected_artifact_name,
+        description=expected_artifact_description,
     )
 
-    assert artifact_info.name == exptected_artifact_name
-    assert artifact_info.description == exptected_artifact_description
+    assert artifact_info.name == expected_artifact_name
+    assert artifact_info.description == expected_artifact_description
     assert artifact_info.resource_classes.keys() == expected_resource_class_names

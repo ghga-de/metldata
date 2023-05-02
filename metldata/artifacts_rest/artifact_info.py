@@ -136,7 +136,7 @@ def load_resource_classes(*, model: MetadataModel) -> dict[str, ArtifactResource
 
     Returns:
         A dictionary of resource classes for this artifact.
-        The keys are the name of the metadata classes. The values are the
+        The keys are the names of the metadata classes. The values are the
         corresponding metadata class models.
     """
 

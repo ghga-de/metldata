@@ -33,7 +33,7 @@ from metldata.custom_types import Json
 async def rest_api_factory(
     *, artifact_infos: list[ArtifactInfo], dao_factory: DaoFactoryProtocol
 ) -> APIRouter:
-    """Factory to build a REST API for a querying the provided artifact.
+    """Factory to build a REST API for querying the provided artifact.
 
     Args:
         artifact_info: Information on the artifact to build the REST API for.

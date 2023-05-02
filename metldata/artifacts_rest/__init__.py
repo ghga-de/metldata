@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-"""Logic for making artefacts queriable via a REST interface."""
+"""Logic for making artefacts queryable via a REST interface."""

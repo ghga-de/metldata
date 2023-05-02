@@ -27,7 +27,7 @@ from metldata.model_utils.anchors import AnchorPoint
 class ArtifactResource(BaseModel):
     """Information on a resource of an artifact."""
 
-    id_: str = Field(..., description="The id of the resource.")
+    id_: str = Field(..., description="The ID of the resource.")
     class_name: str = Field(
         ..., description="The name of the class this resource corresponds to."
     )
@@ -62,7 +62,7 @@ class ArtifactInfo(BaseModel):
         ...,
         description=(
             "A dictionary of resource classes for this artifact."
-            + " The keys are the name of the classes. The values are the"
+            + " The keys are the names of the classes. The values are the"
             + " corresponding class models."
         ),
     )
