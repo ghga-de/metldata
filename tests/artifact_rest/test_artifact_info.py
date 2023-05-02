@@ -23,8 +23,8 @@ from tests.fixtures.metadata_models import VALID_MINIMAL_METADATA_MODEL
 def test_load_artifact_info():
     """Test happy path of using load_artifact_info."""
 
-    exptected_artifact_name = "test_artifact"
-    exptected_artifact_description = "This is a test artifact."
+    expected_artifact_name = "test_artifact"
+    expected_artifact_description = "This is a test artifact."
     expected_resource_class_names = {"File", "Dataset"}
 
     artifact_info = load_artifact_info(
