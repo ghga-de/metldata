@@ -17,9 +17,14 @@
 """Config parameters and their defaults."""
 
 from ghga_service_commons.api import ApiConfigBase
+from pydantic import Field
 
 from metldata.artifacts_rest.config import ArtifactsRestConfig
 
 
 class ArtifactLoaderAPIConfig(ArtifactsRestConfig, ApiConfigBase):
     """Config settings and their defaults."""
+
+    loader_token_hashes: list[str] = Field(
+        ..., description="Hashes of tokens used to authenticate for loading artifact."
+    )
