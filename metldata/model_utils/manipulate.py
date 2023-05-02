@@ -157,7 +157,6 @@ def delete_class_slot(
     # add updated class to a copy of schema view:
     schema_view_copy = deepcopy(schema_view)
     schema_view_copy.add_class(class_copy)
-    schema_view_copy.set_modified()
 
     return schema_view_copy
 

@@ -21,11 +21,11 @@ from __future__ import annotations
 import dataclasses
 import json
 from contextlib import contextmanager
-from copy import deepcopy
+from copy import copy, deepcopy
 from functools import lru_cache
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Generator
+from typing import Any, Generator
 
 import yaml
 from linkml_runtime import SchemaView
@@ -144,9 +144,30 @@ class MetadataModel(SchemaDefinition):
 class ExportableSchemaView(SchemaView):
     """Extend the SchemaView by adding a method for exporting a MetadataModel."""
 
+    def __copy__(self):
+        """Return a copy of the model.
+
+        Please note, the copy will have a new uuid used for hashing.
+        """
+
+        return ExportableSchemaView(
+            schema=copy(self.schema),
+            importmap=copy(self.importmap),
+        )
+
+    def __deepcopy__(self, memo: Any):
+        """Return a deepcopy of the model.
+
+        Please note, the copy will have a new uuid used for hashing.
+        """
+
+        return ExportableSchemaView(
+            schema=deepcopy(self.schema), importmap=copy(self.importmap)
+        )
+
     def export_model(self) -> MetadataModel:
         """Export a MetadataModel."""
 
-        model_json = dataclasses.asdict(self.copy_schema())
+        model_json = dataclasses.asdict(deepcopy(self.schema))
 
         return MetadataModel(**model_json)
