@@ -29,8 +29,8 @@ def test_load_artifact_info():
 
     artifact_info = load_artifact_info(
         model=VALID_MINIMAL_METADATA_MODEL,
-        name=exptected_artifact_name,
-        description=exptected_artifact_description,
+        name=expected_artifact_name,
+        description=expected_artifact_description,
     )
 
     assert artifact_info.name == expected_artifact_name
