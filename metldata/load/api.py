@@ -16,14 +16,16 @@
 
 """API for loading artifacts into running services."""
 
-from fastapi import HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.routing import APIRouter
+from ghga_service_commons.api import configure_app
 from hexkit.protocols.dao import DaoFactoryProtocol
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.artifact_info import get_artifact_info_dict
 from metldata.artifacts_rest.load_resources import load_artifact_resources
 from metldata.artifacts_rest.models import ArtifactInfo
+from metldata.load.config import ArtifactLoaderAPIConfig
 from metldata.load.models import ArtifactResourceDict
 
 
@@ -40,7 +42,7 @@ def check_artifact_resources(
         ArtifactResourcesInvalid: If the artifact resources are invalid.
     """
 
-    for artifact_name in artifact_resources.values():
+    for artifact_name in artifact_resources:
         if not artifact_name in artifact_infos:
             raise ArtifactResourcesInvalid(f"Artifact '{artifact_name}' is unknown.")
 
@@ -73,7 +75,7 @@ async def rest_api_factory(
 
     router = APIRouter()
 
-    @router.post("/rpc/load_artifacts")
+    @router.post("/rpc/load-artifacts")
     async def load_artifacts(artifact_resources: ArtifactResourceDict):
         """Load artifacts into running services."""
 
@@ -89,3 +91,25 @@ async def rest_api_factory(
             artifact_info_dict=artifact_info_dict,
             dao_collection=dao_collection,
         )
+
+    return router
+
+
+async def get_app(
+    config: ArtifactLoaderAPIConfig, dao_factory: DaoFactoryProtocol
+) -> FastAPI:
+    """Get the FastAPI app for loading artifacts. Performs dependency injection."""
+
+    app = FastAPI(
+        title="Artifacts Loader",
+        description="Load artifacts into running services.",
+    )
+    configure_app(app=app, config=config)
+
+    api_router = await rest_api_factory(
+        artifact_infos=config.artifact_infos, dao_factory=dao_factory
+    )
+
+    app.include_router(api_router)
+
+    return app

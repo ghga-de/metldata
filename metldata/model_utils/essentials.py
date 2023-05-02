@@ -27,6 +27,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Any, Generator
 
+import jsonasobj2
 import yaml
 from linkml_runtime import SchemaView
 from linkml_runtime.linkml_model import SchemaDefinition
@@ -86,7 +87,12 @@ class MetadataModel(SchemaDefinition):
                     if "from_schema" in class_:
                         del class_["from_schema"]
                     if "slot_usage" in class_:
-                        for slot in class_["slot_usage"].values():
+                        slot_usage: Any = (
+                            jsonasobj2.as_dict(class_["slot_usage"])
+                            if isinstance(class_["slot_usage"], jsonasobj2.JsonObj)
+                            else class_["slot_usage"]
+                        )
+                        for slot in slot_usage.values():
                             if "alias" in slot:
                                 del slot["alias"]
                             if "from_schema" in slot:

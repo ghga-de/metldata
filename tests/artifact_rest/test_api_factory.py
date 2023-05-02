@@ -16,11 +16,11 @@
 
 """Test the factory module."""
 
-import socket
 
 import httpx
 import pytest
 from fastapi import FastAPI
+from ghga_service_commons.api.testing import AsyncTestClient
 from hexkit.protocols.dao import DaoFactoryProtocol
 from hexkit.providers.mongodb.testutils import mongodb_fixture  # noqa: F401
 from hexkit.providers.mongodb.testutils import MongoDbFixture
@@ -29,13 +29,6 @@ from metldata.artifacts_rest.api_factory import rest_api_factory
 from metldata.artifacts_rest.artifact_info import ArtifactInfo
 from tests.artifact_rest.test_load_artifacts import load_example_artifact_resources
 from tests.fixtures.artifact_info import EXAMPLE_ARTIFACT_INFOS, MINIMAL_ARTIFACT_INFO
-
-
-def get_free_port() -> int:
-    """Finds and returns a free port on localhost."""
-    sock = socket.socket()
-    sock.bind(("", 0))
-    return int(sock.getsockname()[1])
 
 
 @pytest.mark.asyncio
@@ -51,8 +44,7 @@ async def get_example_app_client(
 
     app = FastAPI()
     app.include_router(router)
-    port = get_free_port()
-    return httpx.AsyncClient(app=app, base_url=f"http://localhost:{port}")
+    return AsyncTestClient(app)
 
 
 @pytest.mark.asyncio

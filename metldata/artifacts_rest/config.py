@@ -30,14 +30,14 @@ class ArtifactsRestConfig(BaseSettings):
     )
 
     # pylint: disable=no-self-argument
-    @validator("artifacts_info")
+    @validator("artifact_infos")
     def validate_artifact_info_names(
-        cls, values: list[ArtifactInfo]
+        cls, value: list[ArtifactInfo]
     ) -> list[ArtifactInfo]:
         """Validate that artifact names are unique."""
 
-        artifact_names = [artifact_info.name for artifact_info in values]
+        artifact_names = [artifact_info.name for artifact_info in value]
         if len(artifact_names) != len(set(artifact_names)):
             raise ValueError("Artifact names must be unique.")
 
-        return values
+        return value
