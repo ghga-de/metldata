@@ -33,6 +33,6 @@ def test_load_artifact_info():
         description=exptected_artifact_description,
     )
 
-    assert artifact_info.name == exptected_artifact_name
-    assert artifact_info.description == exptected_artifact_description
+    assert artifact_info.name == expected_artifact_name
+    assert artifact_info.description == expected_artifact_description
     assert artifact_info.resource_classes.keys() == expected_resource_class_names
