@@ -4,5 +4,3 @@
 
 # additional requirements can be listed here
 hexkit[test-mongodb]
-pytest-profiling
-snakeviz
