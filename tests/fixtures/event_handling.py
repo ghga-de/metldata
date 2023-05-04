@@ -18,104 +18,70 @@
 
 import json
 from collections import defaultdict
+from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
 from hexkit.custom_types import Ascii, JsonObject
 from hexkit.protocols.eventsub import EventSubscriberProtocol
 from pydantic import BaseModel, Field
+from pydoc_data import topics
 
 from metldata.event_handling import (
     Event,
+    FileSystemEventCollector,
     FileSystemEventConfig,
     FileSystemEventPublisher,
-    FileSystemEventSubscriber,
 )
-
-
-class ConsumedEvent(BaseModel):
-    """Consumed event without the key."""
-
-    topic: str
-    type_: str
-    payload: str = Field(..., description="JSON string of the event payload.")
-
-    class Config:
-        """Pydantic model configuration."""
-
-        frozen = True
-
-
-class MockSubscriberTranslator(EventSubscriberProtocol):
-    """A mock implementation of the EventSubscriberProtocol to track consumed
-    events. Only consumes from topic1.
-
-    Consumed events are captured in the consumed_events attribute.
-    """
-
-    def __init__(self, topics_of_interest: set[str], types_of_interest: set[str]):
-        self.consumed_events: set[ConsumedEvent] = set()
-        self.topics_of_interest = topics_of_interest
-        self.types_of_interest = types_of_interest
-
-    async def _consume_validated(
-        self, *, payload: JsonObject, type_: Ascii, topic: Ascii
-    ) -> None:
-        self.consumed_events.add(
-            ConsumedEvent(topic=topic, type_=type_, payload=json.dumps(payload))
-        )
 
 
 class EventExpectationMissmatch(RuntimeError):
     """Raised when expected events where not found."""
 
-    def __init__(
-        self, expected_events: set[ConsumedEvent], consumed_events: set[ConsumedEvent]
-    ):
-        message = f"Expected events {expected_events} but got {consumed_events}"
+    def __init__(self, expected_events: set[str], consumed_events: set[str]):
+        message = f"Expected events '{expected_events}' but got '{consumed_events}'"
         super().__init__(message)
 
 
+@dataclass
 class FileSystemEventFixture:
     """Returned by file_system_event_fixture."""
 
-    def __init__(self, *, config: FileSystemEventConfig):
-        """Initialize with config."""
+    config: FileSystemEventConfig
+    publisher: FileSystemEventPublisher
+    collector: FileSystemEventCollector
 
-        self.config = config
-
-    async def expect_events(self, expected_events: set[ConsumedEvent]) -> None:
+    def expect_events(self, expected_events: list[Event]) -> None:
         """Check if the events expected to be published can be consumed.
 
         Raises:
             EventExpectationMissmatch: If the expected events are not consumed.
         """
 
-        events_by_topic: dict[str, set[ConsumedEvent]] = defaultdict(set)
-        for event in list(expected_events):
-            events_by_topic[event.topic].add(event)
+        topics = list({event.topic for event in expected_events})
+        types = list({event.type_ for event in expected_events})
 
-        for topic, events in events_by_topic.items():
-            types_of_interest = {event.type_ for event in events}
-            translator = MockSubscriberTranslator(
-                topics_of_interest={topic}, types_of_interest=types_of_interest
+        observed_events: list[Event] = []
+        for topic in topics:
+            observed_events.extend(
+                list(self.collector.collect_events(topic=topic, types=types))
             )
-            subscriber = FileSystemEventSubscriber(
-                config=self.config, translator=translator
-            )
-            await subscriber.run()
 
-            if translator.consumed_events != events:
-                raise EventExpectationMissmatch(
-                    expected_events=events, consumed_events=translator.consumed_events
-                )
+        # hashable versions for comparison:
+        observed_event_jsons = {event.json() for event in observed_events}
+        expected_event_jsons = {event.json() for event in expected_events}
+
+        if expected_event_jsons != observed_event_jsons:
+            raise EventExpectationMissmatch(
+                expected_events=observed_event_jsons,
+                consumed_events=expected_event_jsons,
+            )
 
     async def publish_events(self, events: list[Event]) -> None:
         """Publish a list of events."""
 
-        publisher = FileSystemEventPublisher(config=self.config)
         for event in events:
-            await publisher.publish(
+            await self.publisher.publish(
                 topic=event.topic,
                 type_=event.type_,
                 key=event.key,
@@ -130,4 +96,8 @@ def file_system_event_fixture(tmp_path: Path) -> FileSystemEventFixture:
     config = FileSystemEventConfig(
         event_store_path=tmp_path,
     )
-    return FileSystemEventFixture(config=config)
+    publisher = FileSystemEventPublisher(config=config)
+    collector = FileSystemEventCollector(config=config)
+    return FileSystemEventFixture(
+        config=config, publisher=publisher, collector=collector
+    )

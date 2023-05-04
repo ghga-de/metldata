@@ -16,6 +16,7 @@
 """Testing the event publisher."""
 
 import asyncio
+import json
 
 from ghga_service_commons.utils.utc_dates import now_as_utc
 
@@ -25,7 +26,7 @@ from metldata.submission_registry import models
 from metldata.submission_registry.event_publisher import SourceEventPublisher
 from tests.fixtures.config import config_fixture  # noqa: F401
 from tests.fixtures.event_handling import file_system_event_fixture  # noqa: F401
-from tests.fixtures.event_handling import ConsumedEvent, FileSystemEventFixture
+from tests.fixtures.event_handling import Event, FileSystemEventFixture
 
 
 def check_source_events(
@@ -42,18 +43,17 @@ def check_source_events(
         EventNotPublishedError: if the event was not yet published.
     """
 
-    expected_events = {
-        ConsumedEvent(
+    expected_events = [
+        Event(
             topic=source_event_topic,
             type_=source_event_type,
-            payload=expected_submission.json(),
+            key=expected_submission.id,
+            payload=json.loads(expected_submission.json()),
         )
         for expected_submission in expected_submissions
-    }
+    ]
 
-    asyncio.run(
-        file_system_event_fixture.expect_events(expected_events=expected_events)
-    )
+    file_system_event_fixture.expect_events(expected_events=expected_events)
 
 
 def test_happy(

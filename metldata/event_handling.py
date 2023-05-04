@@ -18,7 +18,7 @@
 
 import json
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, Optional
 
 from hexkit.base import InboundProviderBase
 from hexkit.custom_types import Ascii, JsonObject
@@ -173,3 +173,28 @@ class FileSystemEventSubscriber(InboundProviderBase):
             await self._translator.consume(
                 payload=event.payload, type_=event.type_, topic=event.topic
             )
+
+
+class FileSystemEventCollector:
+    """An alternative to the FileSystemEventSubscriber that can be used to obtain a
+    collection of events without the need to hand over individual events to a
+    translator."""
+
+    def __init__(self, *, config: FileSystemEventConfig):
+        """Initialize with config."""
+
+        self._config = config
+
+    def collect_events(
+        self, *, topic: str, types: Optional[list[str]] = None
+    ) -> Iterator[Event]:
+        """Collect all events for the given types from the given topic."""
+
+        events = read_events_from_topic(
+            topic=topic,
+            event_store_path=self._config.event_store_path,
+        )
+
+        for event in events:
+            if not types or event.type_ in types:
+                yield event
