@@ -14,13 +14,16 @@
 # limitations under the License.
 #
 
+"""Functionality to publish and consume events stored on the file system."""
+
 import json
 from pathlib import Path
 from typing import Iterator
-from hexkit.custom_types import JsonObject, Ascii
+
+from hexkit.base import InboundProviderBase
+from hexkit.custom_types import Ascii, JsonObject
 from hexkit.protocols.eventpub import EventPublisherProtocol
 from hexkit.protocols.eventsub import EventSubscriberProtocol
-from hexkit.base import InboundProviderBase
 from pydantic import BaseModel, BaseSettings, Field
 
 
@@ -68,7 +71,7 @@ def write_event(*, event: Event, event_store_path: Path) -> None:
     event_path = get_event_path(
         topic=event.topic, key=event.key, event_store_path=event_store_path
     )
-    event_content = {"type": event.type_, "payload": event.payload}
+    event_content = {"type_": event.type_, "payload": event.payload}
 
     event_path.parent.mkdir(parents=True, exist_ok=True)
     with open(event_path, "w", encoding="utf-8") as event_file:
@@ -150,6 +153,8 @@ class FileSystemEventSubscriber(InboundProviderBase):
                 "FileSystemEventSubscriber only supports a single topic of interest."
             )
 
+        self._topic_of_interest = self._translator.topics_of_interest.pop()
+
     async def run(self, forever: bool = True) -> None:
         """
         Runs the inbound provider.
@@ -158,8 +163,11 @@ class FileSystemEventSubscriber(InboundProviderBase):
         are available.
         """
 
+        if not forever:
+            raise NotImplementedError
+
         for event in read_events_from_topic(
-            topic=self._translator.topics_of_interest[0],
+            topic=self._topic_of_interest,
             event_store_path=self._config.event_store_path,
         ):
             await self._translator.consume(
