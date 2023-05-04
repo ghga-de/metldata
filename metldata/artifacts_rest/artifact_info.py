@@ -80,7 +80,7 @@ def get_resource_class_names(*, model: MetadataModel) -> list[str]:
 def filter_json_schema_definitions(
     *, target_definition: Json, all_definitions: dict[str, Json]
 ) -> dict[str, Json]:
-    """Remove json schema defintions that are not used by the target_defintion."""
+    """Remove JSON schema definitions that are not used by the target_defintion."""
 
     target_definition_str = json.dumps(target_definition)
     return {
