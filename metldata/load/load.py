@@ -37,7 +37,7 @@ def check_artifact_resources(
     """
 
     for artifact_name in artifact_resources:
-        if not artifact_name in artifact_infos:
+        if artifact_name not in artifact_infos:
             raise ArtifactResourcesInvalid(f"Artifact '{artifact_name}' is unknown.")
 
 
