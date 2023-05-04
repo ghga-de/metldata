@@ -108,7 +108,7 @@ async def rest_api_factory(
                 artifact_resources=artifact_resources, artifact_infos=artifact_info_dict
             )
         except ArtifactResourcesInvalid as error:
-            raise HTTPException(status_code=400, detail=str(error)) from error
+            raise HTTPException(status_code=422, detail=str(error)) from error
 
         await clear_database()
 
