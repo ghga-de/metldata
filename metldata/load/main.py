@@ -45,7 +45,7 @@ async def get_app(
 
     app = FastAPI(
         title="Artifacts Loader",
-        description="Load artifacts into running services.",
+        description="Load artifacts into services for querying via user-accessible API.",
     )
     configure_app(app=app, config=config)
 

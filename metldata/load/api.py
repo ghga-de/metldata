@@ -101,7 +101,7 @@ async def rest_api_factory(
         artifact_resources: ArtifactResourceDict,
         _token: LoaderTokenAuthContext = require_token,
     ):
-        """Load artifacts into running services."""
+        """Load artifacts into services for querying via user-accessible API."""
 
         try:
             check_artifact_resources(
