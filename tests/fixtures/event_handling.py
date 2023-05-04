@@ -16,16 +16,10 @@
 
 """Fixtures for handling events."""
 
-import json
-from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
-from hexkit.custom_types import Ascii, JsonObject
-from hexkit.protocols.eventsub import EventSubscriberProtocol
-from pydantic import BaseModel, Field
-from pydoc_data import topics
 
 from metldata.event_handling import (
     Event,

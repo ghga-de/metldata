@@ -17,17 +17,14 @@
 """Functionality for collect available artifacts."""
 
 from collections import defaultdict
-from typing import Callable
 
-from hexkit.custom_types import Ascii, JsonObject
-from hexkit.protocols.eventsub import EventSubscriberProtocol
 from pydantic import BaseModel, Field
 
-from metldata.custom_types import Json
+from metldata.event_handling import FileSystemEventCollector
 from metldata.load.models import ArtifactResourceDict
 
 
-class ArtifactConsumerConfig(BaseModel):
+class ArtifactCollectorConfig(BaseModel):
     """Config parameters and their defaults."""
 
     artifact_topic_prefix: str = Field(
@@ -52,63 +49,18 @@ def get_artifact_topic(*, artifact_topic_prefix: str, artifact_type: str) -> str
     return f"{artifact_topic_prefix}.{artifact_type}"
 
 
-class ArtifactConsumer(EventSubscriberProtocol):
-    """Consumes artifact events."""
-
-    def __init__(
-        self,
-        consume_artifact_func: Callable[[str, Json], None],
-        config: ArtifactConsumerConfig,
-    ) -> None:
-        """Initialize with config.
-
-        Args:
-            consume_artifact_func:
-                A function that consumes an artifact of one submission. The first
-                argument is the artifact type, the second is the artifact content.
-            config:
-                Config parameters.
-        """
-
-        artifact_topics = [
-            get_artifact_topic(
-                artifact_topic_prefix=config.artifact_topic_prefix,
-                artifact_type=artifact_type,
-            )
-            for artifact_type in config.artifact_types
-        ]
-
-        self.topics_of_interest = artifact_topics
-        self.types_of_interest = config.artifact_types
-        self._consume_artifact_func = consume_artifact_func
-
-    async def _consume_validated(
-        self, *, payload: JsonObject, type_: Ascii, topic: Ascii
-    ) -> None:
-        """Receive and process an event with already validated topic and type.
-
-        Args:
-            payload: The data/payload to send with the event.
-            type_: The type of the event.
-            topic: Name of the topic the event was published to.
-        """
-
-        self._consume_artifact_func(type_, payload)
-
-
-def collect_artifacts_from_fs(
-    *, config: ArtifactConsumerConfig
+def collect_artifacts(
+    *, config: ArtifactCollectorConfig, event_collector: FileSystemEventCollector
 ) -> ArtifactResourceDict:
     """Collect artifacts from the file system."""
 
-    artifact_resource_dict: ArtifactResourceDict = defaultdict(list)
+    artifact_resources: ArtifactResourceDict = defaultdict(list)
+    for artifact_type in config.artifact_types:
+        topic = get_artifact_topic(
+            artifact_topic_prefix=config.artifact_topic_prefix,
+            artifact_type=artifact_type,
+        )
+        for event in event_collector.collect_events(topic=topic):
+            artifact_resources[artifact_type].append(event.payload)
 
-    def consume_artifact(artifact_type: str, artifact_content: Json) -> None:
-        """Helper function to collect artifacts from the consumer."""
-
-        artifact_resource_dict[artifact_type].append(artifact_content)
-
-    artifact_consumer = ArtifactConsumer(
-        consume_artifact_func=consume_artifact, config=config
-    )
-    event_sub_
+    return artifact_resources

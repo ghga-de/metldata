@@ -16,11 +16,40 @@
 
 """Client functionality to drop artifacts onto the endpoint for uploading them."""
 
+import httpx
+
+from metldata.event_handling import FileSystemEventCollector
+from metldata.load.collect import collect_artifacts
 from metldata.load.config import ArtifactLoaderClientConfig
 
 
+class ArtifactUploadException(Exception):
+    """Exception raised when uploading artifacts fails."""
+
+
 def upload_artifacts_via_http_api(
-    *, artifacts_directory: str, token: str, config: ArtifactLoaderClientConfig
+    *, token: str, config: ArtifactLoaderClientConfig
 ) -> None:
-    """Upload artifacts located in the provided directory via the HTTP API specified in
-    the config using the provided token for authorization."""
+    """Upload artifacts via the HTTP API specified in the config using the provided
+    token for authorization.
+
+    Raises:
+        ArtifactUploadException: If uploading artifacts fails.
+    """
+
+    event_collector = FileSystemEventCollector(config=config)
+    artifacts = collect_artifacts(config=config, event_collector=event_collector)
+
+    with httpx.Client() as client:
+        response = client.post(
+            f"{config.loader_api_root}/rpc/load-artifacts",
+            json=artifacts,
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=60,
+        )
+
+    if response.status_code != 200:
+        raise ArtifactUploadException(
+            f"Uploading artifacts failed with status code {response.status_code}:"
+            + f" {response.json}"
+        )

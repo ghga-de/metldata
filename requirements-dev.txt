@@ -4,3 +4,4 @@
 
 # additional requirements can be listed here
 hexkit[test-mongodb]
+pytest-httpx==0.22.0

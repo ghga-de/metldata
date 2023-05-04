@@ -15,7 +15,6 @@
 
 """Testing the event publisher."""
 
-import asyncio
 import json
 
 from ghga_service_commons.utils.utc_dates import now_as_utc

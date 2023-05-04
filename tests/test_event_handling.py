@@ -22,7 +22,6 @@ import pytest
 from hexkit.custom_types import Ascii, JsonObject
 from hexkit.protocols.eventsub import EventSubscriberProtocol
 from pydantic import BaseModel, Field
-from regex import E
 
 from metldata.event_handling import FileSystemEventSubscriber
 from tests.fixtures.event_handling import file_system_event_fixture  # noqa: F401
