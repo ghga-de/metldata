@@ -26,7 +26,7 @@ class ArtifactsRestConfig(BaseSettings):
 
     artifact_infos: list[ArtifactInfo] = Field(
         ...,
-        description="Information for artifacts to be queriable via the Artifacts REST API.",
+        description="Information for artifacts to be queryable via the Artifacts REST API.",
     )
 
     # pylint: disable=no-self-argument
