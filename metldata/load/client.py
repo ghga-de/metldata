@@ -14,24 +14,13 @@
 # limitations under the License.
 #
 
-"""Config parameters and their defaults."""
+"""Client functionality to drop artifacts onto the endpoint for uploading them."""
 
-from ghga_service_commons.api import ApiConfigBase
-from hexkit.providers.mongodb import MongoDbConfig
-from pydantic import Field
-
-from metldata.artifacts_rest.config import ArtifactsRestConfig
+from metldata.load.config import ArtifactLoaderClientConfig
 
 
-class ArtifactLoaderAPIConfig(ArtifactsRestConfig, ApiConfigBase, MongoDbConfig):
-    """Config settings for the loader API."""
-
-    loader_token_hashes: list[str] = Field(
-        ..., description="Hashes of tokens used to authenticate for loading artifact."
-    )
-
-
-class ArtifactLoaderClientConfig(ArtifactsRestConfig):
-    """Config settings for the loader client."""
-
-    loader_api_root: str = Field(..., description="Root URL of the loader API.")
+def upload_artifacts_via_http_api(
+    *, artifacts_directory: str, token: str, config: ArtifactLoaderClientConfig
+) -> None:
+    """Upload artifacts located in the provided directory via the HTTP API specified in
+    the config using the provided token for authorization."""
