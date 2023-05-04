@@ -35,12 +35,10 @@ def config_fixture() -> Generator[Config, None, None]:
     """Generate a test config."""
 
     with TemporaryDirectory() as submission_store_dir:
-        with TemporaryDirectory() as source_events_dir:
-            with NamedTemporaryFile() as accession_store_path:
-                yield Config(
-                    metadata_model_path=VALID_MINIMAL_MODEL_EXAMPLE_PATH,
-                    submission_store_dir=submission_store_dir,
-                    source_events_dir=source_events_dir,
-                    accession_store_path=accession_store_path.name,
-                    prefix_mapping=PREFIX_MAPPING,
-                )
+        with NamedTemporaryFile() as accession_store_path:
+            yield Config(
+                metadata_model_path=VALID_MINIMAL_MODEL_EXAMPLE_PATH,
+                submission_store_dir=submission_store_dir,
+                accession_store_path=accession_store_path.name,
+                prefix_mapping=PREFIX_MAPPING,
+            )

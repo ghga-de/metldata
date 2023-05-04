@@ -75,7 +75,7 @@ def write_event(*, event: Event, event_store_path: Path) -> None:
 
     event_path.parent.mkdir(parents=True, exist_ok=True)
     with open(event_path, "w", encoding="utf-8") as event_file:
-        json.dump(event_content, event_file)
+        json.dump(event_content, event_file, indent=4)
 
 
 def read_event_file(event_path: Path) -> Event:

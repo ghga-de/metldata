@@ -17,36 +17,17 @@
 """Test the event_handling module."""
 
 import json
-from pathlib import Path
 
 import pytest
-from hexkit.custom_types import Ascii, JsonObject
-from hexkit.protocols.eventsub import EventSubscriberProtocol
-from pydantic import BaseModel, Field
 
-from metldata.event_handling import (
-    Event,
-    FileSystemEventConfig,
-    FileSystemEventPublisher,
-    FileSystemEventSubscriber,
-)
-
-
-class ConsumedEvent(BaseModel):
-    """Consumed event without the key."""
-
-    topic: str
-    type_: str
-    payload: str = Field(..., description="JSON string of the event payload.")
-
-    class Config:
-        """Pydantic model configuration."""
-
-        frozen = True
+from tests.fixtures.event_handling import file_system_event_fixture  # noqa: F401
+from tests.fixtures.event_handling import ConsumedEvent, Event, FileSystemEventFixture
 
 
 @pytest.mark.asyncio
-async def test_pub_sub_workflow(tmp_path: Path):
+async def test_pub_sub_workflow(
+    file_system_event_fixture: FileSystemEventFixture,  # noqa: F811
+):
     """Test a publish subscribe workflow using the FileSystemEventPublisher and
     FileSystemEventSubscriber."""
 
@@ -71,39 +52,5 @@ async def test_pub_sub_workflow(tmp_path: Path):
         ),
     }
 
-    class MockSubscriberTranslator(EventSubscriberProtocol):
-        """A mock implementation of the EventSubscriberProtocol to track consumed
-        events. Only consumes from topic1.
-
-        Consumed events are captured in the consumed_events attribute.
-        """
-
-        def __init__(self):
-            self.consumed_events: set[ConsumedEvent] = set()
-            self.topics_of_interest = {"topic1"}
-            self.types_of_interest = {"type1", "type2"}
-
-        async def _consume_validated(
-            self, *, payload: JsonObject, type_: Ascii, topic: Ascii
-        ) -> None:
-            self.consumed_events.add(
-                ConsumedEvent(topic=topic, type_=type_, payload=json.dumps(payload))
-            )
-
-    # Create a publisher and a subscriber.
-    config = FileSystemEventConfig(event_store_path=tmp_path)
-    translator = MockSubscriberTranslator()
-    publisher = FileSystemEventPublisher(config=config)
-    subscriber = FileSystemEventSubscriber(config=config, translator=translator)
-
-    # Publish a set of event:
-    for event in events_to_publish:
-        await publisher.publish(
-            topic=event.topic, type_=event.type_, key=event.key, payload=event.payload
-        )
-
-    # consume events from topic1:
-    await subscriber.run()
-
-    # check consumed events:
-    assert translator.consumed_events == expected_events
+    await file_system_event_fixture.publish_events(events_to_publish)
+    await file_system_event_fixture.expect_events(expected_events)

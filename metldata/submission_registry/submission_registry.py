@@ -23,7 +23,7 @@ from ghga_service_commons.utils.utc_dates import now_as_utc
 from metldata.model_utils.config import MetadataModelConfig
 from metldata.model_utils.metadata_validator import MetadataValidator
 from metldata.submission_registry import models
-from metldata.submission_registry.event_publisher import EventPublisher
+from metldata.submission_registry.event_publisher import SourceEventPublisher
 from metldata.submission_registry.submission_store import SubmissionStore
 
 
@@ -65,7 +65,7 @@ class SubmissionRegistry:
         *,
         config: SubmissionRegistryConfig,
         submission_store: SubmissionStore,
-        event_publisher: EventPublisher,
+        event_publisher: SourceEventPublisher,
     ):
         """Initialize with dependencies and config parameters."""
 
