@@ -122,7 +122,7 @@ async def test_load_artifacts_endpoint_invalid_resources(
         json=unknown_artifact_resources,
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert response.status_code == 400
+    assert response.status_code == 422
 
 
 @pytest.mark.asyncio
