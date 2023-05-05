@@ -69,12 +69,13 @@ def test_happy(
         id="submission001",
         title="test",
         description="test",
-        content={"test": "test"},
-        status_history=[
+        content={"test_class": {"test_id1": "test"}},
+        accession_map={"test_class": {"test_id1": "test_accession1"}},
+        status_history=(
             models.StatusChange(
                 timestamp=now_as_utc(), new_status=models.SubmissionStatus.PENDING
-            )
-        ],
+            ),
+        ),
     )
     event_publisher.publish_submission(submission)
 

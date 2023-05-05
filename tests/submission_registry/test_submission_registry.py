@@ -18,6 +18,8 @@
 
 import pytest
 
+from metldata.accession_registry.accession_registry import AccessionRegistry
+from metldata.accession_registry.accession_store import AccessionStore
 from metldata.config import Config
 from metldata.event_handling import FileSystemEventPublisher
 from metldata.submission_registry import models
@@ -44,10 +46,15 @@ def test_happy(
     submission_store = SubmissionStore(config=config_fixture)
     provider = FileSystemEventPublisher(config=file_system_event_fixture.config)
     event_publisher = SourceEventPublisher(config=config_fixture, provider=provider)
+    accession_store = AccessionStore(config=config_fixture)
+    accession_registry = AccessionRegistry(
+        config=config_fixture, accession_store=accession_store
+    )
     submission_registry = SubmissionRegistry(
         config=config_fixture,
         submission_store=submission_store,
         event_publisher=event_publisher,
+        accession_registry=accession_registry,
     )
 
     # create a new submission:
@@ -83,6 +90,11 @@ def test_happy(
     assert observed_submission.content == submission_content_updated
     assert observed_submission.current_status == models.SubmissionStatus.PENDING
 
+    # check accessions are in store:
+    for class_ in observed_submission.accession_map.values():
+        for accession in class_.values():
+            assert accession_store.exists(accession=accession)
+
     # check published source event:
     check_source_events(
         expected_submissions=[observed_submission],
@@ -117,10 +129,15 @@ def test_failed_content_validation(
     submission_store = SubmissionStore(config=config_fixture)
     provider = FileSystemEventPublisher(config=file_system_event_fixture.config)
     event_publisher = SourceEventPublisher(config=config_fixture, provider=provider)
+    accession_store = AccessionStore(config=config_fixture)
+    accession_registry = AccessionRegistry(
+        config=config_fixture, accession_store=accession_store
+    )
     submission_registry = SubmissionRegistry(
         config=config_fixture,
         submission_store=submission_store,
         event_publisher=event_publisher,
+        accession_registry=accession_registry,
     )
 
     # create a new submission:
@@ -152,10 +169,15 @@ def test_update_after_completion(
     submission_store = SubmissionStore(config=config_fixture)
     provider = FileSystemEventPublisher(config=file_system_event_fixture.config)
     event_publisher = SourceEventPublisher(config=config_fixture, provider=provider)
+    accession_store = AccessionStore(config=config_fixture)
+    accession_registry = AccessionRegistry(
+        config=config_fixture, accession_store=accession_store
+    )
     submission_registry = SubmissionRegistry(
         config=config_fixture,
         submission_store=submission_store,
         event_publisher=event_publisher,
+        accession_registry=accession_registry,
     )
 
     # create a new submission:

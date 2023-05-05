@@ -23,10 +23,10 @@ from metldata.config import Config
 from tests.fixtures.metadata_models import VALID_MINIMAL_MODEL_EXAMPLE_PATH
 
 PREFIX_MAPPING = {
-    "file": "GHGAF",
-    "experiment": "GHGAE",
-    "sample": "GHGAS",
-    "dataset": "GHGAD",
+    "File": "GHGAF",
+    "Experiment": "GHGAE",
+    "Sample": "GHGAS",
+    "Dataset": "GHGAD",
 }
 
 
