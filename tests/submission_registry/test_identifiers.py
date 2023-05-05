@@ -51,14 +51,14 @@ def test_generate_accession_map():
         "class3_anchor": "Class3",
     }
     existing_accession_map = {
-        "class2_anchor": {"test_alias2": "existing_accession_class2_1"},
-        "class3_anchor": {"test_alias3": "existing_accession_class3_2"},
+        "class2_anchor": {"test_alias2": "existing_class2_accession1"},
+        "class3_anchor": {"test_alias3": "existing_class3_accession2"},
     }
     expected_accession_map = {
-        "class1_anchor": {"test_alias1": "generated_accession_class1_1"},
+        "class1_anchor": {"test_alias1": "generated_class1_accession1"},
         "class2_anchor": {
-            "test_alias2": "existing_accession_class2_1",
-            "test_alias3": "generated_accession_class2_2",
+            "test_alias2": "existing_class2_accession1",
+            "test_alias3": "generated_class2_accession2",
         },
     }
 
