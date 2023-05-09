@@ -61,7 +61,7 @@ class Submission(SubmissionHeader):
     content: Optional[dict[str, dict[str, Any]]] = Field(
         None,
         description=(
-            "The metadata content of the submission. Keys on the top level correspond"
+            "The metadata content of the submission. Keys on the top level correspond to"
             + " names of anchored metadata classes. Keys and values on the second level"
             + " the user-defined aliases and contents of class instance. Please note,"
             + " that the user-defined alias might only be unique within the scope of"
