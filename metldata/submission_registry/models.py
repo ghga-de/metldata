@@ -113,7 +113,7 @@ class Submission(SubmissionHeader):
 
         for resources in value.values():
             total_resources += len(resources)
-            all_accessions.update(set(resources.values()))
+            all_accessions.update(resources.values())
 
         if len(all_accessions) != total_resources:
             raise ValueError("Accessions are not unique.")
