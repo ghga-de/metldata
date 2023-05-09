@@ -138,7 +138,7 @@ class FileSystemEventPublisher(EventPublisherProtocol):
 
 
 class FileSystemEventSubscriber(InboundProviderBase):
-    """An EventSubscriber that reads events on the file system."""
+    """An EventSubscriber that reads events from the file system."""
 
     def __init__(
         self, *, config: FileSystemEventConfig, translator: EventSubscriberProtocol
