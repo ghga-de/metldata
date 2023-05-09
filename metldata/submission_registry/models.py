@@ -139,7 +139,7 @@ class Submission(SubmissionHeader):
             )
 
         for anchor, resources in values["content"].items():
-            if not values["accession_map"][anchor].keys() == resources.keys():
+            if values["accession_map"][anchor].keys() != resources.keys():
                 raise ValueError(
                     f"The resources mentioned for the class at anchor point '{anchor}'"
                     + " in the content and accession_map do not match."
