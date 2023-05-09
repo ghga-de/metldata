@@ -105,7 +105,7 @@ def read_events_from_topic(*, topic: str, event_store_path: Path) -> Iterator[Ev
 class FileSystemEventPublisher(EventPublisherProtocol):
     """An EventPublisher that stores events on the file system.
 
-    Please note that this the file system based event store mimics the behaviour of a
+    Please note that this file system based event store mimics the behaviour of
     compacted topics. Only the last event with a given key are stored."""
 
     def __init__(self, config: FileSystemEventConfig):
