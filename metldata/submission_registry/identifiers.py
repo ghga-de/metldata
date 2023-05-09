@@ -77,7 +77,7 @@ def generate_accession_map(
 
     If an existing accession map is provided, an updated version is returned. Thereby,
     new accessions are added for new content resources. Existing accessions are kept if
-    the corresponding content resource still exists otherwise they are removed."""
+    the corresponding content resource still exists, otherwise they are removed."""
 
     if existing_accession_map is None:
         existing_accession_map = {}
