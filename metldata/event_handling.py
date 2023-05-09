@@ -106,7 +106,7 @@ class FileSystemEventPublisher(EventPublisherProtocol):
     """An EventPublisher that stores events on the file system.
 
     Please note that this file system based event store mimics the behaviour of
-    compacted topics. Only the last event with a given key are stored."""
+    compacted topics. Only the last event with a given key is stored."""
 
     def __init__(self, config: FileSystemEventConfig):
         """Initialize with config."""
