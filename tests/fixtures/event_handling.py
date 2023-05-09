@@ -58,7 +58,7 @@ class FileSystemEventFixture:
         observed_events: list[Event] = []
         for topic in topics:
             observed_events.extend(
-                list(self.collector.collect_events(topic=topic, types=types))
+                self.collector.collect_events(topic=topic, types=types)
             )
 
         # hashable versions for comparison:
