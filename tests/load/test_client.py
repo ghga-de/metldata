@@ -71,7 +71,7 @@ async def test_upload_artifacts_via_http_api(
     httpx_mock.add_response(
         url=f"{config.loader_api_root}/rpc/load-artifacts",
         method="POST",
-        status_code=200,
+        status_code=204,
     )
 
     # upload to api:

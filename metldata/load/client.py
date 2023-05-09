@@ -50,6 +50,5 @@ def upload_artifacts_via_http_api(
 
     if response.status_code != 204:
         raise ArtifactUploadException(
-            f"Uploading artifacts failed with status code {response.status_code}:"
-            + f" {response.json}"
+            f"Uploading artifacts failed with status code {response.status_code}."
         )
