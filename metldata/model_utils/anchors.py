@@ -202,7 +202,7 @@ def lookup_anchor_point(
 
 
 def get_classes_by_anchor_point(*, model: MetadataModel) -> dict[str, str]:
-    """Get a mapping of the root slot where a classes is anchored to the corresponding
+    """Get a mapping from the root slot where a class is anchored to the corresponding
     class."""
 
     anchor_points = get_anchor_points(model=model)
