@@ -121,8 +121,8 @@ class FileSystemEventPublisher(EventPublisherProtocol):
         Args:
             payload: The payload to ship with the event.
             type_: The event type. ASCII characters only.
-            key: The event type. ASCII characters only.
-            topic: The event type. ASCII characters only.
+            key: The event key. ASCII characters only.
+            topic: The event topic. ASCII characters only.
         """
 
         event = Event(
