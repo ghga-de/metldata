@@ -133,7 +133,7 @@ class Submission(SubmissionHeader):
                 )
             return values
 
-        if not values["content"].keys() == values["accession_map"].keys():
+        if values["content"].keys() != values["accession_map"].keys():
             raise ValueError(
                 "The classes mentioned in the content and accession_map do not match."
             )
