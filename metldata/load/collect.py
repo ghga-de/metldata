@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""Functionality for collect available artifacts."""
+"""Functionality for collecting available artifacts."""
 
 from collections import defaultdict
 
