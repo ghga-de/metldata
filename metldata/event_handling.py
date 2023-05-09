@@ -98,7 +98,7 @@ def read_events_from_topic(*, topic: str, event_store_path: Path) -> Iterator[Ev
 
     topic_path.mkdir(parents=True, exist_ok=True)
 
-    for event_path in topic_path.iterdir():
+    for event_path in sorted(topic_path.iterdir()):
         yield read_event_file(event_path)
 
 
