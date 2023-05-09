@@ -52,8 +52,8 @@ class FileSystemEventFixture:
             EventExpectationMissmatch: If the expected events are not consumed.
         """
 
-        topics = list({event.topic for event in expected_events})
-        types = list({event.type_ for event in expected_events})
+        topics = sorted({event.topic for event in expected_events})
+        types = sorted({event.type_ for event in expected_events})
 
         observed_events: list[Event] = []
         for topic in topics:
