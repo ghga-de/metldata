@@ -35,8 +35,8 @@ class FileSystemEventConfig(BaseSettings):
         description=(
             "Path of the directory on the file system where all events are stored."
             + " Each topic is a sub-directory. Each event is stored as a"
-            + " JSON file within the event key directory. The file name corresponds to"
-            + " the event keys. Event types are stored to gether with the payload in"
+            + " JSON file within the sub-directory for the topic. The file name corresponds"
+            + " to the event key. The event type is stored together with the payload in"
             + " the event file."
         ),
     )
