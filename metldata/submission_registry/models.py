@@ -63,7 +63,7 @@ class Submission(SubmissionHeader):
         description=(
             "The metadata content of the submission. Keys on the top level correspond to"
             + " names of anchored metadata classes. Keys and values on the second level"
-            + " the user-defined aliases and contents of class instance. Please note,"
+            + " correspond to the user-defined aliases and contents of class instance. Please note,"
             + " that the user-defined alias might only be unique within the scope of"
             + " the coressponding class and this submission."
         ),
