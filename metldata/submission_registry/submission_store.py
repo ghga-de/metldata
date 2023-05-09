@@ -88,7 +88,7 @@ class SubmissionStore:
             raise self.SubmissionDoesNotExistError(submission_id=submission_id)
 
     def _assert_not_exists(self, *, submission_id: str):
-        """Assert that a submission with the specified ID does notexists.
+        """Assert that a submission with the specified ID does not exist.
 
         Raises:
             SubmissionAlreadyExistError: Raised when the submission already exist.
