@@ -45,7 +45,7 @@ class SubmissionStore:
             super().__init__(message)
 
     class SubmissionAlreadyExistError(RuntimeError):
-        """Raised when an Submission already exists."""
+        """Raised when a Submission already exists."""
 
         def __init__(self, *, submission_id: str):
             message = (
