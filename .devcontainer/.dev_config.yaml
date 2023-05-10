@@ -9,4 +9,3 @@ prefix_mapping:
 
 accession_store_path: /path/to/accession_store.txt
 submission_store_dir: /path/to/submission/store/dir
-source_events_dir: /path/to/source/event/dir
