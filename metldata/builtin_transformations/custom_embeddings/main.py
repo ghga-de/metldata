@@ -28,7 +28,12 @@ from metldata.builtin_transformations.custom_embeddings.model_transform import (
 from metldata.model_utils.anchors import get_anchors_points_by_target
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.base import Json, MetadataTransformer, TransformationDefinition
+from metldata.transform.base import (
+    Json,
+    MetadataAnnotation,
+    MetadataTransformer,
+    TransformationDefinition,
+)
 
 
 class CustomEmbeddingMetadataTransformer(MetadataTransformer[CustomEmbeddingConfig]):
@@ -52,7 +57,7 @@ class CustomEmbeddingMetadataTransformer(MetadataTransformer[CustomEmbeddingConf
             model=self._original_model
         )
 
-    def transform(self, *, metadata: Json, annotation: Json) -> Json:
+    def transform(self, *, metadata: Json, annotation: MetadataAnnotation) -> Json:
         """Transforms metadata.
 
         Args:

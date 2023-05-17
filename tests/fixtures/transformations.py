@@ -30,7 +30,7 @@ from metldata.builtin_transformations.infer_references import (
 )
 from metldata.custom_types import Json
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.base import TransformationDefinition
+from metldata.transform.base import MetadataAnnotation, TransformationDefinition
 from tests.fixtures.utils import BASE_DIR, read_yaml
 
 Config = TypeVar("Config", bound=BaseModel)
@@ -46,7 +46,7 @@ class TransformationTestCase(Generic[Config]):
     config: Config
     original_model: MetadataModel
     original_metadata: Json
-    metadata_annotation: Json
+    metadata_annotation: MetadataAnnotation
     transformed_model: MetadataModel
     transformed_metadata: Json
 
@@ -78,9 +78,9 @@ def _read_test_case(
         original_model=MetadataModel.init_from_path(original_model_path),
         original_metadata=read_yaml(original_metadata_path),
         metadata_annotation=(
-            read_yaml(metadata_annotation_path)
+            MetadataAnnotation(**read_yaml(metadata_annotation_path))
             if metadata_annotation_path.exists()
-            else {}
+            else MetadataAnnotation(accession_mapping={})
         ),
         transformed_model=MetadataModel.init_from_path(transformed_model_path),
         transformed_metadata=read_yaml(transformed_metadata_path),

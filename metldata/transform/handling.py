@@ -23,6 +23,7 @@ from metldata.model_utils.essentials import MetadataModel
 from metldata.model_utils.metadata_validator import MetadataValidator
 from metldata.transform.base import (
     Config,
+    MetadataAnnotation,
     TransformationDefinition,
     WorkflowConfig,
     WorkflowDefinition,
@@ -89,7 +90,9 @@ class TransformationHandler:
             model=self.transformed_model
         )
 
-    def transform_metadata(self, metadata: Json, *, annotation: Json) -> Json:
+    def transform_metadata(
+        self, metadata: Json, *, annotation: MetadataAnnotation
+    ) -> Json:
         """Transforms metadata using the transformation definition. Validates the
         original metadata against the original model and the transformed metadata
         against the transformed model.
@@ -250,7 +253,7 @@ class WorkflowHandler:
             self._resolved_workflow
         )
 
-    def run(self, *, metadata: Json, annotation: Json) -> dict[str, Json]:
+    def run(self, *, metadata: Json, annotation: MetadataAnnotation) -> dict[str, Json]:
         """Run the workflow definition on metadata and its annotation to generate
         artifacts."""
 
