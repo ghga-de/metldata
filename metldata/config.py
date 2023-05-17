@@ -32,6 +32,10 @@ class SubmissionAndTransformationConfig(
     """Config parameters and their defaults."""
 
 
+# Alias for the main config:
+Config = SubmissionAndTransformationConfig  # noqa: N806
+
+
 @config_from_yaml(prefix="metl_load")
 class ArtifactLoaderAPIConfig(ArtifactLoaderAPIConfig_):
     """Config parameters and their defaults."""
