@@ -52,8 +52,12 @@ class CustomEmbeddingMetadataTransformer(MetadataTransformer[CustomEmbeddingConf
             model=self._original_model
         )
 
-    def transform(self, *, metadata: Json) -> Json:
+    def transform(self, *, metadata: Json, annotation: Json) -> Json:
         """Transforms metadata.
+
+        Args:
+            metadata: The metadata to be transformed.
+            annotation: The annotation on the metadata.
 
         Raises:
             MetadataTransformationError:

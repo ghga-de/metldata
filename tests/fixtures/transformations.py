@@ -46,6 +46,7 @@ class TransformationTestCase(Generic[Config]):
     config: Config
     original_model: MetadataModel
     original_metadata: Json
+    metadata_annotation: Json
     transformed_model: MetadataModel
     transformed_metadata: Json
 
@@ -65,6 +66,7 @@ def _read_test_case(
     config_path = case_dir / "config.yaml"
     original_model_path = case_dir / "original_model.yaml"
     original_metadata_path = case_dir / "original_metadata.yaml"
+    metadata_annotation_path = case_dir / "metadata_annotation.yaml"
     transformed_model_path = case_dir / "transformed_model.yaml"
     transformed_metadata_path = case_dir / "transformed_metadata.yaml"
 
@@ -75,6 +77,11 @@ def _read_test_case(
         config=transformation_definition.config_cls(**read_yaml(config_path)),
         original_model=MetadataModel.init_from_path(original_model_path),
         original_metadata=read_yaml(original_metadata_path),
+        metadata_annotation=(
+            read_yaml(metadata_annotation_path)
+            if metadata_annotation_path.exists()
+            else {}
+        ),
         transformed_model=MetadataModel.init_from_path(transformed_model_path),
         transformed_metadata=read_yaml(transformed_metadata_path),
     )

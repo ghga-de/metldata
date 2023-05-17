@@ -56,6 +56,8 @@ def test_metadata_transformations(
         transformation_config=test_case.config,
         original_model=test_case.original_model,
     )
-    transformed_metadata = handler.transform_metadata(test_case.original_metadata)
+    transformed_metadata = handler.transform_metadata(
+        test_case.original_metadata, annotation=test_case.metadata_annotation
+    )
 
     assert transformed_metadata == test_case.transformed_metadata

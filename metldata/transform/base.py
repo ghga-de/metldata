@@ -59,8 +59,12 @@ class MetadataTransformer(ABC, Generic[Config]):
         self._transformed_model = transformed_model
 
     @abstractmethod
-    def transform(self, *, metadata: Json) -> Json:
+    def transform(self, *, metadata: Json, annotation: Json) -> Json:
         """Transforms metadata.
+
+        Args:
+            metadata: The metadata to be transformed.
+            annotation: The annotation on the metadata.
 
         Raises:
             MetadataTransformationError:

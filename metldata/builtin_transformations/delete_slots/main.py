@@ -68,8 +68,17 @@ class SlotDeletionMetadataTransformer(MetadataTransformer[SlotDeletionConfig]):
             model=self._original_model
         )
 
-    def transform(self, *, metadata: Json) -> Json:
-        """Delete slots from classes in the metadata."""
+    def transform(self, *, metadata: Json, annotation: Json) -> Json:
+        """Transforms metadata.
+
+        Args:
+            metadata: The metadata to be transformed.
+            annotation: The annotation on the metadata.
+
+        Raises:
+            MetadataTransformationError:
+                if the transformation fails.
+        """
 
         return delete_class_slots(
             metadata=metadata,
