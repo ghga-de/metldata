@@ -86,10 +86,10 @@ def check_root_slot(slot: SlotDefinition):
             + " however, slots in the root class must be inlined."
         )
 
-    if slot.inlined_as_list:
+    if not slot.inlined_as_list:
         raise InvalidAnchorPointError(
-            f"The inlined_as_list attribute for slot '{slot.name}' is set to True,"
-            + " however, slots in the root class may not be inlined."
+            f"The inlined_as_list attribute for slot '{slot.name}' is set to False,"
+            + " however, slots in the root class must be inlined as list."
         )
 
     if not slot.required:
