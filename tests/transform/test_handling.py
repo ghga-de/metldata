@@ -126,6 +126,6 @@ def test_workflow_handler_artifacts():
 
     artifacts = workflow_handler.run(
         metadata=EXAMPLE_ORIGINAL_METADATA,
-        annotation=MetadataAnnotation(accession_mapping={}),
+        annotation=MetadataAnnotation(accession_map={}),
     )
     assert artifacts == EXAMPLE_ARTIFACTS

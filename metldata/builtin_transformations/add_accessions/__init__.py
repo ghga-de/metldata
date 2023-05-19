@@ -19,7 +19,7 @@
 
 # shortcuts:
 # pylint: disable=unused-import
-from metldata.builtin_transformations.custom_embeddings.main import (  # noqa: F401
-    CustomEmbeddingConfig,
-    custom_embedding_transformation,
+from metldata.builtin_transformations.add_accessions.main import (  # noqa: F401
+    AccessionAdditionConfig,
+    accession_addition_transformation,
 )

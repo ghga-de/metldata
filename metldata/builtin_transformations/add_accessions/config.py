@@ -23,5 +23,9 @@ class AccessionAdditionConfig(BaseSettings):
     """Config to add accessions to a model and associated metadata."""
 
     accession_slot_name: str = Field(
-        ..., description="The name of the slot to contain the accessions to."
+        "accession", description="The name of the slot to contain the accessions to."
+    )
+    accession_slot_description: str = Field(
+        "The accession for an entity.",
+        description="The description of the slot to contain the accessions to.",
     )

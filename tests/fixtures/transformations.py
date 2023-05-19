@@ -21,6 +21,9 @@ from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 
+from metldata.builtin_transformations.add_accessions import (
+    accession_addition_transformation,
+)
 from metldata.builtin_transformations.custom_embeddings import (
     custom_embedding_transformation,
 )
@@ -80,7 +83,7 @@ def _read_test_case(
         metadata_annotation=(
             MetadataAnnotation(**read_yaml(metadata_annotation_path))
             if metadata_annotation_path.exists()
-            else MetadataAnnotation(accession_mapping={})
+            else MetadataAnnotation(accession_map={})
         ),
         transformed_model=MetadataModel.init_from_path(transformed_model_path),
         transformed_metadata=read_yaml(transformed_metadata_path),
@@ -123,6 +126,7 @@ def _read_all_test_cases(
 
 
 TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
+    "add_accessions": accession_addition_transformation,
     "infer_references": reference_inference_transformation,
     "delete_slots": slot_deletion_transformation,
     "custom_embedding": custom_embedding_transformation,

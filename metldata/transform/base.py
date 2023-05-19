@@ -34,7 +34,7 @@ from metldata.submission_registry.models import AccessionMap
 class MetadataAnnotation(BaseModel):
     """Annotation on a given metadata submission."""
 
-    accession_mapping: AccessionMap = Field(
+    accession_map: AccessionMap = Field(
         ...,
         description=(
             "A map of user-specified id to system-generated accession for metadata"
