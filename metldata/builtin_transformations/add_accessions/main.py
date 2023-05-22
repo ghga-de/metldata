@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""A transformation to infer references based on existing ones in the metadata model."""
+"""A transformation to add accessions to metadata."""
 
 from metldata.builtin_transformations.add_accessions.config import (
     AccessionAdditionConfig,
