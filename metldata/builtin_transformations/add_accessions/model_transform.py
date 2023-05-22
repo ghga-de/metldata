@@ -63,7 +63,7 @@ def unset_identifier(
 
 
 def get_accession_slot(*, accession_slot_name: str) -> SlotDefinition:
-    """Generate a slot defition for the accession slot."""
+    """Generate a slot definition for the accession slot."""
 
     return SlotDefinition(
         name=accession_slot_name,
