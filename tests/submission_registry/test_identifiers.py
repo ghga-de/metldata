@@ -42,10 +42,10 @@ def test_generate_accession_map():
 
     accession_registry = FakeAccessionRegistry()
     content = {
-        "class1_anchor": {"test_alias1": "test"},
-        "class2_anchor": {"test_alias2": "test", "test_alias3": "test"},
+        "class1_anchor": [{"alias": "test_alias1"}],
+        "class2_anchor": [{"alias": "test_alias2"}, {"alias": "test_alias3"}],
     }
-    classes_by_anchor_point = {
+    target_by_anchor_point = {
         "class1_anchor": "Class1",
         "class2_anchor": "Class2",
         "class3_anchor": "Class3",
@@ -66,7 +66,7 @@ def test_generate_accession_map():
         content=content,
         existing_accession_map=existing_accession_map,
         accession_registry=accession_registry,  # type: ignore
-        classes_by_anchor_point=classes_by_anchor_point,
+        target_by_anchor_point=target_by_anchor_point,
     )
 
     assert observed_accession_map == expected_accession_map
