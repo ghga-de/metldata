@@ -16,6 +16,7 @@
 
 """Utilities for handling metadata."""
 
+from copy import deepcopy
 from typing import cast
 
 from metldata.custom_types import Json
@@ -166,7 +167,9 @@ def convert_list_to_inlined_dict(
 
     return {
         lookup_self_id(resource=resource, identifier_slot=identifier_slot): {
-            slot: resource[slot] for slot in resource if slot != identifier_slot
+            slot: deepcopy(resource[slot])
+            for slot in resource
+            if slot != identifier_slot
         }
         for resource in resources
     }
@@ -178,9 +181,11 @@ def convert_inlined_dict_to_list(
     """Convert a dictionary representation of resources into a list representation, i.e.
     to "inlined_as_list=true" format."""
 
+    resource_copy = deepcopy(resources)
+
     return [
-        {identifier_slot: identifier, **resource}
-        for identifier, resource in resources.items()
+        {identifier_slot: identifier, **resource_copy}
+        for identifier, resource in resource_copy.items()
     ]
 
 
@@ -196,7 +201,9 @@ def convert_resource_list_to_dict(
     """
 
     return {
-        lookup_self_id(resource=resource, identifier_slot=identifier_slot): resource
+        lookup_self_id(resource=resource, identifier_slot=identifier_slot): deepcopy(
+            resource
+        )
         for resource in resources
     }
 
@@ -224,7 +231,7 @@ def get_resources_of_class(
             + " in the global metadata."
         )
 
-    return global_metadata[anchor_point.root_slot]
+    return deepcopy(global_metadata[anchor_point.root_slot])
 
 
 def get_resource_dict_of_class(
@@ -257,7 +264,7 @@ def get_resource_dict_of_class(
     )
 
 
-def update_resources_in_metadata(
+def upsert_resources_in_metadata(
     *,
     resources: list[Json],
     class_name: str,
@@ -265,10 +272,13 @@ def update_resources_in_metadata(
     anchor_points_by_target: dict[str, AnchorPoint],
 ) -> Json:
     """Update the provided global metadata with the provided resources of the given
-    class. Returns a copy of the updated metadata."""
+    class. If the anchor point for the given class does not yet exist, it is created.
+    Returns a copy of the updated metadata."""
 
     anchor_point = lookup_anchor_point(
         class_name=class_name, anchor_points_by_target=anchor_points_by_target
     )
 
-    return {**global_metadata, anchor_point.root_slot: resources}
+    global_metadata_copy = deepcopy(global_metadata)
+
+    return {**global_metadata_copy, anchor_point.root_slot: resources}

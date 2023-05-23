@@ -23,7 +23,7 @@ from metldata.metadata_utils import (
     MetadataResourceNotFoundError,
     get_resources_of_class,
     lookup_resource_by_identifier,
-    update_resources_in_metadata,
+    upsert_resources_in_metadata,
 )
 from metldata.model_utils.anchors import AnchorPoint, get_anchors_points_by_target
 from tests.fixtures.metadata import VALID_MINIMAL_METADATA_EXAMPLE
@@ -143,7 +143,7 @@ def test_update_resources_in_metadata_happy():
         }
     }
 
-    observed_metadata = update_resources_in_metadata(
+    observed_metadata = upsert_resources_in_metadata(
         resources=modified_resources,
         class_name="File",
         global_metadata=EXAMPLE_GLOBAL_METADATA,

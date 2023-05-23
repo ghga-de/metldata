@@ -16,8 +16,6 @@
 
 """Logic for handling Transformation."""
 
-import json
-
 import yaml
 from pydantic import BaseModel
 
@@ -113,8 +111,6 @@ class TransformationHandler:
         transformed_metadata = self._metadata_transformer.transform(
             metadata=metadata, annotation=annotation
         )
-
-        transformed_metadata = json.loads(json.dumps(transformed_metadata, indent=2))
 
         with open("observed.yaml", "w", encoding="utf-8") as file:
             yaml.safe_dump(transformed_metadata, file)
