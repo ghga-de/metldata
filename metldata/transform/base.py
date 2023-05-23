@@ -41,8 +41,8 @@ class MetadataAnnotation(BaseModel):
             + " resources. Keys on the top level correspond to names of metadata classes."
             + " Keys on the second level correspond to user-specified aliases."
             + " Values on the second level correspond to system-generated accessions."
-            + " Please note, that the user-defined alias might only be unique within"
-            + " the scope of the coressponding class and this submission. By contrast,"
+            + " Please note that the user-defined alias might only be unique within"
+            + " the scope of the corresponding class and this submission. By contrast,"
             + " the system-generated accession is unique across all classes and"
             + " submissions."
         ),

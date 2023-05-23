@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""A transformation to generate custom embeddings for classes of a metadata model."""
+"""A transformation to add accessions to metadata."""
 
 
 # shortcuts:

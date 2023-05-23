@@ -63,7 +63,7 @@ def unset_identifier(
 
 
 def get_accession_slot(*, accession_slot_name: str) -> SlotDefinition:
-    """Generate a slot defition for the accession slot."""
+    """Generate a slot definition for the accession slot."""
 
     return SlotDefinition(
         name=accession_slot_name,
@@ -145,7 +145,7 @@ def add_accessions_to_model(
         class_definition = modified_schema_view.get_class(class_name=class_name)
         if not class_definition:
             raise RuntimeError(  # This should never happen
-                "Class with name '{class_name}' does not exist."
+                f"Class with name '{class_name}' does not exist."
             )
 
         class_definition = add_accessions_to_class(
