@@ -17,22 +17,68 @@
 """Logic for transforming metadata models."""
 
 
-from metldata.model_utils.essentials import MetadataModel
-from metldata.model_utils.manipulate import delete_class_slot
+from metldata.builtin_transformations.merge_slots.models import SlotMergeInstruction
+from metldata.model_utils.essentials import ExportableSchemaView, MetadataModel
+from metldata.transform.base import MetadataModelTransformationError
 
 
-def delete_class_slots_from_model(
-    model: MetadataModel, class_slots: dict[str, list[str]]
+def get_source_range(
+    *, schema_view: ExportableSchemaView, class_name: str, source_slot: str
+) -> str:
+    """Get the range of a source slot for the provided class.
+
+    Raises:
+        MetadataModelTransformationError:
+            If the slot has no defined range, or if the slot is using a union range
+            with the `all_of` or `any_of` properties.
+    """
+
+    slot = schema_view.induced_slot(class_name=class_name, slot_name=source_slot)
+
+    if not slot.range:
+        raise MetadataModelTransformationError(
+            f"Source slot {source_slot} of class {class_name} has no defined range."
+        )
+
+    if slot.all_of is not None or slot.any_of is not None:
+        raise MetadataModelTransformationError(
+            f"Source slot {source_slot} of class {class_name} is using a union range."
+        )
+
+    return str(slot.range)
+
+
+def get_source_ranges(
+    *, schema_view: ExportableSchemaView, class_name: str, source_slots: list[str]
+) -> set[str]:
+    """Get the ranges of the given source slots."""
+
+    return {
+        get_source_range(
+            schema_view=schema_view, class_name=class_name, source_slot=source_slot
+        )
+        for source_slot in source_slots
+    }
+
+
+def apply_merge_instruction(
+    *, schema_view: ExportableSchemaView, merge_instruction: SlotMergeInstruction
+) -> ExportableSchemaView:
+    """Apply the provided merge instructions to the provided schema_view."""
+
+    raise NotImplementedError
+
+
+def merge_slots_in_model(
+    *, model: MetadataModel, merge_instructions: list[SlotMergeInstruction]
 ) -> MetadataModel:
-    """Delete the specified class slots from the provided model. Returns a modified
-    copy of the model."""
+    """Merge slots in the provided model according to the provided instructions."""
 
     schema_view = model.schema_view
 
-    for class_name, slot_names in class_slots.items():
-        for slot_name in slot_names:
-            schema_view = delete_class_slot(
-                schema_view=schema_view, class_name=class_name, slot_name=slot_name
-            )
+    for merge_instruction in merge_instructions:
+        schema_view = apply_merge_instruction(
+            schema_view=schema_view, merge_instruction=merge_instruction
+        )
 
     return schema_view.export_model()

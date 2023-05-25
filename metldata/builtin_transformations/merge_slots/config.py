@@ -24,7 +24,7 @@ from metldata.builtin_transformations.merge_slots.models import SlotMergeInstruc
 class SlotMergingConfig(BaseSettings):
     """Config containing slots to be deleted from models and associated metadata."""
 
-    merges: list[SlotMergeInstruction] = Field(
+    merge_instructions: list[SlotMergeInstruction] = Field(
         ...,
         description=(
             "A list of slot merging instructions. Each instruction specifies a class"
@@ -44,24 +44,30 @@ class SlotMergingConfig(BaseSettings):
     )
 
     # pylint: disable=no-self-argument
-    @validator("merges")
-    def validate_merges(
-        cls, merges: list[SlotMergeInstruction]
+    @validator("merge_instructions")
+    def validate_merge_instructions(
+        cls, filtered_merge_instructions: list[SlotMergeInstruction]
     ) -> list[SlotMergeInstruction]:
         """Validate that source and target slots do not overlap across merge
         instructions and that no target slot is reused for the same
         class."""
 
-        class_names = {merge.class_name for merge in merges}
+        class_names = {merge.class_name for merge in filtered_merge_instructions}
         for class_name in class_names:
-            merge_instructions = [
-                merge for merge in merges if merge.class_name == class_name
+            filtered_merge_instructions = [
+                merge
+                for merge in filtered_merge_instructions
+                if merge.class_name == class_name
             ]
             source_slots = {
-                slot for merge in merge_instructions for slot in merge.source_slots
+                slot
+                for merge in filtered_merge_instructions
+                for slot in merge.source_slots
             }
 
-            target_slot_list = [merge.target_slot for merge in merge_instructions]
+            target_slot_list = [
+                merge.target_slot for merge in filtered_merge_instructions
+            ]
             target_slots = set(target_slot_list)
 
             if len(target_slot_list) != len(target_slots):
@@ -75,4 +81,4 @@ class SlotMergingConfig(BaseSettings):
                     f"Source and target slots for class '{class_name}' overlap."
                 )
 
-        return merges
+        return filtered_merge_instructions
