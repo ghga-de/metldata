@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""Models used to describe all inferred references based on existing references."""
+"""Config parameters and their defaults."""
 
 from pydantic import BaseSettings, Field
 
