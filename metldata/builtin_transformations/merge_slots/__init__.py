@@ -18,7 +18,7 @@
 
 # shortcuts:
 # pylint: disable=unused-import
-from metldata.builtin_transformations.delete_slots.main import (  # noqa: F401
-    SlotDeletionConfig,
-    slot_deletion_transformation,
+from metldata.builtin_transformations.merge_slots.main import (  # noqa: F401
+    SlotMergingConfig,
+    slot_merging_transformation,
 )

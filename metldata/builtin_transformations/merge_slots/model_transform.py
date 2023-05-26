@@ -16,9 +16,12 @@
 
 """Logic for transforming metadata models."""
 
+from linkml_runtime.linkml_model.meta import AnonymousSlotExpression, SlotDefinition
 
 from metldata.builtin_transformations.merge_slots.models import SlotMergeInstruction
+from metldata.model_utils.assumptions import check_class_slot_exists
 from metldata.model_utils.essentials import ExportableSchemaView, MetadataModel
+from metldata.model_utils.manipulate import upsert_class_slot
 from metldata.transform.base import MetadataModelTransformationError
 
 
@@ -40,7 +43,7 @@ def get_source_range(
             f"Source slot {source_slot} of class {class_name} has no defined range."
         )
 
-    if slot.all_of is not None or slot.any_of is not None:
+    if slot.all_of or slot.any_of:
         raise MetadataModelTransformationError(
             f"Source slot {source_slot} of class {class_name} is using a union range."
         )
@@ -61,12 +64,99 @@ def get_source_ranges(
     }
 
 
+def is_source_slot_inlined(
+    *, schema_view: ExportableSchemaView, class_name: str, slot_name: str
+) -> tuple[bool, bool]:
+    """Check if a class slot is inlined. Returns a tuple of booleans where the first
+    element indicates if the slot is inlined, and the second element indicates if the
+    slot is inlined_as_list"""
+
+    slot = schema_view.induced_slot(class_name=class_name, slot_name=slot_name)
+
+    return bool(slot.inlined), bool(slot.inlined_as_list)
+
+
+def are_source_slots_inlined(
+    *, schema_view: ExportableSchemaView, class_name: str, source_slots: list[str]
+) -> tuple[bool, bool]:
+    """Check if all source slots are inlined. Returns a tuple of booleans where the
+    first element indicates if the slots are inlined, and the second element indicates
+    if the slots are inlined_as_list"""
+
+    # inspect first slot:
+    inlined, inlined_as_list = is_source_slot_inlined(
+        schema_view=schema_view, class_name=class_name, slot_name=source_slots[0]
+    )
+
+    # make sure that all other slots are identical:
+    for source_slot in source_slots[1:]:
+        other_inlined, other_inlined_as_list = is_source_slot_inlined(
+            schema_view=schema_view, class_name=class_name, slot_name=source_slot
+        )
+
+        if inlined != other_inlined or inlined_as_list != other_inlined_as_list:
+            raise MetadataModelTransformationError(
+                f"Source slots {source_slots} of class {class_name} are not identical."
+                + " They differ in their inlined and/or inlined_as_list properties."
+            )
+
+    return inlined, inlined_as_list
+
+
+def get_target_slot(
+    *, schema_view: ExportableSchemaView, merge_instruction: SlotMergeInstruction
+) -> SlotDefinition:
+    """Get a definition of the target slot."""
+
+    source_ranges = get_source_ranges(
+        schema_view=schema_view,
+        class_name=merge_instruction.class_name,
+        source_slots=merge_instruction.source_slots,
+    )
+
+    inlined, inlined_as_list = are_source_slots_inlined(
+        schema_view=schema_view,
+        class_name=merge_instruction.class_name,
+        source_slots=merge_instruction.source_slots,
+    )
+
+    target_slot_definition = SlotDefinition(
+        name=merge_instruction.target_slot,
+        required=True,
+        multivalued=True,
+        description=merge_instruction.target_description,
+    )
+
+    if len(source_ranges) == 1:
+        target_slot_definition.range = source_ranges.pop()
+    else:
+        target_slot_definition.any_of = [
+            AnonymousSlotExpression(range=source_range)
+            for source_range in source_ranges
+        ]
+
+    if inlined:
+        target_slot_definition.inlined = True
+        if inlined_as_list:
+            target_slot_definition.inlined_as_list = inlined_as_list
+
+    return target_slot_definition
+
+
 def apply_merge_instruction(
     *, schema_view: ExportableSchemaView, merge_instruction: SlotMergeInstruction
 ) -> ExportableSchemaView:
     """Apply the provided merge instructions to the provided schema_view."""
 
-    raise NotImplementedError
+    target_slot_definition = get_target_slot(
+        schema_view=schema_view, merge_instruction=merge_instruction
+    )
+
+    return upsert_class_slot(
+        schema_view=schema_view,
+        class_name=merge_instruction.class_name,
+        new_slot=target_slot_definition,
+    )
 
 
 def merge_slots_in_model(

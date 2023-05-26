@@ -16,15 +16,12 @@
 
 """A tranformation for merging multiple slots of a class into a single one."""
 
-from metldata.builtin_transformations.delete_slots.assumptions import (
+from metldata.builtin_transformations.merge_slots.assumptions import (
     check_model_class_slots,
 )
-from metldata.builtin_transformations.delete_slots.config import SlotDeletionConfig
-from metldata.builtin_transformations.delete_slots.metadata_transform import (
-    delete_class_slots,
-)
-from metldata.builtin_transformations.delete_slots.model_transform import (
-    delete_class_slots_from_model,
+from metldata.builtin_transformations.merge_slots.config import SlotMergingConfig
+from metldata.builtin_transformations.merge_slots.model_transform import (
+    merge_slots_in_model,
 )
 from metldata.model_utils.anchors import get_anchors_points_by_target
 from metldata.model_utils.assumptions import check_anchor_points
@@ -37,27 +34,31 @@ from metldata.transform.base import (
 )
 
 
-def check_model_assumptions(model: MetadataModel, config: SlotDeletionConfig):
+def check_model_assumptions(model: MetadataModel, config: SlotMergingConfig):
     """Check that the classes and slots specified in the config exist in the model."""
 
-    check_model_class_slots(model=model, class_slots=config.slots_to_delete)
-    check_anchor_points(model=model, classes=list(config.slots_to_delete))
+    check_model_class_slots(model=model, merge_instructions=config.merge_instructions)
+
+    classe_names = {
+        merge_instruction.class_name for merge_instruction in config.merge_instructions
+    }
+    check_anchor_points(model=model, classes=list(classe_names))
 
 
-def transform_model(model: MetadataModel, config: SlotDeletionConfig) -> MetadataModel:
-    """Delete slots from classes in the model."""
+def transform_model(model: MetadataModel, config: SlotMergingConfig) -> MetadataModel:
+    """Merge slots of classes in the model."""
 
-    return delete_class_slots_from_model(
-        model=model, class_slots=config.slots_to_delete
+    return merge_slots_in_model(
+        model=model, merge_instructions=config.merge_instructions
     )
 
 
-class SlotDeletionMetadataTransformer(MetadataTransformer[SlotDeletionConfig]):
-    """Transformer for deleting slots from classes in a metadata model."""
+class SlotMergingMetadataTransformer(MetadataTransformer[SlotMergingConfig]):
+    """Transformer for merging slots of classes in a metadata model."""
 
     def __init__(
         self,
-        config: SlotDeletionConfig,
+        config: SlotMergingConfig,
         original_model: MetadataModel,
         transformed_model: MetadataModel,
     ):
@@ -85,16 +86,12 @@ class SlotDeletionMetadataTransformer(MetadataTransformer[SlotDeletionConfig]):
                 if the transformation fails.
         """
 
-        return delete_class_slots(
-            metadata=metadata,
-            slots_to_delete=self._config.slots_to_delete,
-            anchor_points_by_target=self._anchor_points_by_target,
-        )
+        raise NotImplementedError()
 
 
-slot_deletion_transformation = TransformationDefinition[SlotDeletionConfig](
-    config_cls=SlotDeletionConfig,
+slot_merging_transformation = TransformationDefinition[SlotMergingConfig](
+    config_cls=SlotMergingConfig,
     check_model_assumptions=check_model_assumptions,
     transform_model=transform_model,
-    metadata_transformer_factory=SlotDeletionMetadataTransformer,
+    metadata_transformer_factory=SlotMergingMetadataTransformer,
 )

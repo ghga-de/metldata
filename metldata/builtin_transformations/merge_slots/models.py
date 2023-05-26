@@ -16,6 +16,7 @@
 
 """Models to describe slot merging instructions."""
 
+from typing import Optional
 from pydantic import BaseModel, Field, root_validator
 
 
@@ -30,6 +31,10 @@ class SlotMergeInstruction(BaseModel):
     )
     target_slot: str = Field(
         ..., description="The slot into which the source slots should be merged."
+    )
+    target_description: Optional[str] = Field(
+        None,
+        description="A description of the target slot.",
     )
 
     # pylint: disable=no-self-argument
