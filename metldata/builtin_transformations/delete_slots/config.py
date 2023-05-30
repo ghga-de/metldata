@@ -35,3 +35,8 @@ class SlotDeletionConfig(BaseSettings):
             "class_c": ["some_slot", "yet_another_slot"],
         },
     )
+
+    class Config:
+        """Pydantic config."""
+
+        extra = "forbid"

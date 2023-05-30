@@ -2,10 +2,10 @@ merge_instructions:
   - class_name: Dataset
     source_slots: [read1_files, read2_files]
     target_slot: read_files
-    description: >-
+    target_description: >-
       First and second read files.
   - class_name: Dataset
     source_slots: [read1_files, read2_files, temporary_files]
     target_slot: all_files
-    description: >-
+    target_description: >-
       All files associated with a dataset.

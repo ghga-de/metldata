@@ -42,9 +42,6 @@ def test_model_transformations(
     )
     transformed_model = handler.transformed_model
 
-    test_case.transformed_model.write_yaml("observed.yaml")
-    transformed_model.write_yaml("expected.yaml")
-
     assert transformed_model == test_case.transformed_model
 
 

@@ -47,6 +47,8 @@ classes:
       - read1_files
       - read2_files
       - temporary_files
+      - read_files
+      - all_files
     slot_usage:
       alias:
         required: true
@@ -77,8 +79,8 @@ classes:
         multivalued: true
         inlined: false
         any_of:
-          - range: NamedFile
           - range: File
+          - range: NamedFile
 
   Submission:
     tree_root: true
@@ -180,8 +182,8 @@ slots:
     multivalued: true
     inlined: false
     any_of:
-      - range: NamedFile
       - range: File
+      - range: NamedFile
 
 enums:
   file format enum:

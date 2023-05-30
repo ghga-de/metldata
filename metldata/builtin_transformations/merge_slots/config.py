@@ -82,3 +82,8 @@ class SlotMergingConfig(BaseSettings):
                 )
 
         return filtered_merge_instructions
+
+    class Config:
+        """Pydantic config."""
+
+        extra = "forbid"

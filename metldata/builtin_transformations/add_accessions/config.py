@@ -29,3 +29,8 @@ class AccessionAdditionConfig(BaseSettings):
         "The accession for an entity.",
         description="The description of the slot to contain the accessions to.",
     )
+
+    class Config:
+        """Pydantic config."""
+
+        extra = "forbid"
