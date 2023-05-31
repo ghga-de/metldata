@@ -44,8 +44,8 @@ from tests.fixtures.workflows import (
 VALID_EXAMPLE_CONFIG = ReferenceInferenceConfig(
     inferred_ref_map={
         "Experiment": {
-            "has_file": {
-                "path": "Experiment(has_sample)>Sample(has_file)>File",
+            "files": {
+                "path": "Experiment(samples)>Sample(files)>File",
                 "multivalued": True,
             }
         }
