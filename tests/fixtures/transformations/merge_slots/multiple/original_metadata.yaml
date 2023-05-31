@@ -1,4 +1,9 @@
 has_file:
+  - alias: some_unnamed_file
+    format: txt
+    checksum: 1c8aed294d5dec3330a175f6b655725fa668bfe41311e74f7ca9d85c91371b4e
+    size: 123412
+has_named_file:
   - alias: test_sample_01_R1
     filename: test_sample_01_R1.fastq
     format: fastq
@@ -21,25 +26,11 @@ has_file:
     size: 234243
 has_dataset:
   - alias: test_dataset_01
-    has_file:
+    temporary_files:
+      - some_unnamed_file
+    read1_files:
       - test_sample_01_R1
-      - test_sample_01_R2
       - test_sample_02_R1
-      - test_sample_02_R2
-has_sample:
-  - alias: test_sample_01
-    description: A tests sample.
-    has_file:
-      - test_sample_01_R1
+    read2_files:
       - test_sample_01_R2
-  - alias: test_sample_02
-    description: A tests sample.
-    has_file:
-      - test_sample_02_R1
       - test_sample_02_R2
-has_experiment:
-  - alias: test_experiment_01
-    description: A test experiment.
-    has_sample:
-      - test_sample_01
-      - test_sample_02

@@ -20,6 +20,9 @@ from metldata.builtin_transformations.merge_slots.assumptions import (
     check_model_class_slots,
 )
 from metldata.builtin_transformations.merge_slots.config import SlotMergingConfig
+from metldata.builtin_transformations.merge_slots.metadata_transform import (
+    apply_merge_instructions_to_metadata,
+)
 from metldata.builtin_transformations.merge_slots.model_transform import (
     merge_slots_in_model,
 )
@@ -86,7 +89,11 @@ class SlotMergingMetadataTransformer(MetadataTransformer[SlotMergingConfig]):
                 if the transformation fails.
         """
 
-        raise NotImplementedError()
+        return apply_merge_instructions_to_metadata(
+            metadata=metadata,
+            merge_instructions=self._config.merge_instructions,
+            anchor_points_by_target=self._anchor_points_by_target,
+        )
 
 
 slot_merging_transformation = TransformationDefinition[SlotMergingConfig](
