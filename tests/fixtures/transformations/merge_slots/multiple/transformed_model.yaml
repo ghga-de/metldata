@@ -79,8 +79,8 @@ classes:
         multivalued: true
         inlined: false
         any_of:
-          - range: File
           - range: NamedFile
+          - range: File
 
   Submission:
     tree_root: true
@@ -182,8 +182,8 @@ slots:
     multivalued: true
     inlined: false
     any_of:
-      - range: File
       - range: NamedFile
+      - range: File
 
 enums:
   file format enum:

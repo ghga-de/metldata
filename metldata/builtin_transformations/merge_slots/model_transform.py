@@ -52,15 +52,18 @@ def get_source_range(
 
 def get_source_ranges(
     *, schema_view: ExportableSchemaView, class_name: str, source_slots: list[str]
-) -> set[str]:
+) -> list[str]:
     """Get the ranges of the given source slots."""
 
-    return {
-        get_source_range(
+    source_ranges: list[str] = []
+    for source_slot in source_slots:
+        source_range = get_source_range(
             schema_view=schema_view, class_name=class_name, source_slot=source_slot
         )
-        for source_slot in source_slots
-    }
+        if source_range not in source_ranges:
+            source_ranges.append(source_range)
+
+    return source_ranges
 
 
 def is_source_slot_inlined(
