@@ -14,12 +14,4 @@
 # limitations under the License.
 #
 
-"""A transformation to generate custom embeddings for classes of a metadata model."""
-
-
-# shortcuts:
-# pylint: disable=unused-import
-from metldata.builtin_transformations.custom_embeddings.main import (  # noqa: F401
-    CUSTOM_EMBEDDING_TRANSFORMATION,
-    CustomEmbeddingConfig,
-)
+"""Built in transformation workflows."""

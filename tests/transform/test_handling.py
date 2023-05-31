@@ -20,8 +20,8 @@ with builtin transformations are tested here."""
 import pytest
 
 from metldata.builtin_transformations.infer_references.main import (
+    REFERENCE_INFERENCE_TRANSFORMATION,
     ReferenceInferenceConfig,
-    reference_inference_transformation,
 )
 from metldata.model_utils.essentials import MetadataModel
 from metldata.transform.base import (
@@ -64,10 +64,10 @@ def test_transformation_handler_assumption_error():
         raise MetadataModelAssumptionError
 
     transformation = TransformationDefinition(
-        config_cls=reference_inference_transformation.config_cls,
+        config_cls=REFERENCE_INFERENCE_TRANSFORMATION.config_cls,
         check_model_assumptions=always_failing_assumptions,
-        transform_model=reference_inference_transformation.transform_model,
-        metadata_transformer_factory=reference_inference_transformation.metadata_transformer_factory,
+        transform_model=REFERENCE_INFERENCE_TRANSFORMATION.transform_model,
+        metadata_transformer_factory=REFERENCE_INFERENCE_TRANSFORMATION.metadata_transformer_factory,
     )
 
     with pytest.raises(MetadataModelAssumptionError):
@@ -89,10 +89,10 @@ def test_transformation_handler_model_transformation_error():
         raise MetadataModelTransformationError
 
     transformation = TransformationDefinition(
-        config_cls=reference_inference_transformation.config_cls,
-        check_model_assumptions=reference_inference_transformation.check_model_assumptions,
+        config_cls=REFERENCE_INFERENCE_TRANSFORMATION.config_cls,
+        check_model_assumptions=REFERENCE_INFERENCE_TRANSFORMATION.check_model_assumptions,
         transform_model=always_failing_transformation,
-        metadata_transformer_factory=reference_inference_transformation.metadata_transformer_factory,
+        metadata_transformer_factory=REFERENCE_INFERENCE_TRANSFORMATION.metadata_transformer_factory,
     )
 
     with pytest.raises(MetadataModelTransformationError):

@@ -14,20 +14,20 @@
 # limitations under the License.
 #
 
-"""Fixtures for workflows of trandformation steps."""
+"""A GHGA Archive-specific workflow."""
 
 from metldata.builtin_transformations.delete_slots import SLOT_DELETION_TRANSFORMATION
 from metldata.builtin_transformations.infer_references import (
     REFERENCE_INFERENCE_TRANSFORMATION,
 )
-from metldata.model_utils.essentials import MetadataModel
 from metldata.transform.base import WorkflowDefinition, WorkflowStep
-from tests.fixtures.utils import BASE_DIR, read_yaml
 
-EXAMPLE_WORKFLOW_JOB_DIR = BASE_DIR / "example_workflow"
-
-EXAMPLE_WORKFLOW_DEFINITION = WorkflowDefinition(
-    description="A workflow for testing.",
+GHGA_ARCHIVE_WORKFLOW = WorkflowDefinition(
+    description=(
+        "A GHGA Archive-specific workflow implementing the steps as defined here:"
+        + " https://docs.ghga-dev.de/main/architecture_concepts/ac002_metadata_lifecycl"
+        + "e.html"
+    ),
     steps={
         "infer_references": WorkflowStep(
             description="A step for inferring references.",
@@ -45,31 +45,3 @@ EXAMPLE_WORKFLOW_DEFINITION = WorkflowDefinition(
         "inferred_and_public": "delete_slots",
     },
 )
-
-EXAMPLE_CONFIG = EXAMPLE_WORKFLOW_DEFINITION.config_cls(
-    **read_yaml(EXAMPLE_WORKFLOW_JOB_DIR / "config.yaml")
-)
-EXAMPLE_ORIGINAL_MODEL = MetadataModel.init_from_path(
-    EXAMPLE_WORKFLOW_JOB_DIR / "original_model.yaml"
-)
-EXAMPLE_ORIGINAL_METADATA = read_yaml(
-    EXAMPLE_WORKFLOW_JOB_DIR / "original_metadata.yaml"
-)
-EXAMPLE_ARTIFACT_MODELS = {
-    artifact_name: MetadataModel.init_from_path(
-        EXAMPLE_WORKFLOW_JOB_DIR
-        / "artifacts"
-        / artifact_name
-        / "transformed_model.yaml"
-    )
-    for artifact_name in EXAMPLE_WORKFLOW_DEFINITION.artifacts
-}
-EXAMPLE_ARTIFACTS = {
-    artifact_name: read_yaml(
-        EXAMPLE_WORKFLOW_JOB_DIR
-        / "artifacts"
-        / artifact_name
-        / "transformed_metadata.yaml"
-    )
-    for artifact_name in EXAMPLE_WORKFLOW_DEFINITION.artifacts
-}
