@@ -16,6 +16,9 @@
 
 """A GHGA Archive-specific workflow."""
 
+from metldata.builtin_transformations.add_accessions import (
+    ACCESSION_ADDITION_TRANSFORMATION,
+)
 from metldata.builtin_transformations.custom_embeddings import (
     CUSTOM_EMBEDDING_TRANSFORMATION,
 )
@@ -33,6 +36,11 @@ GHGA_ARCHIVE_WORKFLOW = WorkflowDefinition(
         + "e.html"
     ),
     steps={
+        "add_accessions": WorkflowStep(
+            description="Add accessions that replace aliases as identifiers.",
+            transformation_definition=ACCESSION_ADDITION_TRANSFORMATION,
+            input=None,
+        ),
         "infer_multiway_references": WorkflowStep(
             description=(
                 "Infer multi-way references. During submission, references between"
@@ -42,7 +50,7 @@ GHGA_ARCHIVE_WORKFLOW = WorkflowDefinition(
                 + " connected via a common reference are established."
             ),
             transformation_definition=REFERENCE_INFERENCE_TRANSFORMATION,
-            input=None,
+            input="add_accessions",
         ),
         "get_dataset_file_summary": WorkflowStep(
             description=(
@@ -52,7 +60,7 @@ GHGA_ARCHIVE_WORKFLOW = WorkflowDefinition(
             transformation_definition=SLOT_MERGING_TRANSFORMATION,
             input="infer_multiway_references",
         ),
-        "fully_embedded_restricted_dataset": WorkflowStep(
+        "embed_restricted_dataset": WorkflowStep(
             description=(
                 "A step to generate a fully embedded dataset for data recepients that"
                 + " have been granted controlled access to that dataset."
@@ -67,7 +75,7 @@ GHGA_ARCHIVE_WORKFLOW = WorkflowDefinition(
             transformation_definition=SLOT_DELETION_TRANSFORMATION,
             input="infer_multiway_references",
         ),
-        "fully_embedded_public_dataset": WorkflowStep(
+        "embed_public_dataset": WorkflowStep(
             description=(
                 "A step to generate a fully embedded dataset for use in the metadata"
                 + " catalog as the single dataset view."
@@ -77,7 +85,9 @@ GHGA_ARCHIVE_WORKFLOW = WorkflowDefinition(
         ),
     },
     artifacts={
-        "inferred_and_restricted": "infer_references",
-        "inferred_and_public": "delete_slots",
+        "resolved_restricted": "get_dataset_file_summary",
+        "embedded_restricted_dataset": "embed_restricted_dataset",
+        "resolved_public": "remove_restricted_metadata",
+        "embedded_public_dataset": "embed_public_dataset",
     },
 )
