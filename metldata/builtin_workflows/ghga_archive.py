@@ -16,10 +16,14 @@
 
 """A GHGA Archive-specific workflow."""
 
+from metldata.builtin_transformations.custom_embeddings import (
+    CUSTOM_EMBEDDING_TRANSFORMATION,
+)
 from metldata.builtin_transformations.delete_slots import SLOT_DELETION_TRANSFORMATION
 from metldata.builtin_transformations.infer_references import (
     REFERENCE_INFERENCE_TRANSFORMATION,
 )
+from metldata.builtin_transformations.merge_slots import SLOT_MERGING_TRANSFORMATION
 from metldata.transform.base import WorkflowDefinition, WorkflowStep
 
 GHGA_ARCHIVE_WORKFLOW = WorkflowDefinition(
@@ -29,15 +33,47 @@ GHGA_ARCHIVE_WORKFLOW = WorkflowDefinition(
         + "e.html"
     ),
     steps={
-        "infer_references": WorkflowStep(
-            description="A step for inferring references.",
+        "infer_multiway_references": WorkflowStep(
+            description=(
+                "Infer multi-way references. During submission, references between"
+                + " two classes are only establish in a uni-lateral way from one of the"
+                + " interlinked classes. Here references from both sides are"
+                + " established. Moreover, shortcuts between entities that are"
+                + " connected via a common reference are established."
+            ),
             transformation_definition=REFERENCE_INFERENCE_TRANSFORMATION,
             input=None,
         ),
-        "delete_slots": WorkflowStep(
-            description="A step for deleting slots.",
+        "get_dataset_file_summary": WorkflowStep(
+            description=(
+                "Generate a slot in that dataset that combines all files of different"
+                + " type into a single list."
+            ),
+            transformation_definition=SLOT_MERGING_TRANSFORMATION,
+            input="infer_multiway_references",
+        ),
+        "fully_embedded_restricted_dataset": WorkflowStep(
+            description=(
+                "A step to generate a fully embedded dataset for data recepients that"
+                + " have been granted controlled access to that dataset."
+            ),
+            transformation_definition=CUSTOM_EMBEDDING_TRANSFORMATION,
+            input="infer_multiway_references",
+        ),
+        "remove_restricted_metadata": WorkflowStep(
+            description=(
+                "Restricted metadata that shall not be publicly accessible is removed."
+            ),
             transformation_definition=SLOT_DELETION_TRANSFORMATION,
-            input="infer_references",
+            input="infer_multiway_references",
+        ),
+        "fully_embedded_public_dataset": WorkflowStep(
+            description=(
+                "A step to generate a fully embedded dataset for use in the metadata"
+                + " catalog as the single dataset view."
+            ),
+            transformation_definition=SLOT_DELETION_TRANSFORMATION,
+            input="remove_restricted_metadata",
         ),
     },
     artifacts={
