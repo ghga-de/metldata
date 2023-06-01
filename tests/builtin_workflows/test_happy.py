@@ -19,10 +19,7 @@
 import pytest
 
 from metldata.transform.handling import WorkflowHandler
-from tests.fixtures.workflows import (
-    WORKFLOW_TEST_CASES,
-    WorkflowTestCase,
-)
+from tests.fixtures.workflows import WORKFLOW_TEST_CASES, WorkflowTestCase
 
 
 @pytest.mark.parametrize(

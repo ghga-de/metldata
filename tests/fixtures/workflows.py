@@ -22,10 +22,10 @@ from typing import Generic, TypeVar
 from pydantic import BaseModel
 
 from metldata.builtin_transformations.delete_slots import SLOT_DELETION_TRANSFORMATION
-from metldata.builtin_workflows.ghga_archive import GHGA_ARCHIVE_WORKFLOW
 from metldata.builtin_transformations.infer_references import (
     REFERENCE_INFERENCE_TRANSFORMATION,
 )
+from metldata.builtin_workflows.ghga_archive import GHGA_ARCHIVE_WORKFLOW
 from metldata.custom_types import Json
 from metldata.model_utils.essentials import MetadataModel
 from metldata.transform.base import MetadataAnnotation, WorkflowDefinition, WorkflowStep
@@ -87,16 +87,18 @@ def _read_test_case(
     metadata_annotation_path = case_dir / "metadata_annotation.yaml"
     artifacts_dir = case_dir / "artifacts"
 
-    artifact_models = {
-        artifact: MetadataModel.init_from_path(
-            artifacts_dir / artifact / "transformed_model.yaml"
-        )
-        for artifact in workflow_definition.artifacts
-    }
-    artifact_metadata = {
-        artifact: read_yaml(artifacts_dir / artifact / "transformed_metadata.yaml")
-        for artifact in workflow_definition.artifacts
-    }
+    artifact_models: dict[str, MetadataModel] = {}
+    artifact_metadata: dict[str, Json] = {}
+
+    for artifact in workflow_definition.artifacts:
+        artifact_dir = artifacts_dir / artifact
+        if artifact_dir.exists():
+            model_path = artifact_dir / "transformed_model.yaml"
+            if model_path.exists():
+                artifact_models[artifact] = MetadataModel.init_from_path(model_path)
+            metadata_path = artifact_dir / "transformed_metadata.yaml"
+            if metadata_path.exists():
+                artifact_metadata[artifact] = read_yaml(metadata_path)
 
     return WorkflowTestCase(
         workflow_name=workflow_name,
