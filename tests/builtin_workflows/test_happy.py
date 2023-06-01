@@ -39,8 +39,8 @@ def test_model_transform(
     )
     artifact_models = handler.artifact_models
 
-    for artifact in test_case.workflow_definition.artifacts:
-        assert artifact_models[artifact] == test_case.artifact_models[artifact]
+    for artifact, expected_model in test_case.artifact_models.items():
+        assert artifact_models[artifact] == expected_model
 
 
 @pytest.mark.parametrize("test_case", WORKFLOW_TEST_CASES, ids=str)
@@ -58,5 +58,5 @@ def test_metadata_transform(
         metadata=test_case.original_metadata, annotation=test_case.metadata_annotation
     )
 
-    for artifact in test_case.workflow_definition.artifacts:
-        assert artifact_metadata[artifact] == test_case.artifact_metadata[artifact]
+    for artifact, expected_metadata in test_case.artifact_metadata.items():
+        assert artifact_metadata[artifact] == expected_metadata

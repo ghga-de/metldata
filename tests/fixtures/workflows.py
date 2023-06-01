@@ -104,7 +104,7 @@ def _read_test_case(
         workflow_name=workflow_name,
         case_name=case_name,
         workflow_definition=workflow_definition,
-        config=workflow_definition.config_cls(**read_yaml(config_path)),
+        config=workflow_definition.config_cls(**read_yaml(config_path)),  # type: ignore
         original_model=MetadataModel.init_from_path(original_model_path),
         original_metadata=read_yaml(original_metadata_path),
         metadata_annotation=(
