@@ -57,8 +57,6 @@ data is not available anymore. The guarantees for immutability and stability of
 accessions are not violated, however, data might become unavailable.
 
 
-
-
 ## Installation
 We recommend using the provided Docker container.
 
