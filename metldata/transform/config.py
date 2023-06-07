@@ -16,8 +16,13 @@
 
 """Config parameters and their defaults."""
 
-from metldata.submission_registry.event_publisher import SourceEventPublisher
+
+from metldata.event_handling.event_handling import FileSystemEventConfig
+from metldata.transform.artifact_publisher import ArtifactEventPublisherConfig
+from metldata.transform.source_event_subscriber import SourceEventSubscriberConfig
 
 
-class TransformationEventHandlingConfig(SourceEventPublisher):
-    """"""
+class TransformationEventHandlingConfig(
+    FileSystemEventConfig, ArtifactEventPublisherConfig, SourceEventSubscriberConfig
+):
+    """Config parameters for consuming source events and publishing artifacts."""

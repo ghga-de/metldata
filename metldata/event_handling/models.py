@@ -17,12 +17,13 @@
 """Event Models."""
 
 
-from pydantic import Field
+from pydantic import BaseModel, Field
+
 from metldata.custom_types import SubmissionContent
 from metldata.submission_registry.models import AccessionMap
 
 
-class Annotation(BaseModel):
+class SubmissionAnnotation(BaseModel):
     """Annotation on a given metadata submission."""
 
     accession_map: AccessionMap = Field(
@@ -45,4 +46,4 @@ class SubmissionEventPayload(BaseModel):
 
     submission_id: str
     content: SubmissionContent
-    annotation: Annotation
+    annotation: SubmissionAnnotation

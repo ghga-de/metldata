@@ -18,7 +18,7 @@
 
 from collections import defaultdict
 
-from pydantic import BaseModel, Field, validator
+from pydantic import Field, validator
 
 from metldata.event_handling.artifact_events import (
     ArtifactEventConfig,

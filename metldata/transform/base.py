@@ -23,12 +23,12 @@ from typing import Callable, Generic, Optional, TypeVar
 from pydantic import BaseModel, Field, create_model, root_validator, validator
 
 from metldata.custom_types import Json
+from metldata.event_handling.models import SubmissionAnnotation
 
 # shortcuts:
 # pylint: disable=unused-import
 from metldata.model_utils.assumptions import MetadataModelAssumptionError  # noqa: F401
 from metldata.model_utils.essentials import MetadataModel
-from metldata.submission_registry.models import AccessionMap
 
 
 class MetadataModelTransformationError(RuntimeError):
@@ -60,7 +60,7 @@ class MetadataTransformer(ABC, Generic[Config]):
         self._transformed_model = transformed_model
 
     @abstractmethod
-    def transform(self, *, metadata: Json, annotation: MetadataAnnotation) -> Json:
+    def transform(self, *, metadata: Json, annotation: SubmissionAnnotation) -> Json:
         """Transforms metadata.
 
         Args:

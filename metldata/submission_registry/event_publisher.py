@@ -20,9 +20,8 @@ import asyncio
 import json
 
 from hexkit.protocols.eventpub import EventPublisherProtocol
-from pydantic import BaseSettings, Field
-from metldata.event_handling.submission_events import SourceEventConfig
 
+from metldata.event_handling.submission_events import SourceEventConfig
 from metldata.submission_registry import models
 
 

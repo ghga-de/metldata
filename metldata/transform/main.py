@@ -17,18 +17,28 @@
 """Main logic for running a transformation workflow on submissions."""
 
 
-import json
+import asyncio
 from typing import Callable
-from build.lib.metldata.submission_registry.event_publisher import EventPublisher
-from metldata.custom_types import Json
+
+from pydantic import BaseSettings
+
+from metldata.event_handling.event_handling import (
+    FileSystemEventPublisher,
+    FileSystemEventSubscriber,
+)
 from metldata.event_handling.models import SubmissionEventPayload
+from metldata.model_utils.essentials import MetadataModel
+from metldata.transform.artifact_publisher import ArtifactEvent, ArtifactEventPublisher
+from metldata.transform.base import WorkflowDefinition
+from metldata.transform.config import TransformationEventHandlingConfig
 from metldata.transform.handling import WorkflowHandler
+from metldata.transform.source_event_subscriber import SourceEventSubscriber
 
 
-def run_workflow_on_submission(
+def run_workflow_on_source_event(
     source_event: SubmissionEventPayload,
     workflow_handler: WorkflowHandler,
-    artifact_publisher: Callable[[Json], None],
+    publish_artifact_func: Callable[[ArtifactEvent], None],
 ) -> None:
     """Run a transformation workflow on a source event and publish the artifact using
     the provided artifact publisher.
@@ -39,21 +49,50 @@ def run_workflow_on_submission(
         workflow_handler:
             The workflow handler preconfigured with a workflow definition, a workflow
             config, and the original model of the source events.
-        artifact_publisher: The artifact publisher to use for publishing the artifacts.
+        publish_artifact_func: A function for publishing artifacts.
     """
 
     artifacts = workflow_handler.run(
         metadata=source_event.content, annotation=source_event.annotation
     )
 
-    for artifact in artifacts:
-        artifact_event = source_event.copy(content=artifact)
-        artifact_event_payload = json.loads(artifact_event.json())
-        artifact_publisher(artifact_event_payload)
+    for artifact_type, artifact_content in artifacts.items():
+        artifact_event = ArtifactEvent(
+            artifact_type=artifact_type,
+            artifact_payload=source_event.copy(content=artifact_content),
+        )
+
+        publish_artifact_func(artifact_event)
 
 
-def main():
+def run_workflow_on_all_source_events(
+    *,
+    event_config: TransformationEventHandlingConfig,
+    worflow_definition: WorkflowDefinition,
+    worflow_config: BaseSettings,
+    original_model: MetadataModel
+):
     """Run a subscriber to hand source events to a transformation workflow and
     run a publisher for publishing artifacts."""
 
-    event_publisher = EventPublisher()
+    workflow_handler = WorkflowHandler(
+        workflow_definition=worflow_definition,
+        workflow_config=worflow_config,
+        original_model=original_model,
+    )
+    event_publisher = FileSystemEventPublisher(config=event_config)
+    artifact_publisher = ArtifactEventPublisher(
+        config=event_config, provider=event_publisher
+    )
+    source_event_subscriber = SourceEventSubscriber(
+        config=event_config,
+        run_workflow_func=lambda source_event: run_workflow_on_source_event(
+            workflow_handler=workflow_handler,
+            source_event=source_event,
+            publish_artifact_func=artifact_publisher.publish_artifact,
+        ),
+    )
+    event_subscriber = FileSystemEventSubscriber(
+        config=event_config, translator=source_event_subscriber
+    )
+    asyncio.run(event_subscriber.run())

@@ -26,9 +26,6 @@ from hexkit.protocols.eventpub import EventPublisherProtocol
 from hexkit.protocols.eventsub import EventSubscriberProtocol
 from pydantic import BaseModel, BaseSettings, Field
 
-from metldata.custom_types import SubmissionContent
-from metldata.submission_registry.models import AccessionMap
-
 
 class FileSystemEventConfig(BaseSettings):
     """Config paramters and their defaults."""
