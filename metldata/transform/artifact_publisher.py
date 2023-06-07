@@ -17,7 +17,6 @@
 """Logic for publishing artifacts."""
 
 
-import asyncio
 import json
 
 from hexkit.protocols.eventpub import EventPublisherProtocol
@@ -50,7 +49,7 @@ class ArtifactEventPublisher:
         self._config = config
         self._provider = provider
 
-    def publish_artifact(self, artifact_event: ArtifactEvent):
+    async def publish_artifact(self, artifact_event: ArtifactEvent):
         """Publish an artifact as submission event"""
 
         payload = json.loads(artifact_event.payload.json())
@@ -58,13 +57,11 @@ class ArtifactEventPublisher:
             artifact_topic_prefix=self._config.artifact_topic_prefix,
             artifact_type=artifact_event.artifact_type,
         )
-        type_ = self._config.artifact_type
+        type_ = artifact_event.artifact_type
 
-        asyncio.run(
-            self._provider.publish(
-                topic=topic,
-                type_=type_,
-                key=artifact_event.payload.submission_id,
-                payload=payload,
-            )
+        await self._provider.publish(
+            topic=topic,
+            type_=type_,
+            key=artifact_event.payload.submission_id,
+            payload=payload,
         )

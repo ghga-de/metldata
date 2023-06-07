@@ -160,10 +160,10 @@ WORKFLOWS_BY_NAME: dict[str, WorkflowDefinition] = {
 
 WORKFLOW_TEST_CASES = _read_all_test_cases(workflows_by_name=WORKFLOWS_BY_NAME)
 
-EXAMPLE_WORKFLOW_TEST_CASES = [
+EXAMPLE_WORKFLOW_TEST_CASE = [
     test_case
     for test_case in WORKFLOW_TEST_CASES
     if test_case.workflow_name == "example_workflow"
-]
-EXAMPLE_ARTIFACT_MODELS = EXAMPLE_WORKFLOW_TEST_CASES[0].artifact_models
-EXAMPLE_ARTIFACTS = EXAMPLE_WORKFLOW_TEST_CASES[0].artifact_metadata
+][0]
+EXAMPLE_ARTIFACT_MODELS = EXAMPLE_WORKFLOW_TEST_CASE.artifact_models
+EXAMPLE_ARTIFACTS = EXAMPLE_WORKFLOW_TEST_CASE.artifact_metadata

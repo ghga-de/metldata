@@ -17,8 +17,7 @@
 """Main logic for running a transformation workflow on submissions."""
 
 
-import asyncio
-from typing import Callable
+from typing import Awaitable, Callable
 
 from pydantic import BaseSettings
 
@@ -35,10 +34,10 @@ from metldata.transform.handling import WorkflowHandler
 from metldata.transform.source_event_subscriber import SourceEventSubscriber
 
 
-def run_workflow_on_source_event(
+async def run_workflow_on_source_event(
     source_event: SubmissionEventPayload,
     workflow_handler: WorkflowHandler,
-    publish_artifact_func: Callable[[ArtifactEvent], None],
+    publish_artifact_func: Callable[[ArtifactEvent], Awaitable[None]],
 ) -> None:
     """Run a transformation workflow on a source event and publish the artifact using
     the provided artifact publisher.
@@ -59,16 +58,16 @@ def run_workflow_on_source_event(
     for artifact_type, artifact_content in artifacts.items():
         artifact_event = ArtifactEvent(
             artifact_type=artifact_type,
-            artifact_payload=source_event.copy(content=artifact_content),
+            payload=source_event.copy(update={"content": artifact_content}),
         )
 
-        publish_artifact_func(artifact_event)
+        await publish_artifact_func(artifact_event)
 
 
-def run_workflow_on_all_source_events(
+async def run_workflow_on_all_source_events(
     *,
     event_config: TransformationEventHandlingConfig,
-    worflow_definition: WorkflowDefinition,
+    workflow_definition: WorkflowDefinition,
     worflow_config: BaseSettings,
     original_model: MetadataModel
 ):
@@ -76,7 +75,7 @@ def run_workflow_on_all_source_events(
     run a publisher for publishing artifacts."""
 
     workflow_handler = WorkflowHandler(
-        workflow_definition=worflow_definition,
+        workflow_definition=workflow_definition,
         workflow_config=worflow_config,
         original_model=original_model,
     )
@@ -95,4 +94,4 @@ def run_workflow_on_all_source_events(
     event_subscriber = FileSystemEventSubscriber(
         config=event_config, translator=source_event_subscriber
     )
-    asyncio.run(event_subscriber.run())
+    await event_subscriber.run()
