@@ -20,7 +20,7 @@ import json
 from ghga_service_commons.utils.utc_dates import now_as_utc
 
 from metldata.config import SubmissionAndTransformationConfig
-from metldata.event_handling import FileSystemEventPublisher
+from metldata.event_handling.event_handling import FileSystemEventPublisher
 from metldata.submission_registry import models
 from metldata.submission_registry.event_publisher import SourceEventPublisher
 from tests.fixtures.config import config_sub_fixture  # noqa: F401

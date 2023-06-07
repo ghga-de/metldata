@@ -21,7 +21,7 @@ import pytest
 from metldata.accession_registry.accession_registry import AccessionRegistry
 from metldata.accession_registry.accession_store import AccessionStore
 from metldata.config import SubmissionAndTransformationConfig
-from metldata.event_handling import FileSystemEventPublisher
+from metldata.event_handling.event_handling import FileSystemEventPublisher
 from metldata.submission_registry import models
 from metldata.submission_registry.event_publisher import SourceEventPublisher
 from metldata.submission_registry.submission_registry import SubmissionRegistry
