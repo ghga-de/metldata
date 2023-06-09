@@ -19,8 +19,6 @@
 
 from typing import Awaitable, Callable
 
-from pydantic import BaseSettings
-
 from metldata.event_handling.event_handling import (
     FileSystemEventPublisher,
     FileSystemEventSubscriber,
@@ -28,7 +26,7 @@ from metldata.event_handling.event_handling import (
 from metldata.event_handling.models import SubmissionEventPayload
 from metldata.model_utils.essentials import MetadataModel
 from metldata.transform.artifact_publisher import ArtifactEvent, ArtifactEventPublisher
-from metldata.transform.base import WorkflowDefinition
+from metldata.transform.base import WorkflowConfig, WorkflowDefinition
 from metldata.transform.config import TransformationEventHandlingConfig
 from metldata.transform.handling import WorkflowHandler
 from metldata.transform.source_event_subscriber import SourceEventSubscriber
@@ -68,7 +66,7 @@ async def run_workflow_on_all_source_events(
     *,
     event_config: TransformationEventHandlingConfig,
     workflow_definition: WorkflowDefinition,
-    worflow_config: BaseSettings,
+    worflow_config: WorkflowConfig,
     original_model: MetadataModel
 ):
     """Run a subscriber to hand source events to a transformation workflow and
