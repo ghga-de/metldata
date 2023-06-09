@@ -31,11 +31,10 @@ services:
     # define environment variables
     environment:
       METLDATA_CONFIG_YAML: /workspace/.devcontainer/.dev_config.yaml
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
+      # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
+      # (Adding the "ports" property to this file will not forward from a Codespace.)
 
-
-  # Please remove service dependencies that are not needed:
+      # Please remove service dependencies that are not needed:
   mongodb:
     image: mongo:latest
     restart: unless-stopped
