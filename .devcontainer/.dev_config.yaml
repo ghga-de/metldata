@@ -1,11 +1,6 @@
 # Please only mention the non-default settings here:
 
-metadata_model_path: /workspace/tests/fixtures/example_models/advanced_model.yaml
-prefix_mapping:
-  file: GHGAF
-  experiment: GHGAE
-  sample: GHGAS
-  dataset: GHGAD
-
-accession_store_path: /path/to/accession_store.txt
-submission_store_dir: /path/to/submission/store/dir
+artifact_infos: []
+db_connection_str: "mongodb://mongodb:27017"
+db_name: dev_db
+loader_token_hashes: ["test_token_hash"]
