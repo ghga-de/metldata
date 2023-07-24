@@ -15,4 +15,4 @@
 
 """Short description of package"""  # Please adapt to package
 
-__version__ = "0.3.6"
+__version__ = "0.3.7"
