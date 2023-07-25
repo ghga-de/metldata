@@ -16,20 +16,9 @@
 
 """"Shared fixtures"""
 
-
-import asyncio
-
-import pytest
 from hexkit.providers.mongodb.testutils import get_mongodb_fixture
+from hexkit.providers.testing.utils import get_event_loop
 
-
-@pytest.fixture(scope="session")
-def event_loop():
-    """Get the asyncio event loop."""
-    policy = asyncio.get_event_loop_policy()
-    loop = policy.new_event_loop()
-    yield loop
-    loop.close()
-
+event_loop = get_event_loop(scope="session")
 
 mongodb_session = get_mongodb_fixture(scope="session")
