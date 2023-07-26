@@ -78,6 +78,21 @@ class ArtifactDaoCollection:
 
         return f"art_{artifact_name}_class_{class_name}"
 
+    async def get_all_resource_ids(self) -> dict[str, dict[str, set[str]]]:
+        """Retrieve all resource IDs indexed by artifact type and class name"""
+
+        all_resource_ids = {}
+        for artifact_type, class_name_dao in self._artifact_daos.items():
+            all_resource_ids[artifact_type] = {}
+            for class_name, resource_dao in class_name_dao.items():
+                # empty mapping should yield all resources
+                resource_ids = {
+                    resource.id_ async for resource in resource_dao.find_all(mapping={})
+                }
+                all_resource_ids[artifact_type][class_name] = resource_ids
+
+        return all_resource_ids
+
     async def get_dao(
         self, *, artifact_name: str, class_name: str
     ) -> ArtifactResourceDao:

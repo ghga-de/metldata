@@ -18,7 +18,10 @@
 
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
-from metldata.artifacts_rest.load_resources import load_artifact_resources
+from metldata.artifacts_rest.load_resources import (
+    extract_all_resources_from_artifact,
+    load_artifact_resources,
+)
 from metldata.artifacts_rest.models import ArtifactInfo
 from metldata.load.models import ArtifactResourceDict
 
@@ -41,6 +44,10 @@ def check_artifact_resources(
             raise ArtifactResourcesInvalid(f"Artifact '{artifact_name}' is unknown.")
 
 
+async def get_current_artifacts_using_dao(dao_collection) -> None:
+    """Get artifact resources currently present using the given dao collection"""
+
+
 async def load_artifacts_using_dao(
     artifact_resources: ArtifactResourceDict,
     artifact_info_dict: dict[str, ArtifactInfo],
@@ -48,8 +55,18 @@ async def load_artifacts_using_dao(
 ) -> None:
     """Load artifact resources from multiple submissions using the given dao collection."""
 
+    existing_resources = await dao_collection.get_all_resource_ids()
+
     for artifact_name, artifact_contents in artifact_resources.items():
         for artifact_content in artifact_contents:
+            resources = extract_all_resources_from_artifact(
+                artifact_content=artifact_content,
+                artifact_info=artifact_info_dict[artifact_name],
+            )
+
+            for resource in resources:
+                
+
             await load_artifact_resources(
                 artifact_content=artifact_content,
                 artifact_info=artifact_info_dict[artifact_name],

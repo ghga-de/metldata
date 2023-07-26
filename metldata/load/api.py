@@ -110,8 +110,6 @@ async def rest_api_factory(
         except ArtifactResourcesInvalid as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
-        await clear_database()
-
         await load_artifacts_using_dao(
             artifact_resources=artifact_resources,
             artifact_info_dict=artifact_info_dict,
