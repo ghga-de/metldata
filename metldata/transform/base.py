@@ -241,10 +241,7 @@ class WorkflowDefinition(BaseModel):
         try:
             return list(topological_sorter.static_order())
         except CycleError as exc:
-            raise RuntimeError(
-                "Exceeded number of tries to resolve the step order."
-                + " This is likely due to a circular dependency."
-            ) from exc
+            raise RuntimeError("Step definitions imply a circular dependency.") from exc
 
     class Config:
         """Config for the workflow step."""
