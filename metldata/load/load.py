@@ -17,7 +17,11 @@
 """Logic for loading artifact resources."""
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
-from metldata.artifacts_rest.load_resources import extract_all_resources_from_artifact
+from metldata.artifacts_rest.load_resources import (
+    extract_all_resources_from_artifact,
+    process_new_or_changed_resources,
+    process_removed_resources,
+)
 from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResource
 from metldata.load.models import ArtifactResourceDict
 
@@ -57,16 +61,16 @@ async def load_artifacts_using_dao(
         dao_collection=dao_collection,
     )
 
-    await _process_removed_resources(
+    await process_removed_resources(
         resource_tags=removed_resource_tags, dao_collection=dao_collection
     )
 
-    await _process_new_resources(
-        new_resources=new_resources, dao_collection=dao_collection
+    await process_new_or_changed_resources(
+        resources=new_resources, dao_collection=dao_collection
     )
 
-    await _process_changed_resources(
-        changed_resources=changed_resources, dao_collection=dao_collection
+    await process_new_or_changed_resources(
+        resources=changed_resources, dao_collection=dao_collection
     )
 
 
@@ -117,55 +121,3 @@ async def _get_changed_resources(  # pylint: disable=too-many-locals
     removed_resource_tags = existing_resource_tags - set(seen_resource_tags)
 
     return removed_resource_tags, new_resources, changed_resources
-
-
-async def _process_removed_resources(
-    resource_tags: set[str], dao_collection: ArtifactDaoCollection
-):
-    """Delete no longer needed artifact resources from DB and send corresponding events"""
-
-    for resource_tag in resource_tags:
-        artifact_name, class_name, resource_id = resource_tag.split("#")
-        dao = await dao_collection.get_dao(
-            artifact_name=artifact_name, class_name=class_name
-        )
-        # resource tag was obtained from querying the db, so resource with given ID
-        # should be present
-        await dao.delete(id_=resource_id)
-
-    # needs event publisher and corresponding outgoing models here
-
-
-async def _process_new_resources(
-    new_resources: dict[str, ArtifactResource], dao_collection: ArtifactDaoCollection
-):
-    """Insert newly received artifact resources into DB and send corresponding events"""
-
-    for resource_tag, resource in new_resources.items():
-        artifact_name, class_name, _ = resource_tag.split("#")
-        dao = await dao_collection.get_dao(
-            artifact_name=artifact_name, class_name=class_name
-        )
-        # no resource tag was obtained from querying the db, so the resource with the
-        # given ID should not be present
-        await dao.insert(resource)
-
-    # needs event publisher and corresponding outgoing models here
-
-
-async def _process_changed_resources(
-    changed_resources: dict[str, ArtifactResource],
-    dao_collection: ArtifactDaoCollection,
-):
-    """Upsert changed artifact resources into DB and send corresponding events"""
-
-    for resource_tag, resource in changed_resources.items():
-        artifact_name, class_name, _ = resource_tag.split("#")
-        dao = await dao_collection.get_dao(
-            artifact_name=artifact_name, class_name=class_name
-        )
-        # resource tag was obtained from querying the db, so resource with given ID
-        # should be present
-        await dao.upsert(resource)
-
-    # needs event publisher and corresponding outgoing models here
