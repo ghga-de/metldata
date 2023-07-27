@@ -113,9 +113,6 @@ async def test_load_artifacts_endpoint_happy(
     )
     assert response.status_code == 204
 
-    dao = await dao_collection.get_dao(
-        artifact_name=expected_artifact_name, class_name=expected_resource_class
-    )
     observed_resource = await dao.get_by_id(expected_resource_id)
     assert observed_resource.content == expected_resource_content
 
