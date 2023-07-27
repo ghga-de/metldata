@@ -16,6 +16,8 @@
 
 """Test the main modules."""
 
+from copy import deepcopy
+
 import pytest
 from ghga_service_commons.api.testing import AsyncTestClient
 from hexkit.protocols.dao import ResourceNotFoundError
@@ -101,14 +103,15 @@ async def test_load_artifacts_endpoint_happy(
         "size": 123456,
     }
     # replace tested resource with slightly changed one
-    artifact_resources[expected_artifact_name][0]["files"][
+    new_artifact_resources = deepcopy(artifact_resources)
+    new_artifact_resources[expected_artifact_name][0]["files"][
         0
     ] = expected_resource_content
 
     # submit changed request:
     response = await client.post(
         "/rpc/load-artifacts",
-        json=artifact_resources,
+        json=new_artifact_resources,
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 204
