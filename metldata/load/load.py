@@ -47,7 +47,11 @@ async def load_artifacts_using_dao(
 ) -> None:
     """Load artifact resources from multiple submissions using the given dao collection."""
 
-    removed_resource_tags, new_resources = await _get_removed_and_new_resources(
+    (
+        removed_resource_tags,
+        new_resources,
+        changed_resources,
+    ) = await _get_changed_resources(
         artifact_resources=artifact_resources,
         artifact_info_dict=artifact_info_dict,
         dao_collection=dao_collection,
@@ -61,17 +65,32 @@ async def load_artifacts_using_dao(
         new_resources=new_resources, dao_collection=dao_collection
     )
 
+    await _process_changed_resources(
+        changed_resources=changed_resources, dao_collection=dao_collection
+    )
 
-async def _get_removed_and_new_resources(
+
+async def _get_changed_resources(  # pylint: disable=too-many-locals
     artifact_resources: ArtifactResourceDict,
     artifact_info_dict: dict[str, ArtifactInfo],
     dao_collection: ArtifactDaoCollection,
-) -> tuple[set[str], dict[str, ArtifactResource]]:
-    """Extract new and deleted resource IDs using DAOs and currently submitted artifacts"""
+) -> tuple[set[str], dict[str, ArtifactResource], dict[str, ArtifactResource]]:
+    """Extract changed resources using DAOs and currently submitted artifacts
+
+    Returns the following collections in order:
+     - A set of resource tags for artifact resources that have been removed
+     - A dict of new artifact resources indexed by the corresponding resource_tag
+     - A dict of changed artifact resources indexed by the corresponding resource_tag
+    """
+
+    # only need to collect resource tag to check if something needs to be deleted
+    seen_resource_tags = []
+
+    # collect new/changed resources indexed by their resource_tag for insert/upsert
+    new_resources = {}
+    changed_resources = {}
 
     existing_resource_tags = await dao_collection.get_all_resource_tags()
-    seen_resource_tags = []
-    new_resources = {}
 
     for artifact_name, artifact_contents in artifact_resources.items():
         for artifact_content in artifact_contents:
@@ -80,15 +99,24 @@ async def _get_removed_and_new_resources(
                 artifact_info=artifact_info_dict[artifact_name],
             )
 
+            # check for each resource if it does already exist and is changed
             for resource in resources:
                 resource_tag = f"{artifact_name}#{resource.class_name}#{resource.id_}"
+                seen_resource_tags.append(resource_tag)
+
                 if resource_tag not in existing_resource_tags:
                     new_resources[resource_tag] = resource
-                seen_resource_tags.append(resource_tag)
+                else:
+                    dao = await dao_collection.get_dao(
+                        artifact_name=artifact_name, class_name=resource.class_name
+                    )
+                    old_resource = await dao.get_by_id(resource.id_)
+                    if old_resource != resource:
+                        changed_resources[resource_tag] = resource
 
     removed_resource_tags = existing_resource_tags - set(seen_resource_tags)
 
-    return removed_resource_tags, new_resources
+    return removed_resource_tags, new_resources, changed_resources
 
 
 async def _process_removed_resources(
@@ -121,5 +149,23 @@ async def _process_new_resources(
         # no resource tag was obtained from querying the db, so the resource with the
         # given ID should not be present
         await dao.insert(resource)
+
+    # needs event publisher and corresponding outgoing models here
+
+
+async def _process_changed_resources(
+    changed_resources: dict[str, ArtifactResource],
+    dao_collection: ArtifactDaoCollection,
+):
+    """Upsert changed artifact resources into DB and send corresponding events"""
+
+    for resource_tag, resource in changed_resources.items():
+        artifact_name, class_name, _ = resource_tag.split("#")
+        dao = await dao_collection.get_dao(
+            artifact_name=artifact_name, class_name=class_name
+        )
+        # resource tag was obtained from querying the db, so resource with given ID
+        # should be present
+        await dao.upsert(resource)
 
     # needs event publisher and corresponding outgoing models here
