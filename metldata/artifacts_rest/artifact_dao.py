@@ -99,7 +99,7 @@ class ArtifactDaoCollection:
                         f"{artifact_type}#{class_name}#{resource_id}"
                     )
 
-        return set(all_resource_tags)  # type: ignore
+        return set(all_resource_tags)
 
     async def get_dao(
         self, *, artifact_name: str, class_name: str

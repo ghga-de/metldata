@@ -65,6 +65,7 @@ async def test_load_artifacts_endpoint_happy(
         artifact_name: [artifact_content]
         for artifact_name, artifact_content in EXAMPLE_ARTIFACTS.items()
     }
+
     response = await client.post(
         "/rpc/load-artifacts",
         json=artifact_resources,
@@ -93,7 +94,32 @@ async def test_load_artifacts_endpoint_happy(
     observed_resource = await dao.get_by_id(expected_resource_id)
     assert observed_resource.content == expected_resource_content
 
-    # resubmit an empty request:
+    # test upsert of changed resource
+    expected_resource_content = {
+        "alias": "test_sample_01_R1",
+        "format": "fastq",
+        "size": 123456,
+    }
+    # replace tested resource with slightly changed one
+    artifact_resources[expected_artifact_name][0]["files"][
+        0
+    ] = expected_resource_content
+
+    # submit changed request:
+    response = await client.post(
+        "/rpc/load-artifacts",
+        json=artifact_resources,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 204
+
+    dao = await dao_collection.get_dao(
+        artifact_name=expected_artifact_name, class_name=expected_resource_class
+    )
+    observed_resource = await dao.get_by_id(expected_resource_id)
+    assert observed_resource.content == expected_resource_content
+
+    # submit an empty request:
     response = await client.post(
         "/rpc/load-artifacts",
         json={},
