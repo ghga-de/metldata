@@ -78,11 +78,11 @@ class ArtifactDaoCollection:
 
         return f"art_{artifact_name}_class_{class_name}"
 
-    async def get_all_resource_tags(self) -> set[str]:
+    async def get_all_resource_tags(self) -> list[tuple[str, str, str]]:
         """Retrieve resource tags for all artifacts currently present in the db.
 
-        A resource tag combines artifact_name, class_name and resource ID (accession) into a string
-        separated by #, i.e. it has the form 'artifact_name#class_name#resource_ID'.
+        A resource tag combines artifact_name, class_name and resource ID (accession)
+        into a tuple, i.e. it has the form '(artifact_name,class_name,resource_ID)'.
         This is done to flatten the nested artifact information to simplify keeping track
         of changes.
         """
@@ -95,11 +95,9 @@ class ArtifactDaoCollection:
                     resource.id_ async for resource in resource_dao.find_all(mapping={})
                 }
                 for resource_id in resource_ids:
-                    all_resource_tags.append(
-                        f"{artifact_type}#{class_name}#{resource_id}"
-                    )
+                    all_resource_tags.append((artifact_type, class_name, resource_id))
 
-        return set(all_resource_tags)
+        return all_resource_tags
 
     async def get_dao(
         self, *, artifact_name: str, class_name: str

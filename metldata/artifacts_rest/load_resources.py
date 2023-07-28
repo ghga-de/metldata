@@ -119,12 +119,12 @@ async def load_artifact_resources(
 
 
 async def process_removed_resources(
-    resource_tags: set[str], dao_collection: ArtifactDaoCollection
+    resource_tags: set[tuple[str, str, str]], dao_collection: ArtifactDaoCollection
 ):
     """Delete no longer needed artifact resources from DB and send corresponding events"""
 
     for resource_tag in resource_tags:
-        artifact_name, class_name, resource_id = resource_tag.split("#")
+        artifact_name, class_name, resource_id = resource_tag
         # resource tag was obtained from querying the db, so resource with given ID
         # should be present
         await remove_artifact_resource(
@@ -138,12 +138,13 @@ async def process_removed_resources(
 
 
 async def process_new_or_changed_resources(
-    resources: dict[str, ArtifactResource], dao_collection: ArtifactDaoCollection
+    resources: dict[tuple[str, str, str], ArtifactResource],
+    dao_collection: ArtifactDaoCollection,
 ):
     """Insert newly received artifact resources into DB and send corresponding events"""
 
     for resource_tag, resource in resources.items():
-        artifact_name = resource_tag.split("#")[0]
+        artifact_name = resource_tag[0]
         # no resource tag was obtained from querying the db, so the resource with the
         # given ID should not be present
         await save_artifact_resource(

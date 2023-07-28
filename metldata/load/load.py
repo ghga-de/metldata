@@ -78,7 +78,11 @@ async def _get_changed_resources(  # pylint: disable=too-many-locals
     artifact_resources: ArtifactResourceDict,
     artifact_info_dict: dict[str, ArtifactInfo],
     dao_collection: ArtifactDaoCollection,
-) -> tuple[set[str], dict[str, ArtifactResource], dict[str, ArtifactResource]]:
+) -> tuple[
+    set[tuple[str, str, str]],
+    dict[tuple[str, str, str], ArtifactResource],
+    dict[tuple[str, str, str], ArtifactResource],
+]:
     """Extract changed resources using DAOs and currently submitted artifacts
 
     Returns the following collections in order:
@@ -88,7 +92,7 @@ async def _get_changed_resources(  # pylint: disable=too-many-locals
     """
 
     # only need to collect resource tag to check if something needs to be deleted
-    seen_resource_tags = []
+    unchanged_resource_tags = []
 
     # collect new/changed resources indexed by their resource_tag for insert/upsert
     new_resources = {}
@@ -105,8 +109,7 @@ async def _get_changed_resources(  # pylint: disable=too-many-locals
 
             # check for each resource if it does already exist and is changed
             for resource in resources:
-                resource_tag = f"{artifact_name}#{resource.class_name}#{resource.id_}"
-                seen_resource_tags.append(resource_tag)
+                resource_tag = (artifact_name, resource.class_name, resource.id_)
 
                 if resource_tag not in existing_resource_tags:
                     new_resources[resource_tag] = resource
@@ -117,7 +120,11 @@ async def _get_changed_resources(  # pylint: disable=too-many-locals
                     old_resource = await dao.get_by_id(resource.id_)
                     if old_resource != resource:
                         changed_resources[resource_tag] = resource
+                    else:
+                        unchanged_resource_tags.append(resource_tag)
 
-    removed_resource_tags = existing_resource_tags - set(seen_resource_tags)
+    removed_resource_tags = set(existing_resource_tags).difference(
+        unchanged_resource_tags, new_resources.keys(), changed_resources.keys()
+    )
 
     return removed_resource_tags, new_resources, changed_resources
