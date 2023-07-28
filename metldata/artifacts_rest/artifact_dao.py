@@ -81,7 +81,7 @@ class ArtifactDaoCollection:
     async def get_all_resource_tags(self) -> set[str]:
         """Retrieve resource tags for all artifacts currently present in the db.
 
-        A resource tag combines artifact_name, class_name and resource into a string
+        A resource tag combines artifact_name, class_name and resource ID (accession) into a string
         separated by #, i.e. it has the form 'artifact_name#class_name#resource'.
         This is done to flatten the nested artifact information to simplify keeping track
         of changes.
