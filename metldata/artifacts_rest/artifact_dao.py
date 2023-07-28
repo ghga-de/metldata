@@ -87,7 +87,7 @@ class ArtifactDaoCollection:
         of changes.
         """
 
-        all_resource_tags = []
+        all_resource_tags: list[tuple[str, str, str]] = []
         for artifact_type, class_name_dao in self._artifact_daos.items():
             for class_name, resource_dao in class_name_dao.items():
                 # empty mapping should yield all resources
