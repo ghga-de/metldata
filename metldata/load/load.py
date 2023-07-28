@@ -124,7 +124,7 @@ async def _get_changed_resources(  # pylint: disable=too-many-locals
                         unchanged_resource_tags.append(resource_tag)
 
     removed_resource_tags = set(existing_resource_tags).difference(
-        unchanged_resource_tags, new_resources.keys(), changed_resources.keys()
+        unchanged_resource_tags, new_resources, changed_resources
     )
 
     return removed_resource_tags, new_resources, changed_resources
