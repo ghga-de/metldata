@@ -91,11 +91,13 @@ class ArtifactDaoCollection:
         for artifact_type, class_name_dao in self._artifact_daos.items():
             for class_name, resource_dao in class_name_dao.items():
                 # empty mapping should yield all resources
-                resource_ids = {
+                resource_ids = [
                     resource.id_ async for resource in resource_dao.find_all(mapping={})
-                }
-                for resource_id in resource_ids:
-                    all_resource_tags.append((artifact_type, class_name, resource_id))
+                ]
+                all_resource_tags.extend(
+                    (artifact_type, class_name, resource_id)
+                    for resource_id in resource_ids
+                )
 
         return all_resource_tags
 
