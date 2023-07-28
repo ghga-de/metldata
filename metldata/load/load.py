@@ -111,17 +111,18 @@ async def _get_changed_resources(  # pylint: disable=too-many-locals
             for resource in resources:
                 resource_tag = (artifact_name, resource.class_name, resource.id_)
 
-                if resource_tag not in existing_resource_tags:
-                    new_resources[resource_tag] = resource
-                else:
+                if resource_tag in existing_resource_tags:
                     dao = await dao_collection.get_dao(
                         artifact_name=artifact_name, class_name=resource.class_name
                     )
                     old_resource = await dao.get_by_id(resource.id_)
-                    if old_resource != resource:
-                        changed_resources[resource_tag] = resource
-                    else:
+
+                    if old_resource == resource:
                         unchanged_resource_tags.append(resource_tag)
+                    else:
+                        changed_resources[resource_tag] = resource
+                else:
+                    new_resources[resource_tag] = resource
 
     removed_resource_tags = set(existing_resource_tags).difference(
         unchanged_resource_tags, new_resources, changed_resources
