@@ -124,7 +124,7 @@ async def _get_changed_resources(  # pylint: disable=too-many-locals
                 else:
                     new_resources[resource_tag] = resource
 
-    removed_resource_tags = set(existing_resource_tags).difference(
+    removed_resource_tags = existing_resource_tags.difference(
         unchanged_resource_tags, new_resources, changed_resources
     )
 

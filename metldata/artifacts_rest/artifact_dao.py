@@ -78,7 +78,7 @@ class ArtifactDaoCollection:
 
         return f"art_{artifact_name}_class_{class_name}"
 
-    async def get_all_resource_tags(self) -> list[tuple[str, str, str]]:
+    async def get_all_resource_tags(self) -> set[tuple[str, str, str]]:
         """Retrieve resource tags for all artifacts currently present in the db.
 
         A resource tag combines artifact_name, class_name and resource ID (accession)
@@ -99,7 +99,7 @@ class ArtifactDaoCollection:
                     for resource_id in resource_ids
                 )
 
-        return all_resource_tags
+        return set(all_resource_tags)
 
     async def get_dao(
         self, *, artifact_name: str, class_name: str
