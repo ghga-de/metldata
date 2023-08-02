@@ -18,7 +18,8 @@
 
 from pydantic import BaseModel, Field, root_validator
 
-from metldata.builtin_transformations.infer_references.path.path import ReferencePath
+from metldata.builtin_transformations.infer_references.path.path import \
+    ReferencePath
 
 
 class ReferenceDetails(BaseModel):

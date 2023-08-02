@@ -16,21 +16,20 @@
 
 """A tranformation for merging multiple slots of a class into a single one."""
 
-from metldata.builtin_transformations.merge_slots.assumptions import (
-    check_model_class_slots,
-)
-from metldata.builtin_transformations.merge_slots.config import SlotMergingConfig
-from metldata.builtin_transformations.merge_slots.metadata_transform import (
-    apply_merge_instructions_to_metadata,
-)
-from metldata.builtin_transformations.merge_slots.model_transform import (
-    merge_slots_in_model,
-)
+from metldata.builtin_transformations.merge_slots.assumptions import \
+    check_model_class_slots
+from metldata.builtin_transformations.merge_slots.config import \
+    SlotMergingConfig
+from metldata.builtin_transformations.merge_slots.metadata_transform import \
+    apply_merge_instructions_to_metadata
+from metldata.builtin_transformations.merge_slots.model_transform import \
+    merge_slots_in_model
 from metldata.event_handling.models import SubmissionAnnotation
 from metldata.model_utils.anchors import get_anchors_points_by_target
 from metldata.model_utils.assumptions import check_anchor_points
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.base import Json, MetadataTransformer, TransformationDefinition
+from metldata.transform.base import (Json, MetadataTransformer,
+                                     TransformationDefinition)
 
 
 def check_model_assumptions(model: MetadataModel, config: SlotMergingConfig):

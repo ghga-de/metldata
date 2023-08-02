@@ -20,10 +20,10 @@
 import pytest
 from pydantic import ValidationError
 
-from metldata.builtin_transformations.delete_slots import SLOT_DELETION_TRANSFORMATION
-from metldata.builtin_transformations.infer_references import (
-    REFERENCE_INFERENCE_TRANSFORMATION,
-)
+from metldata.builtin_transformations.delete_slots import \
+    SLOT_DELETION_TRANSFORMATION
+from metldata.builtin_transformations.infer_references import \
+    REFERENCE_INFERENCE_TRANSFORMATION
 from metldata.transform.base import WorkflowDefinition, WorkflowStep
 from tests.fixtures.workflows import EXAMPLE_WORKFLOW_DEFINITION
 

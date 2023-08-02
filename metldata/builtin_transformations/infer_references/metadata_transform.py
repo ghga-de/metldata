@@ -17,28 +17,18 @@
 """Logic for transforming metadata."""
 
 
-from metldata.builtin_transformations.infer_references.path.resolve import (
-    resolve_reference_for_metadata_resource,
-)
-from metldata.builtin_transformations.infer_references.reference import (
-    InferredReference,
-)
-from metldata.metadata_utils import (
-    SelfIdLookUpError,
-    get_resources_of_class,
-    lookup_self_id,
-    upsert_resources_in_metadata,
-)
-from metldata.model_utils.anchors import (
-    AnchorPoint,
-    AnchorPointNotFoundError,
-    lookup_anchor_point,
-)
-from metldata.transform.base import (
-    Json,
-    MetadataModelTransformationError,
-    MetadataTransformationError,
-)
+from metldata.builtin_transformations.infer_references.path.resolve import \
+    resolve_reference_for_metadata_resource
+from metldata.builtin_transformations.infer_references.reference import \
+    InferredReference
+from metldata.metadata_utils import (SelfIdLookUpError, get_resources_of_class,
+                                     lookup_self_id,
+                                     upsert_resources_in_metadata)
+from metldata.model_utils.anchors import (AnchorPoint,
+                                          AnchorPointNotFoundError,
+                                          lookup_anchor_point)
+from metldata.transform.base import (Json, MetadataModelTransformationError,
+                                     MetadataTransformationError)
 
 
 def add_reference_to_metadata_resource(

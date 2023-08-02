@@ -25,10 +25,8 @@ from linkml_runtime.linkml_model.meta import ClassDefinition
 
 from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResourceClass
 from metldata.custom_types import Json
-from metldata.model_utils.anchors import (
-    get_anchors_points_by_target,
-    lookup_anchor_point,
-)
+from metldata.model_utils.anchors import (get_anchors_points_by_target,
+                                          lookup_anchor_point)
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
 

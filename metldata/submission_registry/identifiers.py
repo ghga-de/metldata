@@ -25,12 +25,10 @@ from pydantic import Json
 from metldata.accession_registry import AccessionRegistry
 from metldata.custom_types import SubmissionContent
 from metldata.metadata_utils import lookup_self_id
-from metldata.model_utils.anchors import (
-    AnchorPoint,
-    invert_anchor_points_by_target,
-    lookup_anchor_point,
-    lookup_class_by_anchor_point,
-)
+from metldata.model_utils.anchors import (AnchorPoint,
+                                          invert_anchor_points_by_target,
+                                          lookup_anchor_point,
+                                          lookup_class_by_anchor_point)
 from metldata.submission_registry.models import AccessionMap
 
 

@@ -20,9 +20,7 @@ import re
 from typing import Optional
 
 from metldata.builtin_transformations.infer_references.path.path_elements import (
-    ReferencePathElement,
-    ReferencePathElementType,
-)
+    ReferencePathElement, ReferencePathElementType)
 
 NAME_PATTERN = r"(?!\d)\w+"
 ACTIVE_ARROW_PATTERN = rf"\({NAME_PATTERN}\)>"

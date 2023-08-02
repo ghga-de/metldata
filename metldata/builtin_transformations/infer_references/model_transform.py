@@ -18,15 +18,12 @@
 
 from linkml_runtime.linkml_model.meta import SlotDefinition
 
-from metldata.builtin_transformations.infer_references.reference import (
-    InferredReference,
-)
+from metldata.builtin_transformations.infer_references.reference import \
+    InferredReference
 from metldata.model_utils.essentials import MetadataModel
-from metldata.model_utils.manipulate import (
-    ModelManipulationError,
-    add_slot_if_not_exists,
-    upsert_class_slot,
-)
+from metldata.model_utils.manipulate import (ModelManipulationError,
+                                             add_slot_if_not_exists,
+                                             upsert_class_slot)
 from metldata.transform.base import MetadataModelTransformationError
 
 

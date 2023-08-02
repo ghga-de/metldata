@@ -19,18 +19,14 @@ from contextlib import nullcontext
 
 import pytest
 
-from metldata.model_utils.assumptions import (
-    MetadataModelAssumptionError,
-    check_basic_model_assumption,
-    check_class_exists,
-    check_class_slot_exists,
-)
+from metldata.model_utils.assumptions import (MetadataModelAssumptionError,
+                                              check_basic_model_assumption,
+                                              check_class_exists,
+                                              check_class_slot_exists)
 from metldata.model_utils.essentials import MetadataModel
-from tests.fixtures.metadata_models import (
-    INVALID_METADATA_MODELS,
-    VALID_METADATA_MODELS,
-    VALID_MINIMAL_METADATA_MODEL,
-)
+from tests.fixtures.metadata_models import (INVALID_METADATA_MODELS,
+                                            VALID_METADATA_MODELS,
+                                            VALID_MINIMAL_METADATA_MODEL)
 
 
 @pytest.mark.parametrize(

@@ -16,20 +16,18 @@
 
 """A transformation to generate custom embeddings for classes of a metadata model."""
 
-from metldata.builtin_transformations.custom_embeddings.config import (
-    CustomEmbeddingConfig,
-)
-from metldata.builtin_transformations.custom_embeddings.metadata_transform import (
-    add_custom_embeddings_to_metadata,
-)
-from metldata.builtin_transformations.custom_embeddings.model_transform import (
-    add_custom_embedded_classes,
-)
+from metldata.builtin_transformations.custom_embeddings.config import \
+    CustomEmbeddingConfig
+from metldata.builtin_transformations.custom_embeddings.metadata_transform import \
+    add_custom_embeddings_to_metadata
+from metldata.builtin_transformations.custom_embeddings.model_transform import \
+    add_custom_embedded_classes
 from metldata.event_handling.models import SubmissionAnnotation
 from metldata.model_utils.anchors import get_anchors_points_by_target
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.base import Json, MetadataTransformer, TransformationDefinition
+from metldata.transform.base import (Json, MetadataTransformer,
+                                     TransformationDefinition)
 
 
 class CustomEmbeddingMetadataTransformer(MetadataTransformer[CustomEmbeddingConfig]):

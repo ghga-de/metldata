@@ -22,14 +22,9 @@ from metldata.custom_types import Json
 from metldata.event_handling.models import SubmissionAnnotation
 from metldata.model_utils.essentials import MetadataModel
 from metldata.model_utils.metadata_validator import MetadataValidator
-from metldata.transform.base import (
-    Config,
-    TransformationDefinition,
-    WorkflowConfig,
-    WorkflowDefinition,
-    WorkflowStep,
-    WorkflowStepBase,
-)
+from metldata.transform.base import (Config, TransformationDefinition,
+                                     WorkflowConfig, WorkflowDefinition,
+                                     WorkflowStep, WorkflowStepBase)
 
 
 class WorkflowConfigMismatchError(RuntimeError):

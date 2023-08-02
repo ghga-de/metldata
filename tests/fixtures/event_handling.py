@@ -21,12 +21,10 @@ from pathlib import Path
 
 import pytest
 
-from metldata.event_handling.event_handling import (
-    Event,
-    FileSystemEventCollector,
-    FileSystemEventConfig,
-    FileSystemEventPublisher,
-)
+from metldata.event_handling.event_handling import (Event,
+                                                    FileSystemEventCollector,
+                                                    FileSystemEventConfig,
+                                                    FileSystemEventPublisher)
 
 
 class EventExpectationMismatch(RuntimeError):

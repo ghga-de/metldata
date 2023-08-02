@@ -25,9 +25,7 @@ from metldata.artifacts_rest.models import ArtifactResource
 from tests.fixtures.artifact_info import MINIMAL_ARTIFACT_INFO
 from tests.fixtures.metadata import VALID_MINIMAL_METADATA_EXAMPLE
 from tests.fixtures.mongodb import (  # noqa: F401; pylint: disable=unused-import
-    MongoDbFixture,
-    mongodb_fixture,
-)
+    MongoDbFixture, mongodb_fixture)
 
 
 async def load_example_artifact_resources(

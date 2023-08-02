@@ -21,10 +21,8 @@ from copy import deepcopy
 from linkml_runtime import SchemaView
 
 from metldata.model_utils.essentials import MetadataModel
-from tests.fixtures.metadata_models import (
-    VALID_MINIMAL_METADATA_MODEL,
-    VALID_MINIMAL_MODEL_EXAMPLE_PATH,
-)
+from tests.fixtures.metadata_models import (VALID_MINIMAL_METADATA_MODEL,
+                                            VALID_MINIMAL_MODEL_EXAMPLE_PATH)
 
 
 def test_metadata_model_from_path():

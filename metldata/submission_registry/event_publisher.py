@@ -21,7 +21,8 @@ import json
 
 from hexkit.protocols.eventpub import EventPublisherProtocol
 
-from metldata.event_handling.models import SubmissionAnnotation, SubmissionEventPayload
+from metldata.event_handling.models import (SubmissionAnnotation,
+                                            SubmissionEventPayload)
 from metldata.event_handling.submission_events import SourceEventConfig
 from metldata.submission_registry import models
 

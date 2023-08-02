@@ -16,19 +16,15 @@
 
 """Event publisher for population and deletion events to MASS, WPS and claims repository"""
 
+import json
 from abc import ABC, abstractmethod
 
-from ghga_event_schemas.pydantic_ import (
-    MetadataDataset,
-    MetadataDatasetFile,
-    MetadataDatasetID,
-    MetadataDatasetOverview,
-    MetadataDatasetStage,
-)
+from ghga_event_schemas.pydantic_ import (MetadataDatasetID,
+                                          MetadataDatasetOverview,
+                                          SearchableResource,
+                                          SearchableResourceInfo)
 from hexkit.protocols.eventpub import EventPublisherProtocol
 from pydantic import BaseSettings, Field
-
-from metldata.artifacts_rest.models import ArtifactResource
 
 
 class EventPubTranslatorConfig(BaseSettings):
@@ -37,52 +33,65 @@ class EventPubTranslatorConfig(BaseSettings):
     dataset_overview events should
     """
 
-    dataset_change_topic: str = Field(
+    resource_change_event_topic: str = Field(
         ...,
         description="Name of the topic used for events informing other services about"
-        + " dataset changes, i.e. deletion or insertion.",
-        example="metadata_dataset_change",
+        + " resource changes, i.e. deletion or insertion.",
+        example="searchable_resources",
     )
-    dataset_deletion_type: str = Field(
+    resource_deletion_event_type: str = Field(
         ...,
         description="Type used for events indicating the deletion of a previously"
-        + " existing dataset.",
-        example="deletion",
+        + " existing resource.",
+        example="searchable_resource_deleted",
     )
-    dataset_insertion_type: str = Field(
+    resource_upsertion_type: str = Field(
         ...,
-        description="Type used for events indicating the insertion of a new dataset.",
-        example="insertion",
+        description="Type used for events indicating the upsert of a resource.",
+        example="searchable_resource_upserted",
     )
 
-    dataset_overview_topic: str = Field(
+    dataset_change_event_topic: str = Field(
         ...,
         description="Name of the topic announcing, among other things, the list of"
         + " files included in a new dataset.",
-        example="metadata_dataset_overview",
+        example="metadata_datasets",
     )
-    dataset_overview_type: str = Field(
+    dataset_deletion_type: str = Field(
         ...,
         description="Type used for events announcing a new dataset overview.",
-        example="overview_creation",
+        example="dataset_overview_deleted",
+    )
+    dataset_upsertion_type: str = Field(
+        ...,
+        description="Type used for events announcing a new dataset overview.",
+        example="dataset_overview_created",
     )
 
 
-class EventPubTranslatorPort(ABC):
+class EventPublisherPort(ABC):
     """ """
 
     @abstractmethod
-    async def datasets_created(
-        self, *, artifact_name: str, resources: list[ArtifactResource]
+    async def process_dataset_deletion(self, *, accession: str):
+        """ """
+
+    @abstractmethod
+    async def process_resource_deletion(self, *, accession: str, class_name: str):
+        """ """
+
+    @abstractmethod
+    async def process_dataset_upsert(
+        self, *, dataset_overview: MetadataDatasetOverview
     ):
         """ """
 
     @abstractmethod
-    async def datasets_deleted(self, *, datasets: list[str]):
+    async def process_resource_upsert(self, *, resource: SearchableResource):
         """ """
 
 
-class EventPubTranslator(EventPubTranslatorPort):
+class EventPubTranslator(EventPublisherPort):
     """ """
 
     def __init__(
@@ -93,44 +102,54 @@ class EventPubTranslator(EventPubTranslatorPort):
         self._config = config
         self._provider = provider
 
-    async def datasets_created(self, *, resources: list[ArtifactResource]):
+    async def process_dataset_deletion(self, *, accession: str):
         """ """
 
-        for resource in resources:
-            # population event for MASS
-            payload = MetadataDataset(
-                accession=resource.id_,
-                class_name=resource.class_name,
-                content=resource.content,
-            ).dict()
+        dataset_id = MetadataDatasetID(accession=accession)
 
-            await self._provider.publish(
-                payload=payload,
-                type_=self._config.dataset_insertion_type,
-                key=f"dataset_embedded_{resource.id_}",
-                topic=self._config.dataset_change_topic,
-            )
+        payload = json.loads(dataset_id.json())
+        await self._provider.publish(
+            payload=payload,
+            type_=self._config.dataset_deletion_type,
+            key=f"dataset_embedded_{dataset_id.accession}",
+            topic=self._config.dataset_change_event_topic,
+        )
 
-            files = []
-            resource.content["embedded_dataset"]
-            MetadataDatasetFile(accession="", description="", file_extension="")
-
-            payload = MetadataDatasetOverview(
-                accession=resource.id_,
-                description="",
-                files="",
-                stage=MetadataDatasetStage.DOWNLOAD,
-                title="",
-            )
-
-    async def datasets_deleted(self, *, resource_ids: list[str]):
+    async def process_resource_deletion(self, *, accession: str, class_name: str):
         """ """
-        for resource_id in resource_ids:
-            payload = MetadataDatasetID(accession=resource_id).dict()
 
-            await self._provider.publish(
-                payload=payload,
-                type_=self._config.dataset_deletion_type,
-                key=f"dataset_embedded_{resource_id}",
-                topic=self._config.dataset_change_topic,
-            )
+        resource_info = SearchableResourceInfo(
+            accession=accession, class_name=class_name
+        )
+
+        payload = json.loads(resource_info.json())
+        await self._provider.publish(
+            payload=payload,
+            type_=self._config.resource_deletion_event_type,
+            key=f"dataset_embedded_{resource_info.accession}",
+            topic=self._config.resource_change_event_topic,
+        )
+
+    async def process_dataset_upsert(
+        self, *, dataset_overview: MetadataDatasetOverview
+    ):
+        """ """
+
+        payload = json.loads(dataset_overview.json())
+        await self._provider.publish(
+            payload=payload,
+            type_=self._config.dataset_upsertion_type,
+            key=f"dataset_embedded_{dataset_overview.accession}",
+            topic=self._config.dataset_change_event_topic,
+        )
+
+    async def process_resource_upsert(self, *, resource: SearchableResource):
+        """ """
+
+        payload = json.loads(resource.json())
+        await self._provider.publish(
+            payload=payload,
+            type_=self._config.resource_upsertion_type,
+            key=f"dataset_embedded_{resource.accession}",
+            topic=self._config.resource_change_event_topic,
+        )

@@ -18,18 +18,14 @@
 
 from typing import Union, cast
 
-from metldata.builtin_transformations.custom_embeddings.embedding_profile import (
-    EmbeddingProfile,
-)
-from metldata.builtin_transformations.custom_embeddings.model_transform import (
-    get_embedding_profile_root_slot,
-)
-from metldata.metadata_utils import (
-    MetadataResourceNotFoundError,
-    get_resource_dict_of_class,
-    lookup_resource_by_identifier,
-    upsert_resources_in_metadata,
-)
+from metldata.builtin_transformations.custom_embeddings.embedding_profile import \
+    EmbeddingProfile
+from metldata.builtin_transformations.custom_embeddings.model_transform import \
+    get_embedding_profile_root_slot
+from metldata.metadata_utils import (MetadataResourceNotFoundError,
+                                     get_resource_dict_of_class,
+                                     lookup_resource_by_identifier,
+                                     upsert_resources_in_metadata)
 from metldata.model_utils.anchors import AnchorPoint, lookup_anchor_point
 from metldata.model_utils.essentials import MetadataModel
 from metldata.transform.base import Json, MetadataTransformationError

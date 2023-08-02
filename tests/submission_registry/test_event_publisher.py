@@ -21,11 +21,13 @@ from ghga_service_commons.utils.utc_dates import now_as_utc
 
 from metldata.config import SubmissionConfig
 from metldata.event_handling.event_handling import FileSystemEventPublisher
-from metldata.event_handling.models import SubmissionAnnotation, SubmissionEventPayload
+from metldata.event_handling.models import (SubmissionAnnotation,
+                                            SubmissionEventPayload)
 from metldata.submission_registry import models
 from metldata.submission_registry.event_publisher import SourceEventPublisher
 from tests.fixtures.config import config_sub_fixture  # noqa: F401
-from tests.fixtures.event_handling import file_system_event_fixture  # noqa: F401
+from tests.fixtures.event_handling import \
+    file_system_event_fixture  # noqa: F401
 from tests.fixtures.event_handling import Event, FileSystemEventFixture
 
 

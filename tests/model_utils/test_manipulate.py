@@ -20,15 +20,13 @@ import pytest
 from linkml_runtime.linkml_model.meta import SlotDefinition
 
 from metldata.model_utils.identifiers import get_class_identifier
-from metldata.model_utils.manipulate import (
-    ClassNotFoundError,
-    ClassSlotNotFoundError,
-    add_slot_if_not_exists,
-    add_slot_usage_annotation,
-    delete_class_slot,
-    disable_identifier_slot,
-    upsert_class_slot,
-)
+from metldata.model_utils.manipulate import (ClassNotFoundError,
+                                             ClassSlotNotFoundError,
+                                             add_slot_if_not_exists,
+                                             add_slot_usage_annotation,
+                                             delete_class_slot,
+                                             disable_identifier_slot,
+                                             upsert_class_slot)
 from tests.fixtures.metadata_models import VALID_MINIMAL_METADATA_MODEL
 
 

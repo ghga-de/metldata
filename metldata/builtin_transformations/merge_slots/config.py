@@ -18,7 +18,8 @@
 
 from pydantic import BaseSettings, Field, validator
 
-from metldata.builtin_transformations.merge_slots.models import SlotMergeInstruction
+from metldata.builtin_transformations.merge_slots.models import \
+    SlotMergeInstruction
 
 
 class SlotMergingConfig(BaseSettings):

@@ -19,11 +19,8 @@ import pytest
 from ghga_service_commons.utils.utc_dates import now_as_utc
 
 from metldata.config import SubmissionConfig
-from metldata.submission_registry.models import (
-    StatusChange,
-    Submission,
-    SubmissionStatus,
-)
+from metldata.submission_registry.models import (StatusChange, Submission,
+                                                 SubmissionStatus)
 from metldata.submission_registry.submission_store import SubmissionStore
 from tests.fixtures.config import config_sub_fixture  # noqa: F401
 

@@ -21,11 +21,10 @@ from contextlib import nullcontext
 import pytest
 from pydantic import BaseModel
 
-from metldata.builtin_transformations.infer_references.path.path import ReferencePath
+from metldata.builtin_transformations.infer_references.path.path import \
+    ReferencePath
 from metldata.builtin_transformations.infer_references.path.path_elements import (
-    ReferencePathElement,
-    ReferencePathElementType,
-)
+    ReferencePathElement, ReferencePathElementType)
 
 
 @pytest.mark.parametrize(

@@ -15,8 +15,10 @@
 
 """Config Parameter Modeling and Parsing"""
 
-from metldata.submission_registry.event_publisher import SourceEventPublisherConfig
-from metldata.submission_registry.submission_registry import SubmissionRegistryConfig
+from metldata.submission_registry.event_publisher import \
+    SourceEventPublisherConfig
+from metldata.submission_registry.submission_registry import \
+    SubmissionRegistryConfig
 from metldata.submission_registry.submission_store import SubmissionStoreConfig
 
 

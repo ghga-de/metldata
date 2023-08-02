@@ -31,9 +31,7 @@ from metldata.load.main import get_app
 from metldata.load.stats import STATS_COLLECTION_NAME
 from tests.fixtures.artifact_info import EXAMPLE_ARTIFACT_INFOS
 from tests.fixtures.mongodb import (  # noqa: F401; pylint: disable=unused-import
-    MongoDbFixture,
-    mongodb_fixture,
-)
+    MongoDbFixture, mongodb_fixture)
 from tests.fixtures.workflows import EXAMPLE_ARTIFACTS
 
 

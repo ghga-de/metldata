@@ -20,15 +20,11 @@ with builtin transformations are tested here."""
 import pytest
 
 from metldata.builtin_transformations.infer_references.main import (
-    REFERENCE_INFERENCE_TRANSFORMATION,
-    ReferenceInferenceConfig,
-)
+    REFERENCE_INFERENCE_TRANSFORMATION, ReferenceInferenceConfig)
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.base import (
-    MetadataModelAssumptionError,
-    MetadataModelTransformationError,
-    TransformationDefinition,
-)
+from metldata.transform.base import (MetadataModelAssumptionError,
+                                     MetadataModelTransformationError,
+                                     TransformationDefinition)
 from metldata.transform.handling import TransformationHandler
 from tests.fixtures.metadata_models import VALID_ADVANCED_METADATA_MODEL
 

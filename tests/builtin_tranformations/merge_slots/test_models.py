@@ -19,7 +19,8 @@
 import pytest
 from pydantic import ValidationError
 
-from metldata.builtin_transformations.merge_slots.models import SlotMergeInstruction
+from metldata.builtin_transformations.merge_slots.models import \
+    SlotMergeInstruction
 
 
 def test_slot_merge_instruction_overlap():

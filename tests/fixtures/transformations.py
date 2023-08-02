@@ -21,17 +21,16 @@ from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 
-from metldata.builtin_transformations.add_accessions import (
-    ACCESSION_ADDITION_TRANSFORMATION,
-)
-from metldata.builtin_transformations.custom_embeddings import (
-    CUSTOM_EMBEDDING_TRANSFORMATION,
-)
-from metldata.builtin_transformations.delete_slots import SLOT_DELETION_TRANSFORMATION
-from metldata.builtin_transformations.infer_references import (
-    REFERENCE_INFERENCE_TRANSFORMATION,
-)
-from metldata.builtin_transformations.merge_slots import SLOT_MERGING_TRANSFORMATION
+from metldata.builtin_transformations.add_accessions import \
+    ACCESSION_ADDITION_TRANSFORMATION
+from metldata.builtin_transformations.custom_embeddings import \
+    CUSTOM_EMBEDDING_TRANSFORMATION
+from metldata.builtin_transformations.delete_slots import \
+    SLOT_DELETION_TRANSFORMATION
+from metldata.builtin_transformations.infer_references import \
+    REFERENCE_INFERENCE_TRANSFORMATION
+from metldata.builtin_transformations.merge_slots import \
+    SLOT_MERGING_TRANSFORMATION
 from metldata.custom_types import Json
 from metldata.event_handling.models import SubmissionAnnotation
 from metldata.model_utils.essentials import MetadataModel

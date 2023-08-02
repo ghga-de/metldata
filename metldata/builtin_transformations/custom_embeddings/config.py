@@ -18,9 +18,8 @@
 
 from pydantic import BaseSettings, Field, validator
 
-from metldata.builtin_transformations.custom_embeddings.embedding_profile import (
-    EmbeddingProfile,
-)
+from metldata.builtin_transformations.custom_embeddings.embedding_profile import \
+    EmbeddingProfile
 
 
 def _get_target_class_names(*, embedding_profile: EmbeddingProfile) -> list[str]:

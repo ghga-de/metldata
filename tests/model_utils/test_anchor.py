@@ -19,20 +19,16 @@
 
 import pytest
 
-from metldata.model_utils.anchors import (
-    AnchorPoint,
-    AnchorPointNotFoundError,
-    InvalidAnchorPointError,
-    filter_anchor_points,
-    get_anchor_points,
-    get_anchors_points_by_target,
-    lookup_anchor_point,
-)
+from metldata.model_utils.anchors import (AnchorPoint,
+                                          AnchorPointNotFoundError,
+                                          InvalidAnchorPointError,
+                                          filter_anchor_points,
+                                          get_anchor_points,
+                                          get_anchors_points_by_target,
+                                          lookup_anchor_point)
 from metldata.model_utils.essentials import MetadataModel
-from tests.fixtures.metadata_models import (
-    ANCHORS_INVALID_MODELS,
-    VALID_MINIMAL_METADATA_MODEL,
-)
+from tests.fixtures.metadata_models import (ANCHORS_INVALID_MODELS,
+                                            VALID_MINIMAL_METADATA_MODEL)
 
 EXAMPLE_ANCHOR_POINTS = {
     AnchorPoint(target_class="File", identifier_slot="alias", root_slot="files"),

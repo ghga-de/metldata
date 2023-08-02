@@ -26,7 +26,8 @@ from metldata.load.client import upload_artifacts_via_http_api
 from metldata.load.collect import get_artifact_topic
 from metldata.load.config import ArtifactLoaderClientConfig
 from metldata.load.models import ArtifactResourceDict
-from tests.fixtures.event_handling import file_system_event_fixture  # noqa: F401
+from tests.fixtures.event_handling import \
+    file_system_event_fixture  # noqa: F401
 from tests.fixtures.event_handling import Event, FileSystemEventFixture
 
 EXAMPLE_ARTIFACTS: ArtifactResourceDict = {
