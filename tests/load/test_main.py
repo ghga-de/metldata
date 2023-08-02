@@ -29,6 +29,7 @@ from metldata.artifacts_rest.models import ArtifactInfo, GlobalStats
 from metldata.load.auth import generate_token, generate_token_and_hash
 from metldata.load.config import ArtifactLoaderAPIConfig
 from metldata.load.main import get_app
+from metldata.load.summary import STATS_COLLECTION_NAME
 from tests.fixtures.artifact_info import EXAMPLE_ARTIFACT_INFOS
 from tests.fixtures.mongodb import (  # noqa: F401; pylint: disable=unused-import
     MongoDbFixture,
@@ -130,7 +131,7 @@ async def test_load_artifacts_endpoint_happy(
     }
     dao_factory = MongoDbDaoFactory(config=mongodb_fixture.config)
     stats_dao = await dao_factory.get_dao(
-        name="stats", dto_model=GlobalStats, id_field="id"
+        name=STATS_COLLECTION_NAME, dto_model=GlobalStats, id_field="id"
     )
     async for stats in stats_dao.find_all(mapping={}):
         assert stats.id == "global"

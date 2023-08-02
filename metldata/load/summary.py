@@ -23,7 +23,7 @@ from ghga_service_commons.utils.utc_dates import now_as_utc
 from metldata.artifacts_rest.models import ArtifactInfo, GlobalStats, ResourceStats
 from metldata.load.aggregator import DbAggregator
 
-SUMMARY_COLLECTION_NAME = "summary"
+STATS_COLLECTION_NAME = "stats"
 
 
 def get_stat_slot(resource_class: str) -> Optional[str]:
@@ -75,6 +75,6 @@ async def create_summary_using_aggregator(
             id="global", created=now_as_utc(), resource_stats=resource_stats
         )
         stats_dao = await db_aggregator.get_dao(
-            name="stats", dto_model=GlobalStats, id_field="id"
+            name=STATS_COLLECTION_NAME, dto_model=GlobalStats, id_field="id"
         )
         await stats_dao.upsert(global_stats)
