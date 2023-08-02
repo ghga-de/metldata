@@ -24,7 +24,7 @@ from hexkit.providers.mongodb import MongoDbDaoFactory
 
 
 class DbAggregator(DaoFactoryProtocol):
-    """A DaoFactory that can also aggregate and write documents."""
+    """A DaoFactory that can also aggregate."""
 
     @abstractmethod
     async def aggregate(
@@ -33,13 +33,9 @@ class DbAggregator(DaoFactoryProtocol):
         """Run the given aggregation pipeline."""
         ...
 
-    @abstractmethod
-    async def write(self, *, collection_name, document) -> None:
-        """Write the given document to the given collection."""
-
 
 class MongoDbAggregator(MongoDbDaoFactory, DbAggregator):
-    """A MongoDB-based DaoFactory that can also aggregate and write documents."""
+    """A MongoDB-based DaoFactory that can also aggregate."""
 
     async def aggregate(
         self, *, collection_name: str, pipeline: list[dict[str, Any]]
@@ -47,8 +43,3 @@ class MongoDbAggregator(MongoDbDaoFactory, DbAggregator):
         """Run the given aggregation pipeline."""
         collection = self._db[collection_name]
         return [item async for item in collection.aggregate(pipeline=pipeline)]
-
-    async def write(self, *, collection_name, document) -> None:
-        """Write the given document to the given collection."""
-        collection = self._db[collection_name]
-        await collection.replace_one({"_id": document["_id"]}, document, upsert=True)

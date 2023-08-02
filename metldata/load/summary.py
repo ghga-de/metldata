@@ -16,11 +16,11 @@
 
 """Generate global summary statistics."""
 
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from ghga_service_commons.utils.utc_dates import now_as_utc
 
-from metldata.artifacts_rest.models import ArtifactInfo
+from metldata.artifacts_rest.models import ArtifactInfo, GlobalStats, ResourceStats
 from metldata.load.aggregator import DbAggregator
 
 SUMMARY_COLLECTION_NAME = "summary"
@@ -42,7 +42,7 @@ async def create_summary_using_aggregator(
     db_aggregator: DbAggregator,
 ) -> None:
     """Create summary by running an aggregation pipeline on the database."""
-    summary: dict[str, Any] = {}
+    resource_stats: dict[str, ResourceStats] = {}
     last_artifact_info = next(reversed(artifact_infos.values()))
     last_artifact_name = last_artifact_info.name
     for resource_class in last_artifact_info.resource_classes:
@@ -54,7 +54,7 @@ async def create_summary_using_aggregator(
         )
         if not result:
             continue
-        summary[resource_class] = result[0]
+        resource_stats[resource_class] = cast(ResourceStats, result[0])
 
         stat_slot = get_stat_slot(resource_class)
         if not stat_slot:
@@ -67,11 +67,14 @@ async def create_summary_using_aggregator(
         if not result:
             continue
 
-        stats = {group["_id"]: group["count"] for group in result}
-        summary[resource_class]["stats"] = {stat_slot: stats}
+        stats: dict[str, int] = {group["_id"]: group["count"] for group in result}
+        resource_stats[resource_class]["stats"] = {stat_slot: stats}
 
-    if summary:
-        summary.update(_id="global", created=now_as_utc())
-        await db_aggregator.write(
-            collection_name=SUMMARY_COLLECTION_NAME, document=summary
+    if resource_stats:
+        global_stats = GlobalStats(
+            id="global", created=now_as_utc(), resource_stats=resource_stats
         )
+        stats_dao = await db_aggregator.get_dao(
+            name="stats", dto_model=GlobalStats, id_field="id"
+        )
+        await stats_dao.upsert(global_stats)

@@ -17,15 +17,15 @@
 """Test the main modules."""
 
 from copy import deepcopy
-from datetime import datetime
 
 import pytest
 from ghga_service_commons.api.testing import AsyncTestClient
+from ghga_service_commons.utils.utc_dates import now_as_utc
 from hexkit.protocols.dao import ResourceNotFoundError
+from hexkit.providers.mongodb import MongoDbDaoFactory
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
-from metldata.artifacts_rest.models import ArtifactInfo
-from metldata.load.aggregator import MongoDbAggregator
+from metldata.artifacts_rest.models import ArtifactInfo, GlobalStats
 from metldata.load.auth import generate_token, generate_token_and_hash
 from metldata.load.config import ArtifactLoaderAPIConfig
 from metldata.load.main import get_app
@@ -122,23 +122,20 @@ async def test_load_artifacts_endpoint_happy(
     assert observed_resource.content == expected_resource_content
 
     # check that the summary statistics has been created:
-    expected_summary = {
-        "_id": "global",
+    expected_resource_stats = {
         "Dataset": {"count": 1},
         "Sample": {"count": 2},
         "File": {"count": 4, "stats": {"format": {"fastq": 4}}},
         "Experiment": {"count": 1},
     }
-    db_aggregator = MongoDbAggregator(config=mongodb_fixture.config)
-    summary_documents = await db_aggregator.aggregate(
-        collection_name="summary", pipeline=[{"$match": {}}]
+    dao_factory = MongoDbDaoFactory(config=mongodb_fixture.config)
+    stats_dao = await dao_factory.get_dao(
+        name="stats", dto_model=GlobalStats, id_field="id"
     )
-    assert len(summary_documents) == 1
-    created_summary = summary_documents[0]
-    created_date = created_summary.pop("created", None)
-    assert created_summary == expected_summary
-    assert isinstance(created_date, datetime)
-    assert abs((datetime.now() - created_date).seconds) < 5
+    async for stats in stats_dao.find_all(mapping={}):
+        assert stats.id == "global"
+        assert abs((now_as_utc() - stats.created).seconds) < 5
+        assert stats.resource_stats == expected_resource_stats
 
     # submit an empty request:
     response = await client.post(
