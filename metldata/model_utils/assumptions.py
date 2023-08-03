@@ -17,10 +17,12 @@
 """Logic to check basic assumptions about the metadata model."""
 from typing import Optional
 
-from metldata.model_utils.anchors import (AnchorPointNotFoundError,
-                                          InvalidAnchorPointError,
-                                          filter_anchor_points,
-                                          get_anchors_points_by_target)
+from metldata.model_utils.anchors import (
+    AnchorPointNotFoundError,
+    InvalidAnchorPointError,
+    filter_anchor_points,
+    get_anchors_points_by_target,
+)
 from metldata.model_utils.essentials import ROOT_CLASS, MetadataModel
 
 

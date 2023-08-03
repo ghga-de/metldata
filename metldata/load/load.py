@@ -18,8 +18,10 @@
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.load_resources import (
-    extract_all_resources_from_artifact, process_new_or_changed_resources,
-    process_removed_resources)
+    extract_all_resources_from_artifact,
+    process_new_or_changed_resources,
+    process_removed_resources,
+)
 from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResource
 from metldata.load.event_publisher import EventPublisherPort
 from metldata.load.models import ArtifactResourceDict

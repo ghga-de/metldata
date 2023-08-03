@@ -26,8 +26,10 @@ from metldata.model_utils.config import MetadataModelConfig
 from metldata.model_utils.metadata_validator import MetadataValidator
 from metldata.submission_registry import models
 from metldata.submission_registry.event_publisher import SourceEventPublisher
-from metldata.submission_registry.identifiers import (generate_accession_map,
-                                                      generate_submission_id)
+from metldata.submission_registry.identifiers import (
+    generate_accession_map,
+    generate_submission_id,
+)
 from metldata.submission_registry.submission_store import SubmissionStore
 
 

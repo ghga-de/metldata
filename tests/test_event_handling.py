@@ -24,8 +24,7 @@ from hexkit.protocols.eventsub import EventSubscriberProtocol
 from pydantic import BaseModel, Field
 
 from metldata.event_handling.event_handling import FileSystemEventSubscriber
-from tests.fixtures.event_handling import \
-    file_system_event_fixture  # noqa: F401
+from tests.fixtures.event_handling import file_system_event_fixture  # noqa: F401
 from tests.fixtures.event_handling import Event, FileSystemEventFixture
 
 EXAMPLE_EVENTS = [

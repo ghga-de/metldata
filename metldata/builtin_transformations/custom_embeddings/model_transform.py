@@ -22,17 +22,22 @@ from typing import Union
 from linkml_runtime.linkml_model.meta import ClassDefinition, SlotDefinition
 from stringcase import snakecase
 
-from metldata.builtin_transformations.custom_embeddings.embedding_profile import \
-    EmbeddingProfile
-from metldata.model_utils.anchors import (AnchorPoint,
-                                          get_anchors_points_by_target)
-from metldata.model_utils.essentials import (ROOT_CLASS, ExportableSchemaView,
-                                             MetadataModel)
+from metldata.builtin_transformations.custom_embeddings.embedding_profile import (
+    EmbeddingProfile,
+)
+from metldata.model_utils.anchors import AnchorPoint, get_anchors_points_by_target
+from metldata.model_utils.essentials import (
+    ROOT_CLASS,
+    ExportableSchemaView,
+    MetadataModel,
+)
 from metldata.model_utils.identifiers import get_class_identifier
-from metldata.model_utils.manipulate import (add_anchor_point,
-                                             add_slot_usage_annotation,
-                                             disable_identifier_slot,
-                                             get_normalized_slot_usage)
+from metldata.model_utils.manipulate import (
+    add_anchor_point,
+    add_slot_usage_annotation,
+    disable_identifier_slot,
+    get_normalized_slot_usage,
+)
 from metldata.transform.base import MetadataModelTransformationError
 
 

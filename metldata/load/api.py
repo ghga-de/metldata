@@ -33,7 +33,7 @@ from metldata.artifacts_rest.models import ArtifactInfo
 from metldata.load.aggregator import DbAggregator
 from metldata.load.auth import check_token
 from metldata.load.config import ArtifactLoaderAPIConfig
-from metldata.load.event_publisher import EventPublisherPort, EventPubTranslator
+from metldata.load.event_publisher import EventPubTranslator
 from metldata.load.load import (
     ArtifactResourcesInvalid,
     check_artifact_resources,

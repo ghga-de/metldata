@@ -18,12 +18,14 @@
 
 from copy import deepcopy
 
-from metldata.builtin_transformations.merge_slots.models import \
-    SlotMergeInstruction
+from metldata.builtin_transformations.merge_slots.models import SlotMergeInstruction
 from metldata.custom_types import Json
-from metldata.metadata_utils import (SlotNotFoundError, get_resources_of_class,
-                                     lookup_slot_in_resource,
-                                     upsert_resources_in_metadata)
+from metldata.metadata_utils import (
+    SlotNotFoundError,
+    get_resources_of_class,
+    lookup_slot_in_resource,
+    upsert_resources_in_metadata,
+)
 from metldata.model_utils.anchors import AnchorPoint
 from metldata.transform.base import MetadataTransformationError
 

@@ -24,7 +24,9 @@ from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.artifact_info import get_artifact_info_dict
 from metldata.artifacts_rest.models import ArtifactInfo, GlobalStats
 from metldata.artifacts_rest.query_resources import (
-    ArtifactResourceNotFoundError, query_artifact_resource)
+    ArtifactResourceNotFoundError,
+    query_artifact_resource,
+)
 from metldata.custom_types import Json
 from metldata.load.stats import STATS_COLLECTION_NAME
 

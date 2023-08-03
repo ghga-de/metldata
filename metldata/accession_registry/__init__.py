@@ -17,4 +17,6 @@
 """Generates and persists accession numbers."""
 
 from metldata.accession_registry.accession_registry import (  # noqa: F401
-    AccessionRegistry, AccessionRegistryConfig)
+    AccessionRegistry,
+    AccessionRegistryConfig,
+)

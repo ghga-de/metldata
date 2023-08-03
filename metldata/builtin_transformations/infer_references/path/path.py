@@ -17,7 +17,11 @@
 """Logic for handling reference paths."""
 
 from metldata.builtin_transformations.infer_references.path.path_str import (
-    PATH_PATTERN, ValidationError, clean_path_str, path_str_to_object_elements)
+    PATH_PATTERN,
+    ValidationError,
+    clean_path_str,
+    path_str_to_object_elements,
+)
 
 
 class ReferencePath:

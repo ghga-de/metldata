@@ -16,18 +16,21 @@
 
 """A transformation to add accessions to metadata."""
 
-from metldata.builtin_transformations.add_accessions.config import \
-    AccessionAdditionConfig
+from metldata.builtin_transformations.add_accessions.config import (
+    AccessionAdditionConfig,
+)
 from metldata.builtin_transformations.add_accessions.metadata_transform import (
-    add_accessions_to_metadata, get_references)
-from metldata.builtin_transformations.add_accessions.model_transform import \
-    add_accessions_to_model
+    add_accessions_to_metadata,
+    get_references,
+)
+from metldata.builtin_transformations.add_accessions.model_transform import (
+    add_accessions_to_model,
+)
 from metldata.event_handling.models import SubmissionAnnotation
 from metldata.model_utils.anchors import get_anchors_points_by_target
 from metldata.model_utils.assumptions import check_basic_model_assumption
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.base import (Json, MetadataTransformer,
-                                     TransformationDefinition)
+from metldata.transform.base import Json, MetadataTransformer, TransformationDefinition
 
 
 class AccessionAdditionMetadataTransformer(

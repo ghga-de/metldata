@@ -22,13 +22,16 @@ import pytest
 
 from metldata.event_handling.artifact_events import get_artifact_topic
 from metldata.event_handling.models import SubmissionEventPayload
-from metldata.transform.main import (TransformationEventHandlingConfig,
-                                     run_workflow_on_all_source_events)
-from tests.fixtures.event_handling import \
-    file_system_event_fixture  # noqa: F401
+from metldata.transform.main import (
+    TransformationEventHandlingConfig,
+    run_workflow_on_all_source_events,
+)
+from tests.fixtures.event_handling import file_system_event_fixture  # noqa: F401
 from tests.fixtures.event_handling import Event, FileSystemEventFixture
-from tests.fixtures.workflows import (EXAMPLE_WORKFLOW_DEFINITION,
-                                      EXAMPLE_WORKFLOW_TEST_CASE)
+from tests.fixtures.workflows import (
+    EXAMPLE_WORKFLOW_DEFINITION,
+    EXAMPLE_WORKFLOW_TEST_CASE,
+)
 
 
 @pytest.mark.asyncio

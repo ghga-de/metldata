@@ -16,11 +16,9 @@
 
 """Logic for transforming metadata models."""
 
-from linkml_runtime.linkml_model.meta import (AnonymousSlotExpression,
-                                              SlotDefinition)
+from linkml_runtime.linkml_model.meta import AnonymousSlotExpression, SlotDefinition
 
-from metldata.builtin_transformations.merge_slots.models import \
-    SlotMergeInstruction
+from metldata.builtin_transformations.merge_slots.models import SlotMergeInstruction
 from metldata.model_utils.essentials import ExportableSchemaView, MetadataModel
 from metldata.model_utils.manipulate import upsert_class_slot
 from metldata.transform.base import MetadataModelTransformationError

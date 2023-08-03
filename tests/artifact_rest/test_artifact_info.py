@@ -17,7 +17,9 @@
 """Test the artifact_info module."""
 
 from metldata.artifacts_rest.artifact_info import (
-    load_artifact_info, subset_json_schema_for_class)
+    load_artifact_info,
+    subset_json_schema_for_class,
+)
 from tests.fixtures.metadata_models import VALID_MINIMAL_METADATA_MODEL
 
 

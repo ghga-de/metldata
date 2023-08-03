@@ -22,8 +22,10 @@ import pytest
 from metldata.model_utils.assumptions import MetadataModelAssumptionError
 from metldata.model_utils.config import MetadataModelConfig
 from metldata.model_utils.essentials import MetadataModel
-from tests.fixtures.metadata_models import (INVALID_METADATA_MODELS,
-                                            VALID_METADATA_MODELS)
+from tests.fixtures.metadata_models import (
+    INVALID_METADATA_MODELS,
+    VALID_METADATA_MODELS,
+)
 
 
 @pytest.mark.parametrize(

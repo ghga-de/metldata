@@ -21,8 +21,10 @@ from typing import Any
 import pytest
 
 from metldata.model_utils.metadata_validator import MetadataValidator
-from tests.fixtures.metadata import (INVALID_MINIMAL_METADATA_EXAMPLES,
-                                     VALID_MINIMAL_METADATA_EXAMPLES)
+from tests.fixtures.metadata import (
+    INVALID_MINIMAL_METADATA_EXAMPLES,
+    VALID_MINIMAL_METADATA_EXAMPLES,
+)
 from tests.fixtures.metadata_models import VALID_MINIMAL_METADATA_MODEL
 
 

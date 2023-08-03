@@ -19,8 +19,10 @@
 import pytest
 
 from metldata.transform.handling import TransformationHandler
-from tests.fixtures.transformations import (TRANSFORMATION_TEST_CASES,
-                                            TransformationTestCase)
+from tests.fixtures.transformations import (
+    TRANSFORMATION_TEST_CASES,
+    TransformationTestCase,
+)
 
 
 @pytest.mark.parametrize(

@@ -22,8 +22,10 @@ import json
 from hexkit.protocols.eventpub import EventPublisherProtocol
 from pydantic import BaseModel
 
-from metldata.event_handling.artifact_events import (ArtifactEventConfig,
-                                                     get_artifact_topic)
+from metldata.event_handling.artifact_events import (
+    ArtifactEventConfig,
+    get_artifact_topic,
+)
 from metldata.event_handling.models import SubmissionEventPayload
 
 

@@ -19,13 +19,14 @@
 
 import pytest
 
-from metldata.metadata_utils import (MetadataResourceNotFoundError,
-                                     convert_resource_list_to_dict,
-                                     get_resources_of_class,
-                                     lookup_resource_by_identifier,
-                                     upsert_resources_in_metadata)
-from metldata.model_utils.anchors import (AnchorPoint,
-                                          get_anchors_points_by_target)
+from metldata.metadata_utils import (
+    MetadataResourceNotFoundError,
+    convert_resource_list_to_dict,
+    get_resources_of_class,
+    lookup_resource_by_identifier,
+    upsert_resources_in_metadata,
+)
+from metldata.model_utils.anchors import AnchorPoint, get_anchors_points_by_target
 from tests.fixtures.metadata import VALID_MINIMAL_METADATA_EXAMPLE
 from tests.fixtures.metadata_models import VALID_MINIMAL_METADATA_MODEL
 

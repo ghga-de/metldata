@@ -17,8 +17,7 @@
 """Logic for transforming metadata."""
 
 
-from metldata.metadata_utils import (get_resources_of_class,
-                                     upsert_resources_in_metadata)
+from metldata.metadata_utils import get_resources_of_class, upsert_resources_in_metadata
 from metldata.model_utils.anchors import AnchorPoint
 from metldata.transform.base import Json, MetadataModelTransformationError
 

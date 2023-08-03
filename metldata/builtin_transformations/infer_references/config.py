@@ -19,7 +19,9 @@
 from pydantic import BaseSettings, Field
 
 from metldata.builtin_transformations.infer_references.reference import (
-    InferredReference, ReferenceDetails)
+    InferredReference,
+    ReferenceDetails,
+)
 
 
 class ReferenceInferenceConfig(BaseSettings):

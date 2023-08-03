@@ -21,8 +21,7 @@ from contextlib import nullcontext
 import pytest
 from pydantic import ValidationError
 
-from metldata.builtin_transformations.merge_slots.config import \
-    SlotMergingConfig
+from metldata.builtin_transformations.merge_slots.config import SlotMergingConfig
 
 
 @pytest.mark.parametrize(

@@ -17,19 +17,25 @@
 """Logic for resolving reference paths for existing metadata."""
 
 
-from metldata.builtin_transformations.infer_references.path.path import \
-    ReferencePath
+from metldata.builtin_transformations.infer_references.path.path import ReferencePath
 from metldata.builtin_transformations.infer_references.path.path_elements import (
-    ReferencePathElement, ReferencePathElementType)
+    ReferencePathElement,
+    ReferencePathElementType,
+)
 from metldata.custom_types import Json
-from metldata.metadata_utils import (ForeignIdLookUpError,
-                                     MetadataResourceNotFoundError,
-                                     SelfIdLookUpError, lookup_foreign_ids,
-                                     lookup_resource_by_identifier,
-                                     lookup_self_id)
-from metldata.model_utils.anchors import (AnchorPoint,
-                                          AnchorPointNotFoundError,
-                                          lookup_anchor_point)
+from metldata.metadata_utils import (
+    ForeignIdLookUpError,
+    MetadataResourceNotFoundError,
+    SelfIdLookUpError,
+    lookup_foreign_ids,
+    lookup_resource_by_identifier,
+    lookup_self_id,
+)
+from metldata.model_utils.anchors import (
+    AnchorPoint,
+    AnchorPointNotFoundError,
+    lookup_anchor_point,
+)
 
 
 class PathElementResolutionError(RuntimeError):

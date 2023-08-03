@@ -26,10 +26,10 @@ from pydantic import BaseModel, Field, create_model, root_validator, validator
 
 from metldata.custom_types import Json
 from metldata.event_handling.models import SubmissionAnnotation
+
 # shortcuts:
 # pylint: disable=unused-import
-from metldata.model_utils.assumptions import \
-    MetadataModelAssumptionError  # noqa: F401
+from metldata.model_utils.assumptions import MetadataModelAssumptionError  # noqa: F401
 from metldata.model_utils.essentials import MetadataModel
 
 

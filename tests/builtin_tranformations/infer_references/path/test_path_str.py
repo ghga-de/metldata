@@ -22,13 +22,23 @@ from typing import Optional
 import pytest
 
 from metldata.builtin_transformations.infer_references.path.path_elements import (
-    ReferencePathElement, ReferencePathElementType)
+    ReferencePathElement,
+    ReferencePathElementType,
+)
 from metldata.builtin_transformations.infer_references.path.path_str import (
-    ValidationError, extract_first_element, get_element_components,
-    get_element_type, get_string_elements, get_target_class,
-    path_str_to_object_elements, split_first_element, string_element_to_object,
-    validate_path_str_characters, validate_path_str_format,
-    validate_string_element)
+    ValidationError,
+    extract_first_element,
+    get_element_components,
+    get_element_type,
+    get_string_elements,
+    get_target_class,
+    path_str_to_object_elements,
+    split_first_element,
+    string_element_to_object,
+    validate_path_str_characters,
+    validate_path_str_format,
+    validate_string_element,
+)
 
 
 @pytest.mark.parametrize(

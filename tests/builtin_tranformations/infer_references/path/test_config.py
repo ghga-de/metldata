@@ -16,12 +16,13 @@
 
 """Test reference utils."""
 
-from metldata.builtin_transformations.infer_references.config import \
-    ReferenceInferenceConfig
-from metldata.builtin_transformations.infer_references.path.path import \
-    ReferencePath
-from metldata.builtin_transformations.infer_references.reference import \
-    InferredReference
+from metldata.builtin_transformations.infer_references.config import (
+    ReferenceInferenceConfig,
+)
+from metldata.builtin_transformations.infer_references.path.path import ReferencePath
+from metldata.builtin_transformations.infer_references.reference import (
+    InferredReference,
+)
 
 
 def test_config():

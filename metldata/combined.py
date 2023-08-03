@@ -20,8 +20,9 @@ from fastapi import FastAPI
 from ghga_service_commons.api import configure_app
 from hexkit.providers.mongodb import MongoDbDaoFactory
 
-from metldata.artifacts_rest.api_factory import \
-    rest_api_factory as query_rest_api_factory
+from metldata.artifacts_rest.api_factory import (
+    rest_api_factory as query_rest_api_factory,
+)
 from metldata.config import Config
 from metldata.load.aggregator import MongoDbAggregator
 from metldata.load.api import rest_api_factory as load_rest_api_factory

@@ -20,8 +20,10 @@ from collections import defaultdict
 
 from pydantic import Field, validator
 
-from metldata.event_handling.artifact_events import (ArtifactEventConfig,
-                                                     get_artifact_topic)
+from metldata.event_handling.artifact_events import (
+    ArtifactEventConfig,
+    get_artifact_topic,
+)
 from metldata.event_handling.event_handling import FileSystemEventCollector
 from metldata.load.models import ArtifactResourceDict
 

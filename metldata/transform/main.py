@@ -19,12 +19,13 @@
 
 from typing import Awaitable, Callable
 
-from metldata.event_handling.event_handling import (FileSystemEventPublisher,
-                                                    FileSystemEventSubscriber)
+from metldata.event_handling.event_handling import (
+    FileSystemEventPublisher,
+    FileSystemEventSubscriber,
+)
 from metldata.event_handling.models import SubmissionEventPayload
 from metldata.model_utils.essentials import MetadataModel
-from metldata.transform.artifact_publisher import (ArtifactEvent,
-                                                   ArtifactEventPublisher)
+from metldata.transform.artifact_publisher import ArtifactEvent, ArtifactEventPublisher
 from metldata.transform.base import WorkflowConfig, WorkflowDefinition
 from metldata.transform.config import TransformationEventHandlingConfig
 from metldata.transform.handling import WorkflowHandler
