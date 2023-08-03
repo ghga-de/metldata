@@ -19,10 +19,12 @@
 import json
 from abc import ABC, abstractmethod
 
-from ghga_event_schemas.pydantic_ import (MetadataDatasetID,
-                                          MetadataDatasetOverview,
-                                          SearchableResource,
-                                          SearchableResourceInfo)
+from ghga_event_schemas.pydantic_ import (
+    MetadataDatasetID,
+    MetadataDatasetOverview,
+    SearchableResource,
+    SearchableResourceInfo,
+)
 from hexkit.protocols.eventpub import EventPublisherProtocol
 from pydantic import BaseSettings, Field
 
@@ -70,29 +72,30 @@ class EventPubTranslatorConfig(BaseSettings):
 
 
 class EventPublisherPort(ABC):
-    """ """
+    """A port through which events are communicated with the outside."""
 
     @abstractmethod
     async def process_dataset_deletion(self, *, accession: str):
-        """ """
+        """Communicate the deletion of an embedded dataset resource"""
 
     @abstractmethod
     async def process_resource_deletion(self, *, accession: str, class_name: str):
-        """ """
+        """Communicate the deletion of an artifact resource"""
 
     @abstractmethod
     async def process_dataset_upsert(
         self, *, dataset_overview: MetadataDatasetOverview
     ):
-        """ """
+        """Communicate the upsert of an embedded dataset resource"""
 
     @abstractmethod
     async def process_resource_upsert(self, *, resource: SearchableResource):
-        """ """
+        """Communicate the upsert of an artifact resource"""
 
 
 class EventPubTranslator(EventPublisherPort):
-    """ """
+    """A translator according to  the triple hexagonal architecture implementing
+    the EventPublisherPort."""
 
     def __init__(
         self, *, config: EventPubTranslatorConfig, provider: EventPublisherProtocol
@@ -103,7 +106,9 @@ class EventPubTranslator(EventPublisherPort):
         self._provider = provider
 
     async def process_dataset_deletion(self, *, accession: str):
-        """ """
+        """Communicate the deletion of an embedded dataset resource
+
+        Fires an event that should be processed by the claims repository"""
 
         dataset_id = MetadataDatasetID(accession=accession)
 
@@ -116,7 +121,9 @@ class EventPubTranslator(EventPublisherPort):
         )
 
     async def process_resource_deletion(self, *, accession: str, class_name: str):
-        """ """
+        """Communicate the deletion an artifact resource
+
+        Fires an event that should be processed by MASS"""
 
         resource_info = SearchableResourceInfo(
             accession=accession, class_name=class_name
@@ -133,7 +140,9 @@ class EventPubTranslator(EventPublisherPort):
     async def process_dataset_upsert(
         self, *, dataset_overview: MetadataDatasetOverview
     ):
-        """ """
+        """Communicate the upsert of an embedded dataset resource
+
+        Fires an event that should be processed by the WPS"""
 
         payload = json.loads(dataset_overview.json())
         await self._provider.publish(
@@ -144,7 +153,9 @@ class EventPubTranslator(EventPublisherPort):
         )
 
     async def process_resource_upsert(self, *, resource: SearchableResource):
-        """ """
+        """Communicate the upsert of an artifact resource
+
+        Fires an event that should be processed by MASS"""
 
         payload = json.loads(resource.json())
         await self._provider.publish(

@@ -189,14 +189,14 @@ async def process_new_or_changed_resources(
             )
 
 
-async def _process_resource_upsert(
+async def _process_resource_upsert(  # pylint: disable=too-many-locals
     *,
     artifact_info_dict: dict[str, ArtifactInfo],
     artifact_name: str,
     event_publisher: EventPublisherPort,
     resource: ArtifactResource,
 ):
-    """ """
+    """Convert available data to correct event model and delegate firing appropriate events"""
 
     file_slots = []
     artifact_info = artifact_info_dict[artifact_name]
@@ -242,10 +242,10 @@ async def _process_resource_upsert(
 
 @dataclass
 class FileInformationConverter:
-    """ """
+    """Helper class to extract file extension information and convert file slot data"""
 
     artifact_info: ArtifactInfo
-    file_slots: list[list[dict[str, Any]]]
+    file_slots: list[dict[str, Any]]
     allowed_compressions: frozenset[str] = frozenset(
         {
             ".gz",
@@ -263,10 +263,10 @@ class FileInformationConverter:
     )
 
     def extract_file_information(self) -> list[MetadataDatasetFile]:
-        """ """
+        """Convert file slot information into MetadataDatasetFiles"""
         files = []
         for file_slot in self.file_slots:
-            for file in file_slot:
+            for file in file_slot.values():
                 extension = self._get_file_extension(
                     file_name=file["name"], file_format=file["format"]
                 )

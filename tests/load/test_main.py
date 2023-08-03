@@ -22,6 +22,7 @@ import pytest
 from ghga_service_commons.api.testing import AsyncTestClient
 from ghga_service_commons.utils.utc_dates import now_as_utc
 from hexkit.protocols.dao import ResourceNotFoundError
+from hexkit.providers.akafka.testutils import KafkaFixture, get_kafka_fixture
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.models import ArtifactInfo, GlobalStats
@@ -31,20 +32,35 @@ from metldata.load.main import get_app
 from metldata.load.stats import STATS_COLLECTION_NAME
 from tests.fixtures.artifact_info import EXAMPLE_ARTIFACT_INFOS
 from tests.fixtures.mongodb import (  # noqa: F401; pylint: disable=unused-import
-    MongoDbFixture, mongodb_fixture)
+    MongoDbFixture,
+    mongodb_fixture,
+)
 from tests.fixtures.workflows import EXAMPLE_ARTIFACTS
+
+kafka_fixture = get_kafka_fixture("module")
 
 
 async def get_configured_client(
+    kafka_fixture: KafkaFixture,
     mongodb_fixture: MongoDbFixture,  # noqa: F811
     artifact_infos: list[ArtifactInfo],
 ) -> tuple[AsyncTestClient, str]:
     """Get a tuple of a configured test client together with a corresponding token."""
 
     token, token_hash = generate_token_and_hash()
+
     config = ArtifactLoaderAPIConfig(
         artifact_infos=artifact_infos,
         loader_token_hashes=[token_hash],
+        service_name=kafka_fixture.config.service_name,
+        service_instance_id=kafka_fixture.config.service_instance_id,
+        kafka_servers=kafka_fixture.config.kafka_servers,
+        resource_change_event_topic="searchable_resources",
+        resource_deletion_event_type="searchable_resource_deleted",
+        resource_upsertion_type="searchable_resource_upserted",
+        dataset_change_event_topic="metadata_datasets",
+        dataset_deletion_type="dataset_overview_deleted",
+        dataset_upsertion_type="dataset_overview_created",
         **mongodb_fixture.config.dict(),
     )
     app = await get_app(config=config)
@@ -54,12 +70,14 @@ async def get_configured_client(
 
 @pytest.mark.asyncio
 async def test_load_artifacts_endpoint_happy(
-    mongodb_fixture: MongoDbFixture,  # noqa: F811
+    mongodb_fixture: MongoDbFixture, kafka_fixture: KafkaFixture  # noqa: F811
 ):
     """Test the happy path of using the load artifacts endpoint."""
 
     client, token = await get_configured_client(
-        mongodb_fixture=mongodb_fixture, artifact_infos=EXAMPLE_ARTIFACT_INFOS
+        kafka_fixture=kafka_fixture,
+        mongodb_fixture=mongodb_fixture,
+        artifact_infos=EXAMPLE_ARTIFACT_INFOS,
     )
 
     # load example artifacts resources:
@@ -149,12 +167,14 @@ async def test_load_artifacts_endpoint_happy(
 
 @pytest.mark.asyncio
 async def test_load_artifacts_endpoint_invalid_resources(
-    mongodb_fixture: MongoDbFixture,  # noqa: F811
+    mongodb_fixture: MongoDbFixture, kafka_fixture: KafkaFixture  # noqa: F811
 ):
     """Test using the load artifacts endpoint with resources of unknown artifacts."""
 
     client, token = await get_configured_client(
-        mongodb_fixture=mongodb_fixture, artifact_infos=EXAMPLE_ARTIFACT_INFOS
+        kafka_fixture=kafka_fixture,
+        mongodb_fixture=mongodb_fixture,
+        artifact_infos=EXAMPLE_ARTIFACT_INFOS,
     )
 
     # load example artifacts resources:
@@ -171,13 +191,15 @@ async def test_load_artifacts_endpoint_invalid_resources(
 
 @pytest.mark.asyncio
 async def test_load_artifacts_endpoint_invalid_token(
-    mongodb_fixture: MongoDbFixture,  # noqa: F811
+    mongodb_fixture: MongoDbFixture, kafka_fixture: KafkaFixture  # noqa: F811
 ):
     """Test that using the load artifacts endpoint with an invalid token fails."""
 
     invalid_token = generate_token()
     client, _ = await get_configured_client(
-        mongodb_fixture=mongodb_fixture, artifact_infos=EXAMPLE_ARTIFACT_INFOS
+        kafka_fixture=kafka_fixture,
+        mongodb_fixture=mongodb_fixture,
+        artifact_infos=EXAMPLE_ARTIFACT_INFOS,
     )
 
     # load artifact resources with invalid token:
