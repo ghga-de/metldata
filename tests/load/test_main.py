@@ -22,7 +22,7 @@ import pytest
 from ghga_service_commons.api.testing import AsyncTestClient
 from ghga_service_commons.utils.utc_dates import now_as_utc
 from hexkit.protocols.dao import ResourceNotFoundError
-from hexkit.providers.akafka.testutils import KafkaFixture, get_kafka_fixture
+from hexkit.providers.akafka.testutils import kafka_fixture, KafkaFixture
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.models import ArtifactInfo, GlobalStats
@@ -31,54 +31,19 @@ from metldata.load.config import ArtifactLoaderAPIConfig
 from metldata.load.main import get_app
 from metldata.load.stats import STATS_COLLECTION_NAME
 from tests.fixtures.artifact_info import EXAMPLE_ARTIFACT_INFOS
+from tests.fixtures.load.joint import joint_fixture, JointFixture
 from tests.fixtures.mongodb import (  # noqa: F401; pylint: disable=unused-import
     MongoDbFixture,
     mongodb_fixture,
 )
 from tests.fixtures.workflows import EXAMPLE_ARTIFACTS
 
-kafka_fixture = get_kafka_fixture("module")
-
-
-async def get_configured_client(
-    kafka_fixture: KafkaFixture,
-    mongodb_fixture: MongoDbFixture,  # noqa: F811
-    artifact_infos: list[ArtifactInfo],
-) -> tuple[AsyncTestClient, str]:
-    """Get a tuple of a configured test client together with a corresponding token."""
-
-    token, token_hash = generate_token_and_hash()
-
-    config = ArtifactLoaderAPIConfig(
-        artifact_infos=artifact_infos,
-        loader_token_hashes=[token_hash],
-        service_name=kafka_fixture.config.service_name,
-        service_instance_id=kafka_fixture.config.service_instance_id,
-        kafka_servers=kafka_fixture.config.kafka_servers,
-        resource_change_event_topic="searchable_resources",
-        resource_deletion_event_type="searchable_resource_deleted",
-        resource_upsertion_type="searchable_resource_upserted",
-        dataset_change_event_topic="metadata_datasets",
-        dataset_deletion_type="dataset_overview_deleted",
-        dataset_upsertion_type="dataset_overview_created",
-        **mongodb_fixture.config.dict(),
-    )
-    app = await get_app(config=config)
-    client = AsyncTestClient(app)
-    return client, token
-
 
 @pytest.mark.asyncio
 async def test_load_artifacts_endpoint_happy(
-    mongodb_fixture: MongoDbFixture, kafka_fixture: KafkaFixture  # noqa: F811
+    joint_fixture: JointFixture,  # noqa: F811
 ):
     """Test the happy path of using the load artifacts endpoint."""
-
-    client, token = await get_configured_client(
-        kafka_fixture=kafka_fixture,
-        mongodb_fixture=mongodb_fixture,
-        artifact_infos=EXAMPLE_ARTIFACT_INFOS,
-    )
 
     # load example artifacts resources:
     artifact_resources = {
@@ -86,10 +51,10 @@ async def test_load_artifacts_endpoint_happy(
         for artifact_name, artifact_content in EXAMPLE_ARTIFACTS.items()
     }
 
-    response = await client.post(
+    response = await joint_fixture.client.post(
         "/rpc/load-artifacts",
         json=artifact_resources,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {joint_fixture.token}"},
     )
     assert response.status_code == 204
 
@@ -104,7 +69,7 @@ async def test_load_artifacts_endpoint_happy(
     }
 
     dao_collection = await ArtifactDaoCollection.construct(
-        dao_factory=mongodb_fixture.dao_factory,
+        dao_factory=joint_fixture.mongodb.dao_factory,
         artifact_infos=EXAMPLE_ARTIFACT_INFOS,
     )
     dao = await dao_collection.get_dao(
@@ -127,10 +92,10 @@ async def test_load_artifacts_endpoint_happy(
     ] = expected_resource_content
 
     # submit changed request:
-    response = await client.post(
+    response = await joint_fixture.client.post(
         "/rpc/load-artifacts",
         json=new_artifact_resources,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {joint_fixture.token}"},
     )
     assert response.status_code == 204
 
@@ -153,10 +118,10 @@ async def test_load_artifacts_endpoint_happy(
         assert stats.resource_stats == expected_resource_stats
 
     # submit an empty request:
-    response = await client.post(
+    response = await joint_fixture.client.post(
         "/rpc/load-artifacts",
         json={},
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {joint_fixture.token}"},
     )
     assert response.status_code == 204
 
@@ -167,43 +132,32 @@ async def test_load_artifacts_endpoint_happy(
 
 @pytest.mark.asyncio
 async def test_load_artifacts_endpoint_invalid_resources(
-    mongodb_fixture: MongoDbFixture, kafka_fixture: KafkaFixture  # noqa: F811
+    joint_fixture: JointFixture,  # noqa: F811
 ):
     """Test using the load artifacts endpoint with resources of unknown artifacts."""
-
-    client, token = await get_configured_client(
-        kafka_fixture=kafka_fixture,
-        mongodb_fixture=mongodb_fixture,
-        artifact_infos=EXAMPLE_ARTIFACT_INFOS,
-    )
 
     # load example artifacts resources:
     unknown_artifact_resources = {
         "unknown_artifact": [list(EXAMPLE_ARTIFACTS.values())[0]]
     }
-    response = await client.post(
+    response = await joint_fixture.client.post(
         "/rpc/load-artifacts",
         json=unknown_artifact_resources,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {joint_fixture.token}"},
     )
     assert response.status_code == 422
 
 
 @pytest.mark.asyncio
 async def test_load_artifacts_endpoint_invalid_token(
-    mongodb_fixture: MongoDbFixture, kafka_fixture: KafkaFixture  # noqa: F811
+    # noqa: F811
 ):
     """Test that using the load artifacts endpoint with an invalid token fails."""
 
     invalid_token = generate_token()
-    client, _ = await get_configured_client(
-        kafka_fixture=kafka_fixture,
-        mongodb_fixture=mongodb_fixture,
-        artifact_infos=EXAMPLE_ARTIFACT_INFOS,
-    )
 
     # load artifact resources with invalid token:
-    response = await client.post(
+    response = await joint_fixture.client.post(
         "/rpc/load-artifacts",
         json={},
         headers={"Authorization": f"Bearer {invalid_token}"},
