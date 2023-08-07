@@ -62,12 +62,12 @@ class EventPubTranslatorConfig(BaseSettings):
     dataset_deletion_type: str = Field(
         ...,
         description="Type used for events announcing a new dataset overview.",
-        example="dataset_overview_deleted",
+        example="dataset_deleted",
     )
     dataset_upsertion_type: str = Field(
         ...,
         description="Type used for events announcing a new dataset overview.",
-        example="dataset_overview_created",
+        example="dataset_created",
     )
 
 

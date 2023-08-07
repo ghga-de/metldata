@@ -166,7 +166,7 @@ async def process_removed_resources(
             dao_collection=dao_collection,
         )
 
-        if artifact_name == "embedded_public" and class_name == "DatasetEmbedded":
+        if artifact_name == "embedded_public" and class_name == "EmbeddedDataset":
             await event_publisher.process_dataset_deletion(accession=resource_id)
             await event_publisher.process_resource_deletion(
                 accession=resource_id, class_name=class_name
@@ -229,8 +229,6 @@ async def _process_resource_upsert(  # pylint: disable=too-many-locals
                 file_slot = cast(list[Json], file_slot)
             except SlotNotFoundError:
                 continue
-            if file_slot:
-                raise ValueError(file_slot)
             file_slots.append(file_slot)
 
     file_information_converter = FileInformationConverter(

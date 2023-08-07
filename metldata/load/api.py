@@ -128,14 +128,10 @@ async def rest_api_factory(
                 dao_collection=dao_collection,
             )
 
-<<<<<<< HEAD
             await create_stats_using_aggregator(
                 artifact_infos=artifact_info_dict, db_aggregator=db_aggregator
             )
 
             return Response(status_code=204)
-=======
-        return Response(status_code=204)
->>>>>>> bab569c (Changed tests with reduced test file)
 
     return router

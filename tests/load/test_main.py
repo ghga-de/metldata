@@ -19,7 +19,6 @@
 from copy import deepcopy
 
 import pytest
-from ghga_service_commons.api.testing import AsyncTestClient
 from ghga_service_commons.utils.utc_dates import now_as_utc
 from hexkit.protocols.dao import ResourceNotFoundError
 from hexkit.providers.akafka.testutils import (  # noqa: F401; pylint: disable=unused-import
@@ -28,13 +27,13 @@ from hexkit.providers.akafka.testutils import (  # noqa: F401; pylint: disable=u
 )
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
-from metldata.artifacts_rest.models import ArtifactInfo, GlobalStats
-from metldata.load.auth import generate_token, generate_token_and_hash
-from metldata.load.config import ArtifactLoaderAPIConfig
-from metldata.load.main import get_app
+from metldata.artifacts_rest.models import GlobalStats
+from metldata.load.auth import generate_token
 from metldata.load.stats import STATS_COLLECTION_NAME
-from tests.fixtures.artifact_info import EXAMPLE_ARTIFACT_INFOS
-from tests.fixtures.load.joint import joint_fixture, JointFixture
+from tests.fixtures.load.joint import (  # noqa: F401; pylint: disable=unused-import
+    JointFixture,
+    joint_fixture,
+)
 from tests.fixtures.mongodb import (  # noqa: F401; pylint: disable=unused-import
     MongoDbFixture,
     mongodb_fixture,
@@ -102,8 +101,25 @@ async def test_load_artifacts_endpoint_happy(
         == joint_fixture.expected_embedded_dataset_resource_content
     )
 
-    changed_accession = "CHANGED_EMBEDDED_DATASET"
+    # check that the summary statistics has been created:
+    expected_resource_stats = {
+        "DataAccessPolicy": {"count": 1},
+        "Dataset": {"count": 2},
+        "DataAccessCommittee": {"count": 1},
+        "StudyFile": {"count": 3, "stats": {"format": {"FASTQ": 3}}},
+        "Study": {"count": 1},
+        "EmbeddedDataset": {"count": 2},
+    }
+    stats_dao = await joint_fixture.mongodb.dao_factory.get_dao(
+        name=STATS_COLLECTION_NAME, dto_model=GlobalStats, id_field="id"
+    )
+    async for stats in stats_dao.find_all(mapping={}):
+        assert stats.id == "global"
+        assert abs((now_as_utc() - stats.created).seconds) < 5
+        assert stats.resource_stats == expected_resource_stats
+
     # replace tested resource with slightly changed one
+    changed_accession = "CHANGED_EMBEDDED_DATASET"
     new_artifact_resources = deepcopy(joint_fixture.artifact_resources)
     del new_artifact_resources[expected_artifact_name][0]["embedded_dataset"][0]
     new_artifact_resources[expected_artifact_name][0]["embedded_dataset"][0][
@@ -127,37 +143,23 @@ async def test_load_artifacts_endpoint_happy(
             )
             assert response.status_code == 204
 
-    assert len(resource_recorder.recorded_events) == 2
+    assert len(resource_recorder.recorded_events) == 3
     for event in resource_recorder.recorded_events:
-        if event.key == f"embedded_dataset_{changed_accession}":
+        if event.key == f"dataset_embedded_{changed_accession}":
             assert event.type_ == joint_fixture.config.resource_upsertion_type
         else:
             assert event.type_ == joint_fixture.config.resource_deletion_event_type
 
-    assert len(dataset_recorder.recorded_events) == 2
+    assert len(dataset_recorder.recorded_events) == 3
+
     for event in dataset_recorder.recorded_events:
-        if event.key == f"embedded_dataset_{changed_accession}":
+        if event.key == f"dataset_embedded_{changed_accession}":
             assert event.type_ == joint_fixture.config.dataset_upsertion_type
         else:
             assert event.type_ == joint_fixture.config.dataset_deletion_type
 
     observed_resource = await dao.get_by_id(changed_accession)
     assert observed_resource.content == expected_resource_content
-
-    # check that the summary statistics has been created:
-    expected_resource_stats = {
-        "Dataset": {"count": 1},
-        "Sample": {"count": 2},
-        "File": {"count": 4, "stats": {"format": [{"value": "fastq", "count": 4}]}},
-        "Experiment": {"count": 1},
-    }
-    stats_dao = await mongodb_fixture.dao_factory.get_dao(
-        name=STATS_COLLECTION_NAME, dto_model=GlobalStats, id_field="id"
-    )
-    async for stats in stats_dao.find_all(mapping={}):
-        assert stats.id == "global"
-        assert abs((now_as_utc() - stats.created).seconds) < 5
-        assert stats.resource_stats == expected_resource_stats
 
     # submit an empty request:
     async with joint_fixture.kafka.record_events(
