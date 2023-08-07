@@ -22,7 +22,10 @@ import pytest
 from ghga_service_commons.api.testing import AsyncTestClient
 from ghga_service_commons.utils.utc_dates import now_as_utc
 from hexkit.protocols.dao import ResourceNotFoundError
-from hexkit.providers.akafka.testutils import kafka_fixture, KafkaFixture
+from hexkit.providers.akafka.testutils import (  # noqa: F401; pylint: disable=unused-import
+    KafkaFixture,
+    kafka_fixture,
+)
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.models import ArtifactInfo, GlobalStats
@@ -45,61 +48,100 @@ async def test_load_artifacts_endpoint_happy(
 ):
     """Test the happy path of using the load artifacts endpoint."""
 
-    # load example artifacts resources:
-    artifact_resources = {
-        artifact_name: [artifact_content]
-        for artifact_name, artifact_content in EXAMPLE_ARTIFACTS.items()
-    }
+    async with joint_fixture.kafka.record_events(
+        in_topic=joint_fixture.config.dataset_change_event_topic
+    ) as dataset_recorder:
+        async with joint_fixture.kafka.record_events(
+            in_topic=joint_fixture.config.resource_change_event_topic
+        ) as resource_recorder:
+            response = await joint_fixture.client.post(
+                "/rpc/load-artifacts",
+                json=joint_fixture.artifact_resources,
+                headers={"Authorization": f"Bearer {joint_fixture.token}"},
+            )
+            assert response.status_code == 204
 
-    response = await joint_fixture.client.post(
-        "/rpc/load-artifacts",
-        json=artifact_resources,
-        headers={"Authorization": f"Bearer {joint_fixture.token}"},
-    )
-    assert response.status_code == 204
+    assert len(resource_recorder.recorded_events) == 2
+    for event in resource_recorder.recorded_events:
+        assert event.type_ == joint_fixture.config.resource_upsertion_type
+    assert len(dataset_recorder.recorded_events) == 2
+    for event in dataset_recorder.recorded_events:
+        assert event.type_ == joint_fixture.config.dataset_upsertion_type
 
     # check that the artifact resources were loaded based on an example:
-    expected_artifact_name = "inferred_and_public"
-    expected_resource_class = "File"
-    expected_resource_id = "test_sample_01_R1"
-    expected_resource_content = {
-        "alias": "test_sample_01_R1",
-        "format": "fastq",
-        "size": 299943,
-    }
+    expected_artifact_name = "embedded_public"
+
+    expected_file_resource_class = "StudyFile"
+    expected_file_resource_id = joint_fixture.expected_file_resource_content[
+        "accession"
+    ]
+
+    expected_embedded_dataset_resource_class = "EmbeddedDataset"
+    expected_embedded_dataset_resource_id = (
+        joint_fixture.expected_embedded_dataset_resource_content["accession"]
+    )
 
     dao_collection = await ArtifactDaoCollection.construct(
         dao_factory=joint_fixture.mongodb.dao_factory,
-        artifact_infos=EXAMPLE_ARTIFACT_INFOS,
+        artifact_infos=joint_fixture.artifact_infos,
     )
+
     dao = await dao_collection.get_dao(
-        artifact_name=expected_artifact_name, class_name=expected_resource_class
+        artifact_name=expected_artifact_name, class_name=expected_file_resource_class
+    )
+    observed_resource = await dao.get_by_id(expected_file_resource_id)
+    assert observed_resource.content == joint_fixture.expected_file_resource_content
+
+    dao = await dao_collection.get_dao(
+        artifact_name=expected_artifact_name,
+        class_name=expected_embedded_dataset_resource_class,
+    )
+    observed_resource = await dao.get_by_id(expected_embedded_dataset_resource_id)
+    assert (
+        observed_resource.content
+        == joint_fixture.expected_embedded_dataset_resource_content
     )
 
-    observed_resource = await dao.get_by_id(expected_resource_id)
-    assert observed_resource.content == expected_resource_content
-
-    # test upsert of changed resource
-    expected_resource_content = {
-        "alias": "test_sample_01_R1",
-        "format": "fastq",
-        "size": 123456,
-    }
+    changed_accession = "CHANGED_EMBEDDED_DATASET"
     # replace tested resource with slightly changed one
-    new_artifact_resources = deepcopy(artifact_resources)
-    new_artifact_resources[expected_artifact_name][0]["files"][
-        0
-    ] = expected_resource_content
+    new_artifact_resources = deepcopy(joint_fixture.artifact_resources)
+    del new_artifact_resources[expected_artifact_name][0]["embedded_dataset"][0]
+    new_artifact_resources[expected_artifact_name][0]["embedded_dataset"][0][
+        "accession"
+    ] = "CHANGED_EMBEDDED_DATASET"
+    expected_resource_content = new_artifact_resources[expected_artifact_name][0][
+        "embedded_dataset"
+    ][0]
 
-    # submit changed request:
-    response = await joint_fixture.client.post(
-        "/rpc/load-artifacts",
-        json=new_artifact_resources,
-        headers={"Authorization": f"Bearer {joint_fixture.token}"},
-    )
-    assert response.status_code == 204
+    # submit changed request
+    async with joint_fixture.kafka.record_events(
+        in_topic=joint_fixture.config.dataset_change_event_topic
+    ) as dataset_recorder:
+        async with joint_fixture.kafka.record_events(
+            in_topic=joint_fixture.config.resource_change_event_topic
+        ) as resource_recorder:
+            response = await joint_fixture.client.post(
+                "/rpc/load-artifacts",
+                json=new_artifact_resources,
+                headers={"Authorization": f"Bearer {joint_fixture.token}"},
+            )
+            assert response.status_code == 204
 
-    observed_resource = await dao.get_by_id(expected_resource_id)
+    assert len(resource_recorder.recorded_events) == 2
+    for event in resource_recorder.recorded_events:
+        if event.key == f"embedded_dataset_{changed_accession}":
+            assert event.type_ == joint_fixture.config.resource_upsertion_type
+        else:
+            assert event.type_ == joint_fixture.config.resource_deletion_event_type
+
+    assert len(dataset_recorder.recorded_events) == 2
+    for event in dataset_recorder.recorded_events:
+        if event.key == f"embedded_dataset_{changed_accession}":
+            assert event.type_ == joint_fixture.config.dataset_upsertion_type
+        else:
+            assert event.type_ == joint_fixture.config.dataset_deletion_type
+
+    observed_resource = await dao.get_by_id(changed_accession)
     assert observed_resource.content == expected_resource_content
 
     # check that the summary statistics has been created:
@@ -118,16 +160,30 @@ async def test_load_artifacts_endpoint_happy(
         assert stats.resource_stats == expected_resource_stats
 
     # submit an empty request:
-    response = await joint_fixture.client.post(
-        "/rpc/load-artifacts",
-        json={},
-        headers={"Authorization": f"Bearer {joint_fixture.token}"},
-    )
-    assert response.status_code == 204
+    async with joint_fixture.kafka.record_events(
+        in_topic=joint_fixture.config.dataset_change_event_topic
+    ) as dataset_recorder:
+        async with joint_fixture.kafka.record_events(
+            in_topic=joint_fixture.config.resource_change_event_topic
+        ) as resource_recorder:
+            response = await joint_fixture.client.post(
+                "/rpc/load-artifacts",
+                json={},
+                headers={"Authorization": f"Bearer {joint_fixture.token}"},
+            )
+            assert response.status_code == 204
+
+    assert len(resource_recorder.recorded_events) == 1
+    for event in resource_recorder.recorded_events:
+        assert event.type_ == joint_fixture.config.resource_deletion_event_type
+
+    assert len(dataset_recorder.recorded_events) == 1
+    for event in dataset_recorder.recorded_events:
+        assert event.type_ == joint_fixture.config.dataset_deletion_type
 
     # confirm that example resource was deleted:
     with pytest.raises(ResourceNotFoundError):
-        await dao.get_by_id(expected_resource_id)
+        await dao.get_by_id(changed_accession)
 
 
 @pytest.mark.asyncio
@@ -150,7 +206,7 @@ async def test_load_artifacts_endpoint_invalid_resources(
 
 @pytest.mark.asyncio
 async def test_load_artifacts_endpoint_invalid_token(
-    # noqa: F811
+    joint_fixture: JointFixture,  # noqa: F811
 ):
     """Test that using the load artifacts endpoint with an invalid token fails."""
 

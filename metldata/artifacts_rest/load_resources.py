@@ -17,7 +17,7 @@
 """Logic for loading artifacts."""
 
 from dataclasses import dataclass
-from typing import Any, cast
+from typing import cast
 
 from ghga_event_schemas.pydantic_ import (
     MetadataDatasetFile,
@@ -35,10 +35,25 @@ from metldata.artifacts_rest.models import (
 from metldata.custom_types import Json
 from metldata.load.event_publisher import EventPublisherPort
 from metldata.metadata_utils import (
+    SlotNotFoundError,
     get_resources_of_class,
     lookup_self_id,
     lookup_slot_in_resource,
 )
+
+ALLOWED_COMPRESSIONS: list[str] = [
+    ".tar.bz2",
+    ".tar.gz",
+    ".tar.lz",
+    ".tar.xz",
+    ".tar.zst",
+    ".tbz2",
+    ".tgz",
+    ".tlz",
+    ".txz",
+    ".gz",
+    ".zip",
+]
 
 
 def extract_class_resources_from_artifact(
@@ -179,7 +194,7 @@ async def process_new_or_changed_resources(
 
         if (
             artifact_name == "embedded_public"
-            and resource.class_name == "DatasetEmbedded"
+            and resource.class_name == "EmbeddedDataset"
         ):
             await _process_resource_upsert(
                 artifact_info_dict=artifact_info_dict,
@@ -202,12 +217,20 @@ async def _process_resource_upsert(  # pylint: disable=too-many-locals
     artifact_info = artifact_info_dict[artifact_name]
 
     for class_name, resource_class in artifact_info.resource_classes.items():
+        # get files resource slots from file class names
         if class_name.endswith("File"):
             anchor_point = resource_class.anchor_point
             slot_name = anchor_point.root_slot
-            file_slot = lookup_slot_in_resource(
-                resource=resource.content, slot_name=slot_name
-            )
+            try:
+                file_slot = lookup_slot_in_resource(
+                    resource=resource.content, slot_name=slot_name
+                )
+                # file slots should be lists
+                file_slot = cast(list[Json], file_slot)
+            except SlotNotFoundError:
+                continue
+            if file_slot:
+                raise ValueError(file_slot)
             file_slots.append(file_slot)
 
     file_information_converter = FileInformationConverter(
@@ -245,28 +268,13 @@ class FileInformationConverter:
     """Helper class to extract file extension information and convert file slot data"""
 
     artifact_info: ArtifactInfo
-    file_slots: list[dict[str, Any]]
-    allowed_compressions: frozenset[str] = frozenset(
-        {
-            ".gz",
-            ".tar.gz",
-            ".tgz",
-            ".tar.bz2",
-            ".tbz2",
-            ".tar.lz",
-            ".tlz",
-            ".tar.xz",
-            ".txz",
-            ".tar.zst",
-            ".zip",
-        }
-    )
+    file_slots: list[list[Json]]
 
     def extract_file_information(self) -> list[MetadataDatasetFile]:
         """Convert file slot information into MetadataDatasetFiles"""
         files = []
         for file_slot in self.file_slots:
-            for file in file_slot.values():
+            for file in file_slot:
                 extension = self._get_file_extension(
                     file_name=file["name"], file_format=file["format"]
                 )
@@ -296,12 +304,12 @@ class FileInformationConverter:
         file_format = file_format.lower()
 
         if potential_extension == file_format:
-            return file_format
+            return f".{file_format}"
 
         if potential_extension.startswith(file_format):
             extension = potential_extension.partition(file_format)[2]
-            if extension in self.allowed_compressions:
-                return extension
+            if extension in ALLOWED_COMPRESSIONS:
+                return f".{potential_extension}"
 
-        # log runtime error instead of raising
-        raise ValueError("Invalid file extension.")
+        # cannot extract valid file extension, fall back to no extension
+        return ""

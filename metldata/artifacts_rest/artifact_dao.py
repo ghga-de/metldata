@@ -91,9 +91,10 @@ class ArtifactDaoCollection:
         for artifact_type, class_name_dao in self._artifact_daos.items():
             for class_name, resource_dao in class_name_dao.items():
                 # empty mapping should yield all resources
-                resource_ids = [
-                    resource.id_ async for resource in resource_dao.find_all(mapping={})
-                ]
+                found_resources = resource_dao.find_all(mapping={})
+                if found_resources is None:
+                    return set()
+                resource_ids = [resource.id_ async for resource in found_resources]
                 all_resource_tags.extend(
                     (artifact_type, class_name, resource_id)
                     for resource_id in resource_ids

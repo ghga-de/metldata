@@ -102,24 +102,25 @@ async def rest_api_factory(
 
     router = APIRouter()
 
-    async with KafkaEventPublisher.construct(config=config) as event_pub_provider:
-        event_publisher = EventPubTranslator(config=config, provider=event_pub_provider)
+    @router.post("/rpc/load-artifacts")
+    async def load_artifacts(
+        artifact_resources: ArtifactResourceDict,
+        _token: LoaderTokenAuthContext = require_token,
+    ):
+        """Load artifacts into services for querying via user-accessible API."""
 
-        @router.post("/rpc/load-artifacts")
-        async def load_artifacts(
-            artifact_resources: ArtifactResourceDict,
-            _token: LoaderTokenAuthContext = require_token,
-        ):
-            """Load artifacts into services for querying via user-accessible API."""
+        try:
+            check_artifact_resources(
+                artifact_resources=artifact_resources,
+                artifact_infos=artifact_info_dict,
+            )
+        except ArtifactResourcesInvalid as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
 
-            try:
-                check_artifact_resources(
-                    artifact_resources=artifact_resources,
-                    artifact_infos=artifact_info_dict,
-                )
-            except ArtifactResourcesInvalid as error:
-                raise HTTPException(status_code=422, detail=str(error)) from error
-
+        async with KafkaEventPublisher.construct(config=config) as event_pub_provider:
+            event_publisher = EventPubTranslator(
+                config=config, provider=event_pub_provider
+            )
             await load_artifacts_using_dao(
                 artifact_resources=artifact_resources,
                 artifact_info_dict=artifact_info_dict,
@@ -127,10 +128,14 @@ async def rest_api_factory(
                 dao_collection=dao_collection,
             )
 
+<<<<<<< HEAD
             await create_stats_using_aggregator(
                 artifact_infos=artifact_info_dict, db_aggregator=db_aggregator
             )
 
             return Response(status_code=204)
+=======
+        return Response(status_code=204)
+>>>>>>> bab569c (Changed tests with reduced test file)
 
-        return router
+    return router
