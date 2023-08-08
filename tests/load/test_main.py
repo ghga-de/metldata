@@ -112,7 +112,10 @@ async def test_load_artifacts_endpoint_happy(
         "DataAccessPolicy": {"count": 1},
         "Dataset": {"count": 2},
         "DataAccessCommittee": {"count": 1},
-        "StudyFile": {"count": 3, "stats": {"format": {"FASTQ": 3}}},
+        "StudyFile": {
+            "count": 3,
+            "stats": {"format": [{"value": "FASTQ", "count": 3}]},
+        },
         "Study": {"count": 1},
         "EmbeddedDataset": {"count": 2},
     }
