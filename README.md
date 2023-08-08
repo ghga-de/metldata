@@ -108,6 +108,10 @@ The service requires the following configuration parameters:
 
   - **Items** *(string)*
 
+- **`primary_artifact_name`** *(string)*: Name of the artifact from which the information for outgoing change events is derived.
+
+- **`embedded_dataset_class_name`** *(string)*: Name of the resource class corresponding to the embedded_dataset slot.
+
 - **`resource_change_event_topic`** *(string)*: Name of the topic used for events informing other services about resource changes, i.e. deletion or insertion.
 
 - **`resource_deletion_event_type`** *(string)*: Type used for events indicating the deletion of a previously existing resource.

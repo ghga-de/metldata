@@ -66,6 +66,24 @@
         "type": "string"
       }
     },
+    "primary_artifact_name": {
+      "title": "Primary Artifact Name",
+      "description": "Name of the artifact from which the information for outgoing change events is derived.",
+      "example": "embedded_public",
+      "env_names": [
+        "metldata_primary_artifact_name"
+      ],
+      "type": "string"
+    },
+    "embedded_dataset_class_name": {
+      "title": "Embedded Dataset Class Name",
+      "description": "Name of the resource class corresponding to the embedded_dataset slot.",
+      "example": "EmbeddedDataset",
+      "env_names": [
+        "metldata_embedded_dataset_class_name"
+      ],
+      "type": "string"
+    },
     "resource_change_event_topic": {
       "title": "Resource Change Event Topic",
       "description": "Name of the topic used for events informing other services about resource changes, i.e. deletion or insertion.",
@@ -272,6 +290,8 @@
     "service_name",
     "service_instance_id",
     "kafka_servers",
+    "primary_artifact_name",
+    "embedded_dataset_class_name",
     "resource_change_event_topic",
     "resource_deletion_event_type",
     "resource_upsertion_type",
