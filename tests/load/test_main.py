@@ -184,7 +184,7 @@ async def test_load_artifacts_endpoint_happy(
             )
             assert response.status_code == 204
 
-    assert len(resource_recorder.recorded_events) == 1
+    assert len(resource_recorder.recorded_events) == 9
     for event in resource_recorder.recorded_events:
         assert event.type_ == joint_fixture.config.resource_deletion_event_type
 
