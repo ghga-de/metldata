@@ -27,7 +27,7 @@ from metldata.load.collect import ArtifactCollectorConfig
 from metldata.load.event_publisher import EventPubTranslatorConfig
 
 
-class ArtifactLoaderAPIConfig(
+class ArtifactLoaderAPIConfig(  # pylint: disable=too-many-ancestors
     ArtifactsRestConfig,
     ApiConfigBase,
     EventPubTranslatorConfig,
