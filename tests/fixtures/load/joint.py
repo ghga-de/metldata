@@ -41,6 +41,7 @@ from tests.fixtures.mongodb import (  # noqa: F401; pylint: disable=unused-impor
 ARTIFACT_INFOS_PATH = BASE_DIR / "example_models" / "artifact_infos.json"
 ARTIFACT_NAME = "embedded_public"
 EMBEDDED_ARTIFACT_PATH = BASE_DIR / "example_metadata" / f"{ARTIFACT_NAME}.json"
+EMBEDDED_DATASET_TEST_PATH = BASE_DIR / "example_metadata" / "embedded_dataset.json"
 EMBEDDED_ARTIFACT_MODEL_PATH = (
     BASE_DIR / "example_models" / f"{ARTIFACT_NAME}_model.yaml"
 )

@@ -41,6 +41,7 @@ from metldata.metadata_utils import (
     lookup_slot_in_resource,
 )
 
+# Probably should be made configurable down the line
 ALLOWED_COMPRESSIONS: list[str] = [
     ".tar.bz2",
     ".tar.gz",
@@ -196,7 +197,7 @@ async def process_new_or_changed_resources(
             artifact_name == "embedded_public"
             and resource.class_name == "EmbeddedDataset"
         ):
-            await _process_resource_upsert(
+            await process_resource_upsert(
                 artifact_info_dict=artifact_info_dict,
                 artifact_name=artifact_name,
                 event_publisher=event_publisher,
@@ -204,7 +205,7 @@ async def process_new_or_changed_resources(
             )
 
 
-async def _process_resource_upsert(  # pylint: disable=too-many-locals
+async def process_resource_upsert(  # pylint: disable=too-many-locals
     *,
     artifact_info_dict: dict[str, ArtifactInfo],
     artifact_name: str,
@@ -213,23 +214,8 @@ async def _process_resource_upsert(  # pylint: disable=too-many-locals
 ):
     """Convert available data to correct event model and delegate firing appropriate events"""
 
-    file_slots = []
     artifact_info = artifact_info_dict[artifact_name]
-
-    for class_name, resource_class in artifact_info.resource_classes.items():
-        # get files resource slots from file class names
-        if class_name.endswith("File"):
-            anchor_point = resource_class.anchor_point
-            slot_name = anchor_point.root_slot
-            try:
-                file_slot = lookup_slot_in_resource(
-                    resource=resource.content, slot_name=slot_name
-                )
-                # file slots should be lists
-                file_slot = cast(list[Json], file_slot)
-            except SlotNotFoundError:
-                continue
-            file_slots.append(file_slot)
+    file_slots = get_file_slots(artifact_info=artifact_info, resource=resource)
 
     file_information_converter = FileInformationConverter(
         artifact_info=artifact_info,
@@ -261,6 +247,29 @@ async def _process_resource_upsert(  # pylint: disable=too-many-locals
     await event_publisher.process_resource_upsert(resource=searchable_resource)
 
 
+def get_file_slots(artifact_info: ArtifactInfo, resource: ArtifactResource):
+    """Get files resource slots from file class names"""
+
+    file_slots = []
+    for class_name, resource_class in artifact_info.resource_classes.items():
+        if class_name.endswith("File"):
+            anchor_point = resource_class.anchor_point
+            slot_name = anchor_point.root_slot
+
+            try:
+                file_slot = lookup_slot_in_resource(
+                    resource=resource.content, slot_name=slot_name
+                )
+                # file slots should be lists
+                file_slot = cast(list[Json], file_slot)
+            except SlotNotFoundError:
+                continue
+
+            file_slots.append(file_slot)
+
+    return file_slots
+
+
 @dataclass
 class FileInformationConverter:
     """Helper class to extract file extension information and convert file slot data"""
@@ -280,7 +289,7 @@ class FileInformationConverter:
                 files.append(
                     MetadataDatasetFile(
                         accession=file["accession"],
-                        description="",
+                        description=None,
                         file_extension=extension,
                     )
                 )
@@ -301,13 +310,18 @@ class FileInformationConverter:
         potential_extension = file_name.partition(".")[2].lower()
         file_format = file_format.lower()
 
+        # file extension is file format
         if potential_extension == file_format:
             return f".{file_format}"
 
         if potential_extension.startswith(file_format):
+            # extension is file format + compression extension
             extension = potential_extension.partition(file_format)[2]
             if extension in ALLOWED_COMPRESSIONS:
                 return f".{potential_extension}"
+        elif f".{potential_extension}" in ALLOWED_COMPRESSIONS:
+            # extension is only compression extension, add file format
+            return f".{file_format}.{potential_extension}"
 
-        # cannot extract valid file extension, fall back to no extension
-        return ""
+        # cannot extract valid file extension, fall back to lowercase file format
+        return f".{file_format}"

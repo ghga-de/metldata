@@ -16,6 +16,7 @@
 
 """Test the main modules."""
 
+import json
 from copy import deepcopy
 
 import pytest
@@ -27,10 +28,15 @@ from hexkit.providers.akafka.testutils import (  # noqa: F401; pylint: disable=u
 )
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
-from metldata.artifacts_rest.models import GlobalStats
+from metldata.artifacts_rest.load_resources import (
+    FileInformationConverter,
+    get_file_slots,
+)
+from metldata.artifacts_rest.models import ArtifactResource, GlobalStats
 from metldata.load.auth import generate_token
 from metldata.load.stats import STATS_COLLECTION_NAME
 from tests.fixtures.load.joint import (  # noqa: F401; pylint: disable=unused-import
+    EMBEDDED_DATASET_TEST_PATH,
     JointFixture,
     joint_fixture,
 )
@@ -221,3 +227,39 @@ async def test_load_artifacts_endpoint_invalid_token(
         headers={"Authorization": f"Bearer {invalid_token}"},
     )
     assert response.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_file_slot_transformation(
+    joint_fixture: JointFixture,  # noqa: F811
+):
+    """Test that file slots are discovered and file extensions are extracted correctly"""
+
+    with open(EMBEDDED_DATASET_TEST_PATH, "r", encoding="utf-8") as file:
+        embedded_datasets = json.load(file)
+
+    file_slots = []
+    artifact_info = joint_fixture.artifact_infos[0]
+
+    # get all embedded datset resources
+    for embedded_dataset in embedded_datasets["embedded_dataset"]:
+        resource = ArtifactResource(
+            id_=embedded_dataset["accession"],
+            class_name="EmbeddedDataset",
+            content=embedded_dataset,
+        )
+        current_file_slots = get_file_slots(
+            artifact_info=artifact_info, resource=resource
+        )
+        file_slots.extend(current_file_slots)
+
+    fic = FileInformationConverter(artifact_info=artifact_info, file_slots=file_slots)
+
+    extension_mapping = {
+        "STUDY_FILE_1": ".fastq.gz",
+        "STUDY_FILE_2": ".fastq",
+        "STUDY_FILE_3": ".fastq.gz",
+        "STUDY_FILE_4": ".fastq",
+    }
+    for file_info in fic.extract_file_information():
+        assert extension_mapping[file_info.accession] == file_info.file_extension
