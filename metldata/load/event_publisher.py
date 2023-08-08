@@ -30,10 +30,19 @@ from pydantic import BaseSettings, Field
 
 
 class EventPubTranslatorConfig(BaseSettings):
-    """Config for publishing population/deletion events to other services
+    """Config for publishing population/deletion events to other services"""
 
-    dataset_overview events should
-    """
+    primary_artifact_name: str = Field(
+        ...,
+        description="Name of the artifact from which the information for outgoing"
+        + " change events is derived.",
+        example="embedded_public",
+    )
+    embedded_dataset_class_name: str = Field(
+        ...,
+        description="Name of the resource class corresponding to the embedded_dataset slot.",
+        example="EmbeddedDataset",
+    )
 
     resource_change_event_topic: str = Field(
         ...,
@@ -91,6 +100,13 @@ class EventPublisherPort(ABC):
     @abstractmethod
     async def process_resource_upsert(self, *, resource: SearchableResource):
         """Communicate the upsert of an artifact resource"""
+
+    @abstractmethod
+    def is_primary_dataset_source(
+        self, *, artifact_name: str, resource_class_name: str
+    ) -> bool:
+        """Checks if combination of artifact name and resource class name describe the
+        configured source for outbound change events"""
 
 
 class EventPubTranslator(EventPublisherPort):
@@ -163,4 +179,14 @@ class EventPubTranslator(EventPublisherPort):
             type_=self._config.resource_upsertion_type,
             key=f"dataset_embedded_{resource.accession}",
             topic=self._config.resource_change_event_topic,
+        )
+
+    def is_primary_dataset_source(
+        self, *, artifact_name: str, resource_class_name: str
+    ) -> bool:
+        """Checks if combination of artifact name and resource class name describe the
+        configured source for outbound change events"""
+        return (
+            self._config.primary_artifact_name == artifact_name
+            and self._config.embedded_dataset_class_name == resource_class_name
         )
