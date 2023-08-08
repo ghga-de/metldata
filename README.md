@@ -100,6 +100,26 @@ The service requires the following configuration parameters:
 
 - **`db_name`** *(string)*: Name of the database located on the MongoDB server.
 
+- **`service_name`** *(string)*: The name of the (micro-)service from which messages are published.
+
+- **`service_instance_id`** *(string)*: A string that uniquely identifies this instance across all instances of this service. A globally unique Kafka client ID will be created by concatenating the service_name and the service_instance_id.
+
+- **`kafka_servers`** *(array)*: A list of connection strings to connect to Kafka bootstrap servers.
+
+  - **Items** *(string)*
+
+- **`resource_change_event_topic`** *(string)*: Name of the topic used for events informing other services about resource changes, i.e. deletion or insertion.
+
+- **`resource_deletion_event_type`** *(string)*: Type used for events indicating the deletion of a previously existing resource.
+
+- **`resource_upsertion_type`** *(string)*: Type used for events indicating the upsert of a resource.
+
+- **`dataset_change_event_topic`** *(string)*: Name of the topic announcing, among other things, the list of files included in a new dataset.
+
+- **`dataset_deletion_type`** *(string)*: Type used for events announcing a new dataset overview.
+
+- **`dataset_upsertion_type`** *(string)*: Type used for events announcing a new dataset overview.
+
 - **`host`** *(string)*: IP of the host. Default: `127.0.0.1`.
 
 - **`port`** *(integer)*: Port to expose the server on the specified host. Default: `8080`.
