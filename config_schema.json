@@ -75,12 +75,12 @@
       ],
       "type": "string"
     },
-    "embedded_dataset_class_name": {
-      "title": "Embedded Dataset Class Name",
+    "primary_dataset_name": {
+      "title": "Primary Dataset Name",
       "description": "Name of the resource class corresponding to the embedded_dataset slot.",
       "example": "EmbeddedDataset",
       "env_names": [
-        "metldata_embedded_dataset_class_name"
+        "metldata_primary_dataset_name"
       ],
       "type": "string"
     },
@@ -291,7 +291,7 @@
     "service_instance_id",
     "kafka_servers",
     "primary_artifact_name",
-    "embedded_dataset_class_name",
+    "primary_dataset_name",
     "resource_change_event_topic",
     "resource_deletion_event_type",
     "resource_upsertion_type",

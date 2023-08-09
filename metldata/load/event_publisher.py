@@ -38,7 +38,7 @@ class EventPubTranslatorConfig(BaseSettings):
         + " change events is derived.",
         example="embedded_public",
     )
-    embedded_dataset_class_name: str = Field(
+    primary_dataset_name: str = Field(
         ...,
         description="Name of the resource class corresponding to the embedded_dataset slot.",
         example="EmbeddedDataset",
@@ -185,8 +185,8 @@ class EventPubTranslator(EventPublisherPort):
         self, *, artifact_name: str, resource_class_name: str
     ) -> bool:
         """Checks if combination of artifact name and resource class name describe the
-        configured source for outbound change events"""
+        configured source for outbound dataset change events"""
         return (
             self._config.primary_artifact_name == artifact_name
-            and self._config.embedded_dataset_class_name == resource_class_name
+            and self._config.primary_dataset_name == resource_class_name
         )
