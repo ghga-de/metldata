@@ -4,9 +4,9 @@ aggregate_stats:
     - input: Dataset
       output: DatasetStats
       operations:
-        - output_path: alias
+        - output_path: accession
           input_paths:
-            - alias
+            - accession
           function: StringCopy
         - output_path: file_formats.stats
           input_paths:
