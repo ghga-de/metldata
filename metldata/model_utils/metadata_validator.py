@@ -48,8 +48,8 @@ class MetadataValidationError(InvalidMetadataError):
 
 
 @lru_cache()
-def get_validator(model: MetadataModel):
-    """Create a validator for the given model."""
+def get_metadata_validator(model: MetadataModel):
+    """Create a validator for the given metadata model."""
     with model.temporary_yaml_path() as model_path:
         return Validator(schema=str(model_path))
 
@@ -72,7 +72,7 @@ class MetadataValidator:
             ValidationError: When validation failed.
         """
 
-        validator = get_validator(self._model)
+        validator = get_metadata_validator(self._model)
 
         validation_report = validator.validate(metadata, target_class="Submission")
 
