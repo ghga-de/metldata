@@ -42,6 +42,6 @@ def run_sync(coroutine):
 @run_sync
 async def run_api() -> None:
     """Run the combined loader and query API."""
-    config = Config()
+    config = Config()  # type: ignore
     app = await get_app(config=config)
     await run_server(app=app, config=config)

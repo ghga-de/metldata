@@ -41,9 +41,7 @@ from tests.fixtures.metadata_models import (
 def test_metadata_model_assumption_checking(model: MetadataModel, is_valid: bool):
     """Test the assumptions regarding the metadata model are correctly checked."""
 
-    with nullcontext() if is_valid else pytest.raises(  # type:ignore
-        MetadataModelAssumptionError
-    ):
+    with nullcontext() if is_valid else pytest.raises(MetadataModelAssumptionError):
         check_basic_model_assumption(model)
 
 

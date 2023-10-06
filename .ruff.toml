@@ -27,6 +27,7 @@ ignore = [
     "D100", # missing docstring in public module
     "N805", # first argument of a method should be named `self`
     "UP007", # new syntax for union type annotations based on the `|` operator
+    "PLR0913", # too many arguments
 ]
 
 line-length = 88
