@@ -24,9 +24,9 @@ ignore = [
     "D202", # blank lines allowed after function docstring
     "D209", # multi-line docstring closing quote on newline
     "RUF009", # do not perform function call in dataclass defaults
-    "PLR0913", # too many arguments
     "D100", # missing docstring in public module
     "N805", # first argument of a method should be named `self`
+    "UP007", # new syntax for union type annotations based on the `|` operator
 ]
 
 line-length = 88
