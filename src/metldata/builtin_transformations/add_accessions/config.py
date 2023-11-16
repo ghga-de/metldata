@@ -16,7 +16,8 @@
 
 """Config parameters and their defaults."""
 
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 class AccessionAdditionConfig(BaseSettings):

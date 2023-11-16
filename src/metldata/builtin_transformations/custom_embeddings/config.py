@@ -16,7 +16,8 @@
 
 """Models used to describe embedding profiles."""
 
-from pydantic import BaseSettings, Field, validator
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings
 
 from metldata.builtin_transformations.custom_embeddings.embedding_profile import (
     EmbeddingProfile,
@@ -50,7 +51,7 @@ class CustomEmbeddingConfig(BaseSettings):
     )
 
     # pylint: disable=no-self-argument
-    @validator("embedding_profiles")
+    @field_validator("embedding_profiles")
     def check_embedding_profiles_unique(
         cls,
         value: list[EmbeddingProfile],

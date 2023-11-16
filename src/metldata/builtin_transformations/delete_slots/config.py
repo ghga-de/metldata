@@ -16,7 +16,8 @@
 
 """Config parameters and their defaults."""
 
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 class SlotDeletionConfig(BaseSettings):
@@ -29,11 +30,13 @@ class SlotDeletionConfig(BaseSettings):
             + " The keys refer to classes, the values to the slots that should be"
             + " deleted from the respective class."
         ),
-        example={
-            "class_a": ["some_slot", "another_slot"],
-            "class_b": ["some_slot"],
-            "class_c": ["some_slot", "yet_another_slot"],
-        },
+        examples=[
+            {
+                "class_a": ["some_slot", "another_slot"],
+                "class_b": ["some_slot"],
+                "class_c": ["some_slot", "yet_another_slot"],
+            }
+        ],
     )
 
     class Config:

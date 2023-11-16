@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import yaml
-from pydantic.env_settings import BaseSettings
+from pydantic_settings import BaseSettings
 
 from metldata.load.config import ArtifactLoaderAPIConfig
 from tests.fixtures.load.utils import BASE_DIR
