@@ -17,11 +17,13 @@
 """Config parameters and their defaults."""
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class SlotDeletionConfig(BaseSettings):
     """Config containing slots to be deleted from models and associated metadata."""
+
+    model_config = SettingsConfigDict(extra="forbid")
 
     slots_to_delete: dict[str, list[str]] = Field(
         ...,
@@ -38,8 +40,3 @@ class SlotDeletionConfig(BaseSettings):
             }
         ],
     )
-
-    class Config:
-        """Pydantic config."""
-
-        extra = "forbid"

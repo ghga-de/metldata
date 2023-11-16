@@ -16,7 +16,7 @@
 
 """Logic for handling Transformation."""
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from metldata.custom_types import Json
 from metldata.event_handling.models import SubmissionAnnotation
@@ -115,12 +115,8 @@ class TransformationHandler:
 class ResolvedWorkflowStep(WorkflowStepBase):
     """A resolved workflow step contains a transformation handler."""
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
     transformation_handler: TransformationHandler
-
-    class Config:
-        """Config for ResolvedWorkflowStep."""
-
-        arbitrary_types_allowed = True
 
 
 class ResolvedWorkflow(WorkflowDefinition):

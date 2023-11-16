@@ -17,13 +17,15 @@
 """Config parameters and their defaults."""
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from metldata.builtin_transformations.merge_slots.models import SlotMergeInstruction
 
 
 class SlotMergingConfig(BaseSettings):
     """Config containing slots to be deleted from models and associated metadata."""
+
+    model_config = SettingsConfigDict(extra="forbid")
 
     merge_instructions: list[SlotMergeInstruction] = Field(
         ...,
@@ -83,8 +85,3 @@ class SlotMergingConfig(BaseSettings):
                 )
 
         return filtered_merge_instructions
-
-    class Config:
-        """Pydantic config."""
-
-        extra = "forbid"

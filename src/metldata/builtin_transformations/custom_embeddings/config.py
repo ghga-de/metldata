@@ -17,7 +17,7 @@
 """Models used to describe embedding profiles."""
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from metldata.builtin_transformations.custom_embeddings.embedding_profile import (
     EmbeddingProfile,
@@ -43,6 +43,8 @@ class CustomEmbeddingConfig(BaseSettings):
     model.
     """
 
+    model_config = SettingsConfigDict(extra="forbid")
+
     embedding_profiles: list[EmbeddingProfile] = Field(
         ...,
         description=(
@@ -67,8 +69,3 @@ class CustomEmbeddingConfig(BaseSettings):
             raise ValueError("Names for embedded classes must be unique.")
 
         return value
-
-    class Config:
-        """Pydantic config."""
-
-        extra = "forbid"

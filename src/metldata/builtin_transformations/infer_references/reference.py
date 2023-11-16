@@ -16,7 +16,7 @@
 
 """Reference models."""
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from metldata.builtin_transformations.infer_references.path.path import ReferencePath
 
@@ -39,6 +39,8 @@ class InferredReference(ReferenceDetails):
     """A model for describing an inferred reference that is based on existing
     references.
     """
+
+    model_config = ConfigDict(frozen=True)
 
     source: str = Field(
         ..., description="The source class to which this reference should be added."
@@ -66,8 +68,3 @@ class InferredReference(ReferenceDetails):
             )
 
         return values
-
-    class Config:
-        """Config for this model."""
-
-        frozen = True

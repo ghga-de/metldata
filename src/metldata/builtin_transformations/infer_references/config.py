@@ -17,7 +17,7 @@
 """Models used to describe all inferred references based on existing references."""
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from metldata.builtin_transformations.infer_references.reference import (
     InferredReference,
@@ -30,6 +30,8 @@ class ReferenceInferenceConfig(BaseSettings):
     dictionary-based representation and the option to translate that reference map into
     a list of InferredReferences.
     """
+
+    model_config = SettingsConfigDict(extra="forbid")
 
     inferred_ref_map: dict[str, dict[str, ReferenceDetails]] = Field(
         ...,
@@ -81,8 +83,3 @@ class ReferenceInferenceConfig(BaseSettings):
                 )
 
         return inferred_refs
-
-    class Config:
-        """Pydantic config."""
-
-        extra = "forbid"
