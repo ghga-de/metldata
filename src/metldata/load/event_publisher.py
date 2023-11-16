@@ -130,7 +130,7 @@ class EventPubTranslator(EventPublisherPort):
         """
         dataset_id = MetadataDatasetID(accession=accession)
 
-        payload = json.loads(dataset_id.json())
+        payload = json.loads(dataset_id.model_dump_json())
         await self._provider.publish(
             payload=payload,
             type_=self._config.dataset_deletion_type,
@@ -147,7 +147,7 @@ class EventPubTranslator(EventPublisherPort):
             accession=accession, class_name=class_name
         )
 
-        payload = json.loads(resource_info.json())
+        payload = json.loads(resource_info.model_dump_json())
         await self._provider.publish(
             payload=payload,
             type_=self._config.resource_deletion_event_type,
@@ -162,7 +162,7 @@ class EventPubTranslator(EventPublisherPort):
 
         Fires an event that should be processed by the WPS
         """
-        payload = json.loads(dataset_overview.json())
+        payload = json.loads(dataset_overview.model_dump_json())
         await self._provider.publish(
             payload=payload,
             type_=self._config.dataset_upsertion_type,
@@ -175,7 +175,7 @@ class EventPubTranslator(EventPublisherPort):
 
         Fires an event that should be processed by MASS
         """
-        payload = json.loads(resource.json())
+        payload = json.loads(resource.model_dump_json())
         await self._provider.publish(
             payload=payload,
             type_=self._config.resource_upsertion_type,

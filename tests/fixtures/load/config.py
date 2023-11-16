@@ -37,7 +37,7 @@ def get_config(
     if sources is not None:
         for source in sources:
             if isinstance(source, BaseSettings):
-                sources_dict.update(**source.dict())
+                sources_dict.update(**source.model_dump())
             else:
                 sources_dict.update(**source)
 
