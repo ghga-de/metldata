@@ -135,7 +135,7 @@ def check_workflow_config(
     Raises:
         WorkflowConfigMismatchError:
     """
-    if workflow_config.model_json_schema() == workflow_definition.model_json_schema():
+    if isinstance(workflow_config, workflow_definition.config_cls):
         raise WorkflowConfigMismatchError(
             workflow_definition=workflow_definition, workflow_config=workflow_config
         )
