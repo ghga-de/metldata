@@ -180,8 +180,8 @@ def get_package_details() -> PackageDetails:
     description = read_package_description()
     config_description = generate_config_docs()
     return PackageDetails(
-        **header.model_dump(),
-        **name.model_dump(),
+        **header.dict(),
+        **name.dict(),
         description=description,
         config_description=config_description,
         design_description=read_design_description(),
