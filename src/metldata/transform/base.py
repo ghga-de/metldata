@@ -104,7 +104,6 @@ class TransformationDefinition(Generic[Config]):
             + " MetadataModelTransformationError if the transformation fails."
         ),
     )
-    # FIXME type[MetadataTransformer[Config]]: TypeError: '_GenericAlias' object cannot be converted to 'PyType'
     metadata_transformer_factory: type[MetadataTransformer] = Field(
         ...,
         description=(
