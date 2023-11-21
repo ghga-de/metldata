@@ -31,7 +31,6 @@ class ArtifactEventConfig(BaseModel):
         ),
     )
 
-    # pylint: disable=no-self-argument
     @field_validator("artifact_topic_prefix")
     def artifact_topic_prefix_must_not_contain_dots(cls, value: str):
         """Validate that artifact topic prefix does not contain dots."""

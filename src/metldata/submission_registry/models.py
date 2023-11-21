@@ -105,7 +105,6 @@ class Submission(SubmissionHeader):
 
         return sorted_history[-1].new_status
 
-    # pylint: disable=no-self-argument
     @field_validator("accession_map")
     def check_accession_uniqueness(cls, value: AccessionMap) -> AccessionMap:
         """Check that no accessions are re-used accross classes."""

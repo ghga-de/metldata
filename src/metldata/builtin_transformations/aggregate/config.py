@@ -37,7 +37,6 @@ class AggregationOperation(BaseModel):
     visit_only_once: Optional[list[str]] = None
     function: type[AggregationFunction]
 
-    # pylint: disable=no-self-argument
     @model_validator(mode="before")
     def lookup_operation(cls, values: dict) -> dict:
         """Replaces operation strings with operation types."""

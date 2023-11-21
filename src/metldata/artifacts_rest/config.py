@@ -30,7 +30,6 @@ class ArtifactsRestConfig(BaseSettings):
         description="Information for artifacts to be queryable via the Artifacts REST API.",
     )
 
-    # pylint: disable=no-self-argument
     @field_validator("artifact_infos")
     def validate_artifact_info_names(
         cls, value: list[ArtifactInfo]

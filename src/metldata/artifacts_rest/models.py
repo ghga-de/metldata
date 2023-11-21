@@ -74,7 +74,6 @@ class ArtifactInfo(BaseModel):
         ),
     )
 
-    # pylint: disable=no-self-argument
     @field_validator("resource_classes")
     def check_resource_class_names(
         cls, value: dict[str, ArtifactResourceClass]

@@ -46,7 +46,6 @@ class SlotMergingConfig(BaseSettings):
         ],
     )
 
-    # pylint: disable=no-self-argument
     @field_validator("merge_instructions")
     def validate_merge_instructions(
         cls, filtered_merge_instructions: list[SlotMergeInstruction]

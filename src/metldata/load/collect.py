@@ -40,7 +40,6 @@ class ArtifactCollectorConfig(ArtifactEventConfig):
         ),
     )
 
-    # pylint: disable=no-self-argument
     @field_validator("artifact_types")
     def artifact_types_must_not_contain_dots(cls, value: list[str]):
         """Validate that artifact types do not contain dots."""
