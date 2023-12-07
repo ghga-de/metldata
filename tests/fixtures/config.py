@@ -15,11 +15,11 @@
 #
 
 from collections.abc import Generator
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import NamedTemporaryFile
 
 import pytest
 
-from metldata.config import SubmissionConfig
+from metldata.accession_registry.config import Config as AccessionRegistryConfig
 from tests.fixtures.metadata_models import VALID_MINIMAL_MODEL_EXAMPLE_PATH
 
 PREFIX_MAPPING = {
@@ -31,14 +31,11 @@ PREFIX_MAPPING = {
 
 
 @pytest.fixture
-def config_sub_fixture() -> Generator[SubmissionConfig, None, None]:
+def config_accession_store() -> Generator[AccessionRegistryConfig, None, None]:
     """Generate a test config."""
 
-    with TemporaryDirectory() as submission_store_dir:
-        with NamedTemporaryFile() as accession_store_path:
-            yield SubmissionConfig(  # type: ignore
-                metadata_model_path=VALID_MINIMAL_MODEL_EXAMPLE_PATH,
-                submission_store_dir=submission_store_dir,  # type: ignore
-                accession_store_path=accession_store_path.name,  # type: ignore
-                prefix_mapping=PREFIX_MAPPING,
-            )
+    with NamedTemporaryFile() as accession_store_path:
+        yield AccessionRegistryConfig(
+            accession_store_path=accession_store_path.name,
+            prefix_mapping=PREFIX_MAPPING,
+        )

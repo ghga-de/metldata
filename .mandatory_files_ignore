@@ -3,3 +3,7 @@
 
 .github/workflows/dev_cd.yaml
 scripts/script_utils/fastapi_app_location.py
+.description.md
+.design.md
+config_schema.json
+example_config.yaml

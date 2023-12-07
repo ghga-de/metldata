@@ -25,7 +25,6 @@ from metldata.builtin_transformations.delete_slots import SLOT_DELETION_TRANSFOR
 from metldata.builtin_transformations.infer_references import (
     REFERENCE_INFERENCE_TRANSFORMATION,
 )
-from metldata.builtin_workflows.ghga_archive import GHGA_ARCHIVE_WORKFLOW
 from metldata.custom_types import Json
 from metldata.event_handling.models import SubmissionAnnotation
 from metldata.model_utils.essentials import MetadataModel
@@ -155,7 +154,6 @@ def _read_all_test_cases(
 
 WORKFLOWS_BY_NAME: dict[str, WorkflowDefinition] = {
     "example_workflow": EXAMPLE_WORKFLOW_DEFINITION,
-    "ghga_archive_workflow": GHGA_ARCHIVE_WORKFLOW,
 }
 
 WORKFLOW_TEST_CASES = _read_all_test_cases(workflows_by_name=WORKFLOWS_BY_NAME)
