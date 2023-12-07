@@ -19,7 +19,6 @@
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.event_handling.models import SubmissionAnnotation
 from metldata.schemapack_.builtin_transformations.null.config import NullConfig
 from metldata.schemapack_.transform.base import (
     DataTransformer,
@@ -41,14 +40,11 @@ class NullTransformer(DataTransformer[NullConfig]):
     """A Null transformer that returns the input model and data unchanged. Useful e.g.
     for testing."""
 
-    def transform(
-        self, *, data: DataPack, annotation: SubmissionAnnotation
-    ) -> DataPack:
+    def transform(self, data: DataPack) -> DataPack:
         """Transforms data.
 
         Args:
             data: The data as DataPack to be transformed.
-            annotation: The annotation on the data.
 
         Raises:
             DataTransformationError:

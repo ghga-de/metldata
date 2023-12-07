@@ -33,7 +33,9 @@ from pydantic import (
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.event_handling.models import SubmissionAnnotation
+
+class ModelAssumptionError(RuntimeError):
+    """Raised when assumptions made by transformation step about a model are not met."""
 
 
 class ModelTransformationError(RuntimeError):
@@ -65,14 +67,11 @@ class DataTransformer(ABC, Generic[Config]):
         self._transformed_model = transformed_model
 
     @abstractmethod
-    def transform(
-        self, *, data: DataPack, annotation: SubmissionAnnotation
-    ) -> DataPack:
+    def transform(self, data: DataPack) -> DataPack:
         """Transforms data.
 
         Args:
             data: The data as DataPack to be transformed.
-            annotation: The annotation on the data.
 
         Raises:
             DataTransformationError:
