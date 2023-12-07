@@ -43,9 +43,9 @@ async def run_workflow_on_source_event(
 
     Args:
         source_event:
-            The source event corresponding to one submission and its cotent.
+            The source event corresponding to one submission and its content.
         workflow_handler:
-            The workflow handler preconfigured with a workflow definition, a workflow
+            The workflow handler pre-configured with a workflow definition, a workflow
             config, and the original model of the source events.
         publish_artifact_func: A function for publishing artifacts.
     """
