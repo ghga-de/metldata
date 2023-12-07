@@ -168,7 +168,8 @@ def test_workflow_definition_step_order_happy():
 
 
 def test_workflow_definition_step_order_circular():
-    """Test that the step order is correctly inferred from the workflow definition."""
+    """Test that initialization of a WorkflowDefinition with a circularly dependent
+    steps fails."""
 
     workflow_definition = WorkflowDefinition(
         description="A workflow for testing.",
