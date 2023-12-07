@@ -30,5 +30,6 @@ def _get_example_data(name: str) -> DataPack:
     return load_datapack(EXAMPLE_DATA_DIR / f"{name}.datapack.yaml")
 
 
-VALID_MINIMAL_DATA = _get_example_data("valid_minimal")
+MINIMAL_DATA = _get_example_data("minimal")
+ADVANCED_DATA = _get_example_data("advanced")
 INVALID_MINIMAL_DATA = _get_example_data("invalid_minimal")

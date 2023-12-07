@@ -1,0 +1,5 @@
+inferred_relations:
+  File:
+    datasets:
+      path: "File<(files)Dataset"
+      expect_multiple: true
