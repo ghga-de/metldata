@@ -17,7 +17,6 @@
 """Modelling inferred relations."""
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-from schemapack.spec.schemapack import Cardinality
 
 from metldata.schemapack_.builtin_transformations.infer_relations.path.path import (
     RelationPath,
@@ -35,7 +34,7 @@ class RelationDetails(BaseModel):
             "The path to reconstruct the new relation based on existing relations."
         ),
     )
-    expect_multiple: bool = Field(
+    allow_multiple: bool = Field(
         True,
         description=(
             "Whether multiple target resources to expect for this relation."
@@ -46,7 +45,7 @@ class RelationDetails(BaseModel):
     )
 
 
-class InferredRelations(RelationDetails):
+class InferenceInstruction(RelationDetails):
     """A model for describing an inferred relation that is based on existing
     relations.
     """

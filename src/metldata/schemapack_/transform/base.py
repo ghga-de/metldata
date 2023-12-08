@@ -48,11 +48,11 @@ class ModelTransformationError(RuntimeError):
 class DataTransformationError(RuntimeError):
     """Raised when a transformation failed when applied to data in datapack-format.
     This exception should only be raised when the error could not have been caught
-    earlier by model assumption checks (otherwise the AssumptionsInsufficiencyError
+    earlier by model assumption checks (otherwise the EvitableTransformationError
     should be raised instead)."""
 
 
-class AssumptionsInsufficiencyError(RuntimeError):
+class EvitableTransformationError(RuntimeError):
     """Raised when an exception during the model or data transformation should have
     been caught earlier by model assumption or data validation checks."""
 

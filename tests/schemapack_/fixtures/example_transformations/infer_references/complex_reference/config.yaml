@@ -2,4 +2,4 @@ inferred_relations:
   Dataset:
     samples:
       path: "Dataset(files)>File<(files)Sample"
-      expected_multiple: true
+      allow_multiple: true

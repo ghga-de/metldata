@@ -2,4 +2,4 @@ inferred_relations:
   Experiment:
     files:
       path: "Experiment(samples)>Sample(files)>File"
-      expect_multiple: true
+      allow_multiple: true

@@ -22,7 +22,7 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from metldata.schemapack_.builtin_transformations.infer_relations.relations import (
-    InferredRelations,
+    InferenceInstruction,
     RelationDetails,
 )
 
@@ -64,20 +64,20 @@ class RelationInferenceConfig(BaseSettings):
     )
 
     @cached_property
-    def inferred_relation_list(self) -> list[InferredRelations]:
+    def inference_instructions(self) -> list[InferenceInstruction]:
         """A list of inferred relations."""
-        inferred_refs: list[InferredRelations] = []
+        inferred_refs: list[InferenceInstruction] = []
 
         for source, slot_description in self.inferred_relations.items():
             for property_name, relation_details in slot_description.items():
                 target = relation_details.path.target
                 inferred_refs.append(
-                    InferredRelations(
+                    InferenceInstruction(
                         source=source,
                         target=target,
                         path=relation_details.path,
                         new_property=property_name,
-                        expect_multiple=relation_details.expect_multiple,
+                        allow_multiple=relation_details.allow_multiple,
                     )
                 )
 
