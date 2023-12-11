@@ -91,7 +91,7 @@ class TransformationDefinition(Generic[Config]):
         ...,
         description=(
             "A function that checks the assumptions made about the input model."
-            "Raises a ModelAssumptionError if the assumptions are not met."
+            " Raises a ModelAssumptionError if the assumptions are not met."
         ),
     )
     transform_model: Callable[[SchemaPack, Config], SchemaPack] = Field(
