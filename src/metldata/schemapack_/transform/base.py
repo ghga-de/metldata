@@ -76,14 +76,14 @@ class DataTransformer(ABC, Generic[Config]):
         self,
         *,
         config: Config,
-        original_model: SchemaPack,
+        input_model: SchemaPack,
         transformed_model: SchemaPack,
     ):
-        """Initialize the transformer with config params, the original model, and the
+        """Initialize the transformer with config params, the input model, and the
         transformed model.
         """
         self._config = config
-        self._original_model = original_model
+        self._input_model = input_model
         self._transformed_model = transformed_model
 
     @abstractmethod

@@ -55,33 +55,33 @@ class TransformationHandler:
         self,
         transformation_definition: TransformationDefinition[Config],
         transformation_config: Config,
-        original_model: SchemaPack,
+        input_model: SchemaPack,
     ):
         """Initialize the TransformationHandler by checking the assumptions made on the
-        original model and transforming the model as described in the transformation
+        input model and transforming the model as described in the transformation
         definition. The transformed model is available at the `transformed_model`
         attribute.
 
         Raises:
             ModelAssumptionError:
-                if the assumptions made on the original model are not met.
+                if the assumptions made on the input model are not met.
         """
         self._definition = transformation_definition
         self._config = transformation_config
-        self._original_model = original_model
+        self._input_model = input_model
 
-        self._definition.check_model_assumptions(self._original_model, self._config)
+        self._definition.check_model_assumptions(self._input_model, self._config)
         self.transformed_model = self._definition.transform_model(
-            self._original_model, self._config
+            self._input_model, self._config
         )
         self._data_transformer = self._definition.data_transformer_factory(
             config=self._config,
-            original_model=self._original_model,
+            input_model=self._input_model,
             transformed_model=self.transformed_model,
         )
 
         self._original_data_validator = SchemaPackValidator(
-            schemapack=self._original_model
+            schemapack=self._input_model
         )
         self._transformed_data_validator = SchemaPackValidator(
             schemapack=self.transformed_model
@@ -89,7 +89,7 @@ class TransformationHandler:
 
     def transform_data(self, data: DataPack) -> DataPack:
         """Transforms data using the transformation definition. Validates the
-        original data against the original model and the transformed data
+        input data against the input model and the transformed data
         against the transformed model.
 
         Args:
@@ -144,7 +144,7 @@ def resolve_workflow_step(
     step_name: str,
     workflow_definition: WorkflowDefinition,
     workflow_config: WorkflowConfig,
-    original_model: SchemaPack,
+    input_model: SchemaPack,
 ) -> ResolvedWorkflowStep:
     """Translates a workflow step given a workflow definition and a workflow config
     into a resolved workflow step.
@@ -157,7 +157,7 @@ def resolve_workflow_step(
     transformation_handler = TransformationHandler(
         transformation_definition=workflow_step.transformation_definition,
         transformation_config=transformation_config,
-        original_model=original_model,
+        input_model=input_model,
     )
     return ResolvedWorkflowStep(
         transformation_handler=transformation_handler,
@@ -168,7 +168,7 @@ def resolve_workflow_step(
 
 def resolve_workflow(
     workflow_definition: WorkflowDefinition,
-    original_model: SchemaPack,
+    input_model: SchemaPack,
     workflow_config: WorkflowConfig,
 ) -> ResolvedWorkflow:
     """Translates a workflow definition given an input model and a workflow config into
@@ -182,7 +182,7 @@ def resolve_workflow(
     for step_name in workflow_definition.step_order:
         workflow_step = workflow_definition.steps[step_name]
         input_model = (
-            original_model
+            input_model
             if workflow_step.input is None
             else resolved_steps[
                 workflow_step.input
@@ -194,7 +194,7 @@ def resolve_workflow(
             step_name=step_name,
             workflow_definition=workflow_definition,
             workflow_config=workflow_config,
-            original_model=input_model,
+            input_model=input_model,
         )
 
     return ResolvedWorkflow(
@@ -222,7 +222,7 @@ class WorkflowHandler:
         self,
         workflow_definition: WorkflowDefinition,
         workflow_config: WorkflowConfig,
-        original_model: SchemaPack,
+        input_model: SchemaPack,
     ):
         """Initialize the WorkflowHandler with a workflow deinition, a matching
         config, and a model. The workflow definition is translated into a
@@ -230,7 +230,7 @@ class WorkflowHandler:
         """
         self._resolved_workflow = resolve_workflow(
             workflow_definition=workflow_definition,
-            original_model=original_model,
+            input_model=input_model,
             workflow_config=workflow_config,
         )
 

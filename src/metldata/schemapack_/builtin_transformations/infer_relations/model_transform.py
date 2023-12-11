@@ -16,69 +16,63 @@
 
 """Logic for transforming metadata models."""
 
-from linkml_runtime.linkml_model.meta import SlotDefinition
-
-from metldata.builtin_transformations.infer_references.reference import (
-    InferredReference,
+from schemapack.spec.schemapack import (
+    Cardinality,
+    ClassDefinition,
+    Relation,
+    SchemaPack,
 )
-from metldata.model_utils.essentials import MetadataModel
-from metldata.model_utils.manipulate import (
-    ModelManipulationError,
-    add_slot_if_not_exists,
-    upsert_class_slot,
+from schemapack.utils import FrozenDict
+
+from metldata.schemapack_.builtin_transformations.infer_relations.relations import (
+    InferenceInstruction,
 )
-from metldata.transform.base import MetadataModelTransformationError
+from metldata.schemapack_.transform.base import EvitableTransformationError
 
 
-def inferred_reference_to_slot(reference: InferredReference) -> SlotDefinition:
-    """Convert an inferred reference into a slot definition to be mounted on the
-    source class.
+def add_inferred_relations(
+    *, model: SchemaPack, instructions: list[InferenceInstruction]
+) -> SchemaPack:
+    """Add inferred relations to a model.
+
+    Args:
+        model: The model based on SchemaPack to add the inferred relations to.
+        instructions: The instructions for inferring relations.
+
+    Returns:
+        The model with the inferred relations added.
     """
-    return SlotDefinition(
-        name=reference.new_slot,
-        range=reference.target,
-        multivalued=reference.multivalued,
-        inlined=False,
-        required=True,
-    )
 
-
-def add_reference_to_model(
-    *, model: MetadataModel, reference: InferredReference
-) -> MetadataModel:
-    """Get a modified copy of the provided model with the inferred reference being
-    added.
-
-    Raises:
-            MetadataModelTransformationError:
-                if the transformation of the metadata model fails.
-    """
-    new_slot = inferred_reference_to_slot(reference)
-
-    schema_view = model.schema_view
-    try:
-        schema_view = add_slot_if_not_exists(schema_view=schema_view, new_slot=new_slot)
-        schema_view = upsert_class_slot(
-            schema_view=schema_view, class_name=reference.source, new_slot=new_slot
+    updated_class_defs: dict[str, ClassDefinition] = {}
+    for instruction in instructions:
+        class_def = (
+            updated_class_defs[instruction.source]
+            if instruction.source in updated_class_defs
+            else model.classes.get(instruction.source)
         )
-    except ModelManipulationError as error:
-        raise MetadataModelTransformationError(
-            f"Failed to add the inferred reference '{reference}' to the metadata"
-            + f" model.: {error}"
-        ) from error
 
-    return schema_view.export_model()
+        if class_def is None:
+            raise EvitableTransformationError()
 
+        new_relation = Relation.model_validate(
+            {
+                "to": instruction.target,
+                "cardinality": Cardinality.MANY_TO_MANY
+                if instruction.allow_multiple
+                else Cardinality.ONE_TO_MANY,
+            }
+        )
+        updated_class_defs[instruction.source] = ClassDefinition.model_validate(
+            {
+                "id": class_def.id,
+                "content": class_def.content,
+                "relations": {
+                    **class_def.relations,
+                    instruction.new_property: new_relation,
+                },
+            }
+        )
 
-def add_references_to_model(
-    *, model: MetadataModel, references: list[InferredReference]
-) -> MetadataModel:
-    """Transform the metadata model and return the transformed one.
-    Raises:
-            MetadataModelTransformationError:
-                if the transformation of the metadata model fails.
-    """
-    for reference in references:
-        model = add_reference_to_model(model=model, reference=reference)
-
-    return model
+    return model.model_copy(
+        update={"classes": FrozenDict({**model.classes, **updated_class_defs})}
+    )

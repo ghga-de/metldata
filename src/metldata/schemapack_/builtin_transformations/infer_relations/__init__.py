@@ -18,8 +18,6 @@
 
 
 # shortcuts:
-# pylint: disable=unused-import
-from metldata.builtin_transformations.infer_references.main import (  # noqa: F401
-    REFERENCE_INFERENCE_TRANSFORMATION,
-    ReferenceInferenceConfig,
+from metldata.schemapack_.builtin_transformations.infer_relations.main import (  # noqa: F401
+    RELATION_INFERENCE_TRANSFORMATION,
 )

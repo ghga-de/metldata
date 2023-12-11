@@ -86,16 +86,58 @@ def resolve_active_path_element(
             "Expected path element of type 'ACTIVE', but got a 'PASSIVE' one."
         )
 
-    target_resources = data.resources.get(path_element.target, {})
-    return {
-        target_resource_id
-        for target_resource_id, target_resource in target_resources.items()
-        if relation:=target_resource.relations.get(
-            path_element.property
+    source_resource = data.resources.get(path_element.source, {}).get(
+        source_resource_id
+    )
+
+    if not source_resource:
+        raise EvitableTransformationError()
+
+    target_resource_ids = source_resource.relations.get(path_element.property, [])
+    return (
+        set(target_resource_ids)
+        if isinstance(target_resource_ids, list)
+        else {target_resource_ids}
+    )
+
+
+def resolve_passive_path_element(
+    *,
+    data: DataPack,
+    source_resource_id: ResourceId,
+    path_element: RelationPathElement,
+) -> set[ResourceId]:
+    """Resolve the given relation inference path element of passive type for the given
+    source resource.
+
+    Args:
+        data:
+            The data pack to look up resources in.
+        source_resource_id:
+            The id of the resource to which the path element is applied.
+        path_element:
+            The relation inference path element to resolve. IT is assumed to be of
+            active type.
+
+    Returns:
+        A set of resource IDs that are targeted by the path element in context of the
+        given source resource.
+    """
+    if path_element.type_ != RelationPathElementType.PASSIVE:
+        raise ValueError(
+            "Expected path element of type 'PASSIVE', but got a 'ACTIVE' one."
         )
-        if relation:=(relation if isinstance(relation, list) else [relation])
-        if isinstance(relation, list)
-    }
+
+    candidate_resources = data.resources.get(path_element.target, {})
+    target_resource_ids = set()
+    for candidate_resource_id, canditate_resource in candidate_resources.items():
+        relation = canditate_resource.relations.get(path_element.property, [])
+
+        if isinstance(relation, list):
+            target_resource_ids.update(candidate_resource_id)
+        else:
+            target_resource_ids.add(candidate_resource_id)
+    return target_resource_ids
 
 
 def resolve_path_element(
@@ -117,26 +159,18 @@ def resolve_path_element(
     """
 
     if path_element.type_ == RelationPathElementType.ACTIVE:
-        target_resource_ids = data.resources[path_element.target].keys()
-        return {
-            target_resource_id
-            for target_resource_id in target_resource_ids
-            if source_resource_id
-            in data.resources[path_element.target][target_resource_id].relations.get(
-                path_element.property, []
-            )
-        }
+        return resolve_active_path_element(
+            data=data,
+            source_resource_id=source_resource_id,
+            path_element=path_element,
+        )
 
     # path element is passive:
-    target_resource_ids = data.resources[path_element.target].keys()
-    return {
-        target_resource_id
-        for target_resource_id in target_resource_ids
-        if source_resource_id
-        in data.resources[path_element.target][target_resource_id].relations.get(
-            path_element.property, []
-        )
-    }
+    return resolve_passive_path_element(
+        data=data,
+        source_resource_id=source_resource_id,
+        path_element=path_element,
+    )
 
 
 def resolve_path(
@@ -183,7 +217,7 @@ def add_inferred_relations(
         for host_resource_id, host_resource in host_resources.items():
             target_resource_ids = resolve_path(
                 data=data,
-                source_resource_id=host_resource,
+                source_resource_id=host_resource_id,
                 path=instruction.path,
             )
             updated_host_resources[host_resource_id] = host_resource.model_copy(
