@@ -105,7 +105,7 @@ class TransformationDefinition(Generic[Config]):
         ...,
         description=(
             "A class for transforming data. Raises a DataTransformationError"
-            "if the transformation fails."
+            " if the transformation fails."
         ),
     )
 
