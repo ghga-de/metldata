@@ -52,7 +52,7 @@ def test_workflow_definition_invalid_step_refs():
 
 
 def test_workflow_definition_invalid_multiple_first_steps():
-    """Test that specifing multiple steps without input raises an exeception."""
+    """Test that specifying multiple steps without input raises an exception."""
     with pytest.raises(ValidationError):
         WorkflowDefinition(
             description="A workflow for testing.",
