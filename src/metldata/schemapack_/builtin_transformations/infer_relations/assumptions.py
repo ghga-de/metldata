@@ -30,7 +30,7 @@ from metldata.schemapack_.builtin_transformations.infer_relations.relations impo
 from metldata.schemapack_.transform.base import ModelAssumptionError
 
 
-def assert_path_classes_and_relations(model: SchemaPack, path: RelationPath):
+def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPath):
     """Make sure that all classes and relations defined in the provided path exist in
     the provided model.
 
@@ -95,5 +95,5 @@ def assert_instructions_match_model(
             if the model does not fulfill the assumptions.
     """
     for instruction in instructions:
-        assert_path_classes_and_relations(model=model, path=instruction.path)
+        assert_path_classes_and_relations_exist(model=model, path=instruction.path)
         assert_new_property_not_exists(model=model, instruction=instruction)

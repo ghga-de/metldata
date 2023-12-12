@@ -1,4 +1,4 @@
-# a simple schemapack with the content schemas being embedded
+# a more advanced schemapack:
 schemapack: 0.1.0
 classes:
   File:
