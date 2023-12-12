@@ -23,6 +23,9 @@ from metldata.schemapack_.builtin_transformations.infer_relations import (
     data_transform,
     model_transform,
 )
+from metldata.schemapack_.builtin_transformations.infer_relations.assumptions import (
+    assert_instructions_match_model,
+)
 from metldata.schemapack_.builtin_transformations.infer_relations.config import (
     RelationInferenceConfig,
 )
@@ -60,7 +63,9 @@ def check_model_assumptions(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    pass
+    assert_instructions_match_model(
+        model=model, instructions=config.inference_instructions
+    )
 
 
 def transform_model(model: SchemaPack, config: RelationInferenceConfig) -> SchemaPack:
