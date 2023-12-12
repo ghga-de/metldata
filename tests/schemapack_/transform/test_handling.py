@@ -18,7 +18,6 @@
 with builtin transformations are tested here."""
 
 import pytest
-import schemapack.exceptions
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
@@ -33,6 +32,8 @@ from metldata.schemapack_.transform.base import (
     WorkflowStep,
 )
 from metldata.schemapack_.transform.handling import (
+    PostTransformValidationError,
+    PreTransformValidationError,
     TransformationHandler,
     WorkflowHandler,
 )
@@ -46,7 +47,7 @@ def test_transformation_handler_happy():
     transformation_handler = TransformationHandler(
         transformation_definition=NULL_TRANSFORMATION,
         transformation_config=NullConfig(),
-        original_model=MINIMAL_MODEL,
+        input_model=MINIMAL_MODEL,
     )
 
     # Since the null transformation was used, compare with the input:
@@ -77,7 +78,7 @@ def test_transformation_handler_assumption_error():
         _ = TransformationHandler(
             transformation_definition=transformation,
             transformation_config=NullConfig(),
-            original_model=MINIMAL_MODEL,
+            input_model=MINIMAL_MODEL,
         )
 
 
@@ -85,7 +86,7 @@ def test_transformation_handler_model_transformation_error():
     """Test using the TransformationHandling when model transformation fails."""
 
     # make transformation definition always raise an ModelAssumptionError:
-    def always_failing_transformation(original_model: SchemaPack, config: NullConfig):
+    def always_failing_transformation(input_model: SchemaPack, config: NullConfig):
         """A function that always raises a ModelTransformationError."""
         raise ModelTransformationError
 
@@ -99,7 +100,7 @@ def test_transformation_handler_model_transformation_error():
         _ = TransformationHandler(
             transformation_definition=transformation,
             transformation_config=NullConfig(),
-            original_model=MINIMAL_MODEL,
+            input_model=MINIMAL_MODEL,
         )
 
 
@@ -110,10 +111,10 @@ def test_transformation_handler_input_data_invalid():
     transformation_handler = TransformationHandler(
         transformation_definition=NULL_TRANSFORMATION,
         transformation_config=NullConfig(),
-        original_model=MINIMAL_MODEL,
+        input_model=MINIMAL_MODEL,
     )
 
-    with pytest.raises(schemapack.exceptions.ValidationError):
+    with pytest.raises(PreTransformValidationError):
         _ = transformation_handler.transform_data(INVALID_MINIMAL_DATA)
 
 
@@ -146,10 +147,10 @@ def test_transformation_handler_transformed_data_invalid():
     transformation_handler = TransformationHandler(
         transformation_definition=transformation,
         transformation_config=NullConfig(),
-        original_model=MINIMAL_MODEL,
+        input_model=MINIMAL_MODEL,
     )
 
-    with pytest.raises(schemapack.exceptions.ValidationError):
+    with pytest.raises(PostTransformValidationError):
         _ = transformation_handler.transform_data(MINIMAL_DATA)
 
 
@@ -180,7 +181,7 @@ def test_workflow_handler_happy():
         workflow_config=null_workflow.config_cls.model_validate(
             {"step1": {}, "step2": {}}
         ),
-        original_model=MINIMAL_MODEL,
+        input_model=MINIMAL_MODEL,
     )
 
     artifacts = workflow_handler.run(data=MINIMAL_DATA)

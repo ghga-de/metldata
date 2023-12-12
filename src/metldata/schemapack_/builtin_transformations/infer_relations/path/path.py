@@ -109,3 +109,11 @@ class RelationPath:
             return NotImplemented
 
         return self.path_str == other.path_str
+
+    def __repr__(self):
+        """For representation."""
+        return f"RelationPath(path_str='{self.path_str}')"
+
+    def __str__(self):
+        """For string representation."""
+        return self.path_str

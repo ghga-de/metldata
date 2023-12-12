@@ -1,0 +1,5 @@
+inferred_relations:
+  Dataset:
+    samples:
+      path: "Dataset(files)>File<(files)Sample"
+      allow_multiple: true

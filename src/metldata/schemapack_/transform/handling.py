@@ -16,6 +16,7 @@
 
 """Logic for handling Transformation."""
 
+import schemapack.exceptions
 from pydantic import BaseModel, ConfigDict
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
@@ -29,6 +30,30 @@ from metldata.schemapack_.transform.base import (
     WorkflowStep,
     WorkflowStepBase,
 )
+
+
+class PreTransformValidationError(RuntimeError):
+    """Raised when the validation of input data fails against the input model at the
+    beginning of a data transformation."""
+
+    def __init__(self, *, validation_error: schemapack.exceptions.ValidationError):
+        """Initialize with the schemapack ValidationError."""
+        super().__init__(
+            "Validation of input data failed against the input model:"
+            + f"\n{validation_error}"
+        )
+
+
+class PostTransformValidationError(RuntimeError):
+    """Raised when the validation of transformed data fails against the transformed
+    model at the end of a data transformation step."""
+
+    def __init__(self, *, validation_error: schemapack.exceptions.ValidationError):
+        """Initialize with the schemapack ValidationError."""
+        super().__init__(
+            "Validation of transformed data failed against the transformed model:"
+            + f"\n{validation_error}"
+        )
 
 
 class WorkflowConfigMismatchError(RuntimeError):
@@ -80,9 +105,7 @@ class TransformationHandler:
             transformed_model=self.transformed_model,
         )
 
-        self._original_data_validator = SchemaPackValidator(
-            schemapack=self._input_model
-        )
+        self._input_data_validator = SchemaPackValidator(schemapack=self._input_model)
         self._transformed_data_validator = SchemaPackValidator(
             schemapack=self.transformed_model
         )
@@ -96,15 +119,24 @@ class TransformationHandler:
             data: The data to be transformed.
 
         Raises:
-            schemapack.exceptions.ValidationError:
-                If validation of input data or transformed data fails against the
-                original or transformed model, respectively.
+            PreTransformValidation:
+                If validation of input data fails against the input model.
+            PostTransformValidation:
+                If validation of transformed data fails against the transformed model.
             DataTransformationError:
                 if the transformation fails.
         """
-        self._original_data_validator.validate(datapack=data)
+        try:
+            self._input_data_validator.validate(datapack=data)
+        except schemapack.exceptions.ValidationError as error:
+            raise PreTransformValidationError(validation_error=error) from error
+
         transformed_data = self._data_transformer.transform(data=data)
-        self._transformed_data_validator.validate(datapack=transformed_data)
+
+        try:
+            self._transformed_data_validator.validate(datapack=transformed_data)
+        except schemapack.exceptions.ValidationError as error:
+            raise PostTransformValidationError(validation_error=error) from error
 
         return transformed_data
 

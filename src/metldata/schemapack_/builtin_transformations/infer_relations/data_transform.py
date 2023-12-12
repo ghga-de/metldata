@@ -74,7 +74,7 @@ def resolve_active_path_element(
         source_resource_id:
             The id of the resource to which the path element is applied.
         path_element:
-            The relation inference path element to resolve. IT is assumed to be of
+            The relation inference path element to resolve. It is assumed to be of
             active type.
 
     Returns:
@@ -116,8 +116,8 @@ def resolve_passive_path_element(
         source_resource_id:
             The id of the resource to which the path element is applied.
         path_element:
-            The relation inference path element to resolve. IT is assumed to be of
-            active type.
+            The relation inference path element to resolve. It is assumed to be of
+            passive type.
 
     Returns:
         A set of resource IDs that are targeted by the path element in context of the
@@ -130,13 +130,15 @@ def resolve_passive_path_element(
 
     candidate_resources = data.resources.get(path_element.target, {})
     target_resource_ids = set()
-    for candidate_resource_id, canditate_resource in candidate_resources.items():
-        relation = canditate_resource.relations.get(path_element.property, [])
 
-        if isinstance(relation, list):
-            target_resource_ids.update(candidate_resource_id)
-        else:
+    for candidate_resource_id, candidate_resource in candidate_resources.items():
+        relation = candidate_resource.relations.get(path_element.property, [])
+
+        if (
+            isinstance(relation, list) and source_resource_id in relation
+        ) or source_resource_id == relation:
             target_resource_ids.add(candidate_resource_id)
+
     return target_resource_ids
 
 
@@ -195,12 +197,11 @@ def resolve_path(
         resource_ids = {
             target_resource_id
             for source_resource_id in resource_ids
-            for target_resource_ids in resolve_path_element(
+            for target_resource_id in resolve_path_element(
                 data=data,
                 source_resource_id=source_resource_id,
                 path_element=path_element,
             )
-            for target_resource_id in target_resource_ids
         }
 
     return resource_ids
@@ -220,17 +221,25 @@ def add_inferred_relations(
                 source_resource_id=host_resource_id,
                 path=instruction.path,
             )
+            # transform into list (as references are stored as such) and make order
+            # deterministic:
+            target_list = sorted(list(target_resource_ids))
             updated_host_resources[host_resource_id] = host_resource.model_copy(
                 update={
                     "relations": {
                         **host_resource.relations,
-                        instruction.new_property: target_resource_ids,
+                        instruction.new_property: target_list,
                     }
                 }
             )
 
         data = data.model_copy(
-            update={"resources": {**data.resources, instruction.source: host_resources}}
+            update={
+                "resources": {
+                    **data.resources,
+                    instruction.source: updated_host_resources,
+                }
+            }
         )
 
     return data
