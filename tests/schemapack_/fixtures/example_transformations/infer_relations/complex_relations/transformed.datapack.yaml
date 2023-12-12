@@ -39,6 +39,7 @@ resources:
     sample_x:
       content:
         alias: sample_x
+        description: Some sample.
       relations:
         files:
           - file_a
