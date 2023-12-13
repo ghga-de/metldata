@@ -125,7 +125,7 @@ def resolve_passive_path_element(
     """
     if path_element.type_ != RelationPathElementType.PASSIVE:
         raise ValueError(
-            "Expected path element of type 'PASSIVE', but got a 'ACTIVE' one."
+            "Expected path element of type 'PASSIVE', but got an 'ACTIVE' one."
         )
 
     candidate_resources = data.resources.get(path_element.target, {})
