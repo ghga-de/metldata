@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-"""Test the infer_reference sub-package."""
+"""Test the infer_relations sub-package."""

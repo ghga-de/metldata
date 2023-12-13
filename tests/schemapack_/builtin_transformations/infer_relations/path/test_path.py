@@ -14,17 +14,19 @@
 # limitations under the License.
 #
 
-"""Test reference utils."""
+"""Test the path module."""
 
 from contextlib import nullcontext
 
 import pytest
 from pydantic import BaseModel
 
-from metldata.builtin_transformations.infer_references.path.path import ReferencePath
-from metldata.builtin_transformations.infer_references.path.path_elements import (
-    ReferencePathElement,
-    ReferencePathElementType,
+from metldata.schemapack_.builtin_transformations.infer_relations.path.path import (
+    RelationPath,
+)
+from metldata.schemapack_.builtin_transformations.infer_relations.path.path_elements import (
+    RelationPathElement,
+    RelationPathElementType,
 )
 
 
@@ -34,10 +36,10 @@ from metldata.builtin_transformations.infer_references.path.path_elements import
         (
             "class_a(class_b)>class_b",
             [
-                ReferencePathElement(
-                    type_=ReferencePathElementType.ACTIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.ACTIVE,
                     source="class_a",
-                    slot="class_b",
+                    property="class_b",
                     target="class_b",
                 )
             ],
@@ -49,10 +51,10 @@ from metldata.builtin_transformations.infer_references.path.path_elements import
                 (class_b) >
                 class_b""",  # containing whitespaces
             [
-                ReferencePathElement(
-                    type_=ReferencePathElementType.ACTIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.ACTIVE,
                     source="class_a",
-                    slot="class_b",
+                    property="class_b",
                     target="class_b",
                 )
             ],
@@ -62,10 +64,10 @@ from metldata.builtin_transformations.infer_references.path.path_elements import
         (
             "class_a<(class_a)class_b",
             [
-                ReferencePathElement(
-                    type_=ReferencePathElementType.PASSIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.PASSIVE,
                     source="class_a",
-                    slot="class_a",
+                    property="class_a",
                     target="class_b",
                 )
             ],
@@ -75,16 +77,16 @@ from metldata.builtin_transformations.infer_references.path.path_elements import
         (
             "class_a(class_b)>class_b(class_c)>class_c",
             [
-                ReferencePathElement(
-                    type_=ReferencePathElementType.ACTIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.ACTIVE,
                     source="class_a",
-                    slot="class_b",
+                    property="class_b",
                     target="class_b",
                 ),
-                ReferencePathElement(
-                    type_=ReferencePathElementType.ACTIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.ACTIVE,
                     source="class_b",
-                    slot="class_c",
+                    property="class_c",
                     target="class_c",
                 ),
             ],
@@ -94,16 +96,16 @@ from metldata.builtin_transformations.infer_references.path.path_elements import
         (
             "class_a(class_b)>class_b<(class_b)class_c",
             [
-                ReferencePathElement(
-                    type_=ReferencePathElementType.ACTIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.ACTIVE,
                     source="class_a",
-                    slot="class_b",
+                    property="class_b",
                     target="class_b",
                 ),
-                ReferencePathElement(
-                    type_=ReferencePathElementType.PASSIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.PASSIVE,
                     source="class_b",
-                    slot="class_b",
+                    property="class_b",
                     target="class_c",
                 ),
             ],
@@ -114,13 +116,13 @@ from metldata.builtin_transformations.infer_references.path.path_elements import
 )
 def test_reference_path(
     path_str: str,
-    expected_elements: ReferencePathElement,
+    expected_elements: RelationPathElement,
     expected_source: str,
     expected_target: str,
 ):
-    """Test the ReferencePath class."""
+    """Test the RelationPath class."""
 
-    observed_path = ReferencePath(path_str=path_str)
+    observed_path = RelationPath(path_str=path_str)
     assert observed_path.elements == expected_elements
     assert observed_path.source == expected_source
     assert observed_path.target == expected_target
@@ -138,16 +140,16 @@ def test_reference_path(
     ],
 )
 def test_reference_path_pydantic(path_str: str, is_valid: bool):
-    """Test the ReferencePath class when used with pydantic."""
+    """Test the RelationPath class when used with pydantic."""
 
     class ExampleModel(BaseModel):
         """Some example model."""
 
-        path: ReferencePath
+        path: RelationPath
 
     with nullcontext() if is_valid else pytest.raises(ValueError):
         observed_path = ExampleModel(path=path_str).path  # type: ignore
 
     if is_valid:
-        expected_path = ReferencePath(path_str=path_str)
+        expected_path = RelationPath(path_str=path_str)
         assert observed_path == expected_path
