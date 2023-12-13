@@ -32,7 +32,7 @@ class RelationPath:
     The relation path has two available representation. A string-based ("path_str"
     attribute) and an element-based ("elements" attribute) one.
 
-    In the string-based representation ("path_string" attribute), the first and the last
+    In the string-based representation ("path_str" attribute), the first and the last
     word correspond the name of the source and target class, respectively. ">" and "<"
     means indicate active (left class relations the right one) and passive (the left
     class is referenced by the right one). Parentheses attached to these angles thereby
