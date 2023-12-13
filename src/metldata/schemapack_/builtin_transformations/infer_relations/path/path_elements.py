@@ -55,8 +55,8 @@ class RelationPathElement(BaseModel):
     property: str = Field(
         ...,
         description=(
-            "The name of the slot that holds the relation."
-            + " In case of a active type, the slot is part of the source class."
-            + " In case of a passive type, the slot is part of the target class."
+            "The name of the property that holds the relation."
+            + " In case of a active type, the property is part of the source class."
+            + " In case of a passive type, the property is part of the target class."
         ),
     )
