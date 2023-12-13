@@ -39,7 +39,7 @@ def assert_path_classes_and_relations(model: SchemaPack, path: RelationPath):
             if the model does not fulfill the assumptions.
     """
     for path_element in path.elements:
-        if not path_element.source in model.classes:
+        if path_element.source not in model.classes:
             raise ModelAssumptionError(
                 f"Class {path_element.source} not found in model."
             )
