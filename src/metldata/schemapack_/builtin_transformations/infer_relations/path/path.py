@@ -39,7 +39,7 @@ class RelationPath:
     indicate the property name of the referencing class. E.g. "class_a(class_b)>class_b"
     means that the source class "class_a" has a property "class_b" that references the
     target class "class_b". Or "class_a<(class_a)class_b" means that the source
-    class "class_a" is relation by the target class "class_b" via its properties
+    class "class_a" is referenced by the target class "class_b" via its properties
     "class_a". Reference paths can also involve additional classes. E.g. a string of
     "class_a<(class_a)class_b(class_c)>class_c" means that
     a relation from the source class "class_a" to the target class "class_c" can be
