@@ -66,19 +66,14 @@ class RelationInferenceConfig(BaseSettings):
     @cached_property
     def inference_instructions(self) -> list[InferenceInstruction]:
         """A list of inferred relations."""
-        inferred_refs: list[InferenceInstruction] = []
-
-        for source, slot_description in self.inferred_relations.items():
-            for property_name, relation_details in slot_description.items():
-                target = relation_details.path.target
-                inferred_refs.append(
-                    InferenceInstruction(
-                        source=source,
-                        target=target,
-                        path=relation_details.path,
-                        new_property=property_name,
-                        allow_multiple=relation_details.allow_multiple,
-                    )
-                )
-
-        return inferred_refs
+        return [
+            InferenceInstruction(
+                source=source,
+                target=relation_details.path.target,
+                path=relation_details.path,
+                new_property=property_name,
+                allow_multiple=relation_details.allow_multiple,
+            )
+            for source, slot_description in self.inferred_relations.items()
+            for property_name, relation_details in slot_description.items()
+        ]
