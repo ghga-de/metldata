@@ -59,7 +59,7 @@ class RelationPath:
     into the elements: "class_a<(class_a)class_b" and
     "class_b(class_c)>class_c".
 
-    The elements of a ReferencePath are stored in the "elements" attribute as a list
+    The elements of a RelationPath are stored in the "elements" attribute as a list
     of ReferencePathElement objects that are optimized for programmatic use.
 
     The "source" attribute provides the source class of the path while the
