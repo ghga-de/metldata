@@ -50,6 +50,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+.ruff_cache/
 prof/
 
 # Translations
@@ -131,6 +132,12 @@ dmypy.json
 
 # ignore VS Code settings:
 .vscode/
+
+# key stores
+*.key
+*.rnd
+.keystore
+.ssl/
 
 # desktop settings and thumbnails
 .DS_Store

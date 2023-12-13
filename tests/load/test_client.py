@@ -26,8 +26,11 @@ from metldata.load.client import upload_artifacts_via_http_api
 from metldata.load.collect import get_artifact_topic
 from metldata.load.config import ArtifactLoaderClientConfig
 from metldata.load.models import ArtifactResourceDict
-from tests.fixtures.event_handling import file_system_event_fixture  # noqa: F401
-from tests.fixtures.event_handling import Event, FileSystemEventFixture
+from tests.fixtures.event_handling import (
+    Event,
+    FileSystemEventFixture,
+    file_system_event_fixture,  # noqa: F401
+)
 
 EXAMPLE_ARTIFACTS: ArtifactResourceDict = {
     "example_artifact": [
@@ -48,7 +51,7 @@ async def test_upload_artifacts_via_http_api(
         artifact_types=list(EXAMPLE_ARTIFACTS.keys()),
         artifact_topic_prefix="artifact",
         loader_api_root="http://localhost:8000",
-        **file_system_event_fixture.config.dict(),
+        **file_system_event_fixture.config.model_dump(),
     )
 
     # publish artifacts:

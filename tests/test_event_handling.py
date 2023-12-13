@@ -21,11 +21,14 @@ import json
 import pytest
 from hexkit.custom_types import Ascii, JsonObject
 from hexkit.protocols.eventsub import EventSubscriberProtocol
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from metldata.event_handling.event_handling import FileSystemEventSubscriber
-from tests.fixtures.event_handling import file_system_event_fixture  # noqa: F401
-from tests.fixtures.event_handling import Event, FileSystemEventFixture
+from tests.fixtures.event_handling import (
+    Event,
+    FileSystemEventFixture,
+    file_system_event_fixture,  # noqa: F401
+)
 
 EXAMPLE_EVENTS = [
     Event(topic="topic1", type_="type1", key="key1", payload={"test1": "value1"}),
@@ -41,14 +44,10 @@ EXAMPLE_EVENTS = [
 class ConsumedEvent(BaseModel):
     """Consumed event without the key."""
 
+    model_config = ConfigDict(frozen=True)
     topic: str
     type_: str
     payload: str = Field(..., description="JSON string of the event payload.")
-
-    class Config:
-        """Pydantic model configuration."""
-
-        frozen = True
 
 
 @pytest.mark.asyncio
