@@ -14,18 +14,18 @@
 # limitations under the License.
 #
 
-"""Test reference utils."""
+"""Test the path_str module."""
 
 from contextlib import nullcontext
 from typing import Optional
 
 import pytest
 
-from metldata.builtin_transformations.infer_references.path.path_elements import (
-    ReferencePathElement,
-    ReferencePathElementType,
+from metldata.schemapack_.builtin_transformations.infer_relations.path.path_elements import (
+    RelationPathElement,
+    RelationPathElementType,
 )
-from metldata.builtin_transformations.infer_references.path.path_str import (
+from metldata.schemapack_.builtin_transformations.infer_relations.path.path_str import (
     ValidationError,
     extract_first_element,
     get_element_components,
@@ -188,11 +188,11 @@ def test_validate_string_element(string_element: str, is_valid: bool):
 @pytest.mark.parametrize(
     "string_element, expected_type",
     [
-        ("class_a(class_b)>class_b", ReferencePathElementType.ACTIVE),
-        ("class_a<(class_a)class_b", ReferencePathElementType.PASSIVE),
+        ("class_a(class_b)>class_b", RelationPathElementType.ACTIVE),
+        ("class_a<(class_a)class_b", RelationPathElementType.PASSIVE),
     ],
 )
-def test_get_element_type(string_element: str, expected_type: ReferencePathElementType):
+def test_get_element_type(string_element: str, expected_type: RelationPathElementType):
     """Test the get_element_type method."""
 
     observed_type = get_element_type(string_element=string_element)
@@ -200,22 +200,25 @@ def test_get_element_type(string_element: str, expected_type: ReferencePathEleme
 
 
 @pytest.mark.parametrize(
-    "string_element, expected_source, expected_slot, expected_target",
+    "string_element, expected_source, expected_property, expected_target",
     [
         ("class_a(class_b)>class_b", "class_a", "class_b", "class_b"),
         ("class_a<(class_a)class_b", "class_a", "class_a", "class_b"),
     ],
 )
 def test_get_element_components(
-    string_element: str, expected_source: str, expected_slot: str, expected_target: str
+    string_element: str,
+    expected_source: str,
+    expected_property: str,
+    expected_target: str,
 ):
     """Test the get_element_components method."""
 
-    observed_source, observed_slot, observed_target = get_element_components(
+    observed_source, observed_property, observed_target = get_element_components(
         string_element=string_element
     )
     assert observed_source == expected_source
-    assert observed_slot == expected_slot
+    assert observed_property == expected_property
     assert observed_target == expected_target
 
 
@@ -224,26 +227,26 @@ def test_get_element_components(
     [
         (
             "class_a(class_b)>class_b",
-            ReferencePathElement(
-                type_=ReferencePathElementType.ACTIVE,
+            RelationPathElement(
+                type_=RelationPathElementType.ACTIVE,
                 source="class_a",
-                slot="class_b",
+                property="class_b",
                 target="class_b",
             ),
         ),
         (
             "class_a<(class_a)class_b",
-            ReferencePathElement(
-                type_=ReferencePathElementType.PASSIVE,
+            RelationPathElement(
+                type_=RelationPathElementType.PASSIVE,
                 source="class_a",
-                slot="class_a",
+                property="class_a",
                 target="class_b",
             ),
         ),
     ],
 )
 def test_string_element_to_object(
-    string_element: str, expected_object: ReferencePathElement
+    string_element: str, expected_object: RelationPathElement
 ):
     """Test the string_element_to_object method."""
 
@@ -257,10 +260,10 @@ def test_string_element_to_object(
         (
             "class_a(class_b)>class_b",
             [
-                ReferencePathElement(
-                    type_=ReferencePathElementType.ACTIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.ACTIVE,
                     source="class_a",
-                    slot="class_b",
+                    property="class_b",
                     target="class_b",
                 )
             ],
@@ -268,10 +271,10 @@ def test_string_element_to_object(
         (
             "class_a<(class_a)class_b",
             [
-                ReferencePathElement(
-                    type_=ReferencePathElementType.PASSIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.PASSIVE,
                     source="class_a",
-                    slot="class_a",
+                    property="class_a",
                     target="class_b",
                 )
             ],
@@ -279,16 +282,16 @@ def test_string_element_to_object(
         (
             "class_a(class_b)>class_b(class_c)>class_c",
             [
-                ReferencePathElement(
-                    type_=ReferencePathElementType.ACTIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.ACTIVE,
                     source="class_a",
-                    slot="class_b",
+                    property="class_b",
                     target="class_b",
                 ),
-                ReferencePathElement(
-                    type_=ReferencePathElementType.ACTIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.ACTIVE,
                     source="class_b",
-                    slot="class_c",
+                    property="class_c",
                     target="class_c",
                 ),
             ],
@@ -296,16 +299,16 @@ def test_string_element_to_object(
         (
             "class_a(class_b)>class_b<(class_b)class_c",
             [
-                ReferencePathElement(
-                    type_=ReferencePathElementType.ACTIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.ACTIVE,
                     source="class_a",
-                    slot="class_b",
+                    property="class_b",
                     target="class_b",
                 ),
-                ReferencePathElement(
-                    type_=ReferencePathElementType.PASSIVE,
+                RelationPathElement(
+                    type_=RelationPathElementType.PASSIVE,
                     source="class_b",
-                    slot="class_b",
+                    property="class_b",
                     target="class_c",
                 ),
             ],
@@ -313,7 +316,7 @@ def test_string_element_to_object(
     ],
 )
 def test_path_str_to_object_elements(
-    path_str: str, expected_elements: ReferencePathElement
+    path_str: str, expected_elements: RelationPathElement
 ):
     """Test the path_str_to_object_elements method."""
 
