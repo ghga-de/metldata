@@ -37,7 +37,7 @@ class RelationPath:
     means active (left class refers the right one) and passive (the left
     class is referenced by the right one). Parentheses attached to these angles thereby
     indicate the property name of the referencing class. E.g. "class_a(class_b)>class_b"
-    means that the source class "class_a" has a property "class_b" that relations the
+    means that the source class "class_a" has a property "class_b" that references the
     target class "class_b". Or "class_a<(class_a)class_b" means that the source
     class "class_a" is relation by the target class "class_b" via its properties
     "class_a". Reference paths can also involve additional classes. E.g. a string of
