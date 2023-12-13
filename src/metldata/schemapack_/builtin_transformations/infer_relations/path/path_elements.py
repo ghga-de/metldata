@@ -36,7 +36,7 @@ class RelationPathElementType(Enum):
 
 class RelationPathElement(BaseModel):
     """A model describing an element of a relation path between classes of a
-    metadata model as further explained by the ReferencePath.
+    metadata model as further explained by the RelationPath.
     """
 
     type_: RelationPathElementType = Field(
