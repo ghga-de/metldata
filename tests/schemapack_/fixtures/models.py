@@ -22,7 +22,6 @@ from schemapack.spec.schemapack import SchemaPack
 from tests.schemapack_.fixtures.utils import BASE_DIR
 
 EXAMPLE_MODEL_DIR = BASE_DIR / "example_models"
-VALID_MINIMAL_MODEL_EXAMPLE_PATH = EXAMPLE_MODEL_DIR / "minimal_model.yaml"
 
 
 def _get_example_model(name: str) -> SchemaPack:
@@ -31,5 +30,6 @@ def _get_example_model(name: str) -> SchemaPack:
     return load_schemapack(EXAMPLE_MODEL_DIR / f"{name}.schemapack.yaml")
 
 
-VALID_MINIMAL_MODEL = _get_example_model("minimal")
-VALID_MODELS = [VALID_MINIMAL_MODEL]
+MINIMAL_MODEL = _get_example_model("minimal")
+ADVANCED_MODEL = _get_example_model("advanced")
+VALID_MODELS = [MINIMAL_MODEL]

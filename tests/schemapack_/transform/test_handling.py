@@ -18,7 +18,6 @@
 with builtin transformations are tested here."""
 
 import pytest
-import schemapack.exceptions
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
@@ -33,11 +32,13 @@ from metldata.schemapack_.transform.base import (
     WorkflowStep,
 )
 from metldata.schemapack_.transform.handling import (
+    PostTransformValidationError,
+    PreTransformValidationError,
     TransformationHandler,
     WorkflowHandler,
 )
-from tests.schemapack_.fixtures.data import INVALID_MINIMAL_DATA, VALID_MINIMAL_DATA
-from tests.schemapack_.fixtures.models import VALID_MINIMAL_MODEL
+from tests.schemapack_.fixtures.data import INVALID_MINIMAL_DATA, MINIMAL_DATA
+from tests.schemapack_.fixtures.models import MINIMAL_MODEL
 
 
 def test_transformation_handler_happy():
@@ -46,16 +47,16 @@ def test_transformation_handler_happy():
     transformation_handler = TransformationHandler(
         transformation_definition=NULL_TRANSFORMATION,
         transformation_config=NullConfig(),
-        original_model=VALID_MINIMAL_MODEL,
+        input_model=MINIMAL_MODEL,
     )
 
     # Since the null transformation was used, compare with the input:
-    assert transformation_handler.transformed_model == VALID_MINIMAL_MODEL
+    assert transformation_handler.transformed_model == MINIMAL_MODEL
 
-    transformed_data = transformation_handler.transform_data(VALID_MINIMAL_DATA)
+    transformed_data = transformation_handler.transform_data(MINIMAL_DATA)
 
     # Since the null transformation was used, compare with the input:
-    assert transformed_data == VALID_MINIMAL_DATA
+    assert transformed_data == MINIMAL_DATA
 
 
 def test_transformation_handler_assumption_error():
@@ -77,7 +78,7 @@ def test_transformation_handler_assumption_error():
         _ = TransformationHandler(
             transformation_definition=transformation,
             transformation_config=NullConfig(),
-            original_model=VALID_MINIMAL_MODEL,
+            input_model=MINIMAL_MODEL,
         )
 
 
@@ -85,7 +86,7 @@ def test_transformation_handler_model_transformation_error():
     """Test using the TransformationHandling when model transformation fails."""
 
     # make transformation definition always raise an ModelAssumptionError:
-    def always_failing_transformation(original_model: SchemaPack, config: NullConfig):
+    def always_failing_transformation(input_model: SchemaPack, config: NullConfig):
         """A function that always raises a ModelTransformationError."""
         raise ModelTransformationError
 
@@ -99,7 +100,7 @@ def test_transformation_handler_model_transformation_error():
         _ = TransformationHandler(
             transformation_definition=transformation,
             transformation_config=NullConfig(),
-            original_model=VALID_MINIMAL_MODEL,
+            input_model=MINIMAL_MODEL,
         )
 
 
@@ -110,10 +111,10 @@ def test_transformation_handler_input_data_invalid():
     transformation_handler = TransformationHandler(
         transformation_definition=NULL_TRANSFORMATION,
         transformation_config=NullConfig(),
-        original_model=VALID_MINIMAL_MODEL,
+        input_model=MINIMAL_MODEL,
     )
 
-    with pytest.raises(schemapack.exceptions.ValidationError):
+    with pytest.raises(PreTransformValidationError):
         _ = transformation_handler.transform_data(INVALID_MINIMAL_DATA)
 
 
@@ -146,11 +147,11 @@ def test_transformation_handler_transformed_data_invalid():
     transformation_handler = TransformationHandler(
         transformation_definition=transformation,
         transformation_config=NullConfig(),
-        original_model=VALID_MINIMAL_MODEL,
+        input_model=MINIMAL_MODEL,
     )
 
-    with pytest.raises(schemapack.exceptions.ValidationError):
-        _ = transformation_handler.transform_data(VALID_MINIMAL_DATA)
+    with pytest.raises(PostTransformValidationError):
+        _ = transformation_handler.transform_data(MINIMAL_DATA)
 
 
 def test_workflow_handler_happy():
@@ -180,10 +181,10 @@ def test_workflow_handler_happy():
         workflow_config=null_workflow.config_cls.model_validate(
             {"step1": {}, "step2": {}}
         ),
-        original_model=VALID_MINIMAL_MODEL,
+        input_model=MINIMAL_MODEL,
     )
 
-    artifacts = workflow_handler.run(data=VALID_MINIMAL_DATA)
+    artifacts = workflow_handler.run(data=MINIMAL_DATA)
 
     # Since a null workflow was used, compare to the input:
-    assert artifacts["step1_output"] == artifacts["step2_output"] == VALID_MINIMAL_DATA
+    assert artifacts["step1_output"] == artifacts["step2_output"] == MINIMAL_DATA

@@ -14,22 +14,4 @@
 # limitations under the License.
 #
 
-"""Valid and invalid metadata examples using the minimal model."""
-
-from schemapack.load import load_datapack
-from schemapack.spec.datapack import DataPack
-
-from tests.schemapack_.fixtures.utils import BASE_DIR
-
-EXAMPLE_DATA_DIR = BASE_DIR / "example_data"
-
-
-def _get_example_data(name: str) -> DataPack:
-    """Get example metadata."""
-
-    return load_datapack(EXAMPLE_DATA_DIR / f"{name}.datapack.yaml")
-
-
-MINIMAL_DATA = _get_example_data("minimal")
-ADVANCED_DATA = _get_example_data("advanced")
-INVALID_MINIMAL_DATA = _get_example_data("invalid_minimal")
+"""Test the infer_relations sub-package."""

@@ -17,6 +17,7 @@
 """A Null transformer that returns the input model and data unchanged. Useful e.g. for
 testing."""
 
+# shortcuts:
 from metldata.schemapack_.builtin_transformations.null.main import (  # noqa: F401
     NULL_TRANSFORMATION,
 )

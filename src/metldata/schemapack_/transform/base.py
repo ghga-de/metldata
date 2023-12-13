@@ -39,11 +39,31 @@ class ModelAssumptionError(RuntimeError):
 
 
 class ModelTransformationError(RuntimeError):
-    """Raised when a transformation failed when applied to the schemapack-based model."""
+    """Raised when a transformation failed when applied to the schemapack-based model.
+    This exception should only be raised when the error could not have been caught
+    earlier by model assumption checks (otherwise the AssumptionsInsufficiencyError
+    should be raised instead)."""
 
 
 class DataTransformationError(RuntimeError):
-    """Raised when a transformation failed when applied to data in datapack-format."""
+    """Raised when a transformation failed when applied to data in datapack-format.
+    This exception should only be raised when the error could not have been caught
+    earlier by model assumption checks (otherwise the EvitableTransformationError
+    should be raised instead)."""
+
+
+class EvitableTransformationError(RuntimeError):
+    """Raised when an exception during the model or data transformation should have
+    been caught earlier by model assumption or data validation checks."""
+
+    def __init__(self):
+        super().__init__(
+            "This unexpected error appeared during transformation, however, it should"
+            + " have been caught earlier during model assumption checks (and/or by data"
+            + " validation against the assumption-checked model). Please make sure that"
+            + " the model assumption checks guarantee the workability of the"
+            + " corresponding transformation wrt the provided model (and/or data)."
+        )
 
 
 Config = TypeVar("Config", bound=BaseModel)
@@ -56,14 +76,14 @@ class DataTransformer(ABC, Generic[Config]):
         self,
         *,
         config: Config,
-        original_model: SchemaPack,
+        input_model: SchemaPack,
         transformed_model: SchemaPack,
     ):
-        """Initialize the transformer with config params, the original model, and the
+        """Initialize the transformer with config params, the input model, and the
         transformed model.
         """
         self._config = config
-        self._original_model = original_model
+        self._input_model = input_model
         self._transformed_model = transformed_model
 
     @abstractmethod
