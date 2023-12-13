@@ -44,7 +44,7 @@ def assert_path_classes_and_relations(model: SchemaPack, path: RelationPath):
                 f"Class {path_element.source} not found in model."
             )
 
-        if not path_element.target in model.classes:
+        if path_element.target not in model.classes:
             raise ModelAssumptionError(
                 f"Class {path_element.target} not found in model."
             )
