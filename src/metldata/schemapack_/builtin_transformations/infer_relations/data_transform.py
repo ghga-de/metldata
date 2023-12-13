@@ -220,7 +220,7 @@ def add_inferred_relations(
             )
             # transform into list (as references are stored as such) and make order
             # deterministic:
-            target_list = sorted(list(target_resource_ids))
+            target_list = sorted(target_resource_ids)
             updated_host_resources[host_resource_id] = host_resource.model_copy(
                 update={
                     "relations": {
