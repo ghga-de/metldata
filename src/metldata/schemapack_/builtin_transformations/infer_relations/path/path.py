@@ -34,7 +34,7 @@ class RelationPath:
 
     In the string-based representation ("path_str" attribute), the first and the last
     word correspond to the name of the source and target class respectively. ">" and "<"
-    means indicate active (left class relations the right one) and passive (the left
+    means active (left class refers the right one) and passive (the left
     class is referenced by the right one). Parentheses attached to these angles thereby
     indicate the property name of the referencing class. E.g. "class_a(class_b)>class_b"
     means that the source class "class_a" has a property "class_b" that relations the
