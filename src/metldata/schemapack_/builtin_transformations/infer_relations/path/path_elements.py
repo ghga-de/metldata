@@ -43,7 +43,7 @@ class RelationPathElement(BaseModel):
         ...,
         description=(
             "The type of relation. Active or passive as explained in the"
-            + " ReferencePathElementType enum."
+            + " RelationPathElementType enum."
         ),
     )
     source: str = Field(
