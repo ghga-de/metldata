@@ -160,15 +160,12 @@ def resolve_path_element(
         given source resource.
     """
 
-    if path_element.type_ == RelationPathElementType.ACTIVE:
-        return resolve_active_path_element(
-            data=data,
-            source_resource_id=source_resource_id,
-            path_element=path_element,
-        )
-
-    # path element is passive:
-    return resolve_passive_path_element(
+    resolve = (
+        resolve_active_path_element
+        if path_element.type_ == RelationPathElementType.ACTIVE
+        else resolve_passive_path_element
+    )
+    return resolve(
         data=data,
         source_resource_id=source_resource_id,
         path_element=path_element,
