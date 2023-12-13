@@ -60,7 +60,7 @@ class RelationPath:
     "class_b(class_c)>class_c".
 
     The elements of a RelationPath are stored in the "elements" attribute as a list
-    of ReferencePathElement objects that are optimized for programmatic use.
+    of RelationPathElement objects that are optimized for programmatic use.
 
     The "source" attribute provides the source class of the path while the
     "target" attribute provides the target class of the path.
