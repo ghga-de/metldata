@@ -53,6 +53,20 @@ async def get_example_app_client(
 
 
 @pytest.mark.asyncio
+async def test_health_check(
+    mongodb_fixture: MongoDbFixture,  # noqa: F811
+):
+    """Test that the health check endpoint works."""
+    async with await get_example_app_client(
+        dao_factory=mongodb_fixture.dao_factory
+    ) as client:
+        response = await client.get("/health")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "OK"}
+
+
+@pytest.mark.asyncio
 async def test_artifacts_info_endpoint(
     mongodb_fixture: MongoDbFixture,  # noqa: F811
 ):
@@ -152,7 +166,11 @@ async def test_get_stats_endpoint(
     observed_stats = response.json()
     assert isinstance(observed_stats, dict)
 
-    observed_created = DateTimeUTC.fromisoformat(observed_stats.pop("created"))
+    raw_observed_created = observed_stats.pop("created")
+    if isinstance(raw_observed_created, str) and raw_observed_created.endswith("Z"):
+        raw_observed_created = raw_observed_created.replace("Z", "+00:00")
+
+    observed_created = DateTimeUTC.fromisoformat(raw_observed_created)
     assert abs((now_as_utc() - observed_created).seconds) < 5
 
     expected_stats = {

@@ -25,10 +25,10 @@ import subprocess
 import sys
 from difflib import unified_diff
 from pathlib import Path
-from typing import Any, Type
+from typing import Any
 
 import yaml
-from pydantic import BaseSettings
+
 from script_utils.cli import echo_failure, echo_success, run
 
 HERE = Path(__file__).parent.resolve()
@@ -43,7 +43,7 @@ class ValidationError(RuntimeError):
     """Raised when validation of config documentation fails."""
 
 
-def get_config_class() -> Type[BaseSettings]:
+def get_config_class():
     """
     Dynamically imports and returns the Config class from the current service.
     This makes the script service repo agnostic.
@@ -76,14 +76,16 @@ def get_schema() -> str:
     """Returns a JSON schema generated from a Config class."""
 
     config = get_dev_config()
-    return config.schema_json(indent=2)
+    return config.schema_json(indent=2)  # change eventually to .model_json_schema(...)
 
 
 def get_example() -> str:
     """Returns an example config YAML."""
 
     config = get_dev_config()
-    normalized_config_dict = json.loads(config.json())
+    normalized_config_dict = json.loads(
+        config.json()  # change eventually to .model_dump_json()
+    )
     return yaml.dump(normalized_config_dict)  # pyright: ignore
 
 
@@ -121,7 +123,7 @@ def check_docs():
     """
 
     example_expected = get_example()
-    with open(EXAMPLE_CONFIG_YAML, "r", encoding="utf-8") as example_file:
+    with open(EXAMPLE_CONFIG_YAML, encoding="utf-8") as example_file:
         example_observed = example_file.read()
     if example_expected != example_observed:
         print_diff(example_expected, example_observed)
@@ -130,7 +132,7 @@ def check_docs():
         )
 
     schema_expected = get_schema()
-    with open(CONFIG_SCHEMA_JSON, "r", encoding="utf-8") as schema_file:
+    with open(CONFIG_SCHEMA_JSON, encoding="utf-8") as schema_file:
         schema_observed = schema_file.read()
     if schema_expected != schema_observed:
         raise ValidationError(
