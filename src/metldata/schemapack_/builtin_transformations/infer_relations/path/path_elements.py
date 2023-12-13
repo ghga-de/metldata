@@ -22,7 +22,7 @@ from pydantic import BaseModel, Field
 
 
 class RelationPathElementType(Enum):
-    """The type of ReferencePathElements.
+    """The type of RelationPathElements.
 
     Can be active, meaning the source class is referencing the target class using the
     specified slot.
