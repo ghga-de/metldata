@@ -23,6 +23,9 @@ from schemapack.load import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
+from metldata.schemapack_.builtin_transformations.delete_properties.main import (
+    PROPERTY_DELETION_TRANSFORMATION,
+)
 from metldata.schemapack_.builtin_transformations.infer_relations import (
     RELATION_INFERENCE_TRANSFORMATION,
 )
@@ -35,6 +38,7 @@ EXAMPLE_TRANSFORMATION_DIR = BASE_DIR / "example_transformations"
 
 TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "infer_relations": RELATION_INFERENCE_TRANSFORMATION,
+    "delete_properties": PROPERTY_DELETION_TRANSFORMATION,
 }
 
 
