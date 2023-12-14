@@ -52,7 +52,7 @@ def delete_properties(
         content_schema = class_def.content.json_schema_dict
 
         for property in properties:
-            if not "properties" in content_schema:
+            if "properties" not in content_schema:
                 raise EvitableTransformationError()
 
             content_schema["properties"].pop(property, None)
