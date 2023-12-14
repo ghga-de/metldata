@@ -34,7 +34,7 @@ def delete_properties(
 
     Args:
         model:
-            The model based on SchemaPack to add the inferred relations to.
+            The model based on SchemaPack to delete the content properties from.
         properties_by_class:
             A dictionary mapping class names to lists of content properties to delete.
 
