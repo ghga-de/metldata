@@ -39,20 +39,20 @@ def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPat
             if the model does not fulfill the assumptions.
     """
     for path_element in path.elements:
-        if not path_element.source in model.classes:
+        if path_element.source not in model.classes:
             raise ModelAssumptionError(
                 f"Class {path_element.source} not found in model."
             )
 
-        if not path_element.target in model.classes:
+        if path_element.target not in model.classes:
             raise ModelAssumptionError(
                 f"Class {path_element.target} not found in model."
             )
 
         if path_element.type_ == RelationPathElementType.ACTIVE:
             if (
-                not path_element.property
-                in model.classes[path_element.source].relations
+                path_element.property
+                not in model.classes[path_element.source].relations
             ):
                 raise ModelAssumptionError(
                     f"Relation property {path_element.property} not found in class"
@@ -61,7 +61,7 @@ def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPat
 
             return
 
-        if not path_element.property in model.classes[path_element.target].relations:
+        if path_element.property not in model.classes[path_element.target].relations:
             raise ModelAssumptionError(
                 f"Relation property {path_element.property} not found in class"
                 f" {path_element.target}."

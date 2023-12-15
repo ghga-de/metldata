@@ -22,7 +22,7 @@ from pydantic import BaseModel, Field
 
 
 class RelationPathElementType(Enum):
-    """The type of ReferencePathElements.
+    """The type of RelationPathElements.
 
     Can be active, meaning the source class is referencing the target class using the
     specified slot.
@@ -36,14 +36,14 @@ class RelationPathElementType(Enum):
 
 class RelationPathElement(BaseModel):
     """A model describing an element of a relation path between classes of a
-    metadata model as further explained by the ReferencePath.
+    metadata model as further explained by the RelationPath.
     """
 
     type_: RelationPathElementType = Field(
         ...,
         description=(
             "The type of relation. Active or passive as explained in the"
-            + " ReferencePathElementType enum."
+            + " RelationPathElementType enum."
         ),
     )
     source: str = Field(
@@ -55,8 +55,8 @@ class RelationPathElement(BaseModel):
     property: str = Field(
         ...,
         description=(
-            "The name of the slot that holds the relation."
-            + " In case of a active type, the slot is part of the source class."
-            + " In case of a passive type, the slot is part of the target class."
+            "The name of the property that holds the relation."
+            + " In case of a active type, the property is part of the source class."
+            + " In case of a passive type, the property is part of the target class."
         ),
     )

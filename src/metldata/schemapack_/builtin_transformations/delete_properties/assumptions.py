@@ -37,13 +37,13 @@ def assert_classes_and_properties_exist(
             If the assumptions are not met.
     """
     for class_name, properties in properties_by_class.items():
-        if not class_name in model.classes:
+        if class_name not in model.classes:
             raise ModelAssumptionError(
                 f"Class {class_name} does not exist in the model."
             )
 
         for property in properties:
-            if not property in model.classes[class_name].content.json_schema_dict.get(
+            if property not in model.classes[class_name].content.json_schema_dict.get(
                 "properties", {}
             ):
                 raise ModelAssumptionError(

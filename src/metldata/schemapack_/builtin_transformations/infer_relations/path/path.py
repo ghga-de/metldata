@@ -32,14 +32,14 @@ class RelationPath:
     The relation path has two available representation. A string-based ("path_str"
     attribute) and an element-based ("elements" attribute) one.
 
-    In the string-based representation ("path_string" attribute), the first and the last
-    word correspond the name of the source and target class, respectively. ">" and "<"
-    means indicate active (left class relations the right one) and passive (the left
+    In the string-based representation ("path_str" attribute), the first and the last
+    word correspond to the name of the source and target class respectively. ">" and "<"
+    means active (left class refers the right one) and passive (the left
     class is referenced by the right one). Parentheses attached to these angles thereby
     indicate the property name of the referencing class. E.g. "class_a(class_b)>class_b"
-    means that the source class "class_a" has a property "class_b" that relations the
+    means that the source class "class_a" has a property "class_b" that references the
     target class "class_b". Or "class_a<(class_a)class_b" means that the source
-    class "class_a" is relation by the target class "class_b" via its properties
+    class "class_a" is referenced by the target class "class_b" via its properties
     "class_a". Reference paths can also involve additional classes. E.g. a string of
     "class_a<(class_a)class_b(class_c)>class_c" means that
     a relation from the source class "class_a" to the target class "class_c" can be
@@ -59,8 +59,8 @@ class RelationPath:
     into the elements: "class_a<(class_a)class_b" and
     "class_b(class_c)>class_c".
 
-    The elements of a ReferencePath are stored in the "elements" attribute as a list
-    of ReferencePathElement objects that are optimized for programmatic use.
+    The elements of a RelationPath are stored in the "elements" attribute as a list
+    of RelationPathElement objects that are optimized for programmatic use.
 
     The "source" attribute provides the source class of the path while the
     "target" attribute provides the target class of the path.

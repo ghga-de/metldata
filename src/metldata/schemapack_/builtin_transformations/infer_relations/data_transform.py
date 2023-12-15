@@ -125,7 +125,7 @@ def resolve_passive_path_element(
     """
     if path_element.type_ != RelationPathElementType.PASSIVE:
         raise ValueError(
-            "Expected path element of type 'PASSIVE', but got a 'ACTIVE' one."
+            "Expected path element of type 'PASSIVE', but got an 'ACTIVE' one."
         )
 
     candidate_resources = data.resources.get(path_element.target, {})
@@ -160,15 +160,12 @@ def resolve_path_element(
         given source resource.
     """
 
-    if path_element.type_ == RelationPathElementType.ACTIVE:
-        return resolve_active_path_element(
-            data=data,
-            source_resource_id=source_resource_id,
-            path_element=path_element,
-        )
-
-    # path element is passive:
-    return resolve_passive_path_element(
+    resolve = (
+        resolve_active_path_element
+        if path_element.type_ == RelationPathElementType.ACTIVE
+        else resolve_passive_path_element
+    )
+    return resolve(
         data=data,
         source_resource_id=source_resource_id,
         path_element=path_element,
@@ -223,7 +220,7 @@ def add_inferred_relations(
             )
             # transform into list (as references are stored as such) and make order
             # deterministic:
-            target_list = sorted(list(target_resource_ids))
+            target_list = sorted(target_resource_ids)
             updated_host_resources[host_resource_id] = host_resource.model_copy(
                 update={
                     "relations": {

@@ -34,7 +34,7 @@ def delete_properties(
 
     Args:
         model:
-            The model based on SchemaPack to add the inferred relations to.
+            The model based on SchemaPack to delete the content properties from.
         properties_by_class:
             A dictionary mapping class names to lists of content properties to delete.
 
@@ -52,7 +52,7 @@ def delete_properties(
         content_schema = class_def.content.json_schema_dict
 
         for property in properties:
-            if not "properties" in content_schema:
+            if "properties" not in content_schema:
                 raise EvitableTransformationError()
 
             content_schema["properties"].pop(property, None)

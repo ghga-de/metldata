@@ -34,9 +34,9 @@ class PropertyDeletionConfig(BaseSettings):
         ),
         examples=[
             {
-                "ClassA": ["some_slot", "another_slot"],
-                "ClassB": ["some_slot"],
-                "ClassC": ["some_slot", "yet_another_slot"],
+                "ClassA": ["some_property", "another_property"],
+                "ClassB": ["some_property"],
+                "ClassC": ["some_property", "yet_another_property"],
             }
         ],
     )
