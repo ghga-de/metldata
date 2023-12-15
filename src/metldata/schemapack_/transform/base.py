@@ -119,7 +119,7 @@ class TransformationDefinition(Generic[Config]):
         ...,
         description=(
             "A function that checks the assumptions made about the input model."
-            "Raises a ModelAssumptionError if the assumptions are not met."
+            + " Raises a ModelAssumptionError if the assumptions are not met."
         ),
     )
     transform_model: Callable[[SchemaPack, Config], SchemaPack] = Field(
@@ -133,7 +133,7 @@ class TransformationDefinition(Generic[Config]):
         ...,
         description=(
             "A class for transforming data. Raises a DataTransformationError"
-            "if the transformation fails."
+            + " if the transformation fails."
         ),
     )
 
@@ -151,7 +151,7 @@ class WorkflowStepBase(BaseModel, ABC):
         ...,
         description=(
             "The name of the workflow step from which the output is used as input"
-            " for this step. If this is the first step, set to None."
+            + " for this step. If this is the first step, set to None."
         ),
     )
 
