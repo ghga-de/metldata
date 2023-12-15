@@ -25,6 +25,7 @@ from schemapack.validation import SchemaPackValidator
 from metldata.schemapack_.transform.base import (
     Config,
     TransformationDefinition,
+    WorkflowArtifact,
     WorkflowConfig,
     WorkflowDefinition,
     WorkflowStep,
@@ -270,7 +271,7 @@ class WorkflowHandler:
             self._resolved_workflow
         )
 
-    def run(self, *, data: DataPack) -> dict[str, DataPack]:
+    def run(self, *, data: DataPack) -> dict[str, WorkflowArtifact]:
         """Run the workflow definition on data to generate artifacts."""
         transformed_data: dict[str, DataPack] = {}
         for step_name in self._resolved_workflow.step_order:
@@ -281,6 +282,10 @@ class WorkflowHandler:
             )
 
         return {
-            artifact_name: transformed_data[step_name]
+            artifact_name: WorkflowArtifact(
+                artifact_name=artifact_name,
+                data=transformed_data[step_name],
+                model=self.artifact_models[artifact_name],
+            )
             for artifact_name, step_name in self._resolved_workflow.artifacts.items()
         }

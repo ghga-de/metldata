@@ -17,14 +17,19 @@
 """Test the base module."""
 
 
+from collections import defaultdict
+
 import pytest
 from pydantic import ValidationError
 
 from metldata.schemapack_.builtin_transformations.null import NULL_TRANSFORMATION
 from metldata.schemapack_.transform.base import (
+    WorkflowArtifact,
     WorkflowDefinition,
     WorkflowStep,
 )
+from tests.schemapack_.fixtures.data import MINIMAL_DATA
+from tests.schemapack_.fixtures.models import MINIMAL_MODEL
 
 
 def test_workflow_definition_invalid_step_refs():
@@ -219,3 +224,28 @@ def test_workflow_definition_config_cls():
         == config_fields["step2"].annotation
         == NULL_TRANSFORMATION.config_cls
     )
+
+
+def test_workflow_artifact_resource_iterator():
+    """Test the resource iterator of the WorkflowArtifact model."""
+    expected_resources_by_class = {
+        "Dataset": {"example_dataset_1", "example_dataset_2"},
+        "File": {"example_file_a", "example_file_b", "example_file_c"},
+    }
+
+    artifact = WorkflowArtifact(
+        artifact_name="example_artifact", data=MINIMAL_DATA, model=MINIMAL_MODEL
+    )
+    resources = list(artifact.resource_iterator())
+
+    observed_resources_by_class = defaultdict(set)
+    for resource in resources:
+        # check that the datapacks of all resources are rooted:
+        assert resource.datapack.root
+        assert resource.class_name == resource.datapack.root.class_name
+        assert resource.resource_id == resource.datapack.root.resource_id
+
+        observed_resources_by_class[resource.class_name].add(resource.resource_id)
+
+    # make sure that all expected resources are present:
+    assert expected_resources_by_class == observed_resources_by_class

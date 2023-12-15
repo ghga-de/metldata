@@ -18,6 +18,7 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from collections.abc import Generator
 from dataclasses import dataclass
 from graphlib import CycleError, TopologicalSorter
 from typing import Callable, Generic, Optional, TypeVar
@@ -30,8 +31,15 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from schemapack.spec.datapack import DataPack
+from schemapack.integrate import integrate
+from schemapack.isolate import isolate
+from schemapack.spec.datapack import ClassName, DataPack, ResourceId
 from schemapack.spec.schemapack import SchemaPack
+from typing_extensions import TypeAlias
+
+from metldata.custom_types import Json
+
+ArtifactName: TypeAlias = str
 
 
 class ModelAssumptionError(RuntimeError):
@@ -111,7 +119,7 @@ class TransformationDefinition(Generic[Config]):
         ...,
         description=(
             "A function that checks the assumptions made about the input model."
-            " Raises a ModelAssumptionError if the assumptions are not met."
+            + " Raises a ModelAssumptionError if the assumptions are not met."
         ),
     )
     transform_model: Callable[[SchemaPack, Config], SchemaPack] = Field(
@@ -125,7 +133,7 @@ class TransformationDefinition(Generic[Config]):
         ...,
         description=(
             "A class for transforming data. Raises a DataTransformationError"
-            " if the transformation fails."
+            + " if the transformation fails."
         ),
     )
 
@@ -143,7 +151,7 @@ class WorkflowStepBase(BaseModel, ABC):
         ...,
         description=(
             "The name of the workflow step from which the output is used as input"
-            " for this step. If this is the first step, set to None."
+            + " for this step. If this is the first step, set to None."
         ),
     )
 
@@ -260,3 +268,61 @@ class WorkflowDefinition(BaseModel):
             return list(topological_sorter.static_order())
         except CycleError as exc:
             raise RuntimeError("Step definitions imply a circular dependency.") from exc
+
+
+class ArtifactResource(BaseModel):
+    """A model for one isolated resource of an artifact output by a workflow
+    in the context of specific input data."""
+
+    class_name: ClassName = Field(
+        ..., description="The name of the class of the resource."
+    )
+    resource_id: ResourceId = Field(..., description="The id of the resource.")
+    datapack: DataPack = Field(
+        ...,
+        description="A rooted datapack describing the resource and all its dependencies.",
+    )
+    integrated: Json = Field(
+        ...,
+        description="An integrated representation of the resource in JSON format.",
+    )
+
+
+class WorkflowArtifact(BaseModel):
+    """An artifact output by a workflow in the context of specific input data."""
+
+    artifact_name: ArtifactName = Field(..., description="The name of the artifact.")
+    data: DataPack = Field(
+        ...,
+        description="A datapack containing all resources of the artifact.",
+    )
+    model: SchemaPack = Field(
+        ...,
+        description="A schemapack describing the artifact.",
+    )
+
+    def resource_iterator(self) -> Generator[ArtifactResource, None, None]:
+        """Returns a Generator to iterate over the resources of the artifact.
+
+        Yields:
+            ArtifactResource objects of all classes of the artifact.
+        """
+
+        for class_name, resources in self.data.resources.items():
+            for resource_id in resources:
+                isolated_datapack = isolate(
+                    datapack=self.data,
+                    class_name=class_name,
+                    resource_id=resource_id,
+                    schemapack=self.model,
+                )
+                integrated_json = integrate(
+                    datapack=isolated_datapack,
+                    schemapack=self.model,
+                )
+                yield ArtifactResource(
+                    class_name=class_name,
+                    resource_id=resource_id,
+                    datapack=isolated_datapack,
+                    integrated=integrated_json,
+                )

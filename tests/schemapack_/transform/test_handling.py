@@ -187,4 +187,6 @@ def test_workflow_handler_happy():
     artifacts = workflow_handler.run(data=MINIMAL_DATA)
 
     # Since a null workflow was used, compare to the input:
-    assert artifacts["step1_output"] == artifacts["step2_output"] == MINIMAL_DATA
+    assert (
+        artifacts["step1_output"].data == artifacts["step2_output"].data == MINIMAL_DATA
+    )
