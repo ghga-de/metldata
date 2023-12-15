@@ -280,7 +280,7 @@ class ArtifactResource(BaseModel):
     resource_id: ResourceId = Field(..., description="The id of the resource.")
     datapack: DataPack = Field(
         ...,
-        description="A rooted datapack describing the resource an all its dependencies.",
+        description="A rooted datapack describing the resource and all its dependencies.",
     )
     integrated: Json = Field(
         ...,
