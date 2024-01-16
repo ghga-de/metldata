@@ -1,14 +1,9 @@
-
 [![tests](https://github.com/ghga-de/metldata/actions/workflows/tests.yaml/badge.svg)](https://github.com/ghga-de/metldata/actions/workflows/tests.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/ghga-de/metldata/badge.svg?branch=main)](https://coveralls.io/github/ghga-de/metldata?branch=main)
 
 # Metldata
 
 metldata - A framework for handling metadata based on ETL, CQRS, and event sourcing.
-
-## Description
-
-<!-- Please provide a short overview of the features of this service.-->
 
 ### Scope and Features:
 
@@ -63,13 +58,13 @@ We recommend using the provided Docker container.
 
 A pre-build version is available at [docker hub](https://hub.docker.com/repository/docker/ghga/metldata):
 ```bash
-docker pull ghga/metldata:1.1.0
+docker pull ghga/metldata:1.2.0
 ```
 
 Or you can build the container yourself from the [`./Dockerfile`](./Dockerfile):
 ```bash
 # Execute in the repo's root dir:
-docker build -t ghga/metldata:1.1.0 .
+docker build -t ghga/metldata:1.2.0 .
 ```
 
 For production-ready deployment, we recommend using Kubernetes, however,
@@ -77,7 +72,7 @@ for simple use cases, you could execute the service using docker
 on a single server:
 ```bash
 # The entrypoint is preconfigured:
-docker run -p 8080:8080 ghga/metldata:1.1.0 --help
+docker run -p 8080:8080 ghga/metldata:1.2.0 --help
 ```
 
 If you prefer not to use containers, you may install the service from source:
@@ -326,11 +321,54 @@ The service requires the following configuration parameters:
 
 - **`artifact_infos`** *(array)*: Information for artifacts to be queryable via the Artifacts REST API.
 
-  - **Items**: Refer to *[#/$defs/ArtifactInfo](#$defs/ArtifactInfo)*.
+  - **Items**: Refer to *[#/$defs/ArtifactInfo](#%24defs/ArtifactInfo)*.
 
 - **`loader_token_hashes`** *(array)*: Hashes of tokens used to authenticate for loading artifact.
 
   - **Items** *(string)*
+
+## Definitions
+
+
+- <a id="%24defs/AnchorPoint"></a>**`AnchorPoint`** *(object)*: A model for describing an anchor point for the specified target class.
+
+  - **`target_class`** *(string, required)*: The name of the class to be targeted.
+
+  - **`identifier_slot`** *(string, required)*: The name of the slot in the target class that is used as identifier.
+
+  - **`root_slot`** *(string, required)*: The name of the slot in the root class used to link to the target class.
+
+- <a id="%24defs/ArtifactInfo"></a>**`ArtifactInfo`** *(object)*: Model to describe general information on an artifact.
+Please note, it does not contain actual artifact instances derived from specific
+metadata.
+
+  - **`name`** *(string, required)*: The name of the artifact.
+
+  - **`description`** *(string, required)*: A description of the artifact.
+
+  - **`resource_classes`** *(object, required)*: A dictionary of resource classes for this artifact. The keys are the names of the classes. The values are the corresponding class models. Can contain additional properties.
+
+    - **Additional properties**: Refer to *[#/$defs/ArtifactResourceClass](#%24defs/ArtifactResourceClass)*.
+
+- <a id="%24defs/ArtifactResourceClass"></a>**`ArtifactResourceClass`** *(object)*: Model to describe a resource class of an artifact.
+
+  - **`name`** *(string, required)*: The name of the metadata class.
+
+  - **`description`**: A description of the metadata class. Default: `null`.
+
+    - **Any of**
+
+      - *string*
+
+      - *null*
+
+  - **`anchor_point`**: The anchor point for this metadata class.
+
+    - **All of**
+
+      - : Refer to *[#/$defs/AnchorPoint](#%24defs/AnchorPoint)*.
+
+  - **`json_schema`** *(object, required)*: The JSON schema for this metadata class.
 
 
 ### Usage:
@@ -360,9 +398,6 @@ of the pydantic documentation.
 
 
 ## Architecture and Design:
-<!-- Please provide an overview of the architecture and design of the code base.
-Mention anything that deviates from the standard triple hexagonal architecture and
-the corresponding structure. -->
 
 The framework uses a combination of ETL, CQRS, and event sourcing. Currently it is
 designed to mostly run as a CLI application for managing metadata on the local file
