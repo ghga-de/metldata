@@ -1,19 +1,19 @@
 [project]
-# please adapt to package name
-name = "my_microservice"
-version = "0.1.0"
-description = "My-Microservice - a short description"
+name = "metldata"
+version = "1.2.0"
+description = "metldata - A framework for handling metadata based on ETL, CQRS, and event sourcing."
 dependencies = [
-    "typer >= 0.9.0",
-    "ghga-service-commons[api] >= 1.2.0",
-    "ghga-event-schemas >= 1.0.0",
-    "hexkit[akafka,s3,mongodb] >= 1.1.0"
+    "hexkit[akafka,mongodb]~=1.0.0",
+    "ghga-service-commons[api,auth]~=1.1.0",
+    "ghga-event-schemas~=1.0.0",
+    "typer~=0.9.0",
+    "linkml==1.6.1",
+    "linkml-runtime==1.6.0",
+    "linkml-validator==0.4.5",
 ]
 
 [project.urls]
-# please adapt to package name
-Repository = "https://github.com/ghga-de/my-microservice"
+Repository = "https://github.com/ghga-de/metldata"
 
 [project.scripts]
-# please adapt to package name
-my-microservice = "my_microservice.__main__:run"
+metldata = "metldata.__main__:run"
