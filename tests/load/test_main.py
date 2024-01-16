@@ -109,14 +109,29 @@ async def test_load_artifacts_endpoint_happy(
 
     # check that the summary statistics has been created:
     expected_resource_stats = {
-        "DataAccessPolicy": {"count": 1},
-        "Dataset": {"count": 2},
-        "DataAccessCommittee": {"count": 1},
         "StudyFile": {
             "count": 3,
             "stats": {"format": [{"value": "FASTQ", "count": 3}]},
         },
         "Study": {"count": 1},
+        "Analysis": {"count": 0},
+        "AnalysisProcess": {"count": 0},
+        "Biospecimen": {"count": 0},
+        "SequencingExperiment": {"count": 0},
+        "SampleFile": {"count": 0},
+        "Condition": {"count": 0},
+        "SequencingProtocol": {"count": 0},
+        "Sample": {"count": 0},
+        "SequencingProcessFile": {"count": 0},
+        "Dataset": {"count": 2},
+        "AnalysisProcessOutputFile": {"count": 0},
+        "SequencingProcess": {"count": 0},
+        "Publication": {"count": 0},
+        "DataAccessPolicy": {"count": 1},
+        "Individual": {"count": 0},
+        "Trio": {"count": 0},
+        "DataAccessCommittee": {"count": 1},
+        "LibraryPreparationProtocol": {"count": 0},
         "EmbeddedDataset": {"count": 2},
     }
     stats_dao = await joint_fixture.mongodb.dao_factory.get_dao(
