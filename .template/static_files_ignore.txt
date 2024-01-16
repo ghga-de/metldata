@@ -4,6 +4,7 @@
 scripts/update_openapi_docs.py
 
 .github/workflows/check_openapi_spec.yaml
+.github/workflows/check_readme.yaml
 
 .pre-commit-config.yaml
 .ruff.toml
