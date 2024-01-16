@@ -52,7 +52,6 @@ async def test_load_artifacts_endpoint_happy(
     joint_fixture: JointFixture,  # noqa: F811
 ):
     """Test the happy path of using the load artifacts endpoint."""
-
     async with joint_fixture.kafka.record_events(
         in_topic=joint_fixture.config.dataset_change_event_topic
     ) as dataset_recorder:
@@ -217,7 +216,6 @@ async def test_load_artifacts_endpoint_invalid_resources(
     joint_fixture: JointFixture,  # noqa: F811
 ):
     """Test using the load artifacts endpoint with resources of unknown artifacts."""
-
     # load example artifacts resources:
     unknown_artifact_resources = {
         "unknown_artifact": [list(EXAMPLE_ARTIFACTS.values())[0]]  # noqa: RUF015
@@ -235,7 +233,6 @@ async def test_load_artifacts_endpoint_invalid_token(
     joint_fixture: JointFixture,  # noqa: F811
 ):
     """Test that using the load artifacts endpoint with an invalid token fails."""
-
     invalid_token = generate_token()
 
     # load artifact resources with invalid token:
@@ -252,7 +249,6 @@ async def test_file_slot_transformation(
     joint_fixture: JointFixture,  # noqa: F811
 ):
     """Test that file slots are discovered and file extensions are extracted correctly"""
-
     with open(EMBEDDED_DATASET_TEST_PATH, encoding="utf-8") as file:
         embedded_datasets = json.load(file)
 

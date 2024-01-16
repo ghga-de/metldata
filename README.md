@@ -51,6 +51,7 @@ The associated accessions stay available so that user are informed that the asso
 data is not available anymore. The guarantees for immutability and stability of
 accessions are not violated, however, data might become unavailable.
 
+
 ## Installation
 
 We recommend using the provided Docker container.
@@ -550,7 +551,6 @@ old version to a newer version. Multiple migration scripts may be
 combined to obtain a metadata representation that complies with the
 newest version. The migration can be implemented as a transformation
 that is applied to the source events as explained above.
-
 
 
 ## Development

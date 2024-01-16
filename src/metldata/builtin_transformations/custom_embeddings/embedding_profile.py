@@ -18,8 +18,6 @@
 
 from __future__ import annotations
 
-from typing import Optional, Union
-
 from pydantic import BaseModel, Field
 
 
@@ -38,10 +36,10 @@ class EmbeddingProfile(BaseModel):
     source_class: str = Field(
         ..., description="The class to which the this embedding profile applies."
     )
-    description: Optional[str] = Field(
+    description: str | None = Field(
         ..., description="Description of the transformed class with embeddings."
     )
-    embedded_references: dict[str, Union[str, EmbeddingProfile]] = Field(
+    embedded_references: dict[str, str | EmbeddingProfile] = Field(
         ...,
         description=(
             "The references embedded into the target class."
