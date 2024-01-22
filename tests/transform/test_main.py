@@ -86,7 +86,7 @@ async def test_run_workflow_on_all_source_events(
     await run_workflow_on_all_source_events(
         event_config=event_config,
         workflow_definition=EXAMPLE_WORKFLOW_DEFINITION,
-        worflow_config=EXAMPLE_WORKFLOW_TEST_CASE.config,
+        workflow_config=EXAMPLE_WORKFLOW_TEST_CASE.config,
         original_model=EXAMPLE_WORKFLOW_TEST_CASE.original_model,
     )
 
