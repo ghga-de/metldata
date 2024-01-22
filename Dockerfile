@@ -14,7 +14,7 @@
 # limitations under the License.
 
 ## creating building container
-FROM python:3.10-slim AS builder
+FROM python:3.10.9-slim-bullseye AS builder
 # update and install dependencies
 RUN apt update
 RUN apt upgrade -y
@@ -26,14 +26,18 @@ WORKDIR /service
 RUN python -m build
 
 # creating running container
-FROM python:3.10-slim
+FROM python:3.10.9-slim-bullseye
 # update and install dependencies
 RUN apt update
 RUN apt upgrade -y
 # copy and install wheel
 WORKDIR /service
+COPY --from=builder /service/lock/requirements.txt /service
+RUN pip install --no-deps -r requirements.txt
+RUN rm requirements.txt
 COPY --from=builder /service/dist/ /service
-RUN pip install *.whl
+RUN pip install --no-deps *.whl
+RUN rm *.whl
 # create new user and execute as that user
 RUN useradd --create-home appuser
 WORKDIR /home/appuser
