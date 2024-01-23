@@ -1,7 +1,3 @@
-<!-- Please provide an overview of the architecture and design of the code base.
-Mention anything that deviates from the standard triple hexagonal architecture and
-the corresponding structure. -->
-
 The framework uses a combination of ETL, CQRS, and event sourcing. Currently it is
 designed to mostly run as a CLI application for managing metadata on the local file
 system. However, later, it will be translated into a microservice based-architecture.
