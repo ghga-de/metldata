@@ -16,9 +16,21 @@
 
 """"Shared fixtures"""
 
-from hexkit.providers.mongodb.testutils import get_mongodb_fixture
-from hexkit.providers.testing.utils import get_event_loop
+import asyncio
 
-event_loop = get_event_loop(scope="session")
+import pytest
+from hexkit.providers.mongodb.testutils import get_mongodb_fixture
+
+
+def event_loop_fixture():
+    """Event loop fixture for when an event loop is needed beyond function scope."""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    asyncio.set_event_loop(loop)
+    yield loop
+    loop.close()
+    asyncio.set_event_loop(None)
+
+
+event_loop = pytest.fixture(fixture_function=event_loop_fixture, scope="session")
 
 mongodb_session = get_mongodb_fixture(scope="session")

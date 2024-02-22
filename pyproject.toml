@@ -25,9 +25,9 @@ name = "metldata"
 version = "1.2.0"
 description = "metldata - A framework for handling metadata based on ETL, CQRS, and event sourcing."
 dependencies = [
-    "hexkit[akafka,mongodb]~=1.0.0",
-    "ghga-service-commons[api,auth]~=1.1.0",
-    "ghga-event-schemas~=1.0.0",
+    "hexkit[akafka,mongodb]~=2.1.1",
+    "ghga-service-commons[api,auth]~=2.0.1",
+    "ghga-event-schemas~=3.0.0",
     "typer~=0.9.0",
     "linkml==1.6.1",
     "linkml-runtime==1.6.0",
