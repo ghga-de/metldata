@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-""""Shared fixtures"""
+"""Shared fixtures"""
 
 import asyncio
 

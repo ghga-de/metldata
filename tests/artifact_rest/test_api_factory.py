@@ -16,7 +16,6 @@
 
 """Test the api_factory module."""
 
-
 import httpx
 import pytest
 from fastapi import FastAPI
