@@ -334,11 +334,54 @@ The service requires the following configuration parameters:
 
 - **`artifact_infos`** *(array)*: Information for artifacts to be queryable via the Artifacts REST API.
 
-  - **Items**: Refer to *[#/$defs/ArtifactInfo](#$defs/ArtifactInfo)*.
+  - **Items**: Refer to *[#/$defs/ArtifactInfo](#%24defs/ArtifactInfo)*.
 
 - **`loader_token_hashes`** *(array)*: Hashes of tokens used to authenticate for loading artifact.
 
   - **Items** *(string)*
+
+## Definitions
+
+
+- <a id="%24defs/AnchorPoint"></a>**`AnchorPoint`** *(object)*: A model for describing an anchor point for the specified target class.
+
+  - **`target_class`** *(string, required)*: The name of the class to be targeted.
+
+  - **`identifier_slot`** *(string, required)*: The name of the slot in the target class that is used as identifier.
+
+  - **`root_slot`** *(string, required)*: The name of the slot in the root class used to link to the target class.
+
+- <a id="%24defs/ArtifactInfo"></a>**`ArtifactInfo`** *(object)*: Model to describe general information on an artifact.
+Please note, it does not contain actual artifact instances derived from specific
+metadata.
+
+  - **`name`** *(string, required)*: The name of the artifact.
+
+  - **`description`** *(string, required)*: A description of the artifact.
+
+  - **`resource_classes`** *(object, required)*: A dictionary of resource classes for this artifact. The keys are the names of the classes. The values are the corresponding class models. Can contain additional properties.
+
+    - **Additional properties**: Refer to *[#/$defs/ArtifactResourceClass](#%24defs/ArtifactResourceClass)*.
+
+- <a id="%24defs/ArtifactResourceClass"></a>**`ArtifactResourceClass`** *(object)*: Model to describe a resource class of an artifact.
+
+  - **`name`** *(string, required)*: The name of the metadata class.
+
+  - **`description`**: A description of the metadata class. Default: `null`.
+
+    - **Any of**
+
+      - *string*
+
+      - *null*
+
+  - **`anchor_point`**: The anchor point for this metadata class.
+
+    - **All of**
+
+      - : Refer to *[#/$defs/AnchorPoint](#%24defs/AnchorPoint)*.
+
+  - **`json_schema`** *(object, required)*: The JSON schema for this metadata class.
 
 
 ### Usage:
