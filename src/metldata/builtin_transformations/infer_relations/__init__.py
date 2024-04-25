@@ -16,7 +16,6 @@
 
 """A transformation to infer references based on existing ones in the metadata model."""
 
-
 # shortcuts:
 from metldata.builtin_transformations.infer_relations.main import (  # noqa: F401
     RELATION_INFERENCE_TRANSFORMATION,

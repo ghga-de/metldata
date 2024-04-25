@@ -16,7 +16,6 @@
 
 """A transformation to delete content properties."""
 
-
 # shortcuts:
 from metldata.builtin_transformations.delete_properties.main import (  # noqa: F401
     PROPERTY_DELETION_TRANSFORMATION,
