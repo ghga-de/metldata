@@ -26,7 +26,6 @@ EXAMPLE_DATA_DIR = BASE_DIR / "example_data"
 
 def _get_example_data(name: str) -> DataPack:
     """Get example metadata."""
-
     return load_datapack(EXAMPLE_DATA_DIR / f"{name}.datapack.yaml")
 
 

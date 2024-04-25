@@ -35,7 +35,8 @@ from metldata.transform.base import (
 
 class PreTransformValidationError(RuntimeError):
     """Raised when the validation of input data fails against the input model at the
-    beginning of a data transformation."""
+    beginning of a data transformation.
+    """
 
     def __init__(self, *, validation_error: schemapack.exceptions.ValidationError):
         """Initialize with the schemapack ValidationError."""
@@ -47,7 +48,8 @@ class PreTransformValidationError(RuntimeError):
 
 class PostTransformValidationError(RuntimeError):
     """Raised when the validation of transformed data fails against the transformed
-    model at the end of a data transformation step."""
+    model at the end of a data transformation step.
+    """
 
     def __init__(self, *, validation_error: schemapack.exceptions.ValidationError):
         """Initialize with the schemapack ValidationError."""

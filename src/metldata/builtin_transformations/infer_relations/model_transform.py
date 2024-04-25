@@ -42,7 +42,6 @@ def add_inferred_relations(
     Returns:
         The model with the inferred relations added.
     """
-
     updated_class_defs: dict[str, ClassDefinition] = {}
     for instruction in instructions:
         class_def = (

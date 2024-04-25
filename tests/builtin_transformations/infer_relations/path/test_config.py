@@ -29,7 +29,6 @@ from metldata.builtin_transformations.infer_relations.relations import (
 
 def test_config():
     """Test the RelationInferenceConfig class."""
-
     inferred_relations = {
         "class_a": {
             "class_d": {

@@ -41,7 +41,6 @@ def delete_properties(
     Returns:
         The model with the specified content properties being deleted.
     """
-
     updated_class_defs: dict[str, ClassDefinition] = {}
     for class_name, properties in properties_by_class.items():
         class_def = model.classes.get(class_name)

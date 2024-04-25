@@ -19,7 +19,6 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from collections.abc import Generator
-from dataclasses import dataclass
 from graphlib import CycleError, TopologicalSorter
 from typing import Callable, Generic, Optional, TypeVar
 
@@ -50,19 +49,22 @@ class ModelTransformationError(RuntimeError):
     """Raised when a transformation failed when applied to the schemapack-based model.
     This exception should only be raised when the error could not have been caught
     earlier by model assumption checks (otherwise the AssumptionsInsufficiencyError
-    should be raised instead)."""
+    should be raised instead).
+    """
 
 
 class DataTransformationError(RuntimeError):
     """Raised when a transformation failed when applied to data in datapack-format.
     This exception should only be raised when the error could not have been caught
     earlier by model assumption checks (otherwise the EvitableTransformationError
-    should be raised instead)."""
+    should be raised instead).
+    """
 
 
 class EvitableTransformationError(RuntimeError):
     """Raised when an exception during the model or data transformation should have
-    been caught earlier by model assumption or data validation checks."""
+    been caught earlier by model assumption or data validation checks.
+    """
 
     def __init__(self):
         super().__init__(
@@ -108,8 +110,7 @@ class DataTransformer(ABC, Generic[Config]):
         ...
 
 
-@dataclass(frozen=True)
-class TransformationDefinition(Generic[Config]):
+class TransformationDefinition(BaseModel, Generic[Config]):
     """A model for describing a transformation."""
 
     config_cls: type[Config] = Field(
@@ -188,6 +189,7 @@ class WorkflowDefinition(BaseModel):
 
     # pylint: disable=no-self-argument
     @field_validator("steps", mode="after")
+    @classmethod
     def validate_step_references(
         cls, steps: dict[str, WorkflowStep]
     ) -> dict[str, WorkflowStep]:
@@ -218,6 +220,7 @@ class WorkflowDefinition(BaseModel):
         return steps
 
     @model_validator(mode="after")
+    @classmethod
     def validate_artifact_references(cls, values):
         """Validate that artifacts reference existing workflow steps."""
         steps = values.steps
@@ -272,7 +275,8 @@ class WorkflowDefinition(BaseModel):
 
 class ArtifactResource(BaseModel):
     """A model for one isolated resource of an artifact output by a workflow
-    in the context of specific input data."""
+    in the context of specific input data.
+    """
 
     class_name: ClassName = Field(
         ..., description="The name of the class of the resource."
@@ -307,7 +311,6 @@ class WorkflowArtifact(BaseModel):
         Yields:
             ArtifactResource objects of all classes of the artifact.
         """
-
         for class_name, resources in self.data.resources.items():
             for resource_id in resources:
                 isolated_datapack = isolate(

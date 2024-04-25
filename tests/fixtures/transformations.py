@@ -65,7 +65,6 @@ def _read_test_case(
     case_name: str,
 ) -> TransformationTestCase:
     """Read a test case for a transformation."""
-
     transformation_definition = TRANSFORMATIONS_BY_NAME[transformation_name]
 
     case_dir = EXAMPLE_TRANSFORMATION_DIR / transformation_name / case_name
@@ -101,7 +100,6 @@ def _read_test_case(
 
 def _read_all_test_cases() -> list[TransformationTestCase]:
     """Read all test cases for a transformation."""
-
     return [
         _read_test_case(
             transformation_name=transformation_name,

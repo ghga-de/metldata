@@ -159,7 +159,6 @@ def resolve_path_element(
         A set of resource IDs that are targeted by the path element in context of the
         given source resource.
     """
-
     resolve = (
         resolve_active_path_element
         if path_element.type_ == RelationPathElementType.ACTIVE
@@ -186,7 +185,6 @@ def resolve_path(
         A set of resource IDs that are targeted by the path in context of the given
         source resource.
     """
-
     resource_ids: set[ResourceId] = {source_resource_id}
     for path_element in path.elements:
         # the target resources of the current iteration are the source resources of the

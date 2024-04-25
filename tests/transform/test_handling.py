@@ -15,7 +15,8 @@
 #
 
 """Test the handling module. Only edge cases that are not covered by tests
-with builtin transformations are tested here."""
+with builtin transformations are tested here.
+"""
 
 import pytest
 from schemapack.spec.datapack import DataPack
@@ -43,7 +44,6 @@ from tests.fixtures.models import MINIMAL_MODEL
 
 def test_transformation_handler_happy():
     """Test the happy path of using a TransformationHandler."""
-
     transformation_handler = TransformationHandler(
         transformation_definition=NULL_TRANSFORMATION,
         transformation_config=NullConfig(),
@@ -106,8 +106,8 @@ def test_transformation_handler_model_transformation_error():
 
 def test_transformation_handler_input_data_invalid():
     """Test the TransformationHandler when used with input data that is not valid
-    against the model."""
-
+    against the model.
+    """
     transformation_handler = TransformationHandler(
         transformation_definition=NULL_TRANSFORMATION,
         transformation_config=NullConfig(),
@@ -120,7 +120,8 @@ def test_transformation_handler_input_data_invalid():
 
 def test_transformation_handler_transformed_data_invalid():
     """Test the TransformationHandler when the transformed data fails validation
-    against the transformed model."""
+    against the transformed model.
+    """
 
     class AlwaysInvalidTransformer(DataTransformer[NullConfig]):
         """A transformer that always returns the same invalid data."""

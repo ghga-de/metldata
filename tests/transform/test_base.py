@@ -106,7 +106,6 @@ def test_workflow_definition_invalid_artifacts():
 
 def test_workflow_definition_step_order_happy():
     """Test that the step order is correctly inferred from the workflow definition."""
-
     workflow_definition = WorkflowDefinition(
         description="A workflow for testing.",
         steps={
@@ -155,8 +154,8 @@ def test_workflow_definition_step_order_happy():
 
 def test_workflow_definition_step_order_circular():
     """Test that initialization of a WorkflowDefinition with a circularly dependent
-    steps fails."""
-
+    steps fails.
+    """
     workflow_definition = WorkflowDefinition(
         description="A workflow for testing.",
         steps={
@@ -193,8 +192,8 @@ def test_workflow_definition_step_order_circular():
 
 def test_workflow_definition_config_cls():
     """Test that the config_cls of the WorkflowDefinition generates a concatenated
-    config class correctly."""
-
+    config class correctly.
+    """
     null_workflow = WorkflowDefinition(
         description="A workflow for testing.",
         steps={

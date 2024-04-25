@@ -38,7 +38,8 @@ def null_transform_model(model: SchemaPack, config: NullConfig) -> SchemaPack:
 
 class NullTransformer(DataTransformer[NullConfig]):
     """A Null transformer that returns the input model and data unchanged. Useful e.g.
-    for testing."""
+    for testing.
+    """
 
     def transform(self, data: DataPack) -> DataPack:
         """Transforms data.
@@ -53,7 +54,7 @@ class NullTransformer(DataTransformer[NullConfig]):
         return data
 
 
-NULL_TRANSFORMATION = TransformationDefinition(
+NULL_TRANSFORMATION = TransformationDefinition[NullConfig](
     config_cls=NullConfig,
     check_model_assumptions=lambda schemapack, config: None,
     transform_model=lambda schemapack, config: schemapack,

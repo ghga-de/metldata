@@ -26,7 +26,6 @@ EXAMPLE_MODEL_DIR = BASE_DIR / "example_models"
 
 def _get_example_model(name: str) -> SchemaPack:
     """Get example model."""
-
     return load_schemapack(EXAMPLE_MODEL_DIR / f"{name}.schemapack.yaml")
 
 
