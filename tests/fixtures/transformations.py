@@ -17,47 +17,43 @@
 """Transformation test cases."""
 
 from dataclasses import dataclass
-from typing import Generic, TypeVar
 
 from pydantic import BaseModel
+from schemapack.load import load_datapack, load_schemapack
+from schemapack.spec.datapack import DataPack
+from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.add_accessions import (
-    ACCESSION_ADDITION_TRANSFORMATION,
+from metldata.builtin_transformations.delete_properties.main import (
+    PROPERTY_DELETION_TRANSFORMATION,
 )
-from metldata.builtin_transformations.aggregate import AGGREGATE_TRANSFORMATION
-from metldata.builtin_transformations.custom_embeddings import (
-    CUSTOM_EMBEDDING_TRANSFORMATION,
+from metldata.builtin_transformations.infer_relations import (
+    RELATION_INFERENCE_TRANSFORMATION,
 )
-from metldata.builtin_transformations.delete_slots import SLOT_DELETION_TRANSFORMATION
-from metldata.builtin_transformations.infer_references import (
-    REFERENCE_INFERENCE_TRANSFORMATION,
-)
-from metldata.builtin_transformations.merge_slots import SLOT_MERGING_TRANSFORMATION
-from metldata.builtin_transformations.normalize_model import (
-    NORMALIZATION_TRANSFORMATION,
-)
-from metldata.custom_types import Json
-from metldata.event_handling.models import SubmissionAnnotation
-from metldata.model_utils.essentials import MetadataModel
 from metldata.transform.base import TransformationDefinition
+from tests.fixtures.data import ADVANCED_DATA
+from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR, read_yaml
 
-Config = TypeVar("Config", bound=BaseModel)
+EXAMPLE_TRANSFORMATION_DIR = BASE_DIR / "example_transformations"
+
+TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
+    "infer_relations": RELATION_INFERENCE_TRANSFORMATION,
+    "delete_properties": PROPERTY_DELETION_TRANSFORMATION,
+}
 
 
 @dataclass(frozen=True)
-class TransformationTestCase(Generic[Config]):
+class TransformationTestCase:
     """A test case for a transformation."""
 
     transformation_name: str
     case_name: str
     transformation_definition: TransformationDefinition
-    config: Config
-    original_model: MetadataModel
-    original_metadata: Json
-    metadata_annotation: SubmissionAnnotation
-    transformed_model: MetadataModel
-    transformed_metadata: Json
+    config: BaseModel
+    input_model: SchemaPack
+    input_data: DataPack
+    transformed_model: SchemaPack
+    transformed_data: DataPack
 
     def __str__(self) -> str:  # noqa: D105
         return f"{self.transformation_name}-{self.case_name}"
@@ -66,82 +62,58 @@ class TransformationTestCase(Generic[Config]):
 def _read_test_case(
     *,
     transformation_name: str,
-    transformation_definition: TransformationDefinition,
     case_name: str,
-) -> TransformationTestCase[Config]:
+) -> TransformationTestCase:
     """Read a test case for a transformation."""
 
-    case_dir = BASE_DIR / "transformations" / transformation_name / case_name
+    transformation_definition = TRANSFORMATIONS_BY_NAME[transformation_name]
+
+    case_dir = EXAMPLE_TRANSFORMATION_DIR / transformation_name / case_name
     config_path = case_dir / "config.yaml"
-    original_model_path = case_dir / "original_model.yaml"
-    original_metadata_path = case_dir / "original_metadata.yaml"
-    metadata_annotation_path = case_dir / "metadata_annotation.yaml"
-    transformed_model_path = case_dir / "transformed_model.yaml"
-    transformed_metadata_path = case_dir / "transformed_metadata.yaml"
+    input_model_path = case_dir / "input.schemapack.yaml"
+    input_data_path = case_dir / "input.datapack.yaml"
+    transformed_model_path = case_dir / "transformed.schemapack.yaml"
+    transformed_data_path = case_dir / "transformed.datapack.yaml"
+
+    input_model = (
+        load_schemapack(input_model_path)
+        if input_model_path.exists()
+        else ADVANCED_MODEL
+    )
+    input_data = (
+        load_datapack(input_data_path) if input_data_path.exists() else ADVANCED_DATA
+    )
+    transformed_model = load_schemapack(transformed_model_path)
+    transformed_data = load_datapack(transformed_data_path)
+    config = transformation_definition.config_cls(**read_yaml(config_path))
 
     return TransformationTestCase(
         transformation_name=transformation_name,
         case_name=case_name,
         transformation_definition=transformation_definition,
-        config=transformation_definition.config_cls(**read_yaml(config_path)),
-        original_model=MetadataModel.init_from_path(original_model_path),
-        original_metadata=read_yaml(original_metadata_path),
-        metadata_annotation=(
-            SubmissionAnnotation(**read_yaml(metadata_annotation_path))
-            if metadata_annotation_path.exists()
-            else SubmissionAnnotation(accession_map={})
-        ),
-        transformed_model=MetadataModel.init_from_path(transformed_model_path),
-        transformed_metadata=read_yaml(transformed_metadata_path),
+        config=config,
+        input_model=input_model,
+        input_data=input_data,
+        transformed_model=transformed_model,
+        transformed_data=transformed_data,
     )
 
 
-def _read_all_test_cases_for_a_transformation(
-    *,
-    transformation_name: str,
-    transformation_definition: TransformationDefinition,
-) -> list[TransformationTestCase]:
+def _read_all_test_cases() -> list[TransformationTestCase]:
     """Read all test cases for a transformation."""
-
-    base_dir = BASE_DIR / "transformations" / transformation_name
-    case_names = [path.name for path in base_dir.iterdir() if path.is_dir()]
 
     return [
         _read_test_case(
             transformation_name=transformation_name,
-            transformation_definition=transformation_definition,
             case_name=case_name,
         )
-        for case_name in case_names
+        for transformation_name in TRANSFORMATIONS_BY_NAME
+        for case_name in [
+            path.name
+            for path in (EXAMPLE_TRANSFORMATION_DIR / transformation_name).iterdir()
+            if path.is_dir()
+        ]
     ]
 
 
-def _read_all_test_cases(
-    *, transformations_by_name: dict[str, TransformationDefinition]
-) -> list[TransformationTestCase]:
-    """Read all test cases for the specified transformations."""
-
-    return [
-        test_case
-        for transformation_name, transformation_definition in transformations_by_name.items()
-        for test_case in _read_all_test_cases_for_a_transformation(
-            transformation_name=transformation_name,
-            transformation_definition=transformation_definition,
-        )
-    ]
-
-
-TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
-    "add_accessions": ACCESSION_ADDITION_TRANSFORMATION,
-    "infer_references": REFERENCE_INFERENCE_TRANSFORMATION,
-    "delete_slots": SLOT_DELETION_TRANSFORMATION,
-    "custom_embedding": CUSTOM_EMBEDDING_TRANSFORMATION,
-    "merge_slots": SLOT_MERGING_TRANSFORMATION,
-    "aggregate": AGGREGATE_TRANSFORMATION,
-    "normalize": NORMALIZATION_TRANSFORMATION,
-}
-
-
-TRANSFORMATION_TEST_CASES = _read_all_test_cases(
-    transformations_by_name=TRANSFORMATIONS_BY_NAME
-)
+TRANSFORMATION_TEST_CASES = _read_all_test_cases()

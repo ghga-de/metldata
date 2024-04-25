@@ -14,4 +14,10 @@
 # limitations under the License.
 #
 
-"""Re-implementation based on schemapack."""
+"""A Null transformer that returns the input model and data unchanged. Useful e.g. for
+testing."""
+
+# shortcuts:
+from metldata.builtin_transformations.null.main import (  # noqa: F401
+    NULL_TRANSFORMATION,
+)

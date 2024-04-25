@@ -16,20 +16,45 @@
 
 """Logic for handling Transformation."""
 
+import schemapack.exceptions
 from pydantic import BaseModel, ConfigDict
+from schemapack.spec.datapack import DataPack
+from schemapack.spec.schemapack import SchemaPack
+from schemapack.validation import SchemaPackValidator
 
-from metldata.custom_types import Json
-from metldata.event_handling.models import SubmissionAnnotation
-from metldata.model_utils.essentials import MetadataModel
-from metldata.model_utils.metadata_validator import MetadataValidator
 from metldata.transform.base import (
     Config,
     TransformationDefinition,
+    WorkflowArtifact,
     WorkflowConfig,
     WorkflowDefinition,
     WorkflowStep,
     WorkflowStepBase,
 )
+
+
+class PreTransformValidationError(RuntimeError):
+    """Raised when the validation of input data fails against the input model at the
+    beginning of a data transformation."""
+
+    def __init__(self, *, validation_error: schemapack.exceptions.ValidationError):
+        """Initialize with the schemapack ValidationError."""
+        super().__init__(
+            "Validation of input data failed against the input model:"
+            + f"\n{validation_error}"
+        )
+
+
+class PostTransformValidationError(RuntimeError):
+    """Raised when the validation of transformed data fails against the transformed
+    model at the end of a data transformation step."""
+
+    def __init__(self, *, validation_error: schemapack.exceptions.ValidationError):
+        """Initialize with the schemapack ValidationError."""
+        super().__init__(
+            "Validation of transformed data failed against the transformed model:"
+            + f"\n{validation_error}"
+        )
 
 
 class WorkflowConfigMismatchError(RuntimeError):
@@ -38,7 +63,7 @@ class WorkflowConfigMismatchError(RuntimeError):
     """
 
     def __init__(
-        self, workflow_definition: WorkflowDefinition, workflow_config: Config
+        self, workflow_definition: WorkflowDefinition, workflow_config: BaseModel
     ):
         """Initialize the error with the workflow definition and the config."""
         message = (
@@ -56,60 +81,65 @@ class TransformationHandler:
         self,
         transformation_definition: TransformationDefinition[Config],
         transformation_config: Config,
-        original_model: MetadataModel,
+        input_model: SchemaPack,
     ):
         """Initialize the TransformationHandler by checking the assumptions made on the
-        original model and transforming the model as described in the transformation
+        input model and transforming the model as described in the transformation
         definition. The transformed model is available at the `transformed_model`
         attribute.
 
         Raises:
             ModelAssumptionError:
-                if the assumptions made on the original model are not met.
+                if the assumptions made on the input model are not met.
         """
         self._definition = transformation_definition
         self._config = transformation_config
-        self._original_model = original_model
+        self._input_model = input_model
 
-        self._definition.check_model_assumptions(self._original_model, self._config)
+        self._definition.check_model_assumptions(self._input_model, self._config)
         self.transformed_model = self._definition.transform_model(
-            self._original_model, self._config
+            self._input_model, self._config
         )
-        self._metadata_transformer = self._definition.metadata_transformer_factory(
+        self._data_transformer = self._definition.data_transformer_factory(
             config=self._config,
-            original_model=self._original_model,
+            input_model=self._input_model,
             transformed_model=self.transformed_model,
         )
 
-        self._original_metadata_validator = MetadataValidator(
-            model=self._original_model
-        )
-        self._transformed_metadata_validator = MetadataValidator(
-            model=self.transformed_model
+        self._input_data_validator = SchemaPackValidator(schemapack=self._input_model)
+        self._transformed_data_validator = SchemaPackValidator(
+            schemapack=self.transformed_model
         )
 
-    def transform_metadata(
-        self, metadata: Json, *, annotation: SubmissionAnnotation
-    ) -> Json:
-        """Transforms metadata using the transformation definition. Validates the
-        original metadata against the original model and the transformed metadata
+    def transform_data(self, data: DataPack) -> DataPack:
+        """Transforms data using the transformation definition. Validates the
+        input data against the input model and the transformed data
         against the transformed model.
 
         Args:
-            metadata: The metadata to be transformed.
-            annotation: The annotation on the metadata.
+            data: The data to be transformed.
 
         Raises:
-            MetadataTransformationError:
+            PreTransformValidation:
+                If validation of input data fails against the input model.
+            PostTransformValidation:
+                If validation of transformed data fails against the transformed model.
+            DataTransformationError:
                 if the transformation fails.
         """
-        self._original_metadata_validator.validate(metadata)
-        transformed_metadata = self._metadata_transformer.transform(
-            metadata=metadata, annotation=annotation
-        )
-        self._transformed_metadata_validator.validate(transformed_metadata)
+        try:
+            self._input_data_validator.validate(datapack=data)
+        except schemapack.exceptions.ValidationError as error:
+            raise PreTransformValidationError(validation_error=error) from error
 
-        return transformed_metadata
+        transformed_data = self._data_transformer.transform(data=data)
+
+        try:
+            self._transformed_data_validator.validate(datapack=transformed_data)
+        except schemapack.exceptions.ValidationError as error:
+            raise PostTransformValidationError(validation_error=error) from error
+
+        return transformed_data
 
 
 class ResolvedWorkflowStep(WorkflowStepBase):
@@ -147,7 +177,7 @@ def resolve_workflow_step(
     step_name: str,
     workflow_definition: WorkflowDefinition,
     workflow_config: WorkflowConfig,
-    original_model: MetadataModel,
+    input_model: SchemaPack,
 ) -> ResolvedWorkflowStep:
     """Translates a workflow step given a workflow definition and a workflow config
     into a resolved workflow step.
@@ -160,7 +190,7 @@ def resolve_workflow_step(
     transformation_handler = TransformationHandler(
         transformation_definition=workflow_step.transformation_definition,
         transformation_config=transformation_config,
-        original_model=original_model,
+        input_model=input_model,
     )
     return ResolvedWorkflowStep(
         transformation_handler=transformation_handler,
@@ -171,7 +201,7 @@ def resolve_workflow_step(
 
 def resolve_workflow(
     workflow_definition: WorkflowDefinition,
-    original_model: MetadataModel,
+    input_model: SchemaPack,
     workflow_config: WorkflowConfig,
 ) -> ResolvedWorkflow:
     """Translates a workflow definition given an input model and a workflow config into
@@ -185,7 +215,7 @@ def resolve_workflow(
     for step_name in workflow_definition.step_order:
         workflow_step = workflow_definition.steps[step_name]
         input_model = (
-            original_model
+            input_model
             if workflow_step.input is None
             else resolved_steps[
                 workflow_step.input
@@ -197,7 +227,7 @@ def resolve_workflow(
             step_name=step_name,
             workflow_definition=workflow_definition,
             workflow_config=workflow_config,
-            original_model=input_model,
+            input_model=input_model,
         )
 
     return ResolvedWorkflow(
@@ -225,15 +255,15 @@ class WorkflowHandler:
         self,
         workflow_definition: WorkflowDefinition,
         workflow_config: WorkflowConfig,
-        original_model: MetadataModel,
+        input_model: SchemaPack,
     ):
         """Initialize the WorkflowHandler with a workflow deinition, a matching
-        config, and a metadata model. The workflow definition is translated into a
+        config, and a model. The workflow definition is translated into a
         resolved workflow.
         """
         self._resolved_workflow = resolve_workflow(
             workflow_definition=workflow_definition,
-            original_model=original_model,
+            input_model=input_model,
             workflow_config=workflow_config,
         )
 
@@ -241,25 +271,21 @@ class WorkflowHandler:
             self._resolved_workflow
         )
 
-    def run(
-        self, *, metadata: Json, annotation: SubmissionAnnotation
-    ) -> dict[str, Json]:
-        """Run the workflow definition on metadata and its annotation to generate
-        artifacts.
-        """
-        transformed_metadata: dict[str, Json] = {}
+    def run(self, *, data: DataPack) -> dict[str, WorkflowArtifact]:
+        """Run the workflow definition on data to generate artifacts."""
+        transformed_data: dict[str, DataPack] = {}
         for step_name in self._resolved_workflow.step_order:
             step = self._resolved_workflow.steps[step_name]
-            input_metadata = (
-                metadata if step.input is None else transformed_metadata[step.input]
-            )
-            transformed_metadata[
-                step_name
-            ] = step.transformation_handler.transform_metadata(
-                input_metadata, annotation=annotation
+            input_data = data if step.input is None else transformed_data[step.input]
+            transformed_data[step_name] = step.transformation_handler.transform_data(
+                input_data
             )
 
         return {
-            artifact_name: transformed_metadata[step_name]
+            artifact_name: WorkflowArtifact(
+                artifact_name=artifact_name,
+                data=transformed_data[step_name],
+                model=self.artifact_models[artifact_name],
+            )
             for artifact_name, step_name in self._resolved_workflow.artifacts.items()
         }

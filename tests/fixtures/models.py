@@ -14,4 +14,22 @@
 # limitations under the License.
 #
 
-"""Re-implementation based on schemapack."""
+"""Example models."""
+
+from schemapack.load import load_schemapack
+from schemapack.spec.schemapack import SchemaPack
+
+from tests.fixtures.utils import BASE_DIR
+
+EXAMPLE_MODEL_DIR = BASE_DIR / "example_models"
+
+
+def _get_example_model(name: str) -> SchemaPack:
+    """Get example model."""
+
+    return load_schemapack(EXAMPLE_MODEL_DIR / f"{name}.schemapack.yaml")
+
+
+MINIMAL_MODEL = _get_example_model("minimal")
+ADVANCED_MODEL = _get_example_model("advanced")
+VALID_MODELS = [MINIMAL_MODEL]
