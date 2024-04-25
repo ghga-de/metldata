@@ -1,23 +1,19 @@
-version: '3'
+version: "3"
 
 services:
   app:
     build:
       context: .
       dockerfile: ./Dockerfile
+
       args:
         # [Choice] Python version: 3, 3.8, 3.7, 3.6
         VARIANT: 3.9
-        # [Choice] Install Node.js
-        INSTALL_NODE: "true"
-        NODE_VERSION: "lts/*"
-        PACKAGE_NAME: "metldata"
-        # On Linux, you may need to update USER_UID and USER_GID below if not your local UID is not 1000.
-        USER_UID: 1000
-        USER_GID: 1000
 
     init: true
-    privileged: true
+
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
     volumes:
       - ..:/workspace:cached
@@ -28,20 +24,40 @@ services:
     # Uncomment the next line to use a non-root user for all processes.
     user: vscode
 
-    # define environment variables
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.1
     environment:
-      METLDATA_CONFIG_YAML: /workspace/.devcontainer/.dev_config.yaml
-      # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
-      # (Adding the "ports" property to this file will not forward from a Codespace.)
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
 
-      # Please remove service dependencies that are not needed:
-  mongodb:
-    image: mongo:latest
-    restart: unless-stopped
-    volumes:
-      - mongo_fs:/data/db
+  kafka:
+    image: confluentinc/cp-server:7.5.1
+    restart: always
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
-volumes:
-  postgres_fs: {}
-  s3_fs: {}
-  mongo_fs: {}
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    restart: always
+    depends_on:
+      - kafka
+      - zookeeper
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    ports:
+      - 8080:8080

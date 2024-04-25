@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2021 - 2023 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 """Check capped dependencies for newer versions."""
+
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -28,8 +29,9 @@ from script_utils import cli, deps, lock_deps
 
 REPO_ROOT_DIR = Path(__file__).parent.parent.resolve()
 PYPROJECT_TOML_PATH = REPO_ROOT_DIR / "pyproject.toml"
-DEV_DEPS_PATH = REPO_ROOT_DIR / "requirements-dev.in"
-LOCK_FILE_PATH = REPO_ROOT_DIR / "requirements-dev.txt"
+LOCK_DIR = REPO_ROOT_DIR / "lock"
+DEV_DEPS_PATH = LOCK_DIR / "requirements-dev.in"
+LOCK_FILE_PATH = LOCK_DIR / "requirements-dev.txt"
 
 
 class OutdatedDep(NamedTuple):
@@ -78,7 +80,7 @@ def get_deps_dev() -> list[Requirement]:
             for line in (line.strip() for line in dev_deps)
             if line  # skip empty lines
             and not line.startswith("#")  # skip comments
-            and "requirements-dev-common.in" not in line  # skip inclusion line
+            and "requirements-dev-template.in" not in line  # skip inclusion line
         ]
 
     return [Requirement(dependency) for dependency in dependencies]

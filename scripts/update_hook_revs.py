@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2021 - 2023 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 """Script to ensure the pre-commit hook revs match what is installed."""
+
 import re
 import sys
 from functools import partial
@@ -27,7 +28,7 @@ from script_utils import cli, lock_deps
 
 REPO_ROOT_DIR = Path(__file__).parent.parent.resolve()
 PRE_COMMIT_CFG_PATH = REPO_ROOT_DIR / ".pre-commit-config.yaml"
-LOCK_FILE_PATH = REPO_ROOT_DIR / "requirements-dev.txt"
+LOCK_FILE_PATH = REPO_ROOT_DIR / "lock" / "requirements-dev.txt"
 
 
 def make_dependency_dict(requirements: list[Requirement]) -> dict[str, str]:
@@ -48,7 +49,7 @@ def get_repl_value(match, dependencies: dict[str, str], outdated_hooks: list[str
 
         # Use the v prefix if it was used before
         if ver.startswith("v"):
-            new_ver = ver[0] + new_ver
+            new_ver = f"v{new_ver}"
 
         # Make a list of what's outdated
         if new_ver != ver:
