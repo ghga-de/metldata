@@ -20,9 +20,6 @@
 				"python.languageServer": "Pylance",
 				"python.analysis.typeCheckingMode": "basic",
 				"python.testing.pytestPath": "/usr/local/py-utils/bin/pytest",
-				"python.testing.pytestArgs": [
-					"--profile"
-				],
 				"python.testing.unittestEnabled": false,
 				"python.testing.pytestEnabled": true,
 				"editor.codeActionsOnSave": {
