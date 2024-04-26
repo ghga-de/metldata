@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2021 - 2023 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,8 +37,8 @@ EXCLUDE = [
     ".devcontainer",
     "eggs",
     ".eggs",
-    "dist",
     "build",
+    "dist",
     "develop-eggs",
     "lib",
     "lib62",
@@ -64,12 +64,15 @@ EXCLUDE = [
     ".mypy.ini",
     ".pytest_cache",
     ".editorconfig",
-    ".static_files",
-    ".static_files_ignore",
-    ".mandatory_files",
-    ".mandatory_files_ignore",
-    ".deprecated_files",
-    ".deprecated_files_ignore",
+    ".tox",
+    "venv",
+    ".venv",
+    ".template/.static_files.txt",
+    ".template/.static_files_ignore.txt",
+    ".template/.mandatory_files.txt",
+    ".template/.mandatory_files_ignore.txt",
+    ".template/.deprecated_files.txt",
+    ".template/.deprecated_files_ignore.txt",
 ]
 
 # exclude file by file ending from license header check:
@@ -82,6 +85,8 @@ EXCLUDE_ENDINGS = [
     "md",
     "pub",
     "pyc",
+    "pyd",
+    "typed",
     "sec",
     "toml",
     "txt",
@@ -291,8 +296,8 @@ def validate_year_string(year_string: str, min_year: int = MIN_YEAR) -> bool:
     if year_string.isnumeric():
         return int(year_string) == current_year
 
-    # Otherwise, a range (e.g. 2021 - 2023) is expected:
-    match = re.match("(\d+) - (\d+)", year_string)
+    # Otherwise, a range (e.g. 2021 - 2024) is expected:
+    match = re.match(r"(\d+) - (\d+)", year_string)
 
     if not match:
         return False

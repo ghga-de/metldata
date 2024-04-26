@@ -1,4 +1,4 @@
-# Copyright 2021 - 2023 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,5 @@ BASE_DIR = Path(__file__).parent.resolve()
 
 def read_yaml(path: Path) -> dict[str, Any]:
     """Read a YAML file."""
-
     with open(path, encoding="utf-8") as file:
         return yaml.safe_load(file)

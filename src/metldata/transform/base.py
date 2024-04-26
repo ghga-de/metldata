@@ -1,4 +1,4 @@
-# Copyright 2021 - 2023 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from dataclasses import dataclass
+from collections.abc import Generator
 from graphlib import CycleError, TopologicalSorter
 from typing import Callable, Generic, Optional, TypeVar
 
@@ -30,85 +30,111 @@ from pydantic import (
     field_validator,
     model_validator,
 )
+from schemapack.integrate import integrate
+from schemapack.isolate import isolate
+from schemapack.spec.datapack import ClassName, DataPack, ResourceId
+from schemapack.spec.schemapack import SchemaPack
+from typing_extensions import TypeAlias
 
 from metldata.custom_types import Json
-from metldata.event_handling.models import SubmissionAnnotation
 
-# shortcuts:
-# pylint: disable=unused-import
-from metldata.model_utils.assumptions import MetadataModelAssumptionError  # noqa: F401
-from metldata.model_utils.essentials import MetadataModel
+ArtifactName: TypeAlias = str
 
 
-class MetadataModelTransformationError(RuntimeError):
-    """Raised when a transformation failed when applied to the metadata model."""
+class ModelAssumptionError(RuntimeError):
+    """Raised when assumptions made by transformation step about a model are not met."""
 
 
-class MetadataTransformationError(RuntimeError):
-    """Raised when a transformation failed when applied to metadata."""
+class ModelTransformationError(RuntimeError):
+    """Raised when a transformation failed when applied to the schemapack-based model.
+    This exception should only be raised when the error could not have been caught
+    earlier by model assumption checks (otherwise the AssumptionsInsufficiencyError
+    should be raised instead).
+    """
+
+
+class DataTransformationError(RuntimeError):
+    """Raised when a transformation failed when applied to data in datapack-format.
+    This exception should only be raised when the error could not have been caught
+    earlier by model assumption checks (otherwise the EvitableTransformationError
+    should be raised instead).
+    """
+
+
+class EvitableTransformationError(RuntimeError):
+    """Raised when an exception during the model or data transformation should have
+    been caught earlier by model assumption or data validation checks.
+    """
+
+    def __init__(self):
+        super().__init__(
+            "This unexpected error appeared during transformation, however, it should"
+            + " have been caught earlier during model assumption checks (and/or by data"
+            + " validation against the assumption-checked model). Please make sure that"
+            + " the model assumption checks guarantee the workability of the"
+            + " corresponding transformation wrt the provided model (and/or data)."
+        )
 
 
 Config = TypeVar("Config", bound=BaseModel)
 
 
-class MetadataTransformer(ABC, Generic[Config]):
-    """A base class for a metadata transformer."""
+class DataTransformer(ABC, Generic[Config]):
+    """A base class for a data transformer."""
 
     def __init__(
         self,
         *,
         config: Config,
-        original_model: MetadataModel,
-        transformed_model: MetadataModel,
+        input_model: SchemaPack,
+        transformed_model: SchemaPack,
     ):
-        """Initialize the transformer with config params, the original model, and the
+        """Initialize the transformer with config params, the input model, and the
         transformed model.
         """
         self._config = config
-        self._original_model = original_model
+        self._input_model = input_model
         self._transformed_model = transformed_model
 
     @abstractmethod
-    def transform(self, *, metadata: Json, annotation: SubmissionAnnotation) -> Json:
-        """Transforms metadata.
+    def transform(self, data: DataPack) -> DataPack:
+        """Transforms data.
 
         Args:
-            metadata: The metadata to be transformed.
-            annotation: The annotation on the metadata.
+            data: The data as DataPack to be transformed.
 
         Raises:
-            MetadataTransformationError:
+            DataTransformationError:
                 if the transformation fails.
         """
         ...
 
 
-@dataclass(frozen=True)
-class TransformationDefinition(Generic[Config]):
+class TransformationDefinition(BaseModel, Generic[Config]):
     """A model for describing a transformation."""
 
     config_cls: type[Config] = Field(
         ..., description="The config model of the transformation."
     )
-    check_model_assumptions: Callable[[MetadataModel, Config], None] = Field(
+    check_model_assumptions: Callable[[SchemaPack, Config], None] = Field(
         ...,
         description=(
             "A function that checks the assumptions made about the input model."
-            "Raises a MetadataModelAssumptionError if the assumptions are not met."
+            + " Raises a ModelAssumptionError if the assumptions are not met."
         ),
     )
-    transform_model: Callable[[MetadataModel, Config], MetadataModel] = Field(
+    transform_model: Callable[[SchemaPack, Config], SchemaPack] = Field(
         ...,
         description=(
             "A function to transform the model. Raises a"
-            + " MetadataModelTransformationError if the transformation fails."
+            + " ModelTransformationError if the transformation fails."
         ),
     )
-    metadata_transformer_factory: type[MetadataTransformer] = Field(
+    data_transformer_factory: type[DataTransformer] = Field(
         ...,
         description=(
-            "A class for transforming metadata. Raises a MetadataTransformationError"
-            "if the transformation fails."
+            "A class for transforming data. Raises a DataTransformationError"
+            + " if the transformation fails."
         ),
     )
 
@@ -126,7 +152,7 @@ class WorkflowStepBase(BaseModel, ABC):
         ...,
         description=(
             "The name of the workflow step from which the output is used as input"
-            " for this step. If this is the first step, set to None."
+            + " for this step. If this is the first step, set to None."
         ),
     )
 
@@ -163,6 +189,7 @@ class WorkflowDefinition(BaseModel):
 
     # pylint: disable=no-self-argument
     @field_validator("steps", mode="after")
+    @classmethod
     def validate_step_references(
         cls, steps: dict[str, WorkflowStep]
     ) -> dict[str, WorkflowStep]:
@@ -193,6 +220,7 @@ class WorkflowDefinition(BaseModel):
         return steps
 
     @model_validator(mode="after")
+    @classmethod
     def validate_artifact_references(cls, values):
         """Validate that artifacts reference existing workflow steps."""
         steps = values.steps
@@ -243,3 +271,61 @@ class WorkflowDefinition(BaseModel):
             return list(topological_sorter.static_order())
         except CycleError as exc:
             raise RuntimeError("Step definitions imply a circular dependency.") from exc
+
+
+class ArtifactResource(BaseModel):
+    """A model for one isolated resource of an artifact output by a workflow
+    in the context of specific input data.
+    """
+
+    class_name: ClassName = Field(
+        ..., description="The name of the class of the resource."
+    )
+    resource_id: ResourceId = Field(..., description="The id of the resource.")
+    datapack: DataPack = Field(
+        ...,
+        description="A rooted datapack describing the resource and all its dependencies.",
+    )
+    integrated: Json = Field(
+        ...,
+        description="An integrated representation of the resource in JSON format.",
+    )
+
+
+class WorkflowArtifact(BaseModel):
+    """An artifact output by a workflow in the context of specific input data."""
+
+    artifact_name: ArtifactName = Field(..., description="The name of the artifact.")
+    data: DataPack = Field(
+        ...,
+        description="A datapack containing all resources of the artifact.",
+    )
+    model: SchemaPack = Field(
+        ...,
+        description="A schemapack describing the artifact.",
+    )
+
+    def resource_iterator(self) -> Generator[ArtifactResource, None, None]:
+        """Returns a Generator to iterate over the resources of the artifact.
+
+        Yields:
+            ArtifactResource objects of all classes of the artifact.
+        """
+        for class_name, resources in self.data.resources.items():
+            for resource_id in resources:
+                isolated_datapack = isolate(
+                    datapack=self.data,
+                    class_name=class_name,
+                    resource_id=resource_id,
+                    schemapack=self.model,
+                )
+                integrated_json = integrate(
+                    datapack=isolated_datapack,
+                    schemapack=self.model,
+                )
+                yield ArtifactResource(
+                    class_name=class_name,
+                    resource_id=resource_id,
+                    datapack=isolated_datapack,
+                    integrated=integrated_json,
+                )

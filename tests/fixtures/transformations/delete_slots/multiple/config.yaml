@@ -1,6 +1,0 @@
-slots_to_delete:
-  File:
-    - filename
-    - checksum
-  Sample:
-    - description

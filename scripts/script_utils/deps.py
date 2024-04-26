@@ -1,4 +1,4 @@
-# Copyright 2021 - 2023 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 """Contains utils for working with dependencies, lock files, etc."""
+
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -55,11 +56,11 @@ def remove_self_dependencies(pyproject: dict) -> dict:
 
     if "optional-dependencies" in project_metadata:
         for group in project_metadata["optional-dependencies"]:
-            project_metadata["optional-dependencies"][
-                group
-            ] = exclude_from_dependency_list(
-                package_name=package_name,
-                dependencies=project_metadata["optional-dependencies"][group],
+            project_metadata["optional-dependencies"][group] = (
+                exclude_from_dependency_list(
+                    package_name=package_name,
+                    dependencies=project_metadata["optional-dependencies"][group],
+                )
             )
 
     return modified_pyproject

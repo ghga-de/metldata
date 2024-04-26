@@ -1,0 +1,32 @@
+
+[project]
+name = "metldata"
+version = "1.0.0"
+description = "metldata - A framework for handling metadata based on ETL, CQRS, and event sourcing."
+dependencies = [
+    "schemapack<=1.0.0, <2.0.0"
+]
+
+[project.urls]
+Repository = "https://github.com/ghga-de/hexkit"
+
+[tool.tox]
+legacy_tox_ini = """
+    [tox]
+    env_list = py3{9,12}
+
+    [gh-actions]
+    python =
+        3.9: py39
+        3.10: py310
+        3.11: py311
+        3.12: py312
+
+    [testenv]
+    pass_env =
+        TC_HOST
+        DOCKER_HOST
+    deps =
+        --no-deps -r ./lock/requirements-dev.txt
+    commands = pytest {posargs}
+"""

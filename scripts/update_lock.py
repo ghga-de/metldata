@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2021 - 2023 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@
 import os
 import re
 import subprocess
+from itertools import zip_longest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -31,11 +32,12 @@ import tomli_w
 from script_utils import cli, deps
 
 REPO_ROOT_DIR = Path(__file__).parent.parent.resolve()
+LOCK_DIR = REPO_ROOT_DIR / "lock"
 
 PYPROJECT_TOML_PATH = REPO_ROOT_DIR / "pyproject.toml"
-DEV_DEPS_PATH = REPO_ROOT_DIR / "requirements-dev.in"
-OUTPUT_LOCK_PATH = REPO_ROOT_DIR / "requirements.txt"
-OUTPUT_DEV_LOCK_PATH = REPO_ROOT_DIR / "requirements-dev.txt"
+DEV_DEPS_PATH = LOCK_DIR / "requirements-dev.in"
+OUTPUT_LOCK_PATH = LOCK_DIR / "requirements.txt"
+OUTPUT_DEV_LOCK_PATH = LOCK_DIR / "requirements-dev.txt"
 
 
 def fix_temp_dir_comments(file_path: Path):
@@ -62,22 +64,25 @@ def fix_temp_dir_comments(file_path: Path):
 def is_file_outdated(old_file: Path, new_file: Path) -> bool:
     """Compares two lock files and returns True if there is a difference, else False"""
 
-    header_comment = "#    pip-compile"
     outdated = False
 
     with open(old_file, encoding="utf-8") as old:
         with open(new_file, encoding="utf-8") as new:
-            old_lines = old.readlines()
-            new_lines = new.readlines()
-            if len(old_lines) != len(new_lines):
-                outdated = True
-            if not outdated:
-                for old_line, new_line in zip(old_lines, new_lines):
-                    if old_line.startswith(header_comment):
-                        continue
-                    if old_line != new_line:
-                        outdated = True
-                        break
+            outdated = any(
+                old_line != new_line
+                for old_line, new_line in zip_longest(
+                    (
+                        line
+                        for line in (line.strip() for line in old)
+                        if line and not line.startswith("#")
+                    ),
+                    (
+                        line
+                        for line in (line.strip() for line in new)
+                        if line and not line.startswith("#")
+                    ),
+                )
+            )
     if outdated:
         cli.echo_failure(f"{str(old_file)} is out of date!")
     return outdated
@@ -95,12 +100,7 @@ def compile_lock_file(
 
     print(f"Updating '{output.name}'...")
 
-    command = [
-        "pip-compile",
-        "--rebuild",
-        "--generate-hashes",
-        "--annotate",
-    ]
+    command = ["uv", "pip", "compile", "--refresh", "--generate-hashes", "--no-header"]
 
     if upgrade:
         command.append("--upgrade")
