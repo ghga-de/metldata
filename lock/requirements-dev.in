@@ -5,3 +5,4 @@
 
 # additional requirements can be listed her
 tox >= 4.12.0
+pytest-profiling >= 1.7
