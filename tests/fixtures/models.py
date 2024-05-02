@@ -16,7 +16,7 @@
 
 """Example models."""
 
-from schemapack.load import load_schemapack
+from schemapack import load_schemapack
 from schemapack.spec.schemapack import SchemaPack
 
 from tests.fixtures.utils import BASE_DIR

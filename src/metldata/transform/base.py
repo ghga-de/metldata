@@ -30,9 +30,9 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from schemapack.integrate import integrate
-from schemapack.isolate import isolate
-from schemapack.spec.datapack import ClassName, DataPack, ResourceId
+from schemapack import denormalize, isolate
+from schemapack.spec.custom_types import ClassName, ResourceId
+from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 from typing_extensions import TypeAlias
 
@@ -286,6 +286,10 @@ class ArtifactResource(BaseModel):
         ...,
         description="A rooted datapack describing the resource and all its dependencies.",
     )
+    schema: SchemaPack = Field(
+        ...,
+        description="A rooted schemapack describing the schema of the rooted datapack.",
+    )
     integrated: Json = Field(
         ...,
         description="An integrated representation of the resource in JSON format.",
@@ -313,19 +317,20 @@ class WorkflowArtifact(BaseModel):
         """
         for class_name, resources in self.data.resources.items():
             for resource_id in resources:
-                isolated_datapack = isolate(
+                rooted_schemapack, rooted_datapack = isolate(
                     datapack=self.data,
                     class_name=class_name,
                     resource_id=resource_id,
                     schemapack=self.model,
                 )
-                integrated_json = integrate(
-                    datapack=isolated_datapack,
-                    schemapack=self.model,
+                integrated_json = denormalize(
+                    datapack=rooted_datapack,
+                    schemapack=rooted_schemapack,
                 )
                 yield ArtifactResource(
                     class_name=class_name,
                     resource_id=resource_id,
-                    datapack=isolated_datapack,
+                    datapack=rooted_datapack,
+                    schema=rooted_schemapack,
                     integrated=integrated_json,
                 )

@@ -18,9 +18,9 @@
 
 import schemapack.exceptions
 from pydantic import BaseModel, ConfigDict
+from schemapack import SchemaPackValidator
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
-from schemapack.validation import SchemaPackValidator
 
 from metldata.transform.base import (
     Config,

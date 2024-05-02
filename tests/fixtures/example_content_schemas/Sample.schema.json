@@ -3,15 +3,9 @@
   "additionalProperties": false,
   "description": "A sample used to generate files in the context of an experiment.",
   "properties": {
-    "alias": {
-      "type": "string"
-    },
     "description": {
       "type": "string"
     }
   },
-  "required": [
-    "alias"
-  ],
   "type": "object"
 }

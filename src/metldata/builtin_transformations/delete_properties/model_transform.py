@@ -22,7 +22,6 @@ from schemapack.spec.schemapack import (
     ClassDefinition,
     SchemaPack,
 )
-from schemapack.utils import FrozenDict
 
 from metldata.transform.base import EvitableTransformationError
 
@@ -64,6 +63,6 @@ def delete_properties(
             {**class_def.model_dump(), "content": content_schema}
         )
 
-    return model.model_copy(
-        update={"classes": FrozenDict({**model.classes, **updated_class_defs})}
-    )
+    model_dict = model.model_dump()
+    model_dict.update({"classes": {**model.classes, **updated_class_defs}})
+    return SchemaPack.model_validate(model_dict)

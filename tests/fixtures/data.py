@@ -16,7 +16,7 @@
 
 """Valid and invalid metadata examples using the minimal model."""
 
-from schemapack.load import load_datapack
+from schemapack import load_datapack
 from schemapack.spec.datapack import DataPack
 
 from tests.fixtures.utils import BASE_DIR

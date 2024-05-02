@@ -34,15 +34,6 @@ class RelationDetails(BaseModel):
             "The path to reconstruct the new relation based on existing relations."
         ),
     )
-    allow_multiple: bool = Field(
-        True,
-        description=(
-            "Whether multiple target resources to expect for this relation."
-            + " `True` corresponds to a `many_to_many` cardinality, `False` represents"
-            + " a `many_to_one` cardinality. `one_to_one` or `one_to_many`"
-            + "  cardinalities are currently not possible for inferred relations."
-        ),
-    )
 
 
 class InferenceInstruction(RelationDetails):

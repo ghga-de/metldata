@@ -1,17 +1,14 @@
 # Transformed content schemas are embedded:
-schemapack: 0.1.0
+schemapack: 0.3.0
 classes:
   File:
     id:
-      from_content: alias
+      propertyName: alias
     content: { # <-
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": false,
       "description": "A file is an object that contains information generated from a process, either an Experiment or an Analysis.",
       "properties": {
-        "alias": {
-          "type": "string"
-        },
         "format": {
           "type": "string"
         },
@@ -20,7 +17,6 @@ classes:
         }
       },
       "required": [
-        "alias",
         "format",
         "size"
       ],
@@ -28,38 +24,47 @@ classes:
     }
   Dataset:
     id:
-      from_content: alias
+      propertyName: alias
     content: ../../../example_content_schemas/Dataset.schema.json
     relations:
       files:
-        to: File
-        cardinality: many_to_many
+        targetClass: File
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
   Sample:
     id:
-      from_content: alias
+      propertyName: alias
     content: { # <-
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": false,
       "description": "A sample used to generate files in the context of an experiment.",
       "properties": {
-        "alias": {
-          "type": "string"
-        },
       },
-      "required": [
-        "alias"
-      ],
       "type": "object"
     }
     relations:
       files:
-        to: File
-        cardinality: one_to_many
+        targetClass: File
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: false
+          target: true
   Experiment:
     id:
-      from_content: alias
+      propertyName: alias
     content: ../../../example_content_schemas/Experiment.schema.json
     relations:
       samples:
-        to: Sample
-        cardinality: one_to_many
+        targetClass: Sample
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: true
+          target: true
