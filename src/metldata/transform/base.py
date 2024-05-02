@@ -18,9 +18,9 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from graphlib import CycleError, TopologicalSorter
-from typing import Callable, Generic, Optional, TypeVar
+from typing import Generic, TypeAlias, TypeVar
 
 from pydantic import (
     BaseModel,
@@ -34,7 +34,6 @@ from schemapack import denormalize, isolate
 from schemapack.spec.custom_types import ClassName, ResourceId
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
-from typing_extensions import TypeAlias
 
 from metldata.custom_types import Json
 
@@ -148,7 +147,7 @@ class WorkflowStepBase(BaseModel, ABC):
 
     model_config = ConfigDict(frozen=True)
     description: str = Field(..., description="A description of the step.")
-    input: Optional[str] = Field(
+    input: str | None = Field(
         ...,
         description=(
             "The name of the workflow step from which the output is used as input"

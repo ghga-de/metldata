@@ -17,7 +17,6 @@
 """Data models"""
 
 import re
-from typing import Optional
 
 from metldata.builtin_transformations.infer_relations.path.path_elements import (
     RelationPathElement,
@@ -107,7 +106,7 @@ def get_target_class(*, path_str: str) -> str:
     return match.group(1)
 
 
-def split_first_element(*, path_str: str) -> tuple[str, Optional[str]]:
+def split_first_element(*, path_str: str) -> tuple[str, str | None]:
     """Return a tuple of the first element and the remaining path string.
     Thereby, the target class of the first element is set as the source class of the
     remaining path.
