@@ -3,6 +3,7 @@ add_content_properties:
   target_content:
     object_path: ""
     property_name: "additional_information"
+  required: false
 - class_name: File
   target_content:
     object_path: "additional_information"

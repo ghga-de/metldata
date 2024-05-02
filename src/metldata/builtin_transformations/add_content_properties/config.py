@@ -37,3 +37,14 @@ class AddContentPropertiesConfig(BaseSettings):
             "A list of instructions to add content properties to the model and data."
         ),
     )
+
+    def instructions_by_class(
+        self,
+    ) -> dict[str, list[AddContentPropertyInstruction]]:
+        """Returns a dictionary of instructions by class."""
+        instructions_by_class: dict[str, list[AddContentPropertyInstruction]] = {}
+        for instruction in self.add_content_properties:
+            instructions_by_class.setdefault(instruction.class_name, []).append(
+                instruction
+            )
+        return instructions_by_class

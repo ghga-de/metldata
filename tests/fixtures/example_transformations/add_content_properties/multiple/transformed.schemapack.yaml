@@ -22,6 +22,7 @@ classes:
           "type": "integer"
         },
         "additional_information": {
+          "type": "object",
           "additionalProperties": false,
           "properties": {
             "compression": {
@@ -31,7 +32,6 @@ classes:
           "required": [
             "compression"
           ],
-          "type": "object"
         }
       },
       "required": [
@@ -39,7 +39,6 @@ classes:
         "format",
         "checksum",
         "size",
-        "additional_information"
       ],
       "type": "object"
     }

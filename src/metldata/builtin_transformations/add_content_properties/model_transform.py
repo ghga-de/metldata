@@ -14,17 +14,61 @@
 # limitations under the License.
 """Model transformation logic for the 'add content property' transformation"""
 
-from typing import Any
+from schemapack.spec.schemapack import (
+    ClassDefinition,
+    SchemaPack,
+)
 
-from schemapack.spec.schemapack import SchemaPack
+from metldata.builtin_transformations.add_content_properties.instruction import (
+    AddContentPropertyInstruction,
+)
+from metldata.builtin_transformations.add_content_properties.path import (
+    resolve_object_path,
+)
+from metldata.transform.base import EvitableTransformationError
 
 
-def add_content_property(
+def add_content_properties(
     *,
     model: SchemaPack,
-    object_path: str = "",
-    content_schema: dict[str, Any],
-    required: bool = True,
+    instructions_by_class: dict[str, list[AddContentPropertyInstruction]],
 ) -> SchemaPack:
     """Adds a new content property to the provided model."""
-    return model
+    updated_class_defs: dict[str, ClassDefinition] = {}
+    for class_name, cls_instructions in instructions_by_class.items():
+        class_def = model.classes.get(class_name)
+
+        if not class_def:
+            raise EvitableTransformationError()
+
+        content_schema = class_def.content.json_schema_dict
+
+        for cls_instruction in cls_instructions:
+            try:
+                target_object = resolve_object_path(
+                    content_schema, cls_instruction.target_content.object_path
+                )
+            except KeyError as e:
+                raise EvitableTransformationError() from e
+
+            if cls_instruction.target_content.property_name in content_schema.get(
+                "properties", {}
+            ):
+                raise EvitableTransformationError()
+
+            target_object.setdefault("properties", {})[
+                cls_instruction.target_content.property_name
+            ] = cls_instruction.content_schema
+
+            if cls_instruction.required:
+                target_object.setdefault("required", []).append(
+                    cls_instruction.target_content.property_name
+                )
+
+        updated_class_defs[class_name] = class_def.model_validate(
+            {**class_def.model_dump(), "content": content_schema}
+        )
+
+    model_dict = model.model_dump()
+    model_dict.update({"classes": {**model.classes, **updated_class_defs}})
+    return SchemaPack.model_validate(model_dict)

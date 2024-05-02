@@ -19,8 +19,14 @@
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
+from metldata.builtin_transformations.add_content_properties.assumptions import (
+    check_model_assumptions,
+)
 from metldata.builtin_transformations.add_content_properties.config import (
     AddContentPropertiesConfig,
+)
+from metldata.builtin_transformations.add_content_properties.model_transform import (
+    add_content_properties,
 )
 from metldata.transform.base import (
     DataTransformer,
@@ -40,7 +46,7 @@ class AddContentPropertiesTransformer(DataTransformer[AddContentPropertiesConfig
         return data
 
 
-def check_model_assumptions(
+def check_model_assumptions_wrapper(
     model: SchemaPack,
     config: AddContentPropertiesConfig,
 ) -> None:
@@ -50,7 +56,9 @@ def check_model_assumptions(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    pass
+    check_model_assumptions(
+        schema=model, instructions_by_class=config.instructions_by_class()
+    )
 
 
 def transform_model(
@@ -62,14 +70,16 @@ def transform_model(
         DataModelTransformationError:
             if the transformation fails.
     """
-    return model
+    return add_content_properties(
+        model=model, instructions_by_class=config.instructions_by_class()
+    )
 
 
 ADD_CONTENT_PROPERTIES_TRANSFORMATION = TransformationDefinition[
     AddContentPropertiesConfig
 ](
     config_cls=AddContentPropertiesConfig,
-    check_model_assumptions=check_model_assumptions,
+    check_model_assumptions=check_model_assumptions_wrapper,
     transform_model=transform_model,
     data_transformer_factory=AddContentPropertiesTransformer,
 )
