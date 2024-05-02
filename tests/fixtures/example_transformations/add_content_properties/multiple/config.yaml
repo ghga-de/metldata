@@ -1,0 +1,12 @@
+add_content_properties:
+- class_name: File
+  target_content:
+    object_path: ""
+    property_name: "additional_information"
+- class_name: File
+  target_content:
+    object_path: "additional_information"
+    property_name: "compression"
+  content_schema:
+    type: "boolean"
+  value: false

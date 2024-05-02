@@ -12,14 +12,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-"""Models used to describe content properties that shall be deleted."""
+"""Models for instructions used in the 'add content properties' transformation."""
 
-from typing import Any
+from typing import Any, Final
 
 from pydantic import Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
+
+DEFAULT_CONTENT_SCHEMA: Final[dict[str, Any]] = {
+    "type": "object",
+    "additionalProperties": False,
+}
 
 
 class NewContentSchemaPath(BaseSettings):
@@ -41,12 +45,10 @@ class NewContentSchemaPath(BaseSettings):
     property_name: str = Field(..., description="The name of the property to be added.")
 
 
-class AddContentPropertyConfig(BaseSettings):
-    """A Config for a transformation that adds a new property to an object within a
-    content schema
+class AddContentPropertyInstruction(BaseSettings):
+    """A model describing an instruction to add a new content property to a class in a
+    schemapack, including an associated default value in corresponding data.
     """
-
-    model_config = SettingsConfigDict(extra="forbid")
 
     class_name: str = Field(..., description="The name of the class to modify.")
 
@@ -61,7 +63,7 @@ class AddContentPropertyConfig(BaseSettings):
     )
 
     content_schema: dict[str, Any] = Field(
-        {"type": "object", "additionalProperties": False},
+        DEFAULT_CONTENT_SCHEMA,
         description="The JSON schema of the newly added property.",
     )
 
