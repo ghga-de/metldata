@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "The dev_launcher for this project is not implemented." >&2
+exit 1

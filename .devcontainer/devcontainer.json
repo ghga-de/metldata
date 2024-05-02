@@ -1,6 +1,5 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.177.0/containers/python-3-postgres
-// Update the VARIANT arg in docker-compose.yml to pick a Python version: 3, 3.12, 3.11, 3.10, 3.9
 {
 	"name": "${localWorkspaceFolderBasename}",
 	"dockerComposeFile": "docker-compose.yml",
@@ -23,7 +22,7 @@
 				"python.testing.unittestEnabled": false,
 				"python.testing.pytestEnabled": true,
 				"editor.codeActionsOnSave": {
-					"source.organizeImports": true
+					"source.organizeImports": "explicit"
 				},
 				"editor.formatOnSave": true,
 				"editor.renderWhitespace": "all",
