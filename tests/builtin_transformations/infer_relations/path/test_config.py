@@ -33,17 +33,14 @@ def test_config():
         "class_a": {
             "class_d": {
                 "path": "class_a(class_b)>class_b(class_d)>class_d",
-                "allow_multiple": False,
             },
             "class_c": {
                 "path": "class_a(class_b)>class_b<(class_c)class_c",
-                "allow_multiple": True,
             },
         },
         "class_b": {
             "class_c": {
                 "path": "class_b<(class_c)class_c",
-                "allow_multiple": True,
             }
         },
     }
@@ -53,21 +50,18 @@ def test_config():
             target="class_d",
             path=RelationPath(path_str="class_a(class_b)>class_b(class_d)>class_d"),
             new_property="class_d",
-            allow_multiple=False,
         ),
         InferenceInstruction(
             source="class_a",
             target="class_c",
             path=RelationPath(path_str="class_a(class_b)>class_b<(class_c)class_c"),
             new_property="class_c",
-            allow_multiple=True,
         ),
         InferenceInstruction(
             source="class_b",
             target="class_c",
             path=RelationPath(path_str="class_b<(class_c)class_c"),
             new_property="class_c",
-            allow_multiple=True,
         ),
     ]
 
