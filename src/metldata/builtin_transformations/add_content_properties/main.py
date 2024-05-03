@@ -25,6 +25,9 @@ from metldata.builtin_transformations.add_content_properties.assumptions import 
 from metldata.builtin_transformations.add_content_properties.config import (
     AddContentPropertiesConfig,
 )
+from metldata.builtin_transformations.add_content_properties.data_transform import (
+    add_properties,
+)
 from metldata.builtin_transformations.add_content_properties.model_transform import (
     add_content_properties,
 )
@@ -43,7 +46,9 @@ class AddContentPropertiesTransformer(DataTransformer[AddContentPropertiesConfig
         Args:
             data: The data as DataPack to be transformed.
         """
-        return data
+        return add_properties(
+            data=data, instructions_by_class=self._config.instructions_by_class()
+        )
 
 
 def check_model_assumptions_wrapper(

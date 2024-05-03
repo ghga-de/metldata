@@ -23,7 +23,7 @@ from metldata.builtin_transformations.add_content_properties.instruction import 
     AddContentPropertyInstruction,
 )
 from metldata.builtin_transformations.add_content_properties.path import (
-    resolve_object_path,
+    resolve_schema_object_path,
 )
 from metldata.transform.base import EvitableTransformationError
 
@@ -45,7 +45,7 @@ def add_content_properties(
 
         for cls_instruction in cls_instructions:
             try:
-                target_object = resolve_object_path(
+                target_object = resolve_schema_object_path(
                     content_schema, cls_instruction.target_content.object_path
                 )
             except KeyError as e:

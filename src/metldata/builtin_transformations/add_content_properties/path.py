@@ -20,7 +20,7 @@ from collections.abc import Mapping
 from typing import Any
 
 
-def resolve_object_path(json_schema: Mapping[str, Any], path: str) -> Any:
+def resolve_schema_object_path(json_schema: Mapping[str, Any], path: str) -> Any:
     """Given a JSON schema describing an object, resolve the dot-separated path to a
     property. Return the property schema.
 
@@ -40,3 +40,25 @@ def resolve_object_path(json_schema: Mapping[str, Any], path: str) -> Any:
         for key in path.split("."):
             json_schema = json_schema["properties"][key]
     return json_schema
+
+
+def resolve_data_object_path(data: Mapping, path: str) -> Any:
+    """Given a mapping, resolve the dot-separated path to a property. Return the
+    property value.
+
+    Args:
+        data:
+            The JSON object.
+        path:
+            The dot-separated path to the property.
+
+    Raises:
+        KeyError:
+            If the path does not exist in the data.
+
+    Returns: The value of the property at the given path.
+    """
+    if path:
+        for key in path.split("."):
+            data = data[key]
+    return data

@@ -20,7 +20,7 @@ from metldata.builtin_transformations.add_content_properties.instruction import 
     AddContentPropertyInstruction,
 )
 from metldata.builtin_transformations.add_content_properties.path import (
-    resolve_object_path,
+    resolve_schema_object_path,
 )
 from metldata.transform.base import ModelAssumptionError
 
@@ -42,7 +42,7 @@ def check_model_assumptions(
         for instruction in instructions:
             # Check if the property already exists in the target schema
             try:
-                target_schema = resolve_object_path(
+                target_schema = resolve_schema_object_path(
                     json_schema=class_def.content.json_schema_dict,
                     path=instruction.target_content.object_path,
                 )
