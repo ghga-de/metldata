@@ -14,6 +14,8 @@
 # limitations under the License.
 """Model transformation logic for the 'add content property' transformation"""
 
+from copy import deepcopy
+
 from schemapack.spec.schemapack import (
     ClassDefinition,
     SchemaPack,
@@ -58,7 +60,7 @@ def add_content_properties(
 
             target_object.setdefault("properties", {})[
                 cls_instruction.target_content.property_name
-            ] = cls_instruction.content_schema
+            ] = deepcopy(cls_instruction.content_schema)
 
             if cls_instruction.required:
                 target_object.setdefault("required", []).append(
