@@ -45,11 +45,9 @@ def get_relation(element: RelationPathElement, schema: SchemaPack) -> Relation:
     Returns:
         The relation object.
     """
-    if element.type_ == RelationPathElementType.ACTIVE:
-        class_ = schema.classes[element.source]
-    else:
-        class_ = schema.classes[element.target]
-    return class_.relations[element.property]
+    element_active = element.type_ == RelationPathElementType.ACTIVE
+    class_name = element.source if element_active else element.target
+    return schema.classes[class_name].relations[element.property]
 
 
 def infer_mutiplicity_from_path(
