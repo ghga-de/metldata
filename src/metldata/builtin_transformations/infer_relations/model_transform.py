@@ -64,7 +64,7 @@ def infer_mutiplicity_from_path(
     Returns:
         The inferred multiplicity.
     """
-    origin, target = False, False
+    origin = target = False
     # Traverse the path and check for multiplicity
     for element in path.elements:
         relation = get_relation(element, schema)
@@ -97,7 +97,7 @@ def infer_mandatory_from_path(
     Returns:
         The inferred mandatory property.
     """
-    origin, target = True, True
+    origin = target = True
     # Traverse the path and check for mandatory
     for element in path.elements:
         relation = get_relation(element, schema)
