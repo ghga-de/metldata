@@ -3,15 +3,9 @@
   "additionalProperties": false,
   "description": "An experiment containing one or multiple samples.",
   "properties": {
-    "alias": {
-      "type": "string"
-    },
     "description": {
       "type": "string"
     }
   },
-  "required": [
-    "alias"
-  ],
   "type": "object"
 }

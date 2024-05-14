@@ -1,25 +1,21 @@
-datapack: 0.1.0
+datapack: 0.3.0
 resources:
   File:
     file_a:
       content:
-        alias: file_a
         format: FASTQ
         size: 12321
     file_b:
       content:
-        alias: file_b
         format: FASTQ
         size: 12314
     file_c:
       content:
-        alias: file_c
         format: FASTQ
         size: 12123
   Dataset:
     dataset_1:
       content:
-        alias: dataset_1
         dac_contact: dac@example.org
       relations:
         files:
@@ -28,22 +24,19 @@ resources:
           - file_c
   Sample:
     sample_x:
-      content:
-        alias: sample_x
+      content: {}
       relations:
         files:
           - file_a
           - file_b
     sample_y:
-      content:
-        alias: sample_y
+      content: {}
       relations:
         files:
           - file_c
   Experiment:
     experiment_i:
-      content:
-        alias: experiment_i
+      content: {}
       relations:
         samples:
           - sample_x

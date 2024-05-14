@@ -44,7 +44,8 @@ Here is a brief summary of the principle steps of transformation:
           as defined in the inferred relation
 """
 
-from schemapack.spec.datapack import DataPack, Resource, ResourceId
+from schemapack.spec.custom_types import ResourceId
+from schemapack.spec.datapack import DataPack, Resource
 
 from metldata.builtin_transformations.infer_relations.path.path import (
     RelationPath,
@@ -93,12 +94,12 @@ def resolve_active_path_element(
     if not source_resource:
         raise EvitableTransformationError()
 
-    target_resource_ids = source_resource.relations.get(path_element.property, [])
-    return (
-        set(target_resource_ids)
-        if isinstance(target_resource_ids, list)
-        else {target_resource_ids}
-    )
+    target_resource_ids = source_resource.relations.get(path_element.property)
+    if target_resource_ids is None:
+        target_resource_ids = set()
+    elif isinstance(target_resource_ids, str):
+        target_resource_ids = {target_resource_ids}
+    return target_resource_ids
 
 
 def resolve_passive_path_element(
@@ -132,10 +133,10 @@ def resolve_passive_path_element(
     target_resource_ids = set()
 
     for candidate_resource_id, candidate_resource in candidate_resources.items():
-        relation = candidate_resource.relations.get(path_element.property, [])
+        relation = candidate_resource.relations.get(path_element.property, set())
 
         if (
-            isinstance(relation, list) and source_resource_id in relation
+            isinstance(relation, set) and source_resource_id in relation
         ) or source_resource_id == relation:
             target_resource_ids.add(candidate_resource_id)
 
@@ -218,12 +219,11 @@ def add_inferred_relations(
             )
             # transform into list (as references are stored as such) and make order
             # deterministic:
-            target_list = sorted(target_resource_ids)
             updated_host_resources[host_resource_id] = host_resource.model_copy(
                 update={
                     "relations": {
                         **host_resource.relations,
-                        instruction.new_property: target_list,
+                        instruction.new_property: target_resource_ids,
                     }
                 }
             )

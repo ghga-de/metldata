@@ -46,17 +46,14 @@ class RelationInferenceConfig(BaseSettings):
                 "ClassA": {
                     "class_d": {
                         "path": "ClassA(class_b)>ClassB(class_d)>ClassD",
-                        "cardinality": "many_to_many",
                     },
                     "class_c": {
                         "path": "ClassA(class_b)>ClassB<(class_c)ClassC",
-                        "cardinality": "many_to_one",
                     },
                 },
                 "ClassB": {
                     "class_c": {
                         "path": "ClassB<(class_c)ClassC",
-                        "cardinality": "many_to_many",
                     }
                 },
             }
@@ -72,7 +69,6 @@ class RelationInferenceConfig(BaseSettings):
                 target=relation_details.path.target,
                 path=relation_details.path,
                 new_property=property_name,
-                allow_multiple=relation_details.allow_multiple,
             )
             for source, slot_description in self.inferred_relations.items()
             for property_name, relation_details in slot_description.items()

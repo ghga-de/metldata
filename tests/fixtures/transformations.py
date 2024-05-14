@@ -19,7 +19,7 @@
 from dataclasses import dataclass
 
 from pydantic import BaseModel
-from schemapack.load import load_datapack, load_schemapack
+from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 

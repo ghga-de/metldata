@@ -239,9 +239,8 @@ def test_workflow_artifact_resource_iterator():
     observed_resources_by_class = defaultdict(set)
     for resource in resources:
         # check that the datapacks of all resources are rooted:
-        assert resource.datapack.root
-        assert resource.class_name == resource.datapack.root.class_name
-        assert resource.resource_id == resource.datapack.root.resource_id
+        assert resource.class_name == resource.schema.rootClass
+        assert resource.resource_id == resource.datapack.rootResource
 
         observed_resources_by_class[resource.class_name].add(resource.resource_id)
 

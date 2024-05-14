@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/vscode/devcontainers/python:3.9-bullseye
+FROM mcr.microsoft.com/devcontainers/python:1-3.12-bullseye
 
 ENV PYTHONUNBUFFERED 1
 
@@ -7,23 +7,13 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then groupmod --gid $USER_GID vscode && usermod --uid $USER_UID --gid $USER_GID vscode; fi
 
-# Copy install script
-COPY ./dev_install /bin
+# [Option] Install Node.js
+ARG INSTALL_NODE="true"
+ARG NODE_VERSION="lts/*"
+RUN if [ "${INSTALL_NODE}" = "true" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
-# Install secondary Python version
-USER vscode
-RUN <<EOF
-curl -sS https://pyenv.run | /bin/sh
-INIT_PYENV='
-export PYENV_ROOT="$HOME/.pyenv"
-[ -d "$PYENV_ROOT/bin" ] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-'
-echo "$INIT_PYENV" >> ~/.profile
-echo "$INIT_PYENV" >> ~/.bashrc
-. ~/.profile
-pyenv install --skip-existing 3.12
-pyenv global system 3.12
-EOF
+# Copy install and launcher script to bin:
+COPY ./dev_install /bin
+COPY ./dev_launcher /bin
 
 CMD ["sleep", "infinity"]
