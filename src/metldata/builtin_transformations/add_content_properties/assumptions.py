@@ -53,5 +53,5 @@ def check_model_assumptions(
             ):
                 raise ModelAssumptionError(
                     f"Property {instruction.target_content.property_name} already exists"
-                    + " in class {instruction.class_name}."
+                    + f" in class {class_name}."
                 )
