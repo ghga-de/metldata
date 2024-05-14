@@ -64,5 +64,5 @@ def delete_properties(
         )
 
     model_dict = model.model_dump()
-    model_dict.update({"classes": {**model.classes, **updated_class_defs}})
+    model_dict["classes"].update(updated_class_defs)
     return SchemaPack.model_validate(model_dict)

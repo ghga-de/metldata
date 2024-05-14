@@ -44,8 +44,6 @@ Here is a brief summary of the principle steps of transformation:
           as defined in the inferred relation
 """
 
-from collections.abc import Set
-
 from schemapack.spec.custom_types import ResourceId
 from schemapack.spec.datapack import DataPack, Resource
 
@@ -96,15 +94,12 @@ def resolve_active_path_element(
     if not source_resource:
         raise EvitableTransformationError()
 
-    target_resource_ids = source_resource.relations.get(path_element.property, set())
+    target_resource_ids = source_resource.relations.get(path_element.property)
     if target_resource_ids is None:
         target_resource_ids = set()
-
-    return (
-        set(target_resource_ids)
-        if isinstance(target_resource_ids, Set)
-        else set([target_resource_ids])
-    )
+    elif isinstance(target_resource_ids, str):
+        target_resource_ids = {target_resource_ids}
+    return target_resource_ids
 
 
 def resolve_passive_path_element(
