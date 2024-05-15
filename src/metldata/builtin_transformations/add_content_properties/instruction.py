@@ -58,7 +58,7 @@ class AddContentPropertyInstruction(BaseSettings):
         True,
         description=(
             "Indicates whether the newly added property shall be added to the"
-            + " 'required' list of the corresponding object."
+            + " 'required' list of the corresponding object. Defaults to 'True'."
         ),
     )
 

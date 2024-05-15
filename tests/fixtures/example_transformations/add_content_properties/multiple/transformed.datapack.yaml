@@ -9,6 +9,7 @@ resources:
         size: 12321
         additional_information: # <-
           compression: false
+        content_description: "" # <-
     file_b:
       content:
         filename: file_b.fastq
@@ -17,6 +18,7 @@ resources:
         size: 12314
         additional_information: # <-
           compression: false
+        content_description: "" # <-
     file_c:
       content:
         filename: file_c.fastq
@@ -25,6 +27,7 @@ resources:
         size: 12123
         additional_information: # <-
           compression: false
+        content_description: "" # <-
   Dataset:
     dataset_1:
       content:

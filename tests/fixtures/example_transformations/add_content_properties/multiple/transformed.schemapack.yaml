@@ -31,6 +31,9 @@ classes:
           "required": [
             "compression"
           ],
+        },
+        "content_description": {
+          "type" : "string"
         }
       },
       "required": [
@@ -38,6 +41,7 @@ classes:
         "format",
         "checksum",
         "size",
+        "content_description",
       ],
       "type": "object"
     }
