@@ -69,12 +69,7 @@ def check_model_assumptions_wrapper(
 def transform_model(
     model: SchemaPack, config: AddContentPropertiesConfig
 ) -> SchemaPack:
-    """Transform the data model.
-
-    Raises:
-        DataModelTransformationError:
-            if the transformation fails.
-    """
+    """Transform the data model."""
     return add_content_properties(
         model=model, instructions_by_class=config.instructions_by_class()
     )
