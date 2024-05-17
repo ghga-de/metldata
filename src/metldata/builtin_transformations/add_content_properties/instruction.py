@@ -20,29 +20,12 @@ from typing import Any, Final
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
+from metldata.builtin_transformations.common import NewContentSchemaPath
+
 DEFAULT_CONTENT_SCHEMA: Final[dict[str, Any]] = {
     "type": "object",
     "additionalProperties": False,
 }
-
-
-class NewContentSchemaPath(BaseSettings):
-    """A model describing the path of an object property within the content schema that
-    is yet to be added. The model comprises a path to an already existing object within
-    the content schema and the name of a property to be added to that object's schema
-    """
-
-    object_path: str = Field(
-        ...,
-        description=(
-            "The path to the content object to which a property shall be added. The"
-            + " path must be specified in dot notation, equivalently to JavaScript"
-            + " property accessors."
-        ),
-        examples=["some_property.another_nested_property"],
-    )
-
-    property_name: str = Field(..., description="The name of the property to be added.")
 
 
 class AddContentPropertyInstruction(BaseSettings):

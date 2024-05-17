@@ -23,10 +23,10 @@ from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.add_content_properties.main import (
+from metldata.builtin_transformations.add_content_properties import (
     ADD_CONTENT_PROPERTIES_TRANSFORMATION,
 )
-from metldata.builtin_transformations.delete_properties.main import (
+from metldata.builtin_transformations.delete_properties import (
     PROPERTY_DELETION_TRANSFORMATION,
 )
 from metldata.builtin_transformations.infer_relations import (

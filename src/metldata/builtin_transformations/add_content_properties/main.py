@@ -38,7 +38,7 @@ from metldata.transform.base import (
 
 
 class AddContentPropertiesTransformer(DataTransformer[AddContentPropertiesConfig]):
-    """A transformer that deletes content properties from data."""
+    """A transformer that adds content properties to the data."""
 
     def transform(self, data: DataPack) -> DataPack:
         """Transforms data.
