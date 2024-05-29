@@ -16,8 +16,6 @@
 
 """Data models."""
 
-from typing import Optional
-
 from ghga_service_commons.utils.utc_dates import UTCDatetime
 from pydantic import BaseModel, Field, field_validator
 from typing_extensions import TypedDict
@@ -26,7 +24,7 @@ from metldata.custom_types import Json
 from metldata.model_utils.anchors import AnchorPoint
 
 try:  # workaround for https://github.com/pydantic/pydantic/issues/5821
-    from typing_extensions import Literal
+    from typing import Literal
 except ImportError:
     from typing import Literal  # type: ignore
 
@@ -45,7 +43,7 @@ class ArtifactResourceClass(BaseModel):
     """Model to describe a resource class of an artifact."""
 
     name: str = Field(..., description="The name of the metadata class.")
-    description: Optional[str] = Field(
+    description: str | None = Field(
         None, description="A description of the metadata class."
     )
     anchor_point: AnchorPoint = Field(

@@ -17,9 +17,9 @@
 """Logic for transforming metadata."""
 
 from collections import defaultdict
+from typing import TypeAlias
 
 from pydantic import Json
-from typing_extensions import TypeAlias
 
 from metldata.metadata_utils import lookup_self_id
 from metldata.model_utils.anchors import AnchorPoint, lookup_anchor_point

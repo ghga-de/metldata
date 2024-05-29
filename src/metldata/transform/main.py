@@ -16,8 +16,7 @@
 
 """Main logic for running a transformation workflow on submissions."""
 
-from collections.abc import Awaitable
-from typing import Callable
+from collections.abc import Awaitable, Callable
 
 from metldata.event_handling.event_handling import (
     FileSystemEventPublisher,

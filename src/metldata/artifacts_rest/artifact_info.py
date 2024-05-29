@@ -17,7 +17,6 @@
 """Logic for handling information on artifacts."""
 
 import json
-from typing import Optional
 
 from linkml.generators.jsonschemagen import JsonSchemaGenerator
 from linkml_runtime.linkml_model.annotations import Annotation
@@ -114,9 +113,7 @@ def subset_json_schema_for_class(*, global_json_schema: Json, class_name: str) -
     }
 
 
-def load_description_for_class(
-    *, model: MetadataModel, class_name: str
-) -> Optional[str]:
+def load_description_for_class(*, model: MetadataModel, class_name: str) -> str | None:
     """Load the description for the specified class of the metadata model."""
     return model.schema_view.get_class(class_name, strict=True).description
 

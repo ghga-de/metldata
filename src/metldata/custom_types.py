@@ -16,9 +16,7 @@
 
 """A collection of custom types."""
 
-from typing import Any
-
-from typing_extensions import TypeAlias
+from typing import Any, TypeAlias
 
 Json: TypeAlias = dict[str, Any]
 

@@ -20,7 +20,7 @@ from abc import ABC, abstractmethod
 from collections import Counter
 from collections.abc import Iterable
 from operator import itemgetter
-from typing import Any, Optional
+from typing import Any
 
 from metldata.builtin_transformations.aggregate.models import (
     MinimalClass,
@@ -37,7 +37,7 @@ class AggregationFunction(ABC):
     result_range_name: str
     """The name of the range of the data produced by func."""
 
-    result_range_cls_def: Optional[MinimalClass]
+    result_range_cls_def: MinimalClass | None
     """The class definition of the data produced by func. None if the function
     result range is a type rather than a class."""
 

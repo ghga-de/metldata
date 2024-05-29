@@ -19,7 +19,6 @@
 import json
 from collections.abc import Iterator
 from pathlib import Path
-from typing import Optional
 
 from hexkit.base import InboundProviderBase
 from hexkit.custom_types import Ascii, JsonObject
@@ -180,7 +179,7 @@ class FileSystemEventCollector:
         self._config = config
 
     def collect_events(
-        self, *, topic: str, types: Optional[list[str]] = None
+        self, *, topic: str, types: list[str] | None = None
     ) -> Iterator[Event]:
         """Collect all events for the given types from the given topic."""
         events = read_events_from_topic(

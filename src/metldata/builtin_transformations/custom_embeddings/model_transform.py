@@ -17,7 +17,6 @@
 """Logic for transforming metadata models."""
 
 from copy import deepcopy
-from typing import Union
 
 from linkml_runtime.linkml_model.meta import ClassDefinition, SlotDefinition
 from stringcase import snakecase
@@ -51,7 +50,7 @@ def get_embedded_reference_slot(
     class_: ClassDefinition,
     schema_view: ExportableSchemaView,
     reference_slot_name: str,
-    target: Union[str, EmbeddingProfile],
+    target: str | EmbeddingProfile,
 ) -> SlotDefinition:
     """Update the slot definition of an embedded reference."""
     if not class_.slots or reference_slot_name not in class_.slots:

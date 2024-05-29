@@ -16,8 +16,9 @@
 
 """DAO for managing artifacts."""
 
+from typing import TypeAlias
+
 from hexkit.protocols.dao import DaoFactoryProtocol, DaoNaturalId
-from typing_extensions import TypeAlias
 
 from metldata.artifacts_rest.artifact_info import get_artifact_info_dict
 from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResource

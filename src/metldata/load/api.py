@@ -16,8 +16,6 @@
 
 """API for loading artifacts into running services."""
 
-from typing import Optional
-
 from fastapi import Depends, HTTPException, Response, Security
 from fastapi.routing import APIRouter
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -59,7 +57,7 @@ class LoaderTokenAuthProvider(AuthContextProtocol[LoaderTokenAuthContext]):
         """Initialize the loader token auth provider."""
         self._token_hashes = token_hashes
 
-    async def get_context(self, token: str) -> Optional[LoaderTokenAuthContext]:
+    async def get_context(self, token: str) -> LoaderTokenAuthContext | None:
         """Get a loader token auth context."""
         if not token:
             return None

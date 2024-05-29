@@ -18,9 +18,10 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
 from graphlib import CycleError, TopologicalSorter
-from typing import Callable, Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 
 from pydantic import (
     BaseModel,
@@ -122,7 +123,7 @@ class WorkflowStepBase(BaseModel, ABC):
 
     model_config = ConfigDict(frozen=True)
     description: str = Field(..., description="A description of the step.")
-    input: Optional[str] = Field(
+    input: str | None = Field(
         ...,
         description=(
             "The name of the workflow step from which the output is used as input"

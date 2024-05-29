@@ -17,7 +17,6 @@
 """Test reference utils."""
 
 from contextlib import nullcontext
-from typing import Optional
 
 import pytest
 
@@ -132,7 +131,7 @@ def test_get_target_class(path_str: str, expected_target_class: str):
     ],
 )
 def test_split_first_element(
-    path_str: str, expected_first_element: str, expected_remaining_path: Optional[str]
+    path_str: str, expected_first_element: str, expected_remaining_path: str | None
 ):
     """Test the split_first_element method."""
     observed_first_element, observed_remaining_path = split_first_element(

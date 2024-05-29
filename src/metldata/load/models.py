@@ -16,7 +16,7 @@
 
 """Data models."""
 
-from typing_extensions import TypeAlias
+from typing import TypeAlias
 
 from metldata.custom_types import Json
 
