@@ -36,7 +36,6 @@ from metldata.custom_types import Json
 from metldata.event_handling.models import SubmissionAnnotation
 
 # shortcuts:
-# pylint: disable=unused-import
 from metldata.model_utils.assumptions import MetadataModelAssumptionError  # noqa: F401
 from metldata.model_utils.essentials import MetadataModel
 
@@ -162,7 +161,6 @@ class WorkflowDefinition(BaseModel):
         ),
     )
 
-    # pylint: disable=no-self-argument
     @field_validator("steps", mode="after")
     def validate_step_references(
         cls,  # noqa: N805

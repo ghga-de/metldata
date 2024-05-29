@@ -82,7 +82,7 @@ async def load_artifacts_using_dao(
     )
 
 
-async def _get_changed_resources(  # pylint: disable=too-many-locals
+async def _get_changed_resources(
     artifact_resources: ArtifactResourceDict,
     artifact_info_dict: dict[str, ArtifactInfo],
     dao_collection: ArtifactDaoCollection,

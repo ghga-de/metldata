@@ -20,7 +20,6 @@ from metldata.submission_registry.submission_registry import SubmissionRegistryC
 from metldata.submission_registry.submission_store import SubmissionStoreConfig
 
 
-# pylint: disable=too-many-ancestors
 class Config(
     SubmissionStoreConfig,
     SubmissionRegistryConfig,

@@ -73,7 +73,7 @@ class AggregateTransformer(MetadataTransformer[AggregateConfig]):
 
 def check_model_assumptions(
     model: MetadataModel,
-    config: AggregateConfig,  # pylint: disable=unused-argument
+    config: AggregateConfig,
 ) -> None:
     """Check the assumptions of the model.
 

@@ -74,7 +74,7 @@ class ReferenceInferenceMetadataTransformer(
 
 def check_model_assumptions(
     model: MetadataModel,
-    config: ReferenceInferenceConfig,  # pylint: disable=unused-argument
+    config: ReferenceInferenceConfig,
 ) -> None:
     """Check the assumptions of the model.
 

@@ -81,7 +81,7 @@ class AccessionAdditionMetadataTransformer(
 
 def check_model_assumptions(
     model: MetadataModel,
-    config: AccessionAdditionConfig,  # pylint: disable=unused-argument
+    config: AccessionAdditionConfig,
 ) -> None:
     """Check the assumptions of the model.
 

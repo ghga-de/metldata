@@ -25,7 +25,6 @@ from metldata.custom_types import Json
 from metldata.model_utils.anchors import AnchorPoint
 
 
-# pylint: disable=unused-argument
 def execute_aggregation(
     *,
     original_model: CachedMetadataModel,

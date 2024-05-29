@@ -17,7 +17,6 @@
 """Aggregate transformation for metadata."""
 
 # shortcuts:
-# pylint: disable=unused-import
 from metldata.builtin_transformations.aggregate.config import (  # noqa: F401
     AggregateConfig,
 )

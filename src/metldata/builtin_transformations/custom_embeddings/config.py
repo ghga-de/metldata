@@ -52,7 +52,6 @@ class CustomEmbeddingConfig(BaseSettings):
         ),
     )
 
-    # pylint: disable=no-self-argument
     @field_validator("embedding_profiles")
     def check_embedding_profiles_unique(
         cls,  # noqa: N805

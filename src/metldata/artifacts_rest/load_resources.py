@@ -185,7 +185,7 @@ async def process_new_or_changed_resources(
             )
 
 
-async def process_resource_upsert(  # pylint: disable=too-many-locals
+async def process_resource_upsert(
     *,
     artifact_info_dict: dict[str, ArtifactInfo],
     artifact_name: str,

@@ -21,7 +21,6 @@ from metldata.transform.artifact_publisher import ArtifactEventPublisherConfig
 from metldata.transform.source_event_subscriber import SourceEventSubscriberConfig
 
 
-# pylint: disable=too-many-ancestors
 class TransformationEventHandlingConfig(
     FileSystemEventConfig, ArtifactEventPublisherConfig, SourceEventSubscriberConfig
 ):

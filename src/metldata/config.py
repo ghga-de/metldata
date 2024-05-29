@@ -17,16 +17,12 @@
 
 from hexkit.config import config_from_yaml
 
-# pylint: disable=unused-import
 from metldata.accession_registry.config import Config as AccessionRegistryConfig
 from metldata.artifacts_rest.config import ArtifactsRestConfig
-
-# pylint: disable=unused-import
 from metldata.load.config import ArtifactLoaderAPIConfig
 from metldata.submission_registry.config import Config as SubmissionRegistryConfig
 
 
-# pylint: disable=too-many-ancestors
 @config_from_yaml(prefix="metl_sub")
 class SubmissionConfig(AccessionRegistryConfig, SubmissionRegistryConfig):
     """Config parameters and their defaults."""

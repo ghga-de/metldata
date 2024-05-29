@@ -73,7 +73,7 @@ class CustomEmbeddingMetadataTransformer(MetadataTransformer[CustomEmbeddingConf
 
 def check_model_assumptions(
     model: MetadataModel,
-    config: CustomEmbeddingConfig,  # pylint: disable=unused-argument
+    config: CustomEmbeddingConfig,
 ) -> None:
     """Check the assumptions of the model.
 

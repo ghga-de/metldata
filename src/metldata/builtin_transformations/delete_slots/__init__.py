@@ -17,7 +17,6 @@
 """A transformation that deletes slots from models and associated metadata."""
 
 # shortcuts:
-# pylint: disable=unused-import
 from metldata.builtin_transformations.delete_slots.main import (  # noqa: F401
     SLOT_DELETION_TRANSFORMATION,
     SlotDeletionConfig,

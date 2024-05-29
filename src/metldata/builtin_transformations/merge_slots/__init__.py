@@ -17,7 +17,6 @@
 """A transformation that merges multiple slots of a class into a single one."""
 
 # shortcuts:
-# pylint: disable=unused-import
 from metldata.builtin_transformations.merge_slots.main import (  # noqa: F401
     SLOT_MERGING_TRANSFORMATION,
     SlotMergingConfig,
