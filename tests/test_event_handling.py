@@ -80,8 +80,8 @@ async def test_pub_sub_workflow(
 
         def __init__(self):
             self.consumed_events: set[ConsumedEvent] = set()
-            self.topics_of_interest = {"topic1"}
-            self.types_of_interest = {"type1", "type2"}
+            self.topics_of_interest = {"topic1"}  # type: ignore
+            self.types_of_interest = {"type1", "type2"}  # type: ignore
 
         async def _consume_validated(
             self, *, payload: JsonObject, type_: Ascii, topic: Ascii
