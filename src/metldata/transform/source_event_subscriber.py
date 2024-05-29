@@ -54,5 +54,5 @@ class SourceEventSubscriber(EventSubscriberProtocol):
             type_ (str): The type of the event.
             topic (str): Name of the topic the event was published to.
         """
-        submission_event_payload = SubmissionEventPayload(**payload)
+        submission_event_payload = SubmissionEventPayload(**payload)  # type: ignore
         await self._run_workflow_func(submission_event_payload)
