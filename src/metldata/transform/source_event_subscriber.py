@@ -43,9 +43,8 @@ class SourceEventSubscriber(EventSubscriberProtocol):
         self.types_of_interest = [config.source_event_type]
         self._run_workflow_func = run_workflow_func
 
-    # pylint: disable=unused-argument
     async def _consume_validated(
-        self, *, payload: JsonObject, type_: Ascii, topic: Ascii
+        self, *, payload: JsonObject, type_: Ascii, topic: Ascii, key: Ascii
     ) -> None:
         """
         Receive and process an event with already validated topic and type.

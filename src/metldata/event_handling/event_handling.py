@@ -164,7 +164,7 @@ class FileSystemEventSubscriber(InboundProviderBase):
             event_store_path=self._config.event_store_path,
         ):
             await self._translator.consume(
-                payload=event.payload, type_=event.type_, topic=event.topic
+                payload=event.payload, type_=event.type_, topic=event.topic, key=""
             )
 
 

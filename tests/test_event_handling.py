@@ -84,7 +84,7 @@ async def test_pub_sub_workflow(
             self.types_of_interest = {"type1", "type2"}  # type: ignore
 
         async def _consume_validated(
-            self, *, payload: JsonObject, type_: Ascii, topic: Ascii
+            self, *, payload: JsonObject, type_: Ascii, topic: Ascii, key: Ascii
         ) -> None:
             self.consumed_events.add(
                 ConsumedEvent(topic=topic, type_=type_, payload=json.dumps(payload))

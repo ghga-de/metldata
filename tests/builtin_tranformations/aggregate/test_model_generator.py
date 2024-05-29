@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-# pylint: disable=redefined-outer-name
 
 """Test the model generation"""
 
