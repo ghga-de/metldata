@@ -1,6 +1,6 @@
 [project]
 name = "metldata"
-version = "1.2.1"
+version = "1.3.0"
 description = "metldata - A framework for handling metadata based on ETL, CQRS, and event sourcing."
 dependencies = [
     "hexkit[akafka,mongodb] >=3, <4",
