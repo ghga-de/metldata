@@ -1,4 +1,4 @@
-# Copyright 2021 - 2023 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
 # limitations under the License.
 
 ## creating building container
-FROM python:3.10.9-slim-bullseye AS builder
+FROM python:3.12-slim-bookworm AS builder
 # update and install dependencies
 RUN apt update
 RUN apt upgrade -y
@@ -26,7 +26,7 @@ WORKDIR /service
 RUN python -m build
 
 # creating running container
-FROM python:3.10.9-slim-bullseye
+FROM python:3.12-slim-bookworm
 # update and install dependencies
 RUN apt update
 RUN apt upgrade -y
