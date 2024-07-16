@@ -18,7 +18,7 @@
 
 from pydantic import GetJsonSchemaHandler, ValidationInfo
 
-from metldata.builtin_transformations.infer_relations.path.path_str import (
+from metldata.builtin_transformations.common.path.path_str import (
     PATH_PATTERN,
     ValidationError,
     clean_path_str,

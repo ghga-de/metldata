@@ -18,7 +18,7 @@
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from metldata.builtin_transformations.infer_relations.path.path import (
+from metldata.builtin_transformations.common.path.path import (
     RelationPath,
 )
 

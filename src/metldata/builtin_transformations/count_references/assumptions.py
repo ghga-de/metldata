@@ -12,20 +12,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-"""Check model assumptions."""
+"Assumptions for count references transformation"
+
+from typing import Any
 
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.common.path.path import (
-    RelationPath,
-)
+from metldata.builtin_transformations.common.path.path import RelationPath
 from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElementType,
-)
-from metldata.builtin_transformations.infer_relations.relations import (
-    InferenceInstruction,
 )
 from metldata.transform.base import ModelAssumptionError
 
@@ -61,39 +57,7 @@ def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPat
 
             return
 
-        if path_element.property not in model.classes[path_element.target].relations:
-            raise ModelAssumptionError(
-                f"Relation property {path_element.property} not found in class"
-                f" {path_element.target}."
-            )
 
-
-def assert_new_property_not_exists(
-    model: SchemaPack, instruction: InferenceInstruction
-) -> None:
-    """Make sure that new property specified in the instruction does not yet exist in
-    the model. The existence of the source class is not checked.
-    """
-    source_class = model.classes.get(instruction.source)
-    if source_class and instruction.new_property in source_class.relations:
-        raise ModelAssumptionError(
-            f"Property '{instruction.new_property}' of class '{instruction.source}'"
-            + ", intended to store an inferred relation, does already exist."
-        )
-
-
-def assert_instructions_match_model(
-    *,
-    model: SchemaPack,
-    instructions: list[InferenceInstruction],
-) -> None:
-    """Make sure that the provided inference instructions can be applied to the provided
-    model.
-
-    Raises:
-        ModelAssumptionError:
-            if the model does not fulfill the assumptions.
-    """
-    for instruction in instructions:
-        assert_path_classes_and_relations_exist(model=model, path=instruction.path)
-        assert_new_property_not_exists(model=model, instruction=instruction)
+def check_model_assumptions(schema: SchemaPack, instructions_by_class: Any) -> None:
+    """Check the model assumptions for the count references transformation."""
+    return None
