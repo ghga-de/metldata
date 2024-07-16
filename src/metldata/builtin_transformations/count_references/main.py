@@ -54,7 +54,7 @@ def check_model_assumptions_wrapper(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    check_model_assumptions(schema=model, instructions_by_class=config.count_references)
+    check_model_assumptions(schema=model, instructions=config.count_references)
 
 
 def transform_model(model: SchemaPack, config: CountReferencesConfig) -> SchemaPack:

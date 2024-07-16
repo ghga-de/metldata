@@ -19,14 +19,27 @@ from typing import Any
 
 from schemapack.spec.schemapack import SchemaPack
 
+from metldata.builtin_transformations.add_content_properties.path import (
+    resolve_schema_object_path,
+)
 from metldata.builtin_transformations.common.path.path import RelationPath
 from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElementType,
 )
 from metldata.builtin_transformations.count_references.instruction import (
-    AddCountPropertyInstruction,
+    AddReferenceCountPropertyInstruction,
 )
 from metldata.transform.base import ModelAssumptionError
+
+
+def assert_class_is_source(
+    model: SchemaPack, instruction: AddReferenceCountPropertyInstruction
+):
+    """Make sure that the source class is the one being modified with the count property"""
+    if instruction.class_name != instruction.source_relation_path.source:
+        raise ModelAssumptionError(
+            f"Class {instruction.class_name} does not correspond to the relation source {instruction.source_relation_path.source}."
+        )
 
 
 def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPath):
@@ -48,52 +61,52 @@ def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPat
                 f"Class {path_element.target} not found in model."
             )
 
-        if path_element.type_ == RelationPathElementType.ACTIVE:
-            if (
-                path_element.property
-                not in model.classes[path_element.source].relations
-            ):
-                raise ModelAssumptionError(
-                    f"Relation property {path_element.property} not found in class"
-                    f" {path_element.source}."
-                )
-
-            return
+        if path_element.type_ == RelationPathElementType.ACTIVE and (
+            path_element.property not in model.classes[path_element.source].relations
+        ):
+            raise ModelAssumptionError(
+                f"Relation property {path_element.property} not found in class"
+                f" {path_element.source}."
+            )
 
 
-def assert_new_property_not_exists(
+def assert_summary_exists(
     schema: SchemaPack,
-    instructions_by_class: dict[str, list[AddCountPropertyInstruction]],
+    instruction: AddReferenceCountPropertyInstruction,
 ) -> None:
-    """Check the model assumptions for the add content properties transformation."""
-    # the existence of the class getting the new property is already checked in the previous assumption.
-    for class_name, instructions in instructions_by_class.items():
-        # class_def = schema.classes.get(class_name)
+    """TODO."""
+    class_name = instruction.class_name
+    class_def = schema.classes.get(class_name)
 
-        # # Check if the class exists in the model
-        # if not class_def:
-        #     raise ModelAssumptionError(
-        #         f"Class {class_name} does not exist in the model."
-        #     )
+    # Check if the class exists in the model
+    if not class_def:
+        raise ModelAssumptionError(f"Class {class_name} does not exist in the model.")
 
-        for instruction in instructions:
-            # Check if the property already exists in the target schema
-            try:
-                target_schema = resolve_schema_object_path(
-                    json_schema=class_def.content.json_schema_dict,
-                    path=instruction.target_content.object_path,
-                )
-            except KeyError:
-                continue
-            if instruction.target_content.property_name in target_schema.get(
-                "properties", {}
-            ):
-                raise ModelAssumptionError(
-                    f"Property {instruction.target_content.property_name} already exists"
-                    + f" in class {class_name}."
-                )
+    # Check if the object_path already exists in the model
+    try:
+        target_schema = resolve_schema_object_path(
+            json_schema=class_def.content.json_schema_dict,
+            path=instruction.target_content.object_path,
+        )
+    except KeyError as err:
+        raise ModelAssumptionError(
+            f"Object path {instruction.target_content.object_path} does not exist"
+            + f" in class {class_name}."
+        ) from err
+    if instruction.target_content.property_name in target_schema.get("properties", {}):
+        raise ModelAssumptionError(
+            f"Property {instruction.target_content.property_name} already exists"
+            + f" in class {class_name}."
+        )
 
 
-def check_model_assumptions(schema: SchemaPack, instructions_by_class: Any) -> None:
+def check_model_assumptions(
+    schema: SchemaPack, instructions: list[AddReferenceCountPropertyInstruction]
+) -> None:
     """Check the model assumptions for the count references transformation."""
-    return None
+    for instruction in instructions:
+        assert_class_is_source(schema, instruction)
+        assert_path_classes_and_relations_exist(
+            schema, instruction.source_relation_path
+        )
+        assert_summary_exists(schema, instruction)

@@ -19,14 +19,18 @@ from typing import Any
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from metldata.builtin_transformations.count_references.instruction import (
+    AddReferenceCountPropertyInstruction,
+)
+
 
 class CountReferencesConfig(BaseSettings):
     """Config containing content properties to be deleted from models and data."""
 
     model_config = SettingsConfigDict(extra="forbid")
 
-    count_references: Any = Field(
+    count_references: list[AddReferenceCountPropertyInstruction] = Field(
         ...,
-        description=("description"),
+        description=("Description TODO"),
         examples=[],
     )
