@@ -433,9 +433,9 @@ hbreader==0.9.1 \
     #   jsonasobj2
     #   linkml
     #   linkml-runtime
-hexkit==3.4.0 \
-    --hash=sha256:3f87d76d746a9e506d458eb729374a8b2facc04f4b40307a2db3b970a8ee4713 \
-    --hash=sha256:a02f086de15858b8c72852d022c63ffcec555c24cd30b2f6628f0d41fd2fd88a
+hexkit==3.5.0 \
+    --hash=sha256:30a82d170630a615836d6a42116f10a2052a9ae752137419f6abe1286a113a32 \
+    --hash=sha256:b27599809b94f24e87153667afd9a72f46c46d267c06cafc595d40cdc6c53f89
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
@@ -857,9 +857,9 @@ pydantic-core==2.20.1 \
     # via
     #   -c lock/requirements-dev.txt
     #   pydantic
-pydantic-settings==2.3.4 \
-    --hash=sha256:11ad8bacb68a045f00e4f862c7a718c8a9ec766aa8fd4c32e39a0594b207b53a \
-    --hash=sha256:c5802e3d62b78e82522319bbc9b8f8ffb28ad1c988a99311d04f2a6051fca0a7
+pydantic-settings==2.4.0 \
+    --hash=sha256:bb6849dc067f1687574c12a639e231f3a6feeed0a12d710c1382045c5db1c315 \
+    --hash=sha256:ed81c3a0f46392b4d7c0a565c05884e6e54b3456e6f0fe4d8814981172dc9a88
     # via
     #   -c lock/requirements-dev.txt
     #   hexkit
