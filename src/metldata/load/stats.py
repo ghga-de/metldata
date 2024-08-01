@@ -16,6 +16,7 @@
 
 """Generate global summary statistics."""
 
+import logging
 from operator import itemgetter
 from typing import Any, cast
 
@@ -28,6 +29,9 @@ from metldata.artifacts_rest.models import (
     ValueCount,
 )
 from metldata.load.aggregator import DbAggregator
+
+log = logging.getLogger(__name__)
+
 
 STATS_COLLECTION_NAME = "stats"
 
@@ -54,6 +58,7 @@ async def create_stats_using_aggregator(
     db_aggregator: DbAggregator,
 ) -> None:
     """Create summary by running an aggregation pipeline on the database."""
+    log.debug("Creating global summary statistics...")
     resource_stats: dict[str, ResourceStats] = {}
     artifact_name = primary_artifact_name
     artifact_info = artifact_infos[artifact_name]
