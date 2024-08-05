@@ -58,12 +58,16 @@ async def create_stats_using_aggregator(
     db_aggregator: DbAggregator,
 ) -> None:
     """Create summary by running an aggregation pipeline on the database."""
-    log.debug("Creating global summary statistics...")
+    log.info(
+        "Creating global summary statistics for artifact: %s",
+        primary_artifact_name,
+    )
     resource_stats: dict[str, ResourceStats] = {}
     artifact_name = primary_artifact_name
     artifact_info = artifact_infos[artifact_name]
     for resource_class in artifact_info.resource_classes:
         collection_name = f"art_{artifact_name}_class_{resource_class}"
+        log.debug("Aggregating data for %s", collection_name)
 
         pipeline: list[dict[str, Any]] = [{"$count": "count"}]
         result = await db_aggregator.aggregate(
@@ -71,12 +75,20 @@ async def create_stats_using_aggregator(
         )
         if not result:
             # Initialize with default values if not present
+            log.debug(
+                "No data found for resource class %s, initializing with default values",
+                resource_class,
+            )
             resource_stats[resource_class] = ResourceStats(count=0)
             continue
         resource_stats[resource_class] = cast(ResourceStats, result[0])
 
         stat_slot = get_stat_slot(resource_class)
         if not stat_slot:
+            log.debug(
+                "No stat slot found for resource class %s, skipping detailed stats",
+                resource_class,
+            )
             continue
 
         pipeline = [{"$group": {"_id": f"$content.{stat_slot}", "count": {"$sum": 1}}}]
@@ -84,6 +96,11 @@ async def create_stats_using_aggregator(
             collection_name=collection_name, pipeline=pipeline
         )
         if not result:
+            log.debug(
+                "No detailed stats found for resource class %s, stat slot %s",
+                resource_class,
+                stat_slot,
+            )
             continue
 
         stats: list[ValueCount] = sorted(
@@ -96,6 +113,7 @@ async def create_stats_using_aggregator(
         resource_stats[resource_class]["stats"] = {stat_slot: stats}
 
     if resource_stats:
+        log.debug("Updating global statistics summary in the database")
         global_stats = GlobalStats(
             id="global", created=now_as_utc(), resource_stats=resource_stats
         )

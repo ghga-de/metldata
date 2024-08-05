@@ -109,7 +109,6 @@ async def rest_api_factory(  # noqa: PLR0913
     ):
         """Load artifacts into services for querying via user-accessible API."""
         try:
-            log.debug("Checking artifact resources...")
             check_artifact_resources(
                 artifact_resources=artifact_resources,
                 artifact_infos=artifact_info_dict,
@@ -123,7 +122,6 @@ async def rest_api_factory(  # noqa: PLR0913
                 config=config, provider=event_pub_provider
             )
 
-            log.debug("Loading artifacts...")
             await load_artifacts_using_dao(
                 artifact_resources=artifact_resources,
                 artifact_info_dict=artifact_info_dict,
@@ -131,7 +129,6 @@ async def rest_api_factory(  # noqa: PLR0913
                 dao_collection=dao_collection,
             )
 
-            log.debug("Creating stats for artifacts...")
             await create_stats_using_aggregator(
                 artifact_infos=artifact_info_dict,
                 primary_artifact_name=primary_artifact_name,

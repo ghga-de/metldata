@@ -55,7 +55,7 @@ async def load_artifacts_using_dao(
     dao_collection: ArtifactDaoCollection,
 ) -> None:
     """Load artifact resources from multiple submissions using the given dao collection."""
-    log.debug("Loading artifact resources...")
+    log.info("Starting to load artifact resources.")
     (
         removed_resource_tags,
         new_resources,
@@ -65,15 +65,19 @@ async def load_artifacts_using_dao(
         artifact_info_dict=artifact_info_dict,
         dao_collection=dao_collection,
     )
+    log.info(
+        "Fetched changed resources: %d removed, %d new, %d changed.",
+        len(removed_resource_tags),
+        len(new_resources),
+        len(changed_resources),
+    )
 
-    log.debug("Processing removed resources... Count: %s", len(removed_resource_tags))
     await process_removed_resources(
         event_publisher=event_publisher,
         resource_tags=removed_resource_tags,
         dao_collection=dao_collection,
     )
 
-    log.debug("Processing new resources... Count: %s", len(new_resources))
     await process_new_or_changed_resources(
         artifact_info_dict=artifact_info_dict,
         event_publisher=event_publisher,
@@ -81,13 +85,14 @@ async def load_artifacts_using_dao(
         dao_collection=dao_collection,
     )
 
-    log.debug("Processing changed resources... Count: %s", len(changed_resources))
     await process_new_or_changed_resources(
         artifact_info_dict=artifact_info_dict,
         event_publisher=event_publisher,
         resources=changed_resources,
         dao_collection=dao_collection,
     )
+
+    log.info("Finished loading artifact resources.")
 
 
 async def _get_changed_resources(
