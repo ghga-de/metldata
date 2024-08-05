@@ -16,6 +16,7 @@
 
 """Logic for loading artifacts."""
 
+import logging
 from typing import cast
 
 from ghga_event_schemas.pydantic_ import (
@@ -40,6 +41,8 @@ from metldata.metadata_utils import (
     lookup_self_id,
     lookup_slot_in_resource,
 )
+
+log = logging.getLogger(__name__)
 
 
 def extract_class_resources_from_artifact(
@@ -136,6 +139,7 @@ async def process_removed_resources(
     dao_collection: ArtifactDaoCollection,
 ):
     """Delete no longer needed artifact resources from DB and send corresponding events"""
+    log.info("Starting to process removed resources: %s", len(resource_tags))
     for resource_tag in resource_tags:
         artifact_name, class_name, resource_id = resource_tag
         # resource tag was obtained from querying the db, so resource with given ID
@@ -164,6 +168,8 @@ async def process_new_or_changed_resources(
     dao_collection: ArtifactDaoCollection,
 ):
     """Insert newly received artifact resources into DB and send corresponding events"""
+    log.info("Starting to process new or changed resources: %s", len(resources))
+
     for resource_tag, resource in resources.items():
         artifact_name = resource_tag[0]
         # no resource tag was obtained from querying the db, so the resource with the

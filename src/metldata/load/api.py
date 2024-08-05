@@ -16,6 +16,8 @@
 
 """API for loading artifacts into running services."""
 
+import logging
+
 from fastapi import Depends, HTTPException, Response, Security
 from fastapi.routing import APIRouter
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -39,6 +41,8 @@ from metldata.load.load import (
 )
 from metldata.load.models import ArtifactResourceDict
 from metldata.load.stats import create_stats_using_aggregator
+
+log = logging.getLogger(__name__)
 
 
 class LoaderTokenAuthContext(BaseModel):
@@ -110,12 +114,14 @@ async def rest_api_factory(  # noqa: PLR0913
                 artifact_infos=artifact_info_dict,
             )
         except ArtifactResourcesInvalid as error:
+            log.error("Invalid artifact resources: %s", artifact_resources)
             raise HTTPException(status_code=422, detail=str(error)) from error
 
         async with KafkaEventPublisher.construct(config=config) as event_pub_provider:
             event_publisher = EventPubTranslator(
                 config=config, provider=event_pub_provider
             )
+
             await load_artifacts_using_dao(
                 artifact_resources=artifact_resources,
                 artifact_info_dict=artifact_info_dict,

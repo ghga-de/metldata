@@ -16,6 +16,8 @@
 
 """Logic for loading artifact resources."""
 
+import logging
+
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.load_resources import (
     extract_all_resources_from_artifact,
@@ -25,6 +27,8 @@ from metldata.artifacts_rest.load_resources import (
 from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResource
 from metldata.load.event_publisher import EventPublisherPort
 from metldata.load.models import ArtifactResourceDict
+
+log = logging.getLogger(__name__)
 
 
 class ArtifactResourcesInvalid(RuntimeError):
@@ -51,6 +55,7 @@ async def load_artifacts_using_dao(
     dao_collection: ArtifactDaoCollection,
 ) -> None:
     """Load artifact resources from multiple submissions using the given dao collection."""
+    log.info("Starting to load artifact resources.")
     (
         removed_resource_tags,
         new_resources,
@@ -59,6 +64,12 @@ async def load_artifacts_using_dao(
         artifact_resources=artifact_resources,
         artifact_info_dict=artifact_info_dict,
         dao_collection=dao_collection,
+    )
+    log.info(
+        "Fetched changed resources: %d removed, %d new, %d changed.",
+        len(removed_resource_tags),
+        len(new_resources),
+        len(changed_resources),
     )
 
     await process_removed_resources(
@@ -80,6 +91,8 @@ async def load_artifacts_using_dao(
         resources=changed_resources,
         dao_collection=dao_collection,
     )
+
+    log.info("Finished loading artifact resources.")
 
 
 async def _get_changed_resources(
