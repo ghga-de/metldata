@@ -15,7 +15,6 @@
 
 "Assumptions for count references transformation"
 
-from typing import Any
 
 from schemapack.spec.schemapack import SchemaPack
 
@@ -31,10 +30,13 @@ from metldata.builtin_transformations.count_references.instruction import (
 )
 from metldata.transform.base import ModelAssumptionError
 
+# TODO one more vaidation is required: "The transformation shall validate whether the
+# target is defined with multiplicity and fail otherwise" Multiplicity is defined on
+# schemapack. Hence it should in model assumptions
 
-def assert_class_is_source(
-    model: SchemaPack, instruction: AddReferenceCountPropertyInstruction
-):
+
+def assert_class_is_source(instruction: AddReferenceCountPropertyInstruction
+                           ):
     """Make sure that the source class is the one being modified with the count property"""
     if instruction.class_name != instruction.source_relation_path.source:
         raise ModelAssumptionError(

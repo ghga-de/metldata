@@ -27,9 +27,6 @@ from metldata.builtin_transformations.count_references.config import (
 from metldata.builtin_transformations.count_references.data_transform import (
     count_references,
 )
-from metldata.builtin_transformations.count_references.model_transform import (
-    add_count_references,
-)
 from metldata.transform.base import DataTransformer, TransformationDefinition
 
 
