@@ -47,10 +47,10 @@ Here is a brief summary of the principle steps of transformation:
 from schemapack.spec.custom_types import ResourceId
 from schemapack.spec.datapack import DataPack, Resource
 
-from metldata.builtin_transformations.infer_relations.path.path import (
+from metldata.builtin_transformations.common.path.path import (
     RelationPath,
 )
-from metldata.builtin_transformations.infer_relations.path.path_elements import (
+from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElement,
     RelationPathElementType,
 )
@@ -133,7 +133,8 @@ def resolve_passive_path_element(
     target_resource_ids = set()
 
     for candidate_resource_id, candidate_resource in candidate_resources.items():
-        relation = candidate_resource.relations.get(path_element.property, set())
+        relation = candidate_resource.relations.get(
+            path_element.property, set())
 
         if (
             isinstance(relation, set) and source_resource_id in relation

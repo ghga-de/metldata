@@ -24,8 +24,8 @@ from schemapack.spec.schemapack import (
     SchemaPack,
 )
 
-from metldata.builtin_transformations.infer_relations.path.path import RelationPath
-from metldata.builtin_transformations.infer_relations.path.path_elements import (
+from metldata.builtin_transformations.common.path.path import RelationPath
+from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElement,
     RelationPathElementType,
 )

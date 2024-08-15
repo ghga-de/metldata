@@ -38,7 +38,8 @@ def assert_class_is_source(
     """Make sure that the source class is the one being modified with the count property"""
     if instruction.class_name != instruction.source_relation_path.source:
         raise ModelAssumptionError(
-            f"Class {instruction.class_name} does not correspond to the relation source {instruction.source_relation_path.source}."
+            f"Class {instruction.class_name} does not correspond to the relation source {
+                instruction.source_relation_path.source}."
         )
 
 
@@ -74,13 +75,14 @@ def assert_summary_exists(
     schema: SchemaPack,
     instruction: AddReferenceCountPropertyInstruction,
 ) -> None:
-    """TODO."""
+    """Make sure that the source class (the class being modified) and the object_path exists in the model."""
     class_name = instruction.class_name
     class_def = schema.classes.get(class_name)
 
     # Check if the class exists in the model
     if not class_def:
-        raise ModelAssumptionError(f"Class {class_name} does not exist in the model.")
+        raise ModelAssumptionError(
+            f"Class {class_name} does not exist in the model.")
 
     # Check if the object_path already exists in the model
     try:
@@ -90,12 +92,14 @@ def assert_summary_exists(
         )
     except KeyError as err:
         raise ModelAssumptionError(
-            f"Object path {instruction.target_content.object_path} does not exist"
+            f"Object path {
+                instruction.target_content.object_path} does not exist"
             + f" in class {class_name}."
         ) from err
     if instruction.target_content.property_name in target_schema.get("properties", {}):
         raise ModelAssumptionError(
-            f"Property {instruction.target_content.property_name} already exists"
+            f"Property {
+                instruction.target_content.property_name} already exists"
             + f" in class {class_name}."
         )
 
