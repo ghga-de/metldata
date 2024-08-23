@@ -133,8 +133,7 @@ def resolve_passive_path_element(
     target_resource_ids = set()
 
     for candidate_resource_id, candidate_resource in candidate_resources.items():
-        relation = candidate_resource.relations.get(
-            path_element.property, set())
+        relation = candidate_resource.relations.get(path_element.property, set())
 
         if (
             isinstance(relation, set) and source_resource_id in relation

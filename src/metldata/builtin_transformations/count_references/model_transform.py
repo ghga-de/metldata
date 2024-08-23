@@ -14,7 +14,6 @@
 # limitations under the License.
 """Model transformation logic for the 'count references' transformation"""
 
-
 from schemapack.spec.schemapack import (
     SchemaPack,
 )
@@ -29,11 +28,13 @@ from metldata.transform.base import EvitableTransformationError
 
 
 def add_count_references(
-    *, model: SchemaPack, instructions_by_class: dict[str, list[AddReferenceCountPropertyInstruction]]
+    *,
+    model: SchemaPack,
+    instructions_by_class: dict[str, list[AddReferenceCountPropertyInstruction]],
 ) -> SchemaPack:
     """The content properties are added to the model with the 'add_content_properties
     step of the workflow. Thus, this function applies no transformation.
-    It only checks for EvitableTransformationError. 
+    It only checks for EvitableTransformationError.
     """
     for class_name, cls_instructions in instructions_by_class.items():
         class_def = model.classes.get(class_name)
