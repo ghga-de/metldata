@@ -14,8 +14,6 @@
 # limitations under the License.
 """Models used to describe count content properties that shall be calculated and added."""
 
-from typing import Any
-
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -34,3 +32,16 @@ class CountReferencesConfig(BaseSettings):
         description=("Description TODO"),
         examples=[],
     )
+
+    def instructions_by_class(
+        self,
+    ) -> dict[str, list[AddReferenceCountPropertyInstruction]]:
+        """Returns a dictionary of instructions by class (i.e. config for each class)."""
+        instructions_by_class: dict[
+            str, list[AddReferenceCountPropertyInstruction]
+        ] = {}
+        for instruction in self.count_references:
+            instructions_by_class.setdefault(instruction.class_name, []).append(
+                instruction
+            )
+        return instructions_by_class

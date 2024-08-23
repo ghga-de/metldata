@@ -27,6 +27,9 @@ from metldata.builtin_transformations.count_references.config import (
 from metldata.builtin_transformations.count_references.data_transform import (
     count_references,
 )
+from metldata.builtin_transformations.count_references.model_transform import (
+    add_count_references,
+)
 from metldata.transform.base import DataTransformer, TransformationDefinition
 
 
@@ -39,7 +42,9 @@ class CountReferencesTransformer(DataTransformer[CountReferencesConfig]):
         Args:
             data: The data as DataPack to be transformed.
         """
-        return count_references(data=data)
+        return count_references(
+            data=data, instructions_by_class=self._config.instructions_by_class()
+        )
 
 
 def check_model_assumptions_wrapper(
@@ -51,7 +56,9 @@ def check_model_assumptions_wrapper(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    check_model_assumptions(schema=model, instructions=config.count_references)
+    check_model_assumptions(
+        schema=model, instructions_by_class=config.instructions_by_class()
+    )
 
 
 def transform_model(model: SchemaPack, config: CountReferencesConfig) -> SchemaPack:
@@ -62,7 +69,7 @@ def transform_model(model: SchemaPack, config: CountReferencesConfig) -> SchemaP
             if the transformation fails.
     """
     return add_count_references(
-        model=model, instructions_by_class=config.count_references
+        model=model, instructions_by_class=config.instructions_by_class()
     )
 
 

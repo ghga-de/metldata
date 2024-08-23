@@ -17,21 +17,53 @@
 
 from schemapack.spec.datapack import DataPack
 
-# from metldata.transform.base import EvitableTransformationError
+from metldata.builtin_transformations.common.path.path_elements import (
+    RelationPathElementType,
+)
+from metldata.builtin_transformations.count_references.instruction import (
+    AddReferenceCountPropertyInstruction,
+)
+from metldata.transform.base import EvitableTransformationError
 
 
-def count_references(*, data: DataPack) -> DataPack:
-    """Count
+def count_references(
+    *,
+    data: DataPack,
+    instructions_by_class: dict[str, list[AddReferenceCountPropertyInstruction]],
+) -> DataPack:
+    """Given a data pack and a dictionary of instructions by class,
+    counts the references and adds the value to its corresponding content property.
 
     Args:
         data:
-
+            The datapack to add the reference count values.
+        instructions_by_class:
+            A dictionary mapping class names to lists of instructions.
 
     Returns:
-        The data with
+        The data with the reference counts added.
     """
     modified_data = data.model_copy(deep=True)
+    for class_name, instructions in instructions_by_class.items():
+        resources = modified_data.resources.get(class_name)
 
-    # TODO modifications
+        if not resources:
+            raise EvitableTransformationError()
+
+        for instruction in instructions:
+            for path_element in instruction.source_relation_path.elements:
+                if path_element.type_ == RelationPathElementType.ACTIVE:
+                    relation_slot = path_element.property
+                else:
+                    raise EvitableTransformationError()
+
+                for resource in resources.values():
+                    related_to = resource.relations.get(relation_slot)
+
+                    count = len(related_to) if related_to else 0
+
+                    resource.content[instruction.target_content.object_path].update(
+                        {instruction.target_content.property_name: count}
+                    )
 
     return modified_data

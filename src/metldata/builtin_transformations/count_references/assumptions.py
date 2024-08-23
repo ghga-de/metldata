@@ -15,7 +15,6 @@
 
 "Assumptions for count references transformation"
 
-
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.add_content_properties.path import (
@@ -28,15 +27,10 @@ from metldata.builtin_transformations.common.path.path_elements import (
 from metldata.builtin_transformations.count_references.instruction import (
     AddReferenceCountPropertyInstruction,
 )
-from metldata.transform.base import ModelAssumptionError
-
-# TODO one more vaidation is required: "The transformation shall validate whether the
-# target is defined with multiplicity and fail otherwise" Multiplicity is defined on
-# schemapack. Hence it should in model assumptions
+from metldata.transform.base import ModelAssumptionError, MultiplicityError
 
 
-def assert_class_is_source(instruction: AddReferenceCountPropertyInstruction
-                           ):
+def assert_class_is_source(instruction: AddReferenceCountPropertyInstruction):
     """Make sure that the source class is the one being modified with the count property"""
     if instruction.class_name != instruction.source_relation_path.source:
         raise ModelAssumptionError(
@@ -73,18 +67,31 @@ def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPat
             )
 
 
+def assert_multiplicity(model: SchemaPack, path: RelationPath):
+    """Make sure the target of the relation conributes multiple instances to the relation."""
+    for path_element in path.elements:
+        if path_element.type_ == RelationPathElementType.ACTIVE:
+            relation = model.classes[path_element.source].relations[
+                path_element.property
+            ]
+            if not relation.multiple.target:
+                raise MultiplicityError(
+                    f"The target of the relation {
+                        path_element.property} does not contribute multiple instances to the relation."
+                )
+
+
 def assert_summary_exists(
-    schema: SchemaPack,
+    model: SchemaPack,
     instruction: AddReferenceCountPropertyInstruction,
 ) -> None:
     """Make sure that the source class (the class being modified) and the object_path exists in the model."""
     class_name = instruction.class_name
-    class_def = schema.classes.get(class_name)
+    class_def = model.classes.get(class_name)
 
     # Check if the class exists in the model
     if not class_def:
-        raise ModelAssumptionError(
-            f"Class {class_name} does not exist in the model.")
+        raise ModelAssumptionError(f"Class {class_name} does not exist in the model.")
 
     # Check if the object_path already exists in the model
     try:
@@ -98,21 +105,28 @@ def assert_summary_exists(
                 instruction.target_content.object_path} does not exist"
             + f" in class {class_name}."
         ) from err
-    if instruction.target_content.property_name in target_schema.get("properties", {}):
+
+    # Check if the propert_name already exists in the model
+    if instruction.target_content.property_name not in target_schema.get(
+        "properties", {}
+    ):
         raise ModelAssumptionError(
             f"Property {
-                instruction.target_content.property_name} already exists"
+                instruction.target_content.property_name} does not exist"
             + f" in class {class_name}."
         )
 
 
 def check_model_assumptions(
-    schema: SchemaPack, instructions: list[AddReferenceCountPropertyInstruction]
+    schema: SchemaPack,
+    instructions_by_class: dict[str, list[AddReferenceCountPropertyInstruction]],
 ) -> None:
     """Check the model assumptions for the count references transformation."""
-    for instruction in instructions:
-        assert_class_is_source(schema, instruction)
-        assert_path_classes_and_relations_exist(
-            schema, instruction.source_relation_path
-        )
-        assert_summary_exists(schema, instruction)
+    for _, instructions in instructions_by_class.items():
+        for instruction in instructions:
+            assert_class_is_source(instruction)
+            assert_path_classes_and_relations_exist(
+                schema, instruction.source_relation_path
+            )
+            assert_multiplicity(schema, instruction.source_relation_path)
+            assert_summary_exists(schema, instruction)

@@ -44,6 +44,10 @@ class ModelAssumptionError(RuntimeError):
     """Raised when assumptions made by transformation step about a model are not met."""
 
 
+class MultiplicityError(ModelAssumptionError):
+    """Raised when the relation does not conform the multiplicity."""
+
+
 class ModelTransformationError(RuntimeError):
     """Raised when a transformation failed when applied to the schemapack-based model.
     This exception should only be raised when the error could not have been caught

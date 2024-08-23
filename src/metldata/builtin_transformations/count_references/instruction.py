@@ -34,5 +34,5 @@ class AddReferenceCountPropertyInstruction(BaseSettings):
     )
     source_relation_path: RelationPath = Field(
         ...,
-        description="The path describing the relation between the classes if a metadata model.",
+        description="The path describing the relation between the classes of a metadata model.",
     )
