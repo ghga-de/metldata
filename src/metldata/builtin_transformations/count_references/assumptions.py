@@ -125,12 +125,12 @@ def assert_summary_exists(
             json_schema=class_def.content.json_schema_dict,
             path=instruction.target_content.object_path,
         )
-    except KeyError as err:
+    except KeyError as exc:
         raise ModelAssumptionError(
             f"Object path {
                 instruction.target_content.object_path} does not exist"
             + f" in class {class_name}."
-        ) from err
+        ) from exc
 
     # Check if the propert_name already exists in the model
     if instruction.target_content.property_name not in target_schema.get(

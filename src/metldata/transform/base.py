@@ -45,7 +45,13 @@ class ModelAssumptionError(RuntimeError):
 
 
 class MultiplicityError(ModelAssumptionError):
-    """Raised when the relation does not conform the multiplicity."""
+    """Raised when a relation in the model does not conform to the required multiplicity
+    constraints. It occurs when the actual cardinality of a relationship within a model
+    fails to meet the expected multiplicity criteria of a transformation. E.g.,
+    in 'count references' transformation, the target of a relation is required to
+    contribute multiple instances(`target=True`) to the relation, and this error is raised
+    if that condition is not satisfied.
+    """
 
 
 class ModelTransformationError(RuntimeError):
@@ -212,7 +218,8 @@ class WorkflowDefinition(BaseModel):
                 continue
             if step.input not in steps:
                 raise ValueError(
-                    f"Step {step.input} referenced in step {step_name} is not defined."
+                    f"Step {step.input} referenced in step {
+                        step_name} is not defined."
                 )
 
         if not step_with_no_input_found:
@@ -236,7 +243,8 @@ class WorkflowDefinition(BaseModel):
         for artifact_name, step_name in artifacts.items():
             if step_name not in steps:
                 raise ValueError(
-                    f"Step {step_name} referenced in artifact {artifact_name} is not defined."
+                    f"Step {step_name} referenced in artifact {
+                        artifact_name} is not defined."
                 )
 
         return values

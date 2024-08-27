@@ -29,7 +29,10 @@ class CountReferencesConfig(BaseSettings):
 
     count_references: list[AddReferenceCountPropertyInstruction] = Field(
         ...,
-        description=("A list of instructions describing for which class and corresponding relation path references should be counted."),
+        description=(
+            "A list of instructions describing for which class and"
+            + " corresponding relation path references should be counted."
+        ),
         examples=[],
     )
 

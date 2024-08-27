@@ -22,7 +22,11 @@ from metldata.builtin_transformations.common.path.path import RelationPath
 
 
 class AddReferenceCountPropertyInstruction(BaseSettings):
-    """A model describing an instruction to"""
+    """A model describing an instruction for adding a reference count property to the
+    content schema of a class. It defines the class to be modified, the target content
+    where the property will be added, and the relationship path that describes how the
+    classes are connected.
+    """
 
     class_name: str = Field(..., description="The name of the class to modify.")
 
