@@ -13,36 +13,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-## creating building container
-FROM python:3.12-slim-bookworm AS builder
-# update and install dependencies
-RUN apt update
-RUN apt upgrade -y
+# BASE: a base image with updated packages
+FROM python:3.12-alpine AS base
+RUN apk upgrade --no-cache --available
+
+# BUILDER: a container to build the service wheel
+FROM base AS builder
 RUN pip install build
-# copy code
 COPY . /service
 WORKDIR /service
-# build wheel
 RUN python -m build
 
-# creating running container
-FROM python:3.12-slim-bookworm
-# update and install dependencies
-RUN apt update
-RUN apt upgrade -y
-# copy and install requirements and wheel
+# DEP-BUILDER: a container to (build and) install dependencies
+FROM base AS dep-builder
+RUN apk update
+RUN apk add build-base gcc g++ libffi-dev zlib-dev
+RUN apk upgrade --available
 WORKDIR /service
 COPY --from=builder /service/lock/requirements.txt /service
 RUN pip install --no-deps -r requirements.txt
-RUN rm requirements.txt
+
+# RUNNER: a container to run the service
+FROM base AS runner
+WORKDIR /service
+RUN rm -rf /usr/local/lib/python3.12
+COPY --from=dep-builder /usr/local/lib/python3.12 /usr/local/lib/python3.12
 COPY --from=builder /service/dist/ /service
 RUN pip install --no-deps *.whl
 RUN rm *.whl
-# create new user and execute as that user
-RUN useradd --create-home appuser
+RUN adduser -D appuser
 WORKDIR /home/appuser
 USER appuser
-# set environment
 ENV PYTHONUNBUFFERED=1
+
 # Please adapt to package name:
 ENTRYPOINT ["metldata"]
