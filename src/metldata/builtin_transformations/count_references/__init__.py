@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""A transformation to count the references."""
+"""A transformation to count how often specific classes are referenced along given relation paths."""
 
 # shortcuts:
 from metldata.builtin_transformations.count_references.main import (  # noqa: F401
