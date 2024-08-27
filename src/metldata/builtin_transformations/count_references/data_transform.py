@@ -17,9 +17,6 @@
 
 from schemapack.spec.datapack import DataPack
 
-from metldata.builtin_transformations.common.path.path_elements import (
-    RelationPathElementType,
-)
 from metldata.builtin_transformations.count_references.instruction import (
     AddReferenceCountPropertyInstruction,
 )
@@ -52,13 +49,12 @@ def count_references(
 
         for instruction in instructions:
             for path_element in instruction.source_relation_path.elements:
-                if path_element.type_ == RelationPathElementType.ACTIVE:
-                    relation_slot = path_element.property
-                else:
-                    raise EvitableTransformationError()
+                relation_slot = path_element.property
 
                 for resource in resources.values():
                     related_to = resource.relations.get(relation_slot)
+                    if not related_to:
+                        raise EvitableTransformationError()
 
                     count = len(related_to) if related_to else 0
 

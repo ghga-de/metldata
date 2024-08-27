@@ -14,18 +14,18 @@
 # limitations under the License.
 
 count_references:
-- class_name: Dataset
-  target_content:
-    object_path: "file_summary"
-    property_name: "count"
-  source_relation_path: "Dataset(files)>File"
-- class_name: Sample
-  target_content:
-    object_path: "file_summary"
-    property_name: "count"
-  source_relation_path: "Sample(files)>File"
-- class_name: Experiment
-  target_content:
-    object_path: "sample_summary"
-    property_name: "count"
-  source_relation_path: "Experiment(samples)>Sample"
+  - class_name: Dataset
+    target_content:
+      object_path: "file_summary"
+      property_name: "count"
+    source_relation_path: "Dataset(files)>File"
+  - class_name: Sample
+    target_content:
+      object_path: "file_summary"
+      property_name: "count"
+    source_relation_path: "File<(files)Sample"
+  - class_name: Experiment
+    target_content:
+      object_path: "sample_summary"
+      property_name: "count"
+    source_relation_path: "Experiment(samples)>Sample"

@@ -30,13 +30,48 @@ from metldata.builtin_transformations.count_references.instruction import (
 from metldata.transform.base import ModelAssumptionError, MultiplicityError
 
 
-def assert_class_is_source(instruction: AddReferenceCountPropertyInstruction):
-    """Make sure that the source class is the one being modified with the count property"""
-    if instruction.class_name != instruction.source_relation_path.source:
+def validate_modification_class(path_element, expected_class_name):
+    """Check whether the class specified to be modified with the reference count
+    matches the source or target class in the provided `path_element`, depending on the
+    type of the relation path (i.e., active or passive). If the class does not match,
+    an exception is raised.
+    """
+    modification_class_name = (
+        path_element.source
+        if path_element.type_ == RelationPathElementType.ACTIVE
+        else path_element.target
+    )
+    if expected_class_name != modification_class_name:
         raise ModelAssumptionError(
-            f"Class {instruction.class_name} does not correspond to the relation source {
-                instruction.source_relation_path.source}."
+            f"Class {
+                expected_class_name} does not correspond to the relation source "
+            f"{modification_class_name}."
         )
+
+
+def check_class_exists(model: SchemaPack, class_name: str) -> None:
+    """Check if a class exists in the model and raise an error if not"""
+    if class_name not in model.classes:
+        raise ModelAssumptionError(f"Class {class_name} not found in model.")
+
+
+def check_relation_exists(model: SchemaPack, class_name: str, relation: str):
+    """Check if a relation exists in a class and raise an error if not"""
+    if relation not in model.classes[class_name].relations:
+        raise ModelAssumptionError(
+            f"Relation property {
+                relation} not found in class {class_name}."
+        )
+
+
+def assert_class_is_source(instruction: AddReferenceCountPropertyInstruction):
+    """Ensure that the class being modified with the reference count property is the expected class.
+    This function iterates over the elements of the relation path in the given instruction
+    and validates that the class being modified with the reference count property matches
+    the class specified in the relation path.
+    """
+    for path_element in instruction.source_relation_path.elements:
+        validate_modification_class(path_element, instruction.class_name)
 
 
 def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPath):
@@ -48,27 +83,18 @@ def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPat
             if the model does not fulfill the assumptions.
     """
     for path_element in path.elements:
-        if path_element.source not in model.classes:
-            raise ModelAssumptionError(
-                f"Class {path_element.source} not found in model."
-            )
+        check_class_exists(model, path_element.source)
+        check_class_exists(model, path_element.target)
 
-        if path_element.target not in model.classes:
-            raise ModelAssumptionError(
-                f"Class {path_element.target} not found in model."
-            )
+        if path_element.type_ == RelationPathElementType.ACTIVE:
+            check_relation_exists(model, path_element.source, path_element.property)
 
-        if path_element.type_ == RelationPathElementType.ACTIVE and (
-            path_element.property not in model.classes[path_element.source].relations
-        ):
-            raise ModelAssumptionError(
-                f"Relation property {path_element.property} not found in class"
-                f" {path_element.source}."
-            )
+        if path_element.type_ == RelationPathElementType.PASSIVE:
+            check_relation_exists(model, path_element.target, path_element.property)
 
 
 def assert_multiplicity(model: SchemaPack, path: RelationPath):
-    """Make sure the target of the relation conributes multiple instances to the relation."""
+    """Make sure the target of the relation contributes multiple instances to the relation."""
     for path_element in path.elements:
         if path_element.type_ == RelationPathElementType.ACTIVE:
             relation = model.classes[path_element.source].relations[
