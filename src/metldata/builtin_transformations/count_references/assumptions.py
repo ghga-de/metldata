@@ -30,7 +30,32 @@ from metldata.builtin_transformations.count_references.instruction import (
 from metldata.transform.base import ModelAssumptionError, MultiplicityError
 
 
-def validate_modification_class(path_element, expected_class_name):
+def check_model_assumptions(
+    schema: SchemaPack,
+    instructions_by_class: dict[str, list[AddReferenceCountPropertyInstruction]],
+) -> None:
+    """Check the model assumptions for the count references transformation."""
+    for _, instructions in instructions_by_class.items():
+        for instruction in instructions:
+            assert_class_is_source(instruction)
+            assert_path_classes_and_relations_exist(
+                schema, instruction.source_relation_path
+            )
+            assert_multiplicity(schema, instruction.source_relation_path)
+            assert_object_path_exists(schema, instruction)
+
+
+def assert_class_is_source(instruction: AddReferenceCountPropertyInstruction):
+    """Ensure that the class being modified with the reference count property is the expected class.
+    This function iterates over the elements of the relation path in the given instruction
+    and validates that the class being modified with the reference count property matches
+    the class specified in the relation path.
+    """
+    for path_element in instruction.source_relation_path.elements:
+        _validate_modification_class(path_element, instruction.class_name)
+
+
+def _validate_modification_class(path_element, expected_class_name):
     """Check whether the class specified to be modified with the reference count
     matches the source or target class in the provided `path_element`, depending on the
     type of the relation path (i.e., active or passive). If the class does not match,
@@ -49,31 +74,6 @@ def validate_modification_class(path_element, expected_class_name):
         )
 
 
-def check_class_exists(model: SchemaPack, class_name: str) -> None:
-    """Check if a class exists in the model and raise an error if not"""
-    if class_name not in model.classes:
-        raise ModelAssumptionError(f"Class {class_name} not found in model.")
-
-
-def check_relation_exists(model: SchemaPack, class_name: str, relation: str):
-    """Check if a relation exists in a class and raise an error if not"""
-    if relation not in model.classes[class_name].relations:
-        raise ModelAssumptionError(
-            f"Relation property {
-                relation} not found in class {class_name}."
-        )
-
-
-def assert_class_is_source(instruction: AddReferenceCountPropertyInstruction):
-    """Ensure that the class being modified with the reference count property is the expected class.
-    This function iterates over the elements of the relation path in the given instruction
-    and validates that the class being modified with the reference count property matches
-    the class specified in the relation path.
-    """
-    for path_element in instruction.source_relation_path.elements:
-        validate_modification_class(path_element, instruction.class_name)
-
-
 def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPath):
     """Make sure that all classes and relations defined in the provided path exist in
     the provided model.
@@ -83,14 +83,29 @@ def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPat
             if the model does not fulfill the assumptions.
     """
     for path_element in path.elements:
-        check_class_exists(model, path_element.source)
-        check_class_exists(model, path_element.target)
+        _check_class_exists(model, path_element.source)
+        _check_class_exists(model, path_element.target)
 
         if path_element.type_ == RelationPathElementType.ACTIVE:
-            check_relation_exists(model, path_element.source, path_element.property)
+            _check_relation_exists(model, path_element.source, path_element.property)
 
         if path_element.type_ == RelationPathElementType.PASSIVE:
-            check_relation_exists(model, path_element.target, path_element.property)
+            _check_relation_exists(model, path_element.target, path_element.property)
+
+
+def _check_class_exists(model: SchemaPack, class_name: str) -> None:
+    """Check if a class exists in the model and raise an error if not"""
+    if class_name not in model.classes:
+        raise ModelAssumptionError(f"Class {class_name} not found in model.")
+
+
+def _check_relation_exists(model: SchemaPack, class_name: str, relation: str):
+    """Check if a relation exists in a class and raise an error if not"""
+    if relation not in model.classes[class_name].relations:
+        raise ModelAssumptionError(
+            f"Relation property {
+                relation} not found in class {class_name}."
+        )
 
 
 def assert_multiplicity(model: SchemaPack, path: RelationPath):
@@ -107,7 +122,7 @@ def assert_multiplicity(model: SchemaPack, path: RelationPath):
                 )
 
 
-def assert_summary_exists(
+def assert_object_path_exists(
     model: SchemaPack,
     instruction: AddReferenceCountPropertyInstruction,
 ) -> None:
@@ -141,18 +156,3 @@ def assert_summary_exists(
                 instruction.target_content.property_name} does not exist"
             + f" in class {class_name}."
         )
-
-
-def check_model_assumptions(
-    schema: SchemaPack,
-    instructions_by_class: dict[str, list[AddReferenceCountPropertyInstruction]],
-) -> None:
-    """Check the model assumptions for the count references transformation."""
-    for _, instructions in instructions_by_class.items():
-        for instruction in instructions:
-            assert_class_is_source(instruction)
-            assert_path_classes_and_relations_exist(
-                schema, instruction.source_relation_path
-            )
-            assert_multiplicity(schema, instruction.source_relation_path)
-            assert_summary_exists(schema, instruction)
