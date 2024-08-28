@@ -22,6 +22,7 @@ from metldata.builtin_transformations.add_content_properties.path import (
 )
 from metldata.builtin_transformations.common.path.path import RelationPath
 from metldata.builtin_transformations.common.path.path_elements import (
+    RelationPathElement,
     RelationPathElementType,
 )
 from metldata.builtin_transformations.count_references.instruction import (
@@ -37,12 +38,27 @@ def check_model_assumptions(
     """Check the model assumptions for the count references transformation."""
     for _, instructions in instructions_by_class.items():
         for instruction in instructions:
+            assert_only_direct_relations(instruction)
             assert_class_is_source(instruction)
             assert_path_classes_and_relations_exist(
                 schema, instruction.source_relation_path
             )
             assert_multiplicity(schema, instruction.source_relation_path)
             assert_object_path_exists(schema, instruction)
+
+
+def assert_only_direct_relations(instruction: AddReferenceCountPropertyInstruction):
+    """Ensure that only direct relations are suppported which should be the case if the
+    relation path only contains one path element.
+    """
+    num_elements = len(instruction.source_relation_path.elements)
+    if num_elements != 1:
+        raise ModelAssumptionError(
+            f"The provided relation path {
+                instruction.source_relation_path.path_str}"
+            f"does not describe a direct relation, but contains {
+                num_elements} differents relations"
+        )
 
 
 def assert_class_is_source(instruction: AddReferenceCountPropertyInstruction):
@@ -55,7 +71,9 @@ def assert_class_is_source(instruction: AddReferenceCountPropertyInstruction):
         _validate_modification_class(path_element, instruction.class_name)
 
 
-def _validate_modification_class(path_element, expected_class_name):
+def _validate_modification_class(
+    path_element: RelationPathElement, expected_class_name: str
+):
     """Check whether the class specified to be modified with the reference count
     matches the source or target class in the provided `path_element`, depending on the
     type of the relation path (i.e., active or passive). If the class does not match,
