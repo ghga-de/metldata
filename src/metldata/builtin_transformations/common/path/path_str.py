@@ -18,7 +18,7 @@
 
 import re
 
-from metldata.builtin_transformations.infer_relations.path.path_elements import (
+from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElement,
     RelationPathElementType,
 )

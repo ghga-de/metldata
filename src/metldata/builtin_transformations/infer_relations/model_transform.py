@@ -24,8 +24,8 @@ from schemapack.spec.schemapack import (
     SchemaPack,
 )
 
-from metldata.builtin_transformations.infer_relations.path.path import RelationPath
-from metldata.builtin_transformations.infer_relations.path.path_elements import (
+from metldata.builtin_transformations.common.path.path import RelationPath
+from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElement,
     RelationPathElementType,
 )
@@ -50,7 +50,7 @@ def get_relation(element: RelationPathElement, schema: SchemaPack) -> Relation:
     return schema.classes[class_name].relations[element.property]
 
 
-def infer_mutiplicity_from_path(
+def infer_multiplicity_from_path(
     path: RelationPath, schema: SchemaPack
 ) -> MultipleRelationSpec:
     """Infer the multiplicity of an inferred relation based on the path.
@@ -140,7 +140,7 @@ def add_inferred_relations(
             raise EvitableTransformationError()
 
         mandatory = infer_mandatory_from_path(instruction.path, model)
-        multiple = infer_mutiplicity_from_path(instruction.path, model)
+        multiple = infer_multiplicity_from_path(instruction.path, model)
         new_relation = Relation.model_validate(
             {
                 "targetClass": instruction.target,

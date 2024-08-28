@@ -20,11 +20,11 @@ from contextlib import nullcontext
 
 import pytest
 
-from metldata.builtin_transformations.infer_relations.path.path_elements import (
+from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElement,
     RelationPathElementType,
 )
-from metldata.builtin_transformations.infer_relations.path.path_str import (
+from metldata.builtin_transformations.common.path.path_str import (
     ValidationError,
     extract_first_element,
     get_element_components,

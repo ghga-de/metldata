@@ -26,6 +26,9 @@ from schemapack.spec.schemapack import SchemaPack
 from metldata.builtin_transformations.add_content_properties import (
     ADD_CONTENT_PROPERTIES_TRANSFORMATION,
 )
+from metldata.builtin_transformations.count_references import (
+    COUNT_REFERENCES_TRANSFORMATION,
+)
 from metldata.builtin_transformations.delete_properties import (
     PROPERTY_DELETION_TRANSFORMATION,
 )
@@ -43,6 +46,7 @@ TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "infer_relations": RELATION_INFERENCE_TRANSFORMATION,
     "delete_properties": PROPERTY_DELETION_TRANSFORMATION,
     "add_content_properties": ADD_CONTENT_PROPERTIES_TRANSFORMATION,
+    "count_references": COUNT_REFERENCES_TRANSFORMATION,
 }
 
 
