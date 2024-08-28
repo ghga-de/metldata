@@ -57,7 +57,7 @@ def assert_only_direct_relations(instruction: AddReferenceCountPropertyInstructi
             f"The provided relation path {
                 instruction.source_relation_path.path_str}"
             f"does not describe a direct relation, but contains {
-                num_elements} differents relations"
+                num_elements} different relations"
         )
 
 
