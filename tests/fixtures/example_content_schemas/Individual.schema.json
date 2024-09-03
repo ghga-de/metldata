@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "description": "An Individual of which one or multiple biospecimens are extracted from",
+  "properties": {
+    "sex": {
+      "type": "string"
+    }
+  },
+  "type": "object"
+}

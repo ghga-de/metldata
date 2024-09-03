@@ -1,0 +1,14 @@
+- class_name: Dataset
+  target_content:
+    object_path: samples_summary.stats
+    property_name: sex
+  source:
+    relation_path: Dataset(individuals)>Individual
+    content_path: sex
+- class_name: Dataset
+  target_content:
+    object_path: samples_summary.stats
+    property_name: tissues
+  source:
+    relation_path: Dataset(biospecimens)>Biospecimen
+    content_path: tissue
