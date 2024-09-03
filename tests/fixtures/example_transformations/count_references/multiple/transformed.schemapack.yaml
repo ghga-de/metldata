@@ -19,9 +19,8 @@ classes:
             "file_summary":
               {
                 "type": "object",
-                "additionalProperties": false,
+                "additionalProperties": true,
                 "properties": { "count": { "type": "integer" } },
-                "required": ["count"],
               },
           },
         "type": "object",
@@ -49,9 +48,8 @@ classes:
             "file_summary":
               {
                 "type": "object",
-                "additionalProperties": false,
+                "additionalProperties": true,
                 "properties": { "count": { "type": "integer" } },
-                "required": ["count"],
               },
           },
         "type": "object",
@@ -79,9 +77,8 @@ classes:
             "sample_summary":
               {
                 "type": "object",
-                "additionalProperties": false,
+                "additionalProperties": true,
                 "properties": { "count": { "type": "integer" } },
-                "required": ["count"],
               },
           },
         "type": "object",

@@ -47,7 +47,7 @@ def add_content_properties(
 
         for cls_instruction in cls_instructions:
             try:
-                target_object = resolve_schema_object_path(
+                target_schema = resolve_schema_object_path(
                     content_schema, cls_instruction.target_content.object_path
                 )
             except KeyError as e:
@@ -58,12 +58,12 @@ def add_content_properties(
             ):
                 raise EvitableTransformationError()
 
-            target_object.setdefault("properties", {})[
+            target_schema.setdefault("properties", {})[
                 cls_instruction.target_content.property_name
             ] = deepcopy(cls_instruction.content_schema)
 
             if cls_instruction.required:
-                target_object.setdefault("required", []).append(
+                target_schema.setdefault("required", []).append(
                     cls_instruction.target_content.property_name
                 )
 

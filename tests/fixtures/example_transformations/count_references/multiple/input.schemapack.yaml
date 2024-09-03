@@ -16,13 +16,7 @@ classes:
         "properties":
           {
             "dac_contact": { "type": "string" },
-            "file_summary":
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": { "count": { "type": "integer" } },
-                "required": ["count"],
-              },
+            "file_summary": { "type": "object", "additionalProperties": true },
           },
         "type": "object",
       }
@@ -46,13 +40,7 @@ classes:
         "properties":
           {
             "description": { "type": "string" },
-            "file_summary":
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": { "count": { "type": "integer" } },
-                "required": ["count"],
-              },
+            "file_summary": { "type": "object", "additionalProperties": true },
           },
         "type": "object",
       }
@@ -77,12 +65,7 @@ classes:
           {
             "description": { "type": "string" },
             "sample_summary":
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": { "count": { "type": "integer" } },
-                "required": ["count"],
-              },
+              { "type": "object", "additionalProperties": true },
           },
         "type": "object",
       }

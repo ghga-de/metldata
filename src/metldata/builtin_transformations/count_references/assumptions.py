@@ -165,10 +165,8 @@ def assert_object_path_exists(
             + f" in class {class_name}."
         ) from exc
 
-    # Check if the propert_name already exists in the model
-    if instruction.target_content.property_name not in target_schema.get(
-        "properties", {}
-    ):
+    # Check if the propert_name already exists in the model and raise an error if so
+    if instruction.target_content.property_name in target_schema.get("properties", {}):
         raise ModelAssumptionError(
             f"Property {
                 instruction.target_content.property_name} does not exist"
