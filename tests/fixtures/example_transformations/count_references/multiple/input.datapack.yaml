@@ -23,8 +23,7 @@ resources:
     dataset_1:
       content:
         dac_contact: dac@example.org
-        file_summary: # <-
-          count: 0
+        file_summary: {} # <-
       relations:
         files:
           - file_a
@@ -34,24 +33,21 @@ resources:
     sample_x:
       content:
         description: Some sample.
-        file_summary: # <-
-          count: 0
+        file_summary: {} # <-
       relations:
         files:
           - file_a
           - file_b
     sample_y:
       content:
-        file_summary: # <-
-          count: 0
+        file_summary: {} # <-
       relations:
         files:
           - file_c
   Experiment:
     experiment_i:
       content:
-        sample_summary: # <-
-          count: 0
+        sample_summary: {} # <-
       relations:
         samples:
           - sample_x
