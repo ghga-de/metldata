@@ -15,6 +15,7 @@
 """Model transformation logic for the 'count references' transformation"""
 
 from schemapack.spec.schemapack import (
+    ClassDefinition,
     SchemaPack,
 )
 
@@ -26,16 +27,18 @@ from metldata.builtin_transformations.count_references.instruction import (
 )
 from metldata.transform.base import EvitableTransformationError
 
+DEFAULT_PROPERTY_SCHEMA = {"type": "integer"}
+
 
 def add_count_references(
     *,
     model: SchemaPack,
     instructions_by_class: dict[str, list[AddReferenceCountPropertyInstruction]],
 ) -> SchemaPack:
-    """The content properties are added to the model with the 'add_content_properties
-    step of the workflow. Thus, this function applies no transformation.
-    It only checks for EvitableTransformationError.
+    """The target content - object_names are added to the model with the 'add_content_properties
+    step of the workflow. Thus, this function only adds the property_name to a content schema.
     """
+    updated_class_defs: dict[str, ClassDefinition] = {}
     for class_name, cls_instructions in instructions_by_class.items():
         class_def = model.classes.get(class_name)
 
@@ -45,15 +48,24 @@ def add_count_references(
         content_schema = class_def.content.json_schema_dict
 
         for cls_instruction in cls_instructions:
+            object_path = cls_instruction.target_content.object_path
+            property_name = cls_instruction.target_content.property_name
             try:
-                resolve_schema_object_path(
-                    content_schema, cls_instruction.target_content.object_path
-                )
-            except KeyError as e:
-                raise EvitableTransformationError() from e
+                target_schema = resolve_schema_object_path(content_schema, object_path)
+            except KeyError as exc:
+                raise EvitableTransformationError() from exc
 
-            if cls_instruction.target_content.property_name in content_schema.get(
-                "properties", {}
-            ):
+            if property_name in target_schema.get("properties", {}):
                 raise EvitableTransformationError()
-    return model
+
+            target_schema.setdefault("properties", {})[property_name] = (
+                DEFAULT_PROPERTY_SCHEMA
+            )
+
+        updated_class_defs[class_name] = class_def.model_validate(
+            {**class_def.model_dump(), "content": content_schema}
+        )
+
+    model_dict = model.model_dump()
+    model_dict["classes"].update(updated_class_defs)
+    return SchemaPack.model_validate(model_dict)
