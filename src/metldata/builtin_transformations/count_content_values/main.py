@@ -16,12 +16,36 @@
 
 """A transformation to count content values."""
 
+from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.count_content_values.assumptions import (
     check_model_assumptions,
 )
-from metldata.transform.base import TransformationDefinition
+from metldata.builtin_transformations.count_content_values.config import (
+    CountContentValuesConfig,
+)
+from metldata.builtin_transformations.count_content_values.data_transform import (
+    add_property_count,
+)
+from metldata.builtin_transformations.count_content_values.model_transform import (
+    add_count_content,
+)
+from metldata.transform.base import DataTransformer, TransformationDefinition
+
+
+class CountContentValuesTransformer(DataTransformer[CountContentValuesConfig]):
+    """A transformer"""
+
+    def transform(self, data: DataPack) -> DataPack:
+        """Transforms data.
+
+        Args:
+            data: The data as DataPack to be transformed.
+        """
+        return add_property_count(
+            data=data, instructions_by_class=self._config.instructions_by_class()
+        )
 
 
 def check_model_assumptions_wrapper(
@@ -35,6 +59,13 @@ def check_model_assumptions_wrapper(
     """
     check_model_assumptions(
         schema=model, instructions_by_class=config.instructions_by_class()
+    )
+
+
+def transform_model(model: SchemaPack, config: CountContentValuesConfig) -> SchemaPack:
+    """Transform the data model."""
+    return add_count_content(
+        model=model, instructions_by_class=config.instructions_by_class()
     )
 
 

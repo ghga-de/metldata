@@ -41,11 +41,19 @@ classes:
         mandatory:
           origin: false
           target: true
-  Individual:
-    id:
-      propertyName: alias
-    content: ../../../example_content_schemas/Individual.schema.json
   Biospecimen:
     id:
       propertyName: alias
     content: ../../../example_content_schemas/Biospecimen.schema.json
+    relations:
+      individuals:
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: true
+          target: true
+  Individual:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Individual.schema.json

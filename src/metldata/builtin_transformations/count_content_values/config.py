@@ -16,6 +16,10 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from metldata.builtin_transformations.count_content_values.instruction import (
+    CountContentValueInstruction,
+)
+
 
 class CountContentValuesConfig(BaseSettings):
     """A Config for a transformation that adds a new property to an object within a
@@ -33,10 +37,10 @@ class CountContentValuesConfig(BaseSettings):
 
     def instructions_by_class(
         self,
-    ) -> dict[str, list[AddContentPropertyInstruction]]:
+    ) -> dict[str, list[CountContentValueInstruction]]:
         """Returns a dictionary of instructions by class."""
-        instructions_by_class: dict[str, list[AddContentPropertyInstruction]] = {}
-        for instruction in self.add_content_properties:
+        instructions_by_class: dict[str, list[CountContentValueInstruction]] = {}
+        for instruction in self.count_content_values:
             instructions_by_class.setdefault(instruction.class_name, []).append(
                 instruction
             )

@@ -50,7 +50,7 @@ TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "delete_properties": PROPERTY_DELETION_TRANSFORMATION,
     "add_content_properties": ADD_CONTENT_PROPERTIES_TRANSFORMATION,
     "count_references": COUNT_REFERENCES_TRANSFORMATION,
-    "count_content_values": COUNT_CONTENT_VALUES_TRANSFORMATION,
+    # "count_content_values": COUNT_CONTENT_VALUES_TRANSFORMATION,
 }
 
 

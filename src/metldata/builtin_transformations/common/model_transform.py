@@ -12,31 +12,40 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Model transformation logic for the 'add content property' transformation"""
 
-from copy import deepcopy
+"Common functions used in model transformations of individual transformations"
 
-from schemapack.spec.schemapack import (
-    ClassDefinition,
-    SchemaPack,
-)
+from schemapack.spec.schemapack import ClassDefinition, SchemaPack
 
-from metldata.builtin_transformations.add_content_properties.instruction import (
-    AddContentPropertyInstruction,
-)
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_schema_object_path,
 )
-from metldata.builtin_transformations.common.model_transform import update_model
+from metldata.builtin_transformations.common.instruction import AggregateInstruction
 from metldata.transform.base import EvitableTransformationError
 
 
-def add_content_properties(
+def update_model(
+    *, model: SchemaPack, updated_class_defs: dict[str, ClassDefinition]
+) -> SchemaPack:
+    """Updates class definitions of a model that are subjected to model transformation"""
+    model_dict = model.model_dump()
+    model_dict["classes"].update(updated_class_defs)
+    return SchemaPack.model_validate(model_dict)
+
+
+def add_properties(
     *,
     model: SchemaPack,
-    instructions_by_class: dict[str, list[AddContentPropertyInstruction]],
+    instructions_by_class: dict[str, list[AggregateInstruction]],
+    default_schema: dict,
 ) -> SchemaPack:
-    """Adds a new content property to the provided model."""
+    """The target content - object_path(s) are added to the model with the
+    'add_content_properties' step of the workflow. Thus, this function only adds the
+    property_name(s) to the content schema of the classes that are subject to
+    count_content_values transformation. It is only applicable to the instructions
+    CountContentValueInstruction of count_content_values transformation and
+    AddReferenceCountPropertyInstruction of count_references transformation.
+    """
     updated_class_defs: dict[str, ClassDefinition] = {}
     for class_name, cls_instructions in instructions_by_class.items():
         class_def = model.classes.get(class_name)
@@ -50,23 +59,16 @@ def add_content_properties(
             object_path = cls_instruction.target_content.object_path
             property_name = cls_instruction.target_content.property_name
             try:
-                target_schema = resolve_schema_object_path(
-                    content_schema, object_path)
+                target_schema = resolve_schema_object_path(content_schema, object_path)
             except KeyError as exc:
                 raise EvitableTransformationError() from exc
 
-            if property_name in content_schema.get("properties", {}):
+            if property_name in target_schema.get("properties", {}):
                 raise EvitableTransformationError()
 
-            target_schema.setdefault("properties", {})[property_name] = deepcopy(
-                cls_instruction.content_schema
-            )
-
-            if cls_instruction.required:
-                target_schema.setdefault("required", []).append(property_name)
+            target_schema.setdefault("properties", {})[property_name] = default_schema
 
         updated_class_defs[class_name] = class_def.model_validate(
             {**class_def.model_dump(), "content": content_schema}
         )
-
     return update_model(model=model, updated_class_defs=updated_class_defs)

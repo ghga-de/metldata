@@ -4,8 +4,8 @@ resources:
     dataset_1:
       content:
         dac_contact: dac@example.org
-        file_summary: # <-
-          count: 0
+        samples_summary:
+          stats: {}
       relations:
         individuals:
           - indv_a
@@ -17,13 +17,19 @@ resources:
   Biospecimen:
     bios_a:
       content:
-        tissue:
+        tissue: blood
+      relations:
+        individuals: indv_a
     bios_b:
       content:
-        tissue:
+        tissue: subcutaneous adipose tissue
+      relations:
+        individuals: indv_b
     bios_c:
       content:
-        tissue:
+        tissue: blood
+      relations:
+        individuals: indv_b
   Individual:
     indv_a:
       content:

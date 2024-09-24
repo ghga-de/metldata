@@ -13,9 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Common models and functions for the built-in transformations."""
+"""Data transformation logic for"""
 
-from metldata.builtin_transformations.common.contentschema import (
-    NewContentSchemaPath,  # noqa: F401
-    SourcePath,  # noqa: F401
+from schemapack.spec.datapack import DataPack
+
+from metldata.builtin_transformations.count_content_values.instruction import (
+    CountContentValueInstruction,
 )
+
+
+def add_property_count(
+    *,
+    data: DataPack,
+    instructions_by_class: dict[str, list[CountContentValueInstruction]],
+) -> DataPack:
+    return data

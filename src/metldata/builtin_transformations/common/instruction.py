@@ -13,9 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Common models and functions for the built-in transformations."""
+from typing import Protocol, TypeVar
 
-from metldata.builtin_transformations.common.contentschema import (
-    NewContentSchemaPath,  # noqa: F401
-    SourcePath,  # noqa: F401
-)
+from metldata.builtin_transformations.common.contentschema import NewContentSchemaPath
+
+
+class InstructionProtocol(Protocol):
+    """Class to fix circular dependency"""
+
+    class_name: str
+    target_content: NewContentSchemaPath
+
+
+AggregateInstruction = TypeVar("AggregateInstruction", bound=InstructionProtocol)

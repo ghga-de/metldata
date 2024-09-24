@@ -20,22 +20,12 @@ from typing import Any, Final
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
-from metldata.builtin_transformations.common import NewContentSchemaPath
+from metldata.builtin_transformations.common import NewContentSchemaPath, SourcePath
 
 DEFAULT_CONTENT_SCHEMA: Final[dict[str, Any]] = {
     "type": "object",
-    "additionalProperties": False,
+    "additionalProperties": True,
 }
-
-
-class SourcePath(BaseSettings):
-    """A model describing the source paths of a 'count content value' transformation
-    config. It includes the `relation path` showing how to navigate between classes
-    and `property name` indicating the content property that is to be used in count.
-    """
-
-    relation_path: str = Field(..., description="bla")
-    content_path: str = Field(..., description="bla")
 
 
 class CountContentValueInstruction(BaseSettings):
