@@ -26,7 +26,7 @@ from metldata.builtin_transformations.count_content_values.config import (
     CountContentValuesConfig,
 )
 from metldata.builtin_transformations.count_content_values.data_transform import (
-    add_property_count,
+    count_content,
 )
 from metldata.builtin_transformations.count_content_values.model_transform import (
     add_count_content,
@@ -43,7 +43,7 @@ class CountContentValuesTransformer(DataTransformer[CountContentValuesConfig]):
         Args:
             data: The data as DataPack to be transformed.
         """
-        return add_property_count(
+        return count_content(
             data=data, instructions_by_class=self._config.instructions_by_class()
         )
 

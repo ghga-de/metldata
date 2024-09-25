@@ -22,7 +22,7 @@ from metldata.builtin_transformations.add_content_properties.instruction import 
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_schema_object_path,
 )
-from metldata.transform.base import ModelAssumptionError
+from metldata.transform.exceptions import ModelAssumptionError
 
 
 def check_model_assumptions(

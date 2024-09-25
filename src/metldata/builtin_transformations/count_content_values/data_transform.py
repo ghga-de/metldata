@@ -17,14 +17,58 @@
 
 from schemapack.spec.datapack import DataPack
 
+from metldata.builtin_transformations.common.path.path_utils import get_referred_class
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
 )
+from metldata.transform.exceptions import (
+    EvitableTransformationError,
+)
 
 
-def add_property_count(
+def count_content(
     *,
     data: DataPack,
     instructions_by_class: dict[str, list[CountContentValueInstruction]],
 ) -> DataPack:
+    """Transforms the data."""
+    modified_data = data.model_copy(deep=True)
+    for class_name, instructions in instructions_by_class.items():
+        resources = modified_data.resources.get(class_name)
+
+        if not resources:
+            raise EvitableTransformationError()
+
+        for instruction in instructions:
+            relation_path = instruction.source.relation_path
+            referenced_class = get_referred_class(relation_path)
+
+            # Only one element is expected in the path
+            relation_name = relation_path.elements[0].property
+
+            content_resources = modified_data.resources.get(referenced_class)
+
+            if not content_resources:
+                raise EvitableTransformationError()
+
+            for resource in resources.values():
+                related_to = resource.relations.get(relation_name)
+                if not related_to:
+                    raise EvitableTransformationError()
+
+                try:
+                    count_values = [
+                        content_resources[relation].content.get(
+                            instruction.source.content_path
+                        )
+                        for relation in related_to
+                    ]
+                except KeyError as exc:
+                    raise EvitableTransformationError() from exc
+
+                count_content_values = len(count_values)
+
+                resource.content[instruction.target_content.object_path].update(
+                    {instruction.target_content.property_name: count_content_values}
+                )
     return data

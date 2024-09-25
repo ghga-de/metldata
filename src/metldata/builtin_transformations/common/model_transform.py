@@ -21,7 +21,7 @@ from metldata.builtin_transformations.add_content_properties.path import (
     resolve_schema_object_path,
 )
 from metldata.builtin_transformations.common.instruction import AggregateInstruction
-from metldata.transform.base import EvitableTransformationError
+from metldata.transform.exceptions import EvitableTransformationError
 
 
 def update_model(

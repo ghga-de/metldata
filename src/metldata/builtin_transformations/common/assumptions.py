@@ -26,7 +26,7 @@ from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElement,
     RelationPathElementType,
 )
-from metldata.transform.base import ModelAssumptionError, MultiplicityError
+from metldata.transform.exceptions import ModelAssumptionError, MultiplicityError
 
 
 def assert_path_classes_and_relations_exist(*, model: SchemaPack, path: RelationPath):

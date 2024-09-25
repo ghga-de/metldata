@@ -20,7 +20,7 @@ from schemapack.spec.datapack import DataPack
 from metldata.builtin_transformations.count_references.instruction import (
     AddReferenceCountPropertyInstruction,
 )
-from metldata.transform.base import EvitableTransformationError
+from metldata.transform.exceptions import EvitableTransformationError
 
 
 def count_references(

@@ -18,7 +18,7 @@
 
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.transform.base import ModelAssumptionError
+from metldata.transform.exceptions import ModelAssumptionError
 
 
 def assert_classes_and_properties_exist(

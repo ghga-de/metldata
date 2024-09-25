@@ -28,7 +28,7 @@ from metldata.builtin_transformations.add_content_properties.path import (
     resolve_schema_object_path,
 )
 from metldata.builtin_transformations.common.model_transform import update_model
-from metldata.transform.base import EvitableTransformationError
+from metldata.transform.exceptions import EvitableTransformationError
 
 
 def add_content_properties(
@@ -50,8 +50,7 @@ def add_content_properties(
             object_path = cls_instruction.target_content.object_path
             property_name = cls_instruction.target_content.property_name
             try:
-                target_schema = resolve_schema_object_path(
-                    content_schema, object_path)
+                target_schema = resolve_schema_object_path(content_schema, object_path)
             except KeyError as exc:
                 raise EvitableTransformationError() from exc
 

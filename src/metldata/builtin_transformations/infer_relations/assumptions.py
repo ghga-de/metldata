@@ -27,7 +27,7 @@ from metldata.builtin_transformations.common.path.path_elements import (
 from metldata.builtin_transformations.infer_relations.relations import (
     InferenceInstruction,
 )
-from metldata.transform.base import ModelAssumptionError
+from metldata.transform.exceptions import ModelAssumptionError
 
 
 def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPath):
@@ -55,7 +55,8 @@ def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPat
                 not in model.classes[path_element.source].relations
             ):
                 raise ModelAssumptionError(
-                    f"Relation property {path_element.property} not found in class"
+                    f"Relation property {
+                        path_element.property} not found in class"
                     f" {path_element.source}."
                 )
 
@@ -77,7 +78,8 @@ def assert_new_property_not_exists(
     source_class = model.classes.get(instruction.source)
     if source_class and instruction.new_property in source_class.relations:
         raise ModelAssumptionError(
-            f"Property '{instruction.new_property}' of class '{instruction.source}'"
+            f"Property '{instruction.new_property}' of class '{
+                instruction.source}'"
             + ", intended to store an inferred relation, does already exist."
         )
 

@@ -30,7 +30,7 @@ from metldata.builtin_transformations.common.path.path_elements import (
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
 )
-from metldata.transform.base import ModelAssumptionError
+from metldata.transform.exceptions import ModelAssumptionError
 
 
 def check_model_assumptions(
@@ -77,5 +77,6 @@ def assert_source_content_path_exists(
 
         if not content_slot:
             raise ModelAssumptionError(
-                f"Class {referenced_class} does not have {content_path} in its content schema."
+                f"Class {referenced_class} does not have {
+                    content_path} in its content schema."
             )
