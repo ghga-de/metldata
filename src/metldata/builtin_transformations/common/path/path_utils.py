@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utility functions for Path operations"""
+"""Utility functions for 'path' operations"""
 
 from metldata.builtin_transformations.common.path.path import RelationPath
 from metldata.builtin_transformations.common.path.path_elements import (

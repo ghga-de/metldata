@@ -35,7 +35,9 @@ from metldata.transform.base import DataTransformer, TransformationDefinition
 
 
 class CountContentValuesTransformer(DataTransformer[CountContentValuesConfig]):
-    """A transformer"""
+    """A transformer that counts the values of a specified property of an object and
+    adds the value to the content of a target object.
+    """
 
     def transform(self, data: DataPack) -> DataPack:
         """Transforms data.
@@ -63,7 +65,12 @@ def check_model_assumptions_wrapper(
 
 
 def transform_model(model: SchemaPack, config: CountContentValuesConfig) -> SchemaPack:
-    """Transform the data model."""
+    """Transform the data model.
+
+    Raises:
+        DataModelTransformationError:
+            if the transformation fails.
+    """
     return add_count_content(
         model=model, instructions_by_class=config.instructions_by_class()
     )

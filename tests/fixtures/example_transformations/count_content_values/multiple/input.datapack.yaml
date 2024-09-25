@@ -5,9 +5,7 @@ resources:
       content:
         dac_contact: dac@example.org
         samples_summary:
-          stats:
-            tissues: 2 # <-
-            sex: 2 # <-
+          stats: {}
       relations:
         individuals:
           - indv_a
@@ -24,7 +22,7 @@ resources:
         individuals: indv_a
     bios_b:
       content:
-        tissue: subcutaneous adipose tissue
+        tissue: subcutaneous_adipose_tissue
       relations:
         individuals: indv_b
     bios_c:

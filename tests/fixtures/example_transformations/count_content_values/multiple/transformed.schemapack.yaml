@@ -24,12 +24,12 @@ classes:
                         "additionalProperties": true,
                         "properties":
                           {
-                            "tissues":
+                            "sex":
                               {
                                 "type": "object",
                                 "additionalProperties": true,
                               },
-                            "sex":
+                            "tissues":
                               {
                                 "type": "object",
                                 "additionalProperties": true,
@@ -64,9 +64,10 @@ classes:
     content: ../../../example_content_schemas/Biospecimen.schema.json
     relations:
       individuals:
+        targetClass: Individual
         multiple:
-          origin: false
-          target: true
+          origin: true
+          target: false
         mandatory:
           origin: true
           target: true

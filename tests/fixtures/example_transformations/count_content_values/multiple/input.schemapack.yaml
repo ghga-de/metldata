@@ -47,9 +47,10 @@ classes:
     content: ../../../example_content_schemas/Biospecimen.schema.json
     relations:
       individuals:
+        targetClass: Individual
         multiple:
-          origin: false
-          target: true
+          origin: true
+          target: false
         mandatory:
           origin: true
           target: true

@@ -13,10 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Data transformation logic for"""
+"""Data transformation logic for count content values transformation."""
+
+from collections import Counter
 
 from schemapack.spec.datapack import DataPack
 
+from metldata.builtin_transformations.add_content_properties.path import (
+    resolve_data_object_path,
+)
 from metldata.builtin_transformations.common.path.path_utils import get_referred_class
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
@@ -52,6 +57,7 @@ def count_content(
                 raise EvitableTransformationError()
 
             for resource in resources.values():
+                content = resource.content
                 related_to = resource.relations.get(relation_name)
                 if not related_to:
                     raise EvitableTransformationError()
@@ -66,9 +72,18 @@ def count_content(
                 except KeyError as exc:
                     raise EvitableTransformationError() from exc
 
-                count_content_values = len(count_values)
-
-                resource.content[instruction.target_content.object_path].update(
-                    {instruction.target_content.property_name: count_content_values}
+                object = resolve_data_object_path(
+                    data=content,
+                    path=instruction.target_content.object_path,
                 )
-    return data
+                if (
+                    not isinstance(object, dict)
+                    or instruction.target_content.property_name in object
+                ):
+                    raise EvitableTransformationError()
+
+                object[instruction.target_content.property_name] = dict(
+                    Counter(count_values)
+                )
+
+    return modified_data

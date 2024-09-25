@@ -78,7 +78,6 @@ def _read_test_case(
 ) -> TransformationTestCase:
     """Read a test case for a transformation."""
     transformation_definition = TRANSFORMATIONS_BY_NAME[transformation_name]
-
     case_dir = EXAMPLE_TRANSFORMATION_DIR / transformation_name / case_name
     config_path = case_dir / "config.yaml"
     input_model_path = case_dir / "input.schemapack.yaml"
