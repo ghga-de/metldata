@@ -24,9 +24,7 @@ from metldata.builtin_transformations.common.assumptions import (
     assert_only_direct_relations,
     assert_path_classes_and_relations_exist,
 )
-from metldata.builtin_transformations.common.path.path_elements import (
-    RelationPathElementType,
-)
+from metldata.builtin_transformations.common.path.path_utils import get_referred_class
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
 )
@@ -59,26 +57,19 @@ def assert_source_content_path_exists(
     path = instruction.source.relation_path
     content_path = instruction.source.content_path
 
-    for path_element in path.elements:
-        if path_element.type_ == RelationPathElementType.ACTIVE:
-            # check if path.target has the slot content_path in the path.target's content schema
-            referenced_class = path.target
-        elif path_element.type_ == RelationPathElementType.PASSIVE:
-            referenced_class = path.source
+    referenced_class = get_referred_class(path)
 
-        class_def = schema.classes.get(referenced_class)
+    class_def = schema.classes.get(referenced_class)
 
-        if not class_def:
-            raise ModelAssumptionError(
-                f"Class {referenced_class} does not exist in the model."
-            )
-
-        content_slot = class_def.content.json_schema_dict["properties"].get(
-            content_path
+    if not class_def:
+        raise ModelAssumptionError(
+            f"Class {referenced_class} does not exist in the model."
         )
 
-        if not content_slot:
-            raise ModelAssumptionError(
-                f"Class {referenced_class} does not have {
-                    content_path} in its content schema."
-            )
+    content_slot = class_def.content.json_schema_dict["properties"].get(content_path)
+
+    if not content_slot:
+        raise ModelAssumptionError(
+            f"Class {referenced_class} does not have {
+                content_path} in its content schema."
+        )
