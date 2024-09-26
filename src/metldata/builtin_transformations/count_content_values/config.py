@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Models used to describe content properties that shall be calculated and added."""
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

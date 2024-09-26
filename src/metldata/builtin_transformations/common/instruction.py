@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"Generic instruction type protocol."
+
 from typing import Protocol, TypeVar
 
 from metldata.builtin_transformations.common.contentschema import NewContentSchemaPath
