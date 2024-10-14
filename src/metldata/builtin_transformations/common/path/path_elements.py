@@ -46,10 +46,10 @@ class RelationPathElement(BaseModel):
             + " RelationPathElementType enum."
         ),
     )
-    source: str = Field(
+    lhs: str = Field(
         ..., description="The name of the source class that is referencing."
     )
-    target: str = Field(
+    rhs: str = Field(
         ..., description="The name of the target class that is referenced."
     )
     property: str = Field(

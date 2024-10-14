@@ -80,9 +80,9 @@ def _validate_modification_class(
     an exception is raised.
     """
     modification_class_name = (
-        path_element.source
+        path_element.lhs
         if path_element.type_ == RelationPathElementType.ACTIVE
-        else path_element.target
+        else path_element.rhs
     )
     if expected_class_name != modification_class_name:
         raise ModelAssumptionError(
@@ -101,14 +101,14 @@ def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPat
             if the model does not fulfill the assumptions.
     """
     for path_element in path.elements:
-        _check_class_exists(model, path_element.source)
-        _check_class_exists(model, path_element.target)
+        _check_class_exists(model, path_element.lhs)
+        _check_class_exists(model, path_element.rhs)
 
         if path_element.type_ == RelationPathElementType.ACTIVE:
-            _check_relation_exists(model, path_element.source, path_element.property)
+            _check_relation_exists(model, path_element.lhs, path_element.property)
 
         if path_element.type_ == RelationPathElementType.PASSIVE:
-            _check_relation_exists(model, path_element.target, path_element.property)
+            _check_relation_exists(model, path_element.rhs, path_element.property)
 
 
 def _check_class_exists(model: SchemaPack, class_name: str) -> None:
@@ -130,9 +130,7 @@ def assert_multiplicity(model: SchemaPack, path: RelationPath):
     """Make sure the target of the relation contributes multiple instances to the relation."""
     for path_element in path.elements:
         if path_element.type_ == RelationPathElementType.ACTIVE:
-            relation = model.classes[path_element.source].relations[
-                path_element.property
-            ]
+            relation = model.classes[path_element.lhs].relations[path_element.property]
             if not relation.multiple.target:
                 raise MultiplicityError(
                     f"The target of the relation {

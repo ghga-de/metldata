@@ -40,8 +40,7 @@ class CopyContentInstruction(BaseSettings):
     classes are connected.
     """
 
-    class_name: str = Field(...,
-                            description="The name of the class to modify.")
+    class_name: str = Field(..., description="The name of the class to modify.")
 
     target_content: CopyTarget = Field(
         ...,

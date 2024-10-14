@@ -126,7 +126,7 @@ def split_first_element(*, path_str: str) -> tuple[str, str | None]:
 
 
 def get_string_elements(*, path_str: str) -> list[str]:
-    """Decomposes a path string into elements in string repesentation. The path_str is
+    """Decomposes a path string into elements in string representation. The path_str is
     assumed to be cleaned.
     """
     elements: list[str] = []
@@ -161,21 +161,21 @@ def get_element_components(*, string_element: str) -> tuple[str, str, str]:
     string_element_cleaned = string_element.replace(">", "").replace("<", "")
 
     # extract the source:
-    source, slot_and_target = string_element_cleaned.split("(")
+    lhs, slot_and_target = string_element_cleaned.split("(")
 
     # extract slot and target:
-    slot, target = slot_and_target.split(")")
+    slot, rhs = slot_and_target.split(")")
 
-    return source, slot, target
+    return lhs, slot, rhs
 
 
 def string_element_to_object(string_element: str) -> RelationPathElement:
     """Translates a string-based path element into an object-based representation."""
     validate_string_element(string_element)
     type_ = get_element_type(string_element=string_element)
-    source, slot, target = get_element_components(string_element=string_element)
+    lhs, slot, rhs = get_element_components(string_element=string_element)
 
-    return RelationPathElement(type_=type_, source=source, property=slot, target=target)
+    return RelationPathElement(type_=type_, lhs=lhs, property=slot, rhs=rhs)
 
 
 def path_str_to_object_elements(path_str: str) -> list[RelationPathElement]:

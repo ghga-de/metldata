@@ -70,8 +70,8 @@ class RelationPath:
         """Construct relation path from a string-based representation."""
         self.path_str = clean_path_str(path_str=path_str)
         self.elements = path_str_to_object_elements(path_str=self.path_str)
-        self.source = self.elements[0].source
-        self.target = self.elements[-1].target
+        self.source = self.elements[0].lhs
+        self.target = self.elements[-1].rhs
 
     @classmethod
     def validate(cls, value, info: ValidationInfo) -> "RelationPath":

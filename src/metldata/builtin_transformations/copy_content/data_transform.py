@@ -17,12 +17,10 @@
 
 from schemapack.spec.datapack import DataPack
 
-from metldata.builtin_transformations.common.path.path_elements import (
-    RelationPathElementType,
-)
 from metldata.builtin_transformations.copy_content.instruction import (
     CopyContentInstruction,
 )
+from metldata.builtin_transformations.copy_content.path import RelationPathGraph
 from metldata.transform.base import EvitableTransformationError
 
 
@@ -53,16 +51,31 @@ def copy_content(
             for instruction in instructions:
                 content = target_resource.content
                 target_property_name = instruction.target_content.property_name
+                relation_graph = RelationPathGraph(instruction.source.relation_path)
 
                 if target_property_name in content:
                     raise EvitableTransformationError()
+                source_resource_name = relation_graph.last.name
 
-                # TODO: simplified path handling for now
-                last_path_element = instruction.source.relation_path.elements[-1]
-                if last_path_element.type_ == RelationPathElementType.ACTIVE:
-                    source_class_name = last_path_element.target
-                else:
-                    source_class_name = last_path_element.source
-                property_name = last_path_element.property
+                # fetch property schema to copy
+                source_resources = modified_data.resources.get(source_resource_name)
+                if not source_resources:
+                    raise EvitableTransformationError()
+
+                if len(source_resources) != 1:
+                    raise ValueError(
+                        "Expected exactly one resource to copy from, but found multiple."
+                    )
+                source_resource = next(iter(source_resources.values()))
+
+                source_content = source_resource.content
+                for path_elem in instruction.source.content_path.split("."):
+                    source_content = source_content.get(path_elem)
+                    if not source_content:
+                        raise EvitableTransformationError()
+
+                content.setdefault("properties", {})[target_property_name] = (
+                    source_content
+                )
 
     return modified_data

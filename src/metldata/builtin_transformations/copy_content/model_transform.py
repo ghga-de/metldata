@@ -18,12 +18,13 @@ from copy import deepcopy
 
 from schemapack.spec.schemapack import ClassDefinition, SchemaPack
 
-from metldata.builtin_transformations.common.path.path_elements import (
-    RelationPathElementType,
+from metldata.builtin_transformations.add_content_properties.path import (
+    resolve_schema_object_path,
 )
 from metldata.builtin_transformations.copy_content.instruction import (
     CopyContentInstruction,
 )
+from metldata.builtin_transformations.copy_content.path import RelationPathGraph
 from metldata.transform.base import EvitableTransformationError
 
 
@@ -47,30 +48,28 @@ def add_copy_content(
         for instruction in instructions:
             # check for property existence
             target_property_name = instruction.target_content.property_name
+            relation_graph = RelationPathGraph(instruction.source.relation_path)
             if target_property_name in content_schema.get("properties", {}):
                 raise EvitableTransformationError()
 
             # extract schema information that needs to be copied
-            # TODO: simplified path handling for now
-            last_path_element = instruction.source.relation_path.elements[-1]
-            if last_path_element.type_ == RelationPathElementType.ACTIVE:
-                source_class_name = last_path_element.target
-            else:
-                source_class_name = last_path_element.source
-            property_name = last_path_element.property
+            source_class = relation_graph.last
+            source_content_path = instruction.source.content_path
 
             # fetch property schema to copy
-            source_class_def = model.classes.get(source_class_name)
+            source_class_def = model.classes.get(source_class.name)
             if not source_class_def:
                 raise EvitableTransformationError()
 
             source_content_schema = source_class_def.content.json_schema_dict
-            source_properties = source_content_schema.get("properties", {})
-            if property_name not in source_properties:
-                raise EvitableTransformationError()
+            try:
+                property_schema = resolve_schema_object_path(
+                    source_content_schema, source_content_path
+                )
+            except KeyError as exc:
+                raise EvitableTransformationError() from exc
 
             # add property schema to target class
-            property_schema = source_properties[property_name]
             content_schema.setdefault("properties", {})[target_property_name] = (
                 deepcopy(property_schema)
             )

@@ -40,9 +40,7 @@ class CopyContentConfig(BaseSettings):
         self,
     ) -> dict[str, list[CopyContentInstruction]]:
         """Returns a dictionary of instructions by class (i.e. config for each class)."""
-        instructions_by_class: dict[
-            str, list[CopyContentInstruction]
-        ] = {}
+        instructions_by_class: dict[str, list[CopyContentInstruction]] = {}
         for instruction in self.copy_content:
             instructions_by_class.setdefault(instruction.class_name, []).append(
                 instruction

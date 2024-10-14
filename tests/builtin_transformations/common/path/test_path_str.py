@@ -219,18 +219,18 @@ def test_get_element_components(
             "class_a(class_b)>class_b",
             RelationPathElement(
                 type_=RelationPathElementType.ACTIVE,
-                source="class_a",
+                lhs="class_a",
                 property="class_b",
-                target="class_b",
+                rhs="class_b",
             ),
         ),
         (
             "class_a<(class_a)class_b",
             RelationPathElement(
                 type_=RelationPathElementType.PASSIVE,
-                source="class_a",
+                lhs="class_a",
                 property="class_a",
-                target="class_b",
+                rhs="class_b",
             ),
         ),
     ],
@@ -251,9 +251,9 @@ def test_string_element_to_object(
             [
                 RelationPathElement(
                     type_=RelationPathElementType.ACTIVE,
-                    source="class_a",
+                    lhs="class_a",
                     property="class_b",
-                    target="class_b",
+                    rhs="class_b",
                 )
             ],
         ),
@@ -262,9 +262,9 @@ def test_string_element_to_object(
             [
                 RelationPathElement(
                     type_=RelationPathElementType.PASSIVE,
-                    source="class_a",
+                    lhs="class_a",
                     property="class_a",
-                    target="class_b",
+                    rhs="class_b",
                 )
             ],
         ),
@@ -273,15 +273,15 @@ def test_string_element_to_object(
             [
                 RelationPathElement(
                     type_=RelationPathElementType.ACTIVE,
-                    source="class_a",
+                    lhs="class_a",
                     property="class_b",
-                    target="class_b",
+                    rhs="class_b",
                 ),
                 RelationPathElement(
                     type_=RelationPathElementType.ACTIVE,
-                    source="class_b",
+                    lhs="class_b",
                     property="class_c",
-                    target="class_c",
+                    rhs="class_c",
                 ),
             ],
         ),
@@ -290,15 +290,15 @@ def test_string_element_to_object(
             [
                 RelationPathElement(
                     type_=RelationPathElementType.ACTIVE,
-                    source="class_a",
+                    lhs="class_a",
                     property="class_b",
-                    target="class_b",
+                    rhs="class_b",
                 ),
                 RelationPathElement(
                     type_=RelationPathElementType.PASSIVE,
-                    source="class_b",
+                    lhs="class_b",
                     property="class_b",
-                    target="class_c",
+                    rhs="class_c",
                 ),
             ],
         ),

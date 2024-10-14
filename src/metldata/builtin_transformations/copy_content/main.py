@@ -73,5 +73,5 @@ COPY_CONTENT_TRANSFORMATION = TransformationDefinition[CopyContentConfig](
     config_cls=CopyContentConfig,
     check_model_assumptions=check_model_assumptions_wrapper,
     transform_model=transform_model,
-    data_transformer_factory=CopyContentTransformer
+    data_transformer_factory=CopyContentTransformer,
 )

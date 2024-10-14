@@ -87,9 +87,7 @@ def resolve_active_path_element(
             "Expected path element of type 'ACTIVE', but got a 'PASSIVE' one."
         )
 
-    source_resource = data.resources.get(path_element.source, {}).get(
-        source_resource_id
-    )
+    source_resource = data.resources.get(path_element.lhs, {}).get(source_resource_id)
 
     if not source_resource:
         raise EvitableTransformationError()
@@ -129,7 +127,7 @@ def resolve_passive_path_element(
             "Expected path element of type 'PASSIVE', but got an 'ACTIVE' one."
         )
 
-    candidate_resources = data.resources.get(path_element.target, {})
+    candidate_resources = data.resources.get(path_element.rhs, {})
     target_resource_ids = set()
 
     for candidate_resource_id, candidate_resource in candidate_resources.items():

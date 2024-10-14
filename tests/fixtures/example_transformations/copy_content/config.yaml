@@ -1,7 +1,7 @@
 content_to_copy:
-  - class_name: 
+  - class_name:
     target_content:
       property_name:
     source:
       relation_path:
-      content_path: 
+      content_path:
