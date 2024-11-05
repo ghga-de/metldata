@@ -114,7 +114,7 @@ def assert_object_path_exists(
     instruction: InstructionProtocol,
 ) -> None:
     """Make sure that the source class (the class being modified) and the object_path
-    exists in the model. Assumption fails if the content path is in the model before
+    exist in the model. Assumption fails if the content path is present in the model before
     the transformation.
     """
     class_name = instruction.class_name
