@@ -53,7 +53,7 @@ class CountContentValuesTransformer(DataTransformer[CountContentValuesConfig]):
 def check_model_assumptions_wrapper(
     model: SchemaPack, config: CountContentValuesConfig
 ) -> None:
-    """Check the assumptions of the model.
+    """Check all assumptions hold for a given model.
 
     Raises:
         ModelAssumptionError:
