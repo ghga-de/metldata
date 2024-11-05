@@ -34,7 +34,7 @@ DEFAULT_PROPERTY_SCHEMA: Final[dict[str, Any]] = {
 }
 
 
-def add_count_content(
+def add_count_content_properties(
     *,
     model: SchemaPack,
     instructions_by_class: dict[str, list[CountContentValueInstruction]],

@@ -29,7 +29,7 @@ from metldata.builtin_transformations.count_content_values.data_transform import
     count_content,
 )
 from metldata.builtin_transformations.count_content_values.model_transform import (
-    add_count_content,
+    add_count_content_properties,
 )
 from metldata.transform.base import DataTransformer, TransformationDefinition
 
@@ -71,7 +71,7 @@ def transform_model(model: SchemaPack, config: CountContentValuesConfig) -> Sche
         DataModelTransformationError:
             if the transformation fails.
     """
-    return add_count_content(
+    return add_count_content_properties(
         model=model, instructions_by_class=config.instructions_by_class()
     )
 
