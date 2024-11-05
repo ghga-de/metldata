@@ -35,7 +35,7 @@ from metldata.transform.base import DataTransformer, TransformationDefinition
 
 
 class CountContentValuesTransformer(DataTransformer[CountContentValuesConfig]):
-    """A transformer that counts the values of a specified property of an object and
+    """A transformer that counts the occurrences of a specified property within an object and
     adds the value to the content of a target object.
     """
 
