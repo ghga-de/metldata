@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"Assumptions utilized in more than one transform types"
+"Assumptions utilized in more than one transformation"
 
 from schemapack.spec.schemapack import SchemaPack
 
@@ -29,7 +29,9 @@ from metldata.builtin_transformations.common.path.path_elements import (
 from metldata.transform.exceptions import ModelAssumptionError, MultiplicityError
 
 
-def assert_path_classes_and_relations_exist(*, model: SchemaPack, path: RelationPath):
+def assert_path_classes_and_relations_exist(
+    *, model: SchemaPack, path: RelationPath
+) -> None:
     """Make sure that all classes and relations defined in the provided path exist in
     the provided model.
 
@@ -54,34 +56,33 @@ def _check_class_exists(model: SchemaPack, class_name: str) -> None:
         raise ModelAssumptionError(f"Class {class_name} not found in model.")
 
 
-def _check_relation_exists(model: SchemaPack, class_name: str, relation: str):
+def _check_relation_exists(model: SchemaPack, class_name: str, relation: str) -> None:
     """Check if a relation exists in a class and raise an error if not"""
     if relation not in model.classes[class_name].relations:
         raise ModelAssumptionError(
-            f"Relation property {
-                relation} not found in class {class_name}."
+            f"Relation property {relation} not found in class {class_name}."
         )
 
 
-def assert_only_direct_relations(*, path: RelationPath):
+def assert_only_direct_relations(*, path: RelationPath) -> None:
     """Ensure that only direct relations are supported which should be the case if the
     relation path only contains one path element.
     """
     num_elements = len(path.elements)
     if num_elements != 1:
         raise ModelAssumptionError(
-            f"The provided relation path {
-                path.path_str}"
-            f"does not describe a direct relation, but contains {
-                num_elements} different relations"
+            f"The provided relation path {path.path_str}"
+            f"does not describe a direct relation, but contains {num_elements}"
+            + " different relations"
         )
 
 
-def assert_class_is_source(*, path: RelationPath, instruction: InstructionProtocol):
-    """Ensure that the class being modified with the reference count property is the expected class.
-    This function iterates over the elements of the relation path in the given instruction
-    and validates that the class being modified with the reference count property matches
-    the class specified in the relation path.
+def assert_class_is_source(
+    *, path: RelationPath, instruction: InstructionProtocol
+) -> None:
+    """Iterate over the elements of the relation path in the given instruction
+    and validate that the class being modified matches the class specified in the
+    relation path.
     """
     for path_element in path.elements:
         _validate_modification_class(path_element, instruction.class_name)
@@ -89,11 +90,10 @@ def assert_class_is_source(*, path: RelationPath, instruction: InstructionProtoc
 
 def _validate_modification_class(
     path_element: RelationPathElement, expected_class_name: str
-):
-    """Check whether the class specified to be modified with the reference count
-    matches the source or target class in the provided `path_element`, depending on the
-    type of the relation path (i.e., active or passive). If the class does not match,
-    an exception is raised.
+) -> None:
+    """Check whether the class specified to be modified matches the source or target
+    class in the provided `path_element`, depending on the type of the relation path
+    (i.e., active or passive). If the class does not match, an exception is raised.
     """
     modification_class_name = (
         path_element.source
@@ -102,8 +102,7 @@ def _validate_modification_class(
     )
     if expected_class_name != modification_class_name:
         raise ModelAssumptionError(
-            f"Class {
-                expected_class_name} does not correspond to the relation source "
+            f"Class {expected_class_name} does not correspond to the relation source "
             f"{modification_class_name}."
         )
 
@@ -132,21 +131,19 @@ def assert_object_path_exists(
         )
     except KeyError as exc:
         raise ModelAssumptionError(
-            f"Object path {
-                instruction.target_content.object_path} does not exist"
+            f"Object path {instruction.target_content.object_path} does not exist"
             + f" in class {class_name}."
         ) from exc
 
     # Check if the property_name already exists in the model and raise an error if so
     if instruction.target_content.property_name in target_schema.get("properties", {}):
         raise ModelAssumptionError(
-            f"Property {
-                instruction.target_content.property_name} already exists"
+            f"Property {instruction.target_content.property_name} already exists"
             + f" in class {class_name}."
         )
 
 
-def assert_multiplicity(*, model: SchemaPack, path: RelationPath):
+def assert_target_multiplicity(*, model: SchemaPack, path: RelationPath) -> None:
     """Make sure the target of the relation contributes multiple instances to the relation."""
     for path_element in path.elements:
         if path_element.type_ == RelationPathElementType.ACTIVE:
@@ -155,6 +152,6 @@ def assert_multiplicity(*, model: SchemaPack, path: RelationPath):
             ]
             if not relation.multiple.target:
                 raise MultiplicityError(
-                    f"The target of the relation {
-                        path_element.property} does not contribute multiple instances to the relation."
+                    f"The target of the relation {path_element.property} does not"
+                    + " contribute multiple instances to the relation."
                 )

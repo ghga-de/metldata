@@ -78,8 +78,7 @@ def assert_new_property_not_exists(
     source_class = model.classes.get(instruction.source)
     if source_class and instruction.new_property in source_class.relations:
         raise ModelAssumptionError(
-            f"Property '{instruction.new_property}' of class '{
-                instruction.source}'"
+            f"Property {instruction.new_property} of class {instruction.source}"
             + ", intended to store an inferred relation, does already exist."
         )
 

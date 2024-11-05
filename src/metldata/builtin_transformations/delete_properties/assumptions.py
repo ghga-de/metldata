@@ -47,6 +47,5 @@ def assert_classes_and_properties_exist(
                 "properties", {}
             ):
                 raise ModelAssumptionError(
-                    f"Property {property} does not exist in class {
-                        class_name}."
+                    f"Property {property} does not exist in class {class_name}."
                 )
