@@ -24,7 +24,7 @@ from metldata.transform.exceptions import (
 )
 
 
-def get_referred_class(relation_path: RelationPath) -> str:
+def get_directly_referenced_class(relation_path: RelationPath) -> str:
     """Extracts and returns the class that is referred to in a direct relation path.
 
     Given a `RelationPath` object, this function identifies the target class that

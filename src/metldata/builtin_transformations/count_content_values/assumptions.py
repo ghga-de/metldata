@@ -24,7 +24,9 @@ from metldata.builtin_transformations.common.assumptions import (
     assert_path_classes_and_relations_exist,
     assert_target_multiplicity,
 )
-from metldata.builtin_transformations.common.path.path_utils import get_referred_class
+from metldata.builtin_transformations.common.path.path_utils import (
+    get_directly_referenced_class,
+)
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
 )
@@ -57,7 +59,7 @@ def assert_source_content_path_exists(
     path = instruction.source.relation_path
     content_path = instruction.source.content_path
 
-    referenced_class = get_referred_class(path)
+    referenced_class = get_directly_referenced_class(path)
 
     class_def = schema.classes.get(referenced_class)
 

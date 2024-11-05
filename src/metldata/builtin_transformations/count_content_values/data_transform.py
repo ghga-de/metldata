@@ -22,7 +22,9 @@ from schemapack.spec.datapack import DataPack
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_data_object_path,
 )
-from metldata.builtin_transformations.common.path.path_utils import get_referred_class
+from metldata.builtin_transformations.common.path.path_utils import (
+    get_directly_referenced_class,
+)
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
 )
@@ -64,7 +66,7 @@ def count_content(
 
         for instruction in instructions:
             relation_path = instruction.source.relation_path
-            referenced_class = get_referred_class(relation_path)
+            referenced_class = get_directly_referenced_class(relation_path)
 
             # Only one element is expected in the path
             relation_name = relation_path.elements[0].property
