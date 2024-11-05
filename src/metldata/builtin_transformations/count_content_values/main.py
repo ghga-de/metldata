@@ -57,7 +57,7 @@ def check_model_assumptions_wrapper(
 
     Raises:
         ModelAssumptionError:
-            if the model does not fulfill the assumptions.
+            if the model does not fulfill all assumptions.
     """
     check_model_assumptions(
         schema=model, instructions_by_class=config.instructions_by_class()
