@@ -16,8 +16,11 @@
 """Data transformation logic for count content values transformation."""
 
 from collections import Counter
+from typing import Any
 
-from schemapack.spec.datapack import DataPack
+from schemapack._internals.spec.custom_types import ResourceId
+from schemapack._internals.spec.datapack import ResourceIdSet
+from schemapack.spec.datapack import DataPack, Resource
 
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_data_object_path,
@@ -62,7 +65,7 @@ def count_content(
     """Transforms the data."""
     context = TransformationContext(data, instructions_by_class)
     for class_name, instructions in context.instructions_by_class.items():
-        resources = context.get_class_resources(class_name)
+        target_resources = context.get_class_resources(class_name)
 
         for instruction in instructions:
             relation_path = instruction.source.relation_path
@@ -76,7 +79,10 @@ def count_content(
             content_resources = context.get_class_resources(referenced_class)
 
             transform_resources(
-                resources, relation_name, content_resources, instruction
+                target_resources=target_resources,
+                relation_name=relation_name,
+                content_resources=content_resources,
+                instruction=instruction,
             )
 
     return context.data
@@ -84,41 +90,43 @@ def count_content(
 
 def transform_resources(
     *,
-    resources,
-    relation_name,
-    content_resources,
+    target_resources: dict[ResourceId, Resource],
+    relation_name: str,
+    content_resources: dict[ResourceId, Resource],
     instruction: CountContentValueInstruction,
 ):
     """Transform resources"""
-    for resource in resources.values():
-        content = resource.content
-        related_to = resource.relations.get(relation_name)
+    for target_resource in target_resources.values():
+        target_content = target_resource.content
+        related_to = target_resource.relations.get(relation_name)
+        if not related_to:
+            raise EvitableTransformationError()
         count_values = get_count_values(related_to, content_resources, instruction)
 
-        target_object = get_target_object(content, instruction)
-        target_object[instruction.target_content.property_name] = dict(
-            Counter(count_values)
-        )
+        target_object = get_target_object(target_content, instruction)
+        target_property = instruction.target_content.property_name
+        target_object[target_property] = dict(Counter(count_values))
 
 
 def get_count_values(
-    resource_relations, content_resources, instruction: CountContentValueInstruction
+    resource_relations: ResourceId | ResourceIdSet,
+    content_resources: dict[ResourceId, Resource],
+    instruction: CountContentValueInstruction,
 ):
-    """Get values that is to be counted."""
-    if not resource_relations:
-        raise EvitableTransformationError()
-
+    """Get values to be counted."""
     try:
-        count_values = [
+        content_values = [
             content_resources[relation].content.get(instruction.source.content_path)
             for relation in resource_relations
         ]
-        return count_values
+        return content_values
     except KeyError as exc:
         raise EvitableTransformationError() from exc
 
 
-def get_target_object(content, instruction: CountContentValueInstruction):
+def get_target_object(
+    content: dict[str, Any], instruction: CountContentValueInstruction
+):
     """Get the json object that is to be modify."""
     target_object = resolve_data_object_path(
         data=content,
