@@ -60,7 +60,7 @@ def count_content(
 def transform_class(
     *, class_name: str, data: DataPack, instructions: list[CountContentValueInstruction]
 ):
-    """Apply the count content value transformation to the specified class."""
+    """Apply the count content value transformations to the specified class."""
     # the target prefix refers to resources that will be modified by the transformation
     target_resources = get_class_resources(data=data, class_name=class_name)
     for instruction in instructions:
