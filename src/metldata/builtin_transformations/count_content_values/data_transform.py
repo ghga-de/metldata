@@ -34,7 +34,7 @@ from metldata.transform.exceptions import (
 
 
 class TransformationContext:
-    """Context manager for a data transformation process, wrapping the Datapack to be
+    """Context for a data transformation process, wrapping the Datapack to be
     transformed and transformation instructions per class.
     """
 
