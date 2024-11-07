@@ -83,6 +83,7 @@ def count_content(
 
 
 def transform_resources(
+    *,
     resources,
     relation_name,
     content_resources,
