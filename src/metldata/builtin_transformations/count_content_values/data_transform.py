@@ -70,7 +70,7 @@ def count_content(
 
             # Only one element is expected in the path
             relation_name = relation_path.elements[0].property
-            # content_resources keeping the values to be count are obtained from
+            # content_resources keeping the values to be counted are obtained from
             # the class that is referenced by the transformation target class through
             # relation_name.
             content_resources = context.get_class_resources(referenced_class)
