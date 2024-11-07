@@ -51,7 +51,7 @@ def check_model_assumptions(
 
 def assert_source_content_path_exists(
     schema: SchemaPack, instruction: CountContentValueInstruction
-):
+) -> None:
     """Ensure that the slot given as 'content path' of the source in the
     'count content values' transformation config exists in the content schema of
     the class that is referred in the 'relation path'.
@@ -72,6 +72,6 @@ def assert_source_content_path_exists(
 
     if not content_slot:
         raise ModelAssumptionError(
-            f"Class {referenced_class} does not have {
-                content_path} in its content schema."
+            f"Class {referenced_class} does not have {content_path} in its content"
+            + " schema."
         )

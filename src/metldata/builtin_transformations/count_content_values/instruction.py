@@ -35,6 +35,14 @@ class CountContentValueInstruction(BaseSettings):
 
     class_name: str = Field(..., description="The name of the class to modify.")
 
-    target_content: NewContentSchemaPath
+    target_content: NewContentSchemaPath = Field(
+        ...,
+        description="NewContentSchemaPath object describing where a new"
+        + " content property will be added.",
+    )
 
-    source: SourcePath
+    source: SourcePath = Field(
+        ...,
+        description="SourcePath object defining the path to reach a property"
+        + " from which content values are sourced.",
+    )

@@ -42,9 +42,7 @@ def add_properties(
     """The target content - object_path(s) are added to the model with the
     'add_content_properties' step of the workflow. Thus, this function only adds the
     property_name(s) to the content schema of the classes that are subject to
-    count_content_values transformation. It is only applicable to the instructions
-    CountContentValueInstruction of count_content_values transformation and
-    AddReferenceCountPropertyInstruction of count_references transformation.
+    count_content_values transformation.
     """
     updated_class_defs: dict[str, ClassDefinition] = {}
     for class_name, cls_instructions in instructions_by_class.items():

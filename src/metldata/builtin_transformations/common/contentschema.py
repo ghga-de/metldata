@@ -40,9 +40,9 @@ class NewContentSchemaPath(BaseSettings):
 
 
 class SourcePath(BaseSettings):
-    """A model describing the source path of an object within the schema that describes
-    the path to navigate between classes and the content schema property that is to be
-    used in a transformation.
+    """A model describing the path to a property within the schema. It describes a path
+    to reach from one class to another, and defines a property at the
+    destination class.
     """
 
     relation_path: RelationPath = Field(
@@ -50,4 +50,4 @@ class SourcePath(BaseSettings):
         description="A RelationPath establishing how to navigate between classes.",
         examples=["ClassA(relation)>ClassB"],
     )
-    content_path: str = Field(..., description="Content schema property name")
+    content_path: str = Field(..., description="Content schema property name.")
