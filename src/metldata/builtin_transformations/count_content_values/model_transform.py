@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Model transformation logic for the 'count references' transformation"""
+"""Model transformation logic for the 'count content values' transformation"""
 
 from typing import Any, Final
 
@@ -21,21 +21,28 @@ from schemapack.spec.schemapack import (
     SchemaPack,
 )
 
-from metldata.builtin_transformations.common.model_transform import add_properties
-from metldata.builtin_transformations.count_references.instruction import (
-    AddReferenceCountPropertyInstruction,
+from metldata.builtin_transformations.common.model_transform import (
+    add_properties,
+)
+from metldata.builtin_transformations.count_content_values.instruction import (
+    CountContentValueInstruction,
 )
 
-DEFAULT_PROPERTY_SCHEMA: Final[dict[str, Any]] = {"type": "integer"}
+DEFAULT_PROPERTY_SCHEMA: Final[dict[str, Any]] = {
+    "type": "object",
+    "additionalProperties": True,
+}
 
 
-def add_count_references(
+def add_count_content_properties(
     *,
     model: SchemaPack,
-    instructions_by_class: dict[str, list[AddReferenceCountPropertyInstruction]],
+    instructions_by_class: dict[str, list[CountContentValueInstruction]],
 ) -> SchemaPack:
-    """The target content - object_names are added to the model with the 'add_content_properties
-    step of the workflow. Thus, this function only adds the property_name to a content schema.
+    """The target content - object_path(s) are added to the model with the
+    'add_content_properties' step of the workflow. Thus, this function only adds the
+    property_name(s) to the content schema of the classes that are subject to
+    count_content_values transformation.
     """
     return add_properties(
         model=model,

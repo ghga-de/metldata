@@ -24,7 +24,7 @@ from metldata.builtin_transformations.add_content_properties.instruction import 
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_data_object_path,
 )
-from metldata.transform.base import EvitableTransformationError
+from metldata.transform.exceptions import EvitableTransformationError
 
 
 def add_properties(

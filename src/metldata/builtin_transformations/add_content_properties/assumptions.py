@@ -22,7 +22,7 @@ from metldata.builtin_transformations.add_content_properties.instruction import 
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_schema_object_path,
 )
-from metldata.transform.base import ModelAssumptionError
+from metldata.transform.exceptions import ModelAssumptionError
 
 
 def check_model_assumptions(
@@ -52,6 +52,6 @@ def check_model_assumptions(
                 "properties", {}
             ):
                 raise ModelAssumptionError(
-                    f"Property {instruction.target_content.property_name} already exists"
-                    + f" in class {class_name}."
+                    f"Property {instruction.target_content.property_name} already"
+                    f"exists in class {class_name}."
                 )

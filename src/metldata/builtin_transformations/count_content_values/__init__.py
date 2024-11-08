@@ -13,9 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Common models and functions for the built-in transformations."""
+"""A transformation to add content properties."""
 
-from metldata.builtin_transformations.common.contentschema import (
-    NewContentSchemaPath,  # noqa: F401
-    SourcePath,  # noqa: F401
+from metldata.builtin_transformations.count_content_values.main import (
+    COUNT_CONTENT_VALUES_TRANSFORMATION,  # noqa: F401
 )

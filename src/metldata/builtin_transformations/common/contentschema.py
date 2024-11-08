@@ -17,6 +17,8 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
+from metldata.builtin_transformations.common.path.path import RelationPath
+
 
 class NewContentSchemaPath(BaseSettings):
     """A model describing the path of an object property within the content schema that
@@ -35,3 +37,17 @@ class NewContentSchemaPath(BaseSettings):
     )
 
     property_name: str = Field(..., description="The name of the property to be added.")
+
+
+class SourcePath(BaseSettings):
+    """A model describing the path to a property within the schema. It describes a path
+    to reach from one class to another, and defines a property at the
+    destination class.
+    """
+
+    relation_path: RelationPath = Field(
+        ...,
+        description="A RelationPath establishing how to navigate between classes.",
+        examples=["ClassA(relation)>ClassB"],
+    )
+    content_path: str = Field(..., description="Content schema property name.")

@@ -1,0 +1,39 @@
+datapack: 0.3.0
+resources:
+  Dataset:
+    dataset_1:
+      content:
+        dac_contact: dac@example.org
+        samples_summary:
+          stats: {}
+      relations:
+        individuals:
+          - indv_a
+          - indv_b
+        biospecimens:
+          - bios_a
+          - bios_b
+          - bios_c
+  Biospecimen:
+    bios_a:
+      content:
+        tissue: blood
+      relations:
+        individuals: indv_a
+    bios_b:
+      content:
+        tissue: subcutaneous_adipose_tissue
+      relations:
+        individuals: indv_b
+    bios_c:
+      content:
+        tissue: blood
+      relations:
+        individuals: indv_b
+  Individual:
+    indv_a:
+      content:
+        sex: Male
+    indv_b:
+      content:
+        sex: Female

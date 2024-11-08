@@ -1,0 +1,60 @@
+# a simple schemapack:
+schemapack: 0.3.0
+classes:
+  Dataset:
+    id:
+      propertyName: alias
+    content:
+      {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "description": "A dataset that is a collection of files.",
+        "properties":
+          {
+            "dac_contact": { "type": "string" },
+            "samples_summary":
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties":
+                  {
+                    "stats": { "type": "object", "additionalProperties": true },
+                  },
+              },
+          },
+        "type": "object",
+      }
+    relations:
+      individuals:
+        targetClass: Individual
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
+      biospecimens:
+        targetClass: Biospecimen
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
+  Biospecimen:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Biospecimen.schema.json
+    relations:
+      individuals:
+        targetClass: Individual
+        multiple:
+          origin: true
+          target: false
+        mandatory:
+          origin: true
+          target: true
+  Individual:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Individual.schema.json

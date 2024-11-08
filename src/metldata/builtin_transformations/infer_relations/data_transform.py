@@ -57,7 +57,7 @@ from metldata.builtin_transformations.common.path.path_elements import (
 from metldata.builtin_transformations.infer_relations.relations import (
     InferenceInstruction,
 )
-from metldata.transform.base import EvitableTransformationError
+from metldata.transform.exceptions import EvitableTransformationError
 
 
 def resolve_active_path_element(

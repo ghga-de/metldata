@@ -23,7 +23,7 @@ from schemapack.spec.schemapack import (
     SchemaPack,
 )
 
-from metldata.transform.base import EvitableTransformationError
+from metldata.transform.exceptions import EvitableTransformationError
 
 
 def delete_properties(
