@@ -126,7 +126,7 @@ def assert_object_path_exists(
     # Check if the object_path already exists in the model
     try:
         target_schema = resolve_schema_object_path(
-            json_schema=class_def.content.json_schema_dict,
+            json_schema=class_def.content,
             path=instruction.target_content.object_path,
         )
     except KeyError as exc:

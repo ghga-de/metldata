@@ -133,10 +133,9 @@ def resolve_passive_path_element(
     target_resource_ids = set()
 
     for candidate_resource_id, candidate_resource in candidate_resources.items():
-        relation = candidate_resource.relations.get(path_element.property, set())
-
+        relation = candidate_resource.relations.get(path_element.property, frozenset())
         if (
-            isinstance(relation, set) and source_resource_id in relation
+            isinstance(relation, frozenset) and source_resource_id in relation
         ) or source_resource_id == relation:
             target_resource_ids.add(candidate_resource_id)
 
@@ -223,12 +222,14 @@ def add_inferred_relations(
                 update={
                     "relations": {
                         **host_resource.relations,
-                        instruction.new_property: target_resource_ids,
+                        instruction.new_property: frozenset(
+                            target_resource_ids
+                        ),  # freeze inferred relations for datapack data type compatibility
                     }
                 }
             )
 
-        data = data.model_copy(
+        modified_data = data.model_copy(
             update={
                 "resources": {
                     **data.resources,
@@ -237,4 +238,4 @@ def add_inferred_relations(
             }
         )
 
-    return data
+    return modified_data

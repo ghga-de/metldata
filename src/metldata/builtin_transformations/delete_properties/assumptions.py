@@ -43,7 +43,7 @@ def assert_classes_and_properties_exist(
             )
 
         for property in properties:
-            if property not in model.classes[class_name].content.json_schema_dict.get(
+            if property not in model.classes[class_name].content.get(
                 "properties", {}
             ):
                 raise ModelAssumptionError(

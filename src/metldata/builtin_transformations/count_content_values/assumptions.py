@@ -68,7 +68,7 @@ def assert_source_content_path_exists(
             f"Class {referenced_class} does not exist in the model."
         )
 
-    content_slot = class_def.content.json_schema_dict["properties"].get(content_path)
+    content_slot = class_def.content["properties"].get(content_path)
 
     if not content_slot:
         raise ModelAssumptionError(

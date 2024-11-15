@@ -6,6 +6,10 @@ anyio==4.3.0 \
     --hash=sha256:048e05d0f6caeed70d731f3db756d35dcc1f35747c8c403364a8332c630441b8 \
     --hash=sha256:f75253795a87df48568485fd18cdd2a3fa5c4f7c5be8e5e36637733fce06fed6
     # via httpx
+arcticfreeze==0.1.1 \
+    --hash=sha256:977a1d7c74498d00201d65519fa59f2b59e5a2b303668f7ecaec58a270ce5eda \
+    --hash=sha256:c9811b3c787bfdb0e2ea721b0a99bb0e700c91945fb1c9ce0822cb859b409916
+    # via schemapack
 attrs==23.2.0 \
     --hash=sha256:935dc3b529c262f6cf76e50877d35a4bd3c1de194fd41f47a2b7ae8f19971f30 \
     --hash=sha256:99b87a485a5820b23b879f04c2305b44b951b502fd64be915879d77a7e8fc6f1
@@ -222,10 +226,10 @@ idna==3.7 \
     #   anyio
     #   httpx
     #   requests
-immutabledict==3.0.0 \
-    --hash=sha256:034bacc6c6872707c4ec0ea9515de6bbe0dcf0fcabd97ae19fd4e4c338f05798 \
-    --hash=sha256:5a23cd369a6187f76a8c29d7d687980b092538eb9800e58964603f1b973c56fe
-    # via schemapack
+immutabledict==4.2.0 \
+    --hash=sha256:d728b2c2410d698d95e6200237feb50a695584d20289ad3379a439aa3d90baba \
+    --hash=sha256:e003fd81aad2377a5a758bf7e1086cf3b70b63e9a5cc2f46bce8d0a2b4727c5f
+    # via arcticfreeze
 iniconfig==2.0.0 \
     --hash=sha256:2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3 \
     --hash=sha256:b6a85871a79d2e3b22d2d1b94ac2824226a63c6b741c88f7ae975f18b6778374
@@ -507,7 +511,9 @@ requests==2.31.0 \
 rich==13.7.1 \
     --hash=sha256:4edbae314f59eb482f54e9e30bf00d33350aaa94f4bfcd4e9e3110e64d0d7222 \
     --hash=sha256:9be308cb1fe2f1f57d67ce99e95af38a1e2bc71ad9813b0e247cf7ffbcc3a432
-    # via typer
+    # via
+    #   schemapack
+    #   typer
 rpds-py==0.18.0 \
     --hash=sha256:01e36a39af54a30f28b73096dd39b6802eddd04c90dbe161c1b8dbe22353189f \
     --hash=sha256:044a3e61a7c2dafacae99d1e722cc2d4c05280790ec5a05031b3876809d89a5c \
@@ -686,9 +692,9 @@ ruff==0.4.2 \
     --hash=sha256:cbd1e87c71bca14792948c4ccb51ee61c3296e164019d2d484f3eaa2d360dfaf \
     --hash=sha256:ec4ba9436a51527fb6931a8839af4c36a5481f8c19e8f5e42c2f7ad3a49f5069
     # via -r lock/requirements-dev-template.in
-schemapack==2.0.0a3 \
-    --hash=sha256:897c2659beb358a4256b95db94b9dfa1095b46698f46e4e3f2c50989e6c0210c \
-    --hash=sha256:fc6c182cf0f27e362a3a6163bf1c070f79c758362e53420980fbce7f1927c1bf
+schemapack==2.0.0a4 \
+    --hash=sha256:5e5a703f16cdb01067ac51a34362658db83e2adc48e61f4517c7d755154fbf68 \
+    --hash=sha256:a550df6bf0a4c5dc8293479a190600197a4a62b3fe3850c33b0ebe06ff11d729
     # via metldata (pyproject.toml)
 setuptools==69.5.1 \
     --hash=sha256:6c1fccdac05a97e598fb0ae3bbed5904ccb317337a51139dcd51453611bbb987 \

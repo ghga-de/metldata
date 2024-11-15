@@ -43,7 +43,7 @@ def check_model_assumptions(
             # Check if the property already exists in the target schema
             try:
                 target_schema = resolve_schema_object_path(
-                    json_schema=class_def.content.json_schema_dict,
+                    json_schema=class_def.content,
                     path=instruction.target_content.object_path,
                 )
             except KeyError:
