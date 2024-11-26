@@ -29,8 +29,7 @@ from metldata.builtin_transformations.add_content_properties.path import (
 )
 from metldata.builtin_transformations.common.model_transform import update_model
 from metldata.builtin_transformations.common.utils import (
-    model_to_dict,
-    thaw_frozen_dict,
+    thaw_content,
 )
 from metldata.transform.exceptions import EvitableTransformationError
 
@@ -47,7 +46,7 @@ def add_content_properties(
         if not class_def:
             raise EvitableTransformationError()
 
-        content_schema = thaw_frozen_dict(class_def.content)
+        content_schema = thaw_content(class_def.content)
         for cls_instruction in cls_instructions:
             object_path = cls_instruction.target_content.object_path
             property_name = cls_instruction.target_content.property_name
