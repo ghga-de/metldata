@@ -27,9 +27,7 @@ from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
 
-def model_to_dict(
-    model: SchemaPack,
-) -> dict[str, Any]:
+def model_to_dict(model: SchemaPack) -> dict[str, Any]:
     """Converts the provided SchemaPack model to a JSON-serializable dictionary.
 
     Returns:
