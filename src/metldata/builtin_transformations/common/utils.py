@@ -28,20 +28,12 @@ from schemapack.spec.schemapack import SchemaPack
 
 
 def model_to_dict(model: SchemaPack) -> dict[str, Any]:
-    """Converts the provided SchemaPack model to a dictionary.
-
-    Returns:
-        A dictionary representation of the provided model.
-    """
+    """Converts the provided SchemaPack model to a dictionary."""
     return json.loads(dumps_schemapack(deepcopy(model), yaml_format=False))
 
 
 def data_to_dict(data: DataPack) -> dict[str, Any]:
-    """Converts the provided DataPack data to a dictionary.
-
-    Returns:
-        A dictionary representation of the provided data.
-    """
+    """Converts the provided DataPack data to a dictionary."""
     return json.loads(dumps_datapack(deepcopy(data), yaml_format=False))
 
 
