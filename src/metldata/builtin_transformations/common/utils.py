@@ -38,7 +38,7 @@ def model_to_dict(
     return json.loads(dumps_schemapack(deepcopy(model), yaml_format=False))
 
 
-def data_to_dict(data:DataPack)-> dict[str, Any]:
+def data_to_dict(data: DataPack) -> dict[str, Any]:
     """Converts the provided DataPack data to a JSON-serializable dictionary.
 
     Returns:
@@ -47,7 +47,7 @@ def data_to_dict(data:DataPack)-> dict[str, Any]:
     return json.loads(dumps_datapack(deepcopy(data), yaml_format=False))
 
 
-def _thaw_content(frozen_dict: Mapping ) -> dict:
+def _thaw_content(frozen_dict: Mapping) -> dict:
     """Recursively converts a nested FrozenDict and frozenset to mutable types.
     This will be removed after we implement a FrozenDict validation to Schemapack lib.
     """

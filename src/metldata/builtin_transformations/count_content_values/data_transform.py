@@ -54,7 +54,9 @@ def count_content(
     modified_data = data_to_dict(data)
 
     for class_name, instructions in instructions_by_class.items():
-        transform_class(class_name=class_name, data=modified_data, instructions=instructions)
+        transform_class(
+            class_name=class_name, data=modified_data, instructions=instructions
+        )
     return DataPack.model_validate(modified_data)
 
 
@@ -95,7 +97,7 @@ def transform_resource(
     target_content = target_resource.get("content")
     if not target_content:
         raise EvitableTransformationError()
-    
+
     relation_target_ids = target_resource.get("relations", {}).get(relation_name)
     if not relation_target_ids:
         raise EvitableTransformationError()
