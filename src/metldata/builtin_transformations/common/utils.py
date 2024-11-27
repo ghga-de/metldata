@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Helper functions to transform Schemapack models and Datapack data
+into JSON-serializable dictionaries, as well as thawing frozen structures.
+"""
 
 import json
 from collections.abc import Mapping
@@ -20,7 +23,6 @@ from copy import deepcopy
 from typing import Any
 
 from schemapack import dumps_datapack, dumps_schemapack
-from schemapack._internals.spec.datapack import Resource
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
@@ -36,22 +38,21 @@ def model_to_dict(
     return json.loads(dumps_schemapack(deepcopy(model), yaml_format=False))
 
 
-def data_to_dict(data:DataPack):
+def data_to_dict(data:DataPack)-> dict[str, Any]:
     """Converts the provided DataPack data to a JSON-serializable dictionary.
 
     Returns:
         A dictionary representation of the provided data.
-        """
+    """
     return json.loads(dumps_datapack(deepcopy(data), yaml_format=False))
 
 
-def thaw_content(frozen_dict: Mapping ) -> dict:
-    """Recursively convert a nested FrozenDict, frozenset to mutable types.
+def _thaw_content(frozen_dict: Mapping ) -> dict:
+    """Recursively converts a nested FrozenDict and frozenset to mutable types.
     This will be removed after we implement a FrozenDict validation to Schemapack lib.
     """
     if isinstance(frozen_dict, Mapping):
-        return {key: thaw_content(value) for key, value in frozen_dict.items()}
+        return {key: _thaw_content(value) for key, value in frozen_dict.items()}
     elif isinstance(frozen_dict, tuple):
-        return [thaw_content(item) for item in frozen_dict]
+        return [_thaw_content(item) for item in frozen_dict]
     return frozen_dict
-

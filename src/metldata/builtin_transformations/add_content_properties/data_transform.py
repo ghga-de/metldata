@@ -55,7 +55,7 @@ def add_properties(
         for resource in class_resources.values():
             for instruction in instructions:
                 object = resolve_data_object_path(
-                    data=resource.get("content", {}),
+                    data=resource["content"],
                     path=instruction.target_content.object_path,
                 )
 

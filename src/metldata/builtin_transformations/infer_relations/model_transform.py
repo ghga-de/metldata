@@ -30,8 +30,8 @@ from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElementType,
 )
 from metldata.builtin_transformations.common.utils import (
+    _thaw_content,
     model_to_dict,
-    thaw_content,
 )
 from metldata.builtin_transformations.infer_relations.relations import (
     InferenceInstruction,
@@ -155,7 +155,7 @@ def add_inferred_relations(
         updated_class_defs[instruction.source] = ClassDefinition.model_validate(
             {
                 "id": class_def.id,
-                "content": thaw_content(class_def.content),
+                "content": _thaw_content(class_def.content),
                 "relations": {
                     **class_def.relations,
                     instruction.new_property: new_relation,

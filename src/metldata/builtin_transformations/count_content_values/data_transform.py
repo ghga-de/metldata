@@ -20,7 +20,7 @@ from typing import Any
 
 from schemapack._internals.spec.custom_types import ResourceId
 from schemapack._internals.spec.datapack import ResourceIdSet
-from schemapack.spec.datapack import DataPack, Resource
+from schemapack.spec.datapack import DataPack
 
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_data_object_path,
@@ -28,6 +28,7 @@ from metldata.builtin_transformations.add_content_properties.path import (
 from metldata.builtin_transformations.common.path.path_utils import (
     get_directly_referenced_class,
 )
+from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
 )
@@ -36,9 +37,9 @@ from metldata.transform.exceptions import (
 )
 
 
-def get_class_resources(*, data: DataPack, class_name: str):
-    """Extract the resources of a given class from a Datapack."""
-    resources = data.resources.get(class_name)
+def get_class_resources(*, data: dict, class_name: str) -> dict:
+    """Extract the resources of a given class from the dictionary."""
+    resources = data.get("resources", {}).get(class_name)
     if not resources:
         raise EvitableTransformationError()
     return resources
@@ -50,15 +51,15 @@ def count_content(
     instructions_by_class: dict[str, list[CountContentValueInstruction]],
 ) -> DataPack:
     """Apply all count content value transformation instructions."""
-    data = data.model_copy(deep=True)
+    modified_data = data_to_dict(data)
 
     for class_name, instructions in instructions_by_class.items():
-        transform_class(class_name=class_name, data=data, instructions=instructions)
-    return data
+        transform_class(class_name=class_name, data=modified_data, instructions=instructions)
+    return DataPack.model_validate(modified_data)
 
 
 def transform_class(
-    *, class_name: str, data: DataPack, instructions: list[CountContentValueInstruction]
+    *, class_name: str, data: dict, instructions: list[CountContentValueInstruction]
 ):
     """Apply the count content value transformations to the specified class."""
     # the target prefix refers to resources that will be modified by the transformation
@@ -85,14 +86,17 @@ def transform_class(
 
 def transform_resource(
     *,
-    referenced_resources: dict[ResourceId, Resource],
-    target_resource: Resource,
+    referenced_resources: dict[str, Any],
+    target_resource: dict,
     relation_name: str,
     instruction: CountContentValueInstruction,
 ):
     """Apply the count content value transformation to each resource of a class."""
-    target_content = target_resource.content
-    relation_target_ids = target_resource.relations.get(relation_name)
+    target_content = target_resource.get("content")
+    if not target_content:
+        raise EvitableTransformationError()
+    
+    relation_target_ids = target_resource.get("relations", {}).get(relation_name)
     if not relation_target_ids:
         raise EvitableTransformationError()
 
@@ -111,13 +115,13 @@ def transform_resource(
 def get_values_to_count(
     *,
     relation_target_ids: ResourceId | ResourceIdSet,
-    referenced_resources: dict[ResourceId, Resource],
+    referenced_resources: dict[str, Any],
     content_path: str,
 ):
     """Get countable properties from all resources referred to by the relation."""
     try:
         return [
-            referenced_resources[resource_id].content.get(content_path)
+            referenced_resources[resource_id]["content"].get(content_path)
             for resource_id in relation_target_ids
         ]
     except KeyError as exc:
