@@ -37,12 +37,12 @@ def data_to_dict(data: DataPack) -> dict[str, Any]:
     return json.loads(dumps_datapack(deepcopy(data), yaml_format=False))
 
 
-def _thaw_content(frozen_dict: Mapping | tuple) -> dict | list:
+def _thaw_content(frozen_dict: Mapping | tuple) -> dict:
     """Recursively converts a nested FrozenDict and frozenset to mutable types.
     This will be removed after we implement a FrozenDict validation to Schemapack lib.
     """
     if isinstance(frozen_dict, Mapping):
         return {key: _thaw_content(value) for key, value in frozen_dict.items()}
     elif isinstance(frozen_dict, tuple):
-        return [_thaw_content(item) for item in frozen_dict]
+        return [_thaw_content(item) for item in frozen_dict]  # type: ignore
     return frozen_dict
