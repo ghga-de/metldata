@@ -34,7 +34,7 @@ def model_to_dict(model: SchemaPack) -> dict[str, Any]:
 
 def data_to_dict(data: DataPack) -> dict[str, Any]:
     """Converts the provided DataPack data to a dictionary."""
-    return json.loads(dumps_datapack(deepcopy(data), yaml_format=False))
+    return json.loads(dumps_datapack(data, yaml_format=False))
 
 
 def _thaw_content(frozen_dict: Mapping | tuple) -> dict:
