@@ -18,13 +18,11 @@ into JSON-serializable dictionaries, as well as thawing frozen structures.
 """
 
 import json
-from collections.abc import Mapping
-from copy import deepcopy
 from typing import Any
 
 from schemapack import dumps_datapack, dumps_schemapack
 from schemapack.spec.datapack import DataPack
-from schemapack.spec.schemapack import SchemaPack
+from schemapack.spec.schemapack import ClassDefinition, SchemaPack
 
 
 def model_to_dict(model: SchemaPack) -> dict[str, Any]:
@@ -37,12 +35,7 @@ def data_to_dict(data: DataPack) -> dict[str, Any]:
     return json.loads(dumps_datapack(data, yaml_format=False))
 
 
-def _thaw_content(frozen_dict: Mapping | tuple) -> dict:
-    """Recursively converts a nested FrozenDict and frozenset to mutable types.
-    This will be removed after we implement a FrozenDict validation to Schemapack lib.
-    """
-    if isinstance(frozen_dict, Mapping):
-        return {key: _thaw_content(value) for key, value in frozen_dict.items()}
-    elif isinstance(frozen_dict, tuple):
-        return [_thaw_content(item) for item in frozen_dict]  # type: ignore
-    return frozen_dict
+def content_to_dict(class_def: ClassDefinition) -> dict[str, Any]:
+    """Converts a content schema into a dictionary."""
+    class_def_dict = json.loads(class_def.model_dump_json())
+    return class_def_dict["content"]

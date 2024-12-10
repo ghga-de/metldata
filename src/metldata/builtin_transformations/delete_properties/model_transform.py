@@ -24,9 +24,7 @@ from schemapack.spec.schemapack import (
 )
 
 from metldata.builtin_transformations.common.model_transform import update_model
-from metldata.builtin_transformations.common.utils import (
-    _thaw_content,
-)
+from metldata.builtin_transformations.common.utils import content_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 
 
@@ -51,7 +49,7 @@ def delete_properties(
         if not class_def:
             raise EvitableTransformationError()
 
-        content_schema = _thaw_content(class_def.content)
+        content_schema = content_to_dict(class_def)
 
         for property in properties:
             if "properties" not in content_schema:
