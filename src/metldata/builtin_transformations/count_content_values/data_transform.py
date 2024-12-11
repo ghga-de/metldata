@@ -105,7 +105,7 @@ def transform_resource(
 ):
     """Apply the count content value transformation to each resource of a class."""
     target_content = target_resource.get("content")
-    if not target_content:
+    if target_content is None:
         raise EvitableTransformationError()
 
     relation_target_ids = target_resource.get("relations", {}).get(relation_name)
