@@ -16,7 +16,6 @@
 """Data transformation logic for count content values transformation."""
 
 from collections import Counter
-from typing import Any
 
 from schemapack._internals.spec.custom_types import ResourceId
 from schemapack._internals.spec.datapack import ResourceIdSet
@@ -24,6 +23,12 @@ from schemapack.spec.datapack import DataPack
 
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_data_object_path,
+)
+from metldata.builtin_transformations.common.custom_types import (
+    MutableClassResources,
+    MutableDatapack,
+    MutableResource,
+    MutableResourceContent,
 )
 from metldata.builtin_transformations.common.path.path_utils import (
     get_directly_referenced_class,
@@ -37,7 +42,9 @@ from metldata.transform.exceptions import (
 )
 
 
-def get_class_resources(*, data: dict, class_name: str) -> dict:
+def get_class_resources(
+    *, data: MutableDatapack, class_name: str
+) -> MutableClassResources:
     """Extract the resources of a given class from the dictionary."""
     resources = data.get("resources", {}).get(class_name)
     if not resources:
@@ -61,7 +68,10 @@ def count_content(
 
 
 def transform_class(
-    *, class_name: str, data: dict, instructions: list[CountContentValueInstruction]
+    *,
+    class_name: str,
+    data: MutableDatapack,
+    instructions: list[CountContentValueInstruction],
 ):
     """Apply the count content value transformations to the specified class."""
     # the target prefix refers to resources that will be modified by the transformation
@@ -88,8 +98,8 @@ def transform_class(
 
 def transform_resource(
     *,
-    referenced_resources: dict[str, Any],
-    target_resource: dict,
+    referenced_resources: MutableClassResources,
+    target_resource: MutableResource,
     relation_name: str,
     instruction: CountContentValueInstruction,
 ):
@@ -117,7 +127,7 @@ def transform_resource(
 def get_values_to_count(
     *,
     relation_target_ids: ResourceId | ResourceIdSet,
-    referenced_resources: dict[str, Any],
+    referenced_resources: MutableClassResources,
     content_path: str,
 ):
     """Get countable properties from all resources referred to by the relation."""
@@ -131,7 +141,7 @@ def get_values_to_count(
 
 
 def get_modification_target(
-    *, data: dict[str, Any], instruction: CountContentValueInstruction
+    *, data: MutableResourceContent, instruction: CountContentValueInstruction
 ):
     """Get the json object that is to be modified."""
     path = instruction.target_content.object_path
