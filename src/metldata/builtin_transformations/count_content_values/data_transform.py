@@ -46,7 +46,7 @@ def get_class_resources(
     *, data: MutableDatapack, class_name: str
 ) -> MutableClassResources:
     """Extract the resources of a given class from the dictionary."""
-    resources = data.get("resources", {}).get(class_name)
+    resources = data["resources"].get(class_name)
     if not resources:
         raise EvitableTransformationError()
     return resources
@@ -108,7 +108,7 @@ def transform_resource(
     if target_content is None:
         raise EvitableTransformationError()
 
-    relation_target_ids = target_resource.get("relations", {}).get(relation_name)
+    relation_target_ids = target_resource["relations"].get(relation_name)
     if not relation_target_ids:
         raise EvitableTransformationError()
 
