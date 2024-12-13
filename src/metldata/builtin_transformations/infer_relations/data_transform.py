@@ -65,7 +65,7 @@ def resolve_active_path_element(
     data: DataPack,
     source_resource_id: ResourceId,
     path_element: RelationPathElement,
-) -> set[ResourceId]:
+) -> set[ResourceId] | frozenset[ResourceId]:
     """Resolve the given relation inference path element of active type for the given
     source resource.
 
@@ -93,7 +93,6 @@ def resolve_active_path_element(
 
     if not source_resource:
         raise EvitableTransformationError()
-
     target_resource_ids = source_resource.relations.get(path_element.property)
     if target_resource_ids is None:
         target_resource_ids = set()
@@ -128,7 +127,6 @@ def resolve_passive_path_element(
         raise ValueError(
             "Expected path element of type 'PASSIVE', but got an 'ACTIVE' one."
         )
-
     candidate_resources = data.resources.get(path_element.target, {})
     target_resource_ids = set()
 
@@ -147,7 +145,7 @@ def resolve_path_element(
     data: DataPack,
     source_resource_id: ResourceId,
     path_element: RelationPathElement,
-) -> set[ResourceId]:
+) -> set[ResourceId] | frozenset[ResourceId]:
     """Resolve the given relation inference path element for the given source resource.
 
     Args:

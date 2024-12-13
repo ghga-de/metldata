@@ -15,6 +15,9 @@
 
 "Assumptions utilized in more than one transformation"
 
+from collections.abc import Mapping
+from typing import Any
+
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.add_content_properties.path import (
@@ -107,14 +110,28 @@ def _validate_modification_class(
         )
 
 
+def assert_object_path_required(json_schema: Mapping[str, Any], path: str) -> None:
+    """Ensures that a path exists and its components are marked as 'required' in the schemapack.
+    This validates that any transformation relying on that path can depend on its presence
+    in a datapack.
+    """
+    if not path:
+        return
+    for key in path.split("."):
+        required_keys = json_schema.get("required", [])
+        if key not in required_keys:
+            raise ModelAssumptionError(f"'{key}' is not marked as required.")
+        json_schema = json_schema["properties"][key]
+
+
 def assert_object_path_exists(
     *,
     model: SchemaPack,
     instruction: InstructionProtocol,
 ) -> None:
     """Make sure that the source class (the class being modified) and the object_path
-    exist in the model. Assumption fails if the content path is present in the model before
-    the transformation.
+    exist in the model, and object_path properties are marked as required.
+    Assumption fails if the content path is present in the model before the transformation.
     """
     class_name = instruction.class_name
     class_def = model.classes.get(class_name)
@@ -134,7 +151,11 @@ def assert_object_path_exists(
             f"Object path {instruction.target_content.object_path} does not exist"
             + f" in class {class_name}."
         ) from exc
-
+    else:
+        assert_object_path_required(
+            json_schema=class_def.content,
+            path=instruction.target_content.object_path,
+        )
     # Check if the property_name already exists in the model and raise an error if so
     if instruction.target_content.property_name in target_schema.get("properties", {}):
         raise ModelAssumptionError(

@@ -37,8 +37,10 @@ classes:
                           },
                       },
                   },
+                "required": ["stats"],
               },
           },
+        "required": ["samples_summary"],
         "type": "object",
       }
     relations:
