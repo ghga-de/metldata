@@ -111,9 +111,11 @@ def _validate_modification_class(
 
 
 def assert_object_path_required(json_schema: Mapping[str, Any], path: str) -> None:
-    """Ensures that a path exists and its components are marked as 'required' in the schemapack.
-    This validates that any transformation relying on that path can depend on its presence
-    in a datapack.
+    """Ensures that a given object path in a JSON schema is marked as required.
+    This validates that any transformation relying on that path can depend on its
+    presence in a datapack.
+
+    If the path is an empty string, no validation is required.
     """
     if not path:
         return

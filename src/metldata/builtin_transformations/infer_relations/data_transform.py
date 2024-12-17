@@ -65,7 +65,7 @@ def resolve_active_path_element(
     data: DataPack,
     source_resource_id: ResourceId,
     path_element: RelationPathElement,
-) -> set[ResourceId] | frozenset[ResourceId]:
+) -> frozenset[ResourceId]:
     """Resolve the given relation inference path element of active type for the given
     source resource.
 
@@ -95,9 +95,9 @@ def resolve_active_path_element(
         raise EvitableTransformationError()
     target_resource_ids = source_resource.relations.get(path_element.property)
     if target_resource_ids is None:
-        target_resource_ids = set()
+        target_resource_ids = frozenset()
     elif isinstance(target_resource_ids, str):
-        target_resource_ids = {target_resource_ids}
+        target_resource_ids = frozenset({target_resource_ids})
     return target_resource_ids
 
 
@@ -106,7 +106,7 @@ def resolve_passive_path_element(
     data: DataPack,
     source_resource_id: ResourceId,
     path_element: RelationPathElement,
-) -> set[ResourceId]:
+) -> frozenset[ResourceId]:
     """Resolve the given relation inference path element of passive type for the given
     source resource.
 
@@ -137,7 +137,7 @@ def resolve_passive_path_element(
         ) or source_resource_id == relation:
             target_resource_ids.add(candidate_resource_id)
 
-    return target_resource_ids
+    return frozenset(target_resource_ids)
 
 
 def resolve_path_element(
@@ -145,7 +145,7 @@ def resolve_path_element(
     data: DataPack,
     source_resource_id: ResourceId,
     path_element: RelationPathElement,
-) -> set[ResourceId] | frozenset[ResourceId]:
+) -> frozenset[ResourceId]:
     """Resolve the given relation inference path element for the given source resource.
 
     Args:
@@ -171,7 +171,7 @@ def resolve_path_element(
 
 def resolve_path(
     *, data: DataPack, source_resource_id: ResourceId, path: RelationPath
-) -> set[ResourceId]:
+) -> frozenset[ResourceId]:
     """Resolve the given relation inference path for the given source resource.
 
     Args:
@@ -197,7 +197,7 @@ def resolve_path(
             )
         }
 
-    return resource_ids
+    return frozenset(resource_ids)
 
 
 def add_inferred_relations(
@@ -220,9 +220,7 @@ def add_inferred_relations(
                 update={
                     "relations": {
                         **host_resource.relations,
-                        instruction.new_property: frozenset(
-                            target_resource_ids
-                        ),  # freeze inferred relations for datapack data type compatibility
+                        instruction.new_property: target_resource_ids,
                     }
                 }
             )
