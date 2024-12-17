@@ -23,6 +23,7 @@ classes:
                 "properties": { "count": { "type": "integer" } },
               },
           },
+        "required": ["file_summary"],
         "type": "object",
       }
     relations:
@@ -52,6 +53,7 @@ classes:
                 "properties": { "count": { "type": "integer" } },
               },
           },
+        "required": ["file_summary"],
         "type": "object",
       }
     relations:
@@ -81,6 +83,7 @@ classes:
                 "properties": { "count": { "type": "integer" } },
               },
           },
+        "required": ["sample_summary"],
         "type": "object",
       }
     relations:

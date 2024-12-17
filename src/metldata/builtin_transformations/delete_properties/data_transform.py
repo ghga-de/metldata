@@ -18,6 +18,7 @@
 
 from schemapack.spec.datapack import DataPack
 
+from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 
 
@@ -35,16 +36,16 @@ def delete_properties(
     Returns:
         The data with the specified content properties being deleted.
     """
-    modified_data = data.model_copy(deep=True)
+    modified_data = data_to_dict(data)
 
     for class_name, properties in properties_by_class.items():
-        resources = modified_data.resources.get(class_name)
+        class_resources = modified_data["resources"].get(class_name)
 
-        if not resources:
+        if not class_resources:
             raise EvitableTransformationError()
 
-        for resource in resources.values():
+        for resource in class_resources.values():
             for property in properties:
-                resource.content.pop(property, None)
+                resource["content"].pop(property, None)
 
-    return modified_data
+    return DataPack.model_validate(modified_data)

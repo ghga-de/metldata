@@ -13,18 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"Generic instruction type protocol."
 
-from typing import Protocol, TypeVar
+"""A collection of custom types used for builtin transformations."""
 
-from metldata.builtin_transformations.common import NewContentSchemaPath
+from typing import Any, TypeAlias
 
-
-class InstructionProtocol(Protocol):
-    """Class to fix circular dependency"""
-
-    class_name: str
-    target_content: NewContentSchemaPath
-
-
-AggregateInstruction = TypeVar("AggregateInstruction", bound=InstructionProtocol)
+ResourceId: TypeAlias = str
+MutableDatapack: TypeAlias = dict[str, Any]
+MutableResource: TypeAlias = dict[str, dict]
+MutableClassResources: TypeAlias = dict[ResourceId, MutableResource]
+MutableResourceContent: TypeAlias = dict[str, Any]

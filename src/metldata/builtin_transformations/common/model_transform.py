@@ -21,6 +21,7 @@ from metldata.builtin_transformations.add_content_properties.path import (
     resolve_schema_object_path,
 )
 from metldata.builtin_transformations.common.instruction import AggregateInstruction
+from metldata.builtin_transformations.common.utils import content_to_dict, model_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 
 
@@ -28,7 +29,7 @@ def update_model(
     *, model: SchemaPack, updated_class_defs: dict[str, ClassDefinition]
 ) -> SchemaPack:
     """Updates class definitions of a model that are subjected to model transformation"""
-    model_dict = model.model_dump()
+    model_dict = model_to_dict(model)
     model_dict["classes"].update(updated_class_defs)
     return SchemaPack.model_validate(model_dict)
 
@@ -51,7 +52,7 @@ def add_properties(
         if not class_def:
             raise EvitableTransformationError()
 
-        content_schema = class_def.content.json_schema_dict
+        content_schema = content_to_dict(class_def)
 
         for cls_instruction in cls_instructions:
             object_path = cls_instruction.target_content.object_path

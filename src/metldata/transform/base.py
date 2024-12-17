@@ -252,7 +252,7 @@ class ArtifactResource(BaseModel):
         ...,
         description="A rooted datapack describing the resource and all its dependencies.",
     )
-    schema: SchemaPack = Field(
+    model: SchemaPack = Field(
         ...,
         description="A rooted schemapack describing the schema of the rooted datapack.",
     )
@@ -297,6 +297,6 @@ class WorkflowArtifact(BaseModel):
                     class_name=class_name,
                     resource_id=resource_id,
                     datapack=rooted_datapack,
-                    schema=rooted_schemapack,
+                    model=rooted_schemapack,
                     integrated=integrated_json,
                 )

@@ -65,7 +65,7 @@ def resolve_active_path_element(
     data: DataPack,
     source_resource_id: ResourceId,
     path_element: RelationPathElement,
-) -> set[ResourceId]:
+) -> frozenset[ResourceId]:
     """Resolve the given relation inference path element of active type for the given
     source resource.
 
@@ -93,12 +93,11 @@ def resolve_active_path_element(
 
     if not source_resource:
         raise EvitableTransformationError()
-
     target_resource_ids = source_resource.relations.get(path_element.property)
     if target_resource_ids is None:
-        target_resource_ids = set()
+        target_resource_ids = frozenset()
     elif isinstance(target_resource_ids, str):
-        target_resource_ids = {target_resource_ids}
+        target_resource_ids = frozenset({target_resource_ids})
     return target_resource_ids
 
 
@@ -107,7 +106,7 @@ def resolve_passive_path_element(
     data: DataPack,
     source_resource_id: ResourceId,
     path_element: RelationPathElement,
-) -> set[ResourceId]:
+) -> frozenset[ResourceId]:
     """Resolve the given relation inference path element of passive type for the given
     source resource.
 
@@ -128,19 +127,17 @@ def resolve_passive_path_element(
         raise ValueError(
             "Expected path element of type 'PASSIVE', but got an 'ACTIVE' one."
         )
-
     candidate_resources = data.resources.get(path_element.target, {})
     target_resource_ids = set()
 
     for candidate_resource_id, candidate_resource in candidate_resources.items():
-        relation = candidate_resource.relations.get(path_element.property, set())
-
+        relation = candidate_resource.relations.get(path_element.property, frozenset())
         if (
-            isinstance(relation, set) and source_resource_id in relation
+            isinstance(relation, frozenset) and source_resource_id in relation
         ) or source_resource_id == relation:
             target_resource_ids.add(candidate_resource_id)
 
-    return target_resource_ids
+    return frozenset(target_resource_ids)
 
 
 def resolve_path_element(
@@ -148,7 +145,7 @@ def resolve_path_element(
     data: DataPack,
     source_resource_id: ResourceId,
     path_element: RelationPathElement,
-) -> set[ResourceId]:
+) -> frozenset[ResourceId]:
     """Resolve the given relation inference path element for the given source resource.
 
     Args:
@@ -174,7 +171,7 @@ def resolve_path_element(
 
 def resolve_path(
     *, data: DataPack, source_resource_id: ResourceId, path: RelationPath
-) -> set[ResourceId]:
+) -> frozenset[ResourceId]:
     """Resolve the given relation inference path for the given source resource.
 
     Args:
@@ -200,7 +197,7 @@ def resolve_path(
             )
         }
 
-    return resource_ids
+    return frozenset(resource_ids)
 
 
 def add_inferred_relations(
@@ -228,7 +225,7 @@ def add_inferred_relations(
                 }
             )
 
-        data = data.model_copy(
+        modified_data = data.model_copy(
             update={
                 "resources": {
                     **data.resources,
@@ -237,4 +234,4 @@ def add_inferred_relations(
             }
         )
 
-    return data
+    return modified_data

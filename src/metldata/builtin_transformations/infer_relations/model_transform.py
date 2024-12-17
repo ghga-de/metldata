@@ -29,6 +29,7 @@ from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElement,
     RelationPathElementType,
 )
+from metldata.builtin_transformations.common.utils import model_to_dict
 from metldata.builtin_transformations.infer_relations.relations import (
     InferenceInstruction,
 )
@@ -159,6 +160,6 @@ def add_inferred_relations(
             }
         )
 
-    model_dict = model.model_dump()
+    model_dict = model_to_dict(model)
     model_dict["classes"].update(updated_class_defs)
     return SchemaPack.model_validate(model_dict)

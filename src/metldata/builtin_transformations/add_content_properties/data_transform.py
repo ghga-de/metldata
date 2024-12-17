@@ -24,6 +24,7 @@ from metldata.builtin_transformations.add_content_properties.instruction import 
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_data_object_path,
 )
+from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 
 
@@ -44,19 +45,17 @@ def add_properties(
     Returns:
         The data with the specified content properties being added.
     """
-    modified_data = data.model_copy(deep=True)
-
+    modified_data = data_to_dict(data)
     for class_name, instructions in instructions_by_class.items():
-        resources = modified_data.resources.get(class_name)
+        class_resources = modified_data["resources"].get(class_name)
 
-        if not resources:
+        if not class_resources:
             raise EvitableTransformationError()
 
-        for resource in resources.values():
+        for resource in class_resources.values():
             for instruction in instructions:
-                content = resource.content
                 object = resolve_data_object_path(
-                    data=content,
+                    data=resource["content"],
                     path=instruction.target_content.object_path,
                 )
 
@@ -69,5 +68,4 @@ def add_properties(
                 object[instruction.target_content.property_name] = deepcopy(
                     instruction.value
                 )
-
-    return modified_data
+    return DataPack.model_validate(modified_data)

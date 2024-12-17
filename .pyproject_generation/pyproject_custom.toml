@@ -4,7 +4,7 @@ name = "metldata"
 version = "1.0.0"
 description = "metldata - A framework for handling metadata based on ETL, CQRS, and event sourcing."
 dependencies = [
-    "schemapack == 2.0.0-alpha.3"
+    "schemapack == 2.0.0-alpha.5"
 ]
 
 [project.urls]
