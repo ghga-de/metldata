@@ -142,21 +142,17 @@ def assert_relation_target_multiplicity(
     *, model: SchemaPack, path: RelationPath
 ) -> None:
     """Make sure the target of the relation contributes multiple instances to the relation."""
-    target_multiplicity = False
     for element in path.elements:
         relation = get_relation(element, model)
         if element.type_ == RelationPathElementType.ACTIVE and relation.multiple.target:
-            target_multiplicity = True
+            return
         if (
             element.type_ == RelationPathElementType.PASSIVE
             and relation.multiple.origin
         ):
-            target_multiplicity = True
-        if target_multiplicity:
-            break
+            return
 
-    if not target_multiplicity:
-        raise MultiplicityError(
-            f"Along the path {path} there is no target that contributes"
-            + " multiple instances to the relation"
-        )
+    raise MultiplicityError(
+        f"Along the path {path} there is no target that contributes"
+        + " multiple instances to the relation"
+    )
