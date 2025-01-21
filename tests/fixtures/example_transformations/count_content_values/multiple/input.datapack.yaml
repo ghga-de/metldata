@@ -7,9 +7,6 @@ resources:
         samples_summary:
           stats: {}
       relations:
-        individuals:
-          - indv_a
-          - indv_b
         biospecimens:
           - bios_a
           - bios_b

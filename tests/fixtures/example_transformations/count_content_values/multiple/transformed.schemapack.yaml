@@ -44,14 +44,6 @@ classes:
         "type": "object",
       }
     relations:
-      individuals:
-        targetClass: Individual
-        multiple:
-          origin: true
-          target: true
-        mandatory:
-          origin: false
-          target: true
       biospecimens:
         targetClass: Biospecimen
         multiple:

@@ -26,29 +26,13 @@ from schemapack.spec.schemapack import (
 
 from metldata.builtin_transformations.common.path.path import RelationPath
 from metldata.builtin_transformations.common.path.path_elements import (
-    RelationPathElement,
     RelationPathElementType,
 )
-from metldata.builtin_transformations.common.utils import model_to_dict
+from metldata.builtin_transformations.common.utils import get_relation, model_to_dict
 from metldata.builtin_transformations.infer_relations.relations import (
     InferenceInstruction,
 )
 from metldata.transform.exceptions import EvitableTransformationError
-
-
-def get_relation(element: RelationPathElement, schema: SchemaPack) -> Relation:
-    """Get the relation object for a path element.
-
-    Args:
-        element: The path element to get the relation for.
-        schema: The underlying schema.
-
-    Returns:
-        The relation object.
-    """
-    element_active = element.type_ == RelationPathElementType.ACTIVE
-    class_name = element.source if element_active else element.target
-    return schema.classes[class_name].relations[element.property]
 
 
 def infer_multiplicity_from_path(

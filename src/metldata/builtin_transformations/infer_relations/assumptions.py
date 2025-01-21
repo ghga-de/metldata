@@ -18,54 +18,13 @@
 
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.common.path.path import (
-    RelationPath,
-)
-from metldata.builtin_transformations.common.path.path_elements import (
-    RelationPathElementType,
+from metldata.builtin_transformations.common.assumptions import (
+    assert_path_classes_and_relations_exist,
 )
 from metldata.builtin_transformations.infer_relations.relations import (
     InferenceInstruction,
 )
 from metldata.transform.exceptions import ModelAssumptionError
-
-
-def assert_path_classes_and_relations_exist(model: SchemaPack, path: RelationPath):
-    """Make sure that all classes and relations defined in the provided path exist in
-    the provided model.
-
-    Raises:
-        ModelAssumptionError:
-            if the model does not fulfill the assumptions.
-    """
-    for path_element in path.elements:
-        if path_element.source not in model.classes:
-            raise ModelAssumptionError(
-                f"Class {path_element.source} not found in model."
-            )
-
-        if path_element.target not in model.classes:
-            raise ModelAssumptionError(
-                f"Class {path_element.target} not found in model."
-            )
-
-        if path_element.type_ == RelationPathElementType.ACTIVE:
-            if (
-                path_element.property
-                not in model.classes[path_element.source].relations
-            ):
-                raise ModelAssumptionError(
-                    f"Relation property {path_element.property} not found in class"
-                    f" {path_element.source}."
-                )
-
-            return
-
-        if path_element.property not in model.classes[path_element.target].relations:
-            raise ModelAssumptionError(
-                f"Relation property {path_element.property} not found in class"
-                f" {path_element.target}."
-            )
 
 
 def assert_new_property_not_exists(

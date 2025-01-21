@@ -17,6 +17,7 @@
 
 from schemapack.spec.datapack import DataPack
 
+from metldata.builtin_transformations.common.resolve_path import resolve_path
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.count_references.instruction import (
     AddReferenceCountPropertyInstruction,
@@ -44,23 +45,21 @@ def count_references(
     modified_data = data_to_dict(data)
     for class_name, instructions in instructions_by_class.items():
         resources = modified_data["resources"].get(class_name)
-
         if not resources:
             raise EvitableTransformationError()
 
         for instruction in instructions:
-            for path_element in instruction.source_relation_path.elements:
-                relation_slot = path_element.property
+            path = instruction.source_relation_path
 
-                for resource in resources.values():
-                    related_to = resource["relations"].get(relation_slot)
-                    if not related_to:
-                        raise EvitableTransformationError()
-
-                    count = len(related_to) if related_to else 0
-
-                    resource["content"][instruction.target_content.object_path].update(
-                        {instruction.target_content.property_name: count}
-                    )
+            for resource_id, resource in resources.items():
+                target_resource_ids = resolve_path(
+                    data=data,
+                    source_resource_id=resource_id,
+                    path=path,
+                )
+                count = len(target_resource_ids or [])
+                resource["content"][instruction.target_content.object_path].update(
+                    {instruction.target_content.property_name: count}
+                )
 
     return DataPack.model_validate(modified_data)

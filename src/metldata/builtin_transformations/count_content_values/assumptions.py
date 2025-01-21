@@ -20,12 +20,8 @@ from schemapack.spec.schemapack import SchemaPack
 from metldata.builtin_transformations.common.assumptions import (
     assert_class_is_source,
     assert_object_path_exists,
-    assert_only_direct_relations,
     assert_path_classes_and_relations_exist,
-    assert_target_multiplicity,
-)
-from metldata.builtin_transformations.common.path.path_utils import (
-    get_directly_referenced_class,
+    assert_relation_target_multiplicity,
 )
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
@@ -42,10 +38,9 @@ def check_model_assumptions(
         for instruction in instructions:
             path = instruction.source.relation_path
             assert_path_classes_and_relations_exist(model=schema, path=path)
-            assert_only_direct_relations(path=path)
             assert_class_is_source(path=path, instruction=instruction)
             assert_object_path_exists(model=schema, instruction=instruction)
-            assert_target_multiplicity(model=schema, path=path)
+            assert_relation_target_multiplicity(model=schema, path=path)
             assert_source_content_path_exists(schema, instruction)
 
 
@@ -59,7 +54,7 @@ def assert_source_content_path_exists(
     path = instruction.source.relation_path
     content_path = instruction.source.content_path
 
-    referenced_class = get_directly_referenced_class(path)
+    referenced_class = path.target
 
     class_def = schema.classes.get(referenced_class)
 
