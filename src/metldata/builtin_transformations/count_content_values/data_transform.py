@@ -51,7 +51,7 @@ def get_class_resources(
     return resources
 
 
-def _resolve_relations(*, data: DataPack) -> ResolveRelations:
+def _resolve_relations(data: DataPack) -> ResolveRelations:
     """Retains resolve_path function's access to a datapack argument."""
 
     def partial_resolve_relations(source_resource_id, path):
