@@ -57,7 +57,7 @@ def count_references(
                     source_resource_id=resource_id,
                     path=path,
                 )
-                count = len(target_resource_ids or [])
+                count = len(target_resource_ids)
                 resource["content"][instruction.target_content.object_path].update(
                     {instruction.target_content.property_name: count}
                 )
