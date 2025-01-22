@@ -52,12 +52,12 @@ def count_references(
             path = instruction.source_relation_path
 
             for resource_id, resource in resources.items():
-                target_resource_ids = resolve_path(
+                relation_target_ids = resolve_path(
                     data=data,
                     source_resource_id=resource_id,
                     path=path,
                 )
-                count = len(target_resource_ids)
+                count = len(relation_target_ids)
                 resource["content"][instruction.target_content.object_path].update(
                     {instruction.target_content.property_name: count}
                 )
