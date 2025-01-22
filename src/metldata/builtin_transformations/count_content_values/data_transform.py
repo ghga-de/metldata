@@ -31,6 +31,7 @@ from metldata.builtin_transformations.common.custom_types import (
     MutableResourceContent,
     ResolveRelations,
 )
+from metldata.builtin_transformations.common.path.path import RelationPath
 from metldata.builtin_transformations.common.resolve_path import resolve_path
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.count_content_values.instruction import (
@@ -54,7 +55,9 @@ def get_class_resources(
 def _resolve_relations(data: DataPack) -> ResolveRelations:
     """Retains resolve_path function's access to a datapack argument."""
 
-    def partial_resolve_relations(source_resource_id, path):
+    def partial_resolve_relations(
+        source_resource_id: ResourceId, path: RelationPath
+    ) -> frozenset[ResourceId]:
         return resolve_path(data=data, source_resource_id=source_resource_id, path=path)
 
     return partial_resolve_relations
