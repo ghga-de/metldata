@@ -13,9 +13,6 @@ resources:
               blood: 2 # <-
               subcutaneous_adipose_tissue: 1 # <-
       relations:
-        individuals:
-          - indv_a
-          - indv_b
         biospecimens:
           - bios_a
           - bios_b

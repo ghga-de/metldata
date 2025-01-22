@@ -16,10 +16,16 @@
 
 """A collection of custom types used for builtin transformations."""
 
+from collections.abc import Callable
 from typing import Any, TypeAlias
+
+from metldata.builtin_transformations.common.path.path import RelationPath
 
 ResourceId: TypeAlias = str
 MutableDatapack: TypeAlias = dict[str, Any]
 MutableResource: TypeAlias = dict[str, dict]
 MutableClassResources: TypeAlias = dict[ResourceId, MutableResource]
 MutableResourceContent: TypeAlias = dict[str, Any]
+ResolveRelations: TypeAlias = Callable[
+    [ResourceId, RelationPath], frozenset[ResourceId]
+]

@@ -16,16 +16,16 @@
 count_references:
   - class_name: Dataset
     target_content:
-      object_path: "file_summary"
-      property_name: "count"
-    source_relation_path: "Dataset(files)>File"
-  - class_name: Sample
+      object_path: sample_summary
+      property_name: count
+    source_relation_path: Dataset(files)>File<(files)Sample
+  - class_name: File
     target_content:
-      object_path: "file_summary"
-      property_name: "count"
-    source_relation_path: "File<(files)Sample"
+      object_path: dataset_summary
+      property_name: count
+    source_relation_path: File<(files)Dataset
   - class_name: Experiment
     target_content:
-      object_path: "sample_summary"
-      property_name: "count"
-    source_relation_path: "Experiment(samples)>Sample"
+      object_path: sample_summary
+      property_name: count
+    source_relation_path: Experiment(samples)>Sample

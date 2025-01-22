@@ -26,9 +26,9 @@ from metldata.builtin_transformations.add_content_properties.path import (
 from metldata.builtin_transformations.common.instruction import InstructionProtocol
 from metldata.builtin_transformations.common.path.path import RelationPath
 from metldata.builtin_transformations.common.path.path_elements import (
-    RelationPathElement,
     RelationPathElementType,
 )
+from metldata.builtin_transformations.common.utils import get_relation
 from metldata.transform.exceptions import ModelAssumptionError, MultiplicityError
 
 
@@ -67,19 +67,6 @@ def _check_relation_exists(model: SchemaPack, class_name: str, relation: str) ->
         )
 
 
-def assert_only_direct_relations(*, path: RelationPath) -> None:
-    """Ensure that only direct relations are supported which should be the case if the
-    relation path only contains one path element.
-    """
-    num_elements = len(path.elements)
-    if num_elements != 1:
-        raise ModelAssumptionError(
-            f"The provided relation path {path.path_str}"
-            f"does not describe a direct relation, but contains {num_elements}"
-            + " different relations"
-        )
-
-
 def assert_class_is_source(
     *, path: RelationPath, instruction: InstructionProtocol
 ) -> None:
@@ -87,26 +74,11 @@ def assert_class_is_source(
     and validate that the class being modified matches the class specified in the
     relation path.
     """
-    for path_element in path.elements:
-        _validate_modification_class(path_element, instruction.class_name)
-
-
-def _validate_modification_class(
-    path_element: RelationPathElement, expected_class_name: str
-) -> None:
-    """Check whether the class specified to be modified matches the source or target
-    class in the provided `path_element`, depending on the type of the relation path
-    (i.e., active or passive). If the class does not match, an exception is raised.
-    """
-    modification_class_name = (
-        path_element.source
-        if path_element.type_ == RelationPathElementType.ACTIVE
-        else path_element.target
-    )
-    if expected_class_name != modification_class_name:
+    class_to_modify = instruction.class_name
+    if path.source != class_to_modify:
         raise ModelAssumptionError(
-            f"Class {expected_class_name} does not correspond to the relation source "
-            f"{modification_class_name}."
+            f"Class {class_to_modify} is not the source of the given relation path "
+            f"{path}."
         )
 
 
@@ -166,15 +138,21 @@ def assert_object_path_exists(
         )
 
 
-def assert_target_multiplicity(*, model: SchemaPack, path: RelationPath) -> None:
+def assert_relation_target_multiplicity(
+    *, model: SchemaPack, path: RelationPath
+) -> None:
     """Make sure the target of the relation contributes multiple instances to the relation."""
-    for path_element in path.elements:
-        if path_element.type_ == RelationPathElementType.ACTIVE:
-            relation = model.classes[path_element.source].relations[
-                path_element.property
-            ]
-            if not relation.multiple.target:
-                raise MultiplicityError(
-                    f"The target of the relation {path_element.property} does not"
-                    + " contribute multiple instances to the relation."
-                )
+    for element in path.elements:
+        relation = get_relation(element, model)
+        if element.type_ == RelationPathElementType.ACTIVE and relation.multiple.target:
+            return
+        if (
+            element.type_ == RelationPathElementType.PASSIVE
+            and relation.multiple.origin
+        ):
+            return
+
+    raise MultiplicityError(
+        f"Along the path {path} there is no target that contributes"
+        + " multiple instances to the relation"
+    )

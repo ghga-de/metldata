@@ -29,10 +29,10 @@ from metldata.builtin_transformations.common.custom_types import (
     MutableDatapack,
     MutableResource,
     MutableResourceContent,
+    ResolveRelations,
 )
-from metldata.builtin_transformations.common.path.path_utils import (
-    get_directly_referenced_class,
-)
+from metldata.builtin_transformations.common.path.path import RelationPath
+from metldata.builtin_transformations.common.resolve_path import resolve_path
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
@@ -52,6 +52,17 @@ def get_class_resources(
     return resources
 
 
+def _resolve_relations(data: DataPack) -> ResolveRelations:
+    """Retains resolve_path function's access to a datapack argument."""
+
+    def partial_resolve_relations(
+        source_resource_id: ResourceId, path: RelationPath
+    ) -> frozenset[ResourceId]:
+        return resolve_path(data=data, source_resource_id=source_resource_id, path=path)
+
+    return partial_resolve_relations
+
+
 def count_content(
     *,
     data: DataPack,
@@ -62,8 +73,12 @@ def count_content(
 
     for class_name, instructions in instructions_by_class.items():
         transform_class(
-            class_name=class_name, data=modified_data, instructions=instructions
+            class_name=class_name,
+            data=modified_data,
+            instructions=instructions,
+            resolve_relations=_resolve_relations(data=data),
         )
+
     return DataPack.model_validate(modified_data)
 
 
@@ -72,26 +87,29 @@ def transform_class(
     class_name: str,
     data: MutableDatapack,
     instructions: list[CountContentValueInstruction],
+    resolve_relations: ResolveRelations,
 ):
     """Apply the count content value transformations to the specified class."""
     # the target prefix refers to resources that will be modified by the transformation
     target_resources = get_class_resources(data=data, class_name=class_name)
-    for instruction in instructions:
-        relation_path = instruction.source.relation_path
-        referenced_class = get_directly_referenced_class(relation_path)
 
-        # Only one element is expected in the path, validated by `get_directly_referenced_class`
-        relation_name = relation_path.elements[0].property
+    for instruction in instructions:
+        path = instruction.source.relation_path
+        referenced_class = path.target
+
         # get resources for the class referenced by the relation path
         referenced_resources = get_class_resources(
             data=data, class_name=referenced_class
         )
-
-        for target_resource in target_resources.values():
+        for resource_id, resource in target_resources.items():
+            relation_target_ids = resolve_relations(
+                resource_id,
+                path,
+            )
             transform_resource(
                 referenced_resources=referenced_resources,
-                target_resource=target_resource,
-                relation_name=relation_name,
+                target_resource=resource,
+                relation_target_ids=relation_target_ids,
                 instruction=instruction,
             )
 
@@ -100,16 +118,12 @@ def transform_resource(
     *,
     referenced_resources: MutableClassResources,
     target_resource: MutableResource,
-    relation_name: str,
+    relation_target_ids: frozenset[str],
     instruction: CountContentValueInstruction,
 ):
     """Apply the count content value transformation to each resource of a class."""
     target_content = target_resource.get("content")
     if target_content is None:
-        raise EvitableTransformationError()
-
-    relation_target_ids = target_resource["relations"].get(relation_name)
-    if not relation_target_ids:
         raise EvitableTransformationError()
 
     values_to_count = get_values_to_count(

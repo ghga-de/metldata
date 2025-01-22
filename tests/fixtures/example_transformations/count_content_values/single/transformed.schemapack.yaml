@@ -24,12 +24,7 @@ classes:
                         "additionalProperties": true,
                         "properties":
                           {
-                            "sex":
-                              {
-                                "type": "object",
-                                "additionalProperties": true,
-                              },
-                            "tissues":
+                            "description":
                               {
                                 "type": "object",
                                 "additionalProperties": true,
@@ -44,28 +39,28 @@ classes:
         "type": "object",
       }
     relations:
-      biospecimens:
-        targetClass: Biospecimen
+      files:
+        targetClass: File
         multiple:
-          origin: true
-          target: true
-        mandatory:
           origin: false
-          target: true
-  Biospecimen:
-    id:
-      propertyName: alias
-    content: ../../../example_content_schemas/Biospecimen.schema.json
-    relations:
-      individuals:
-        targetClass: Individual
-        multiple:
-          origin: true
           target: false
         mandatory:
           origin: true
           target: true
-  Individual:
+  File:
     id:
       propertyName: alias
-    content: ../../../example_content_schemas/Individual.schema.json
+    content: ../../../example_content_schemas/File.schema.json
+    relations:
+      samples:
+        targetClass: Sample
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: true
+          target: false
+  Sample:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Sample.schema.json
