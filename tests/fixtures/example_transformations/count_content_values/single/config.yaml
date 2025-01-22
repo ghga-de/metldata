@@ -1,0 +1,8 @@
+count_content_values:
+  - class_name: Dataset
+    target_content:
+      object_path: samples_summary.stats
+      property_name: description
+    source:
+      relation_path: Dataset(files)>File(samples)>Sample
+      content_path: description
