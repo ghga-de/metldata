@@ -61,9 +61,7 @@ def copy_content(
                 if num_source_resources > 1:
                     raise EvitableTransformationError()
                 elif num_source_resources == 0:
-                    # nothing to copy, move on to next resource
-                    # TODO: this should probably differentiate between required and not
-                    # required properties, but would need schema introspection to do that
+                    # nothing to copy, move on to next resource, initialize with type
                     continue
 
                 # exactly one value in the frozenset, so unpacking this way works
@@ -74,18 +72,11 @@ def copy_content(
                     source_resource.content, path=content_path
                 )
                 target_resource = target_resources[resource_id]
-
                 # the target property should not be present in the resource
                 # of the class that's being modified
                 if target_resource.content.get(property_name):
                     raise EvitableTransformationError()
 
-                # TODO: default placheholder for now, needs better code here
-                # not sure if this would also need schema introspection or all cases
-                # can be enumerated exhaustively
-                target_resource.content.setdefault(
-                    property_name, type(source_property)()
-                )
-                ...
+                target_resource.content[property_name] = source_property
 
-    return data
+    return DataPack.model_validate(modified_data)
