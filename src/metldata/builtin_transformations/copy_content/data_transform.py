@@ -31,7 +31,7 @@ def copy_content(
     data: DataPack,
     instructions_by_class: dict[str, list[CopyContentInstruction]],
 ) -> DataPack:
-    """TODO"""
+    """Copy content properties between resources described by a relation path."""
     modified_data = data_to_dict(data)
     resources = modified_data["resources"]
 
@@ -62,6 +62,8 @@ def copy_content(
                     raise EvitableTransformationError()
                 elif num_source_resources == 0:
                     # nothing to copy, move on to next resource
+                    # TODO: this should probably differentiate between required and not
+                    # required properties, but would need schema introspection to do that
                     continue
 
                 # exactly one value in the frozenset, so unpacking this way works
@@ -79,6 +81,8 @@ def copy_content(
                     raise EvitableTransformationError()
 
                 # TODO: default placheholder for now, needs better code here
+                # not sure if this would also need schema introspection or all cases
+                # can be enumerated exhaustively
                 target_resource.content.setdefault(
                     property_name, type(source_property)()
                 )
