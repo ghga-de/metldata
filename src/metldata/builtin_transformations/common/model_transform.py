@@ -20,7 +20,7 @@ from schemapack.spec.schemapack import ClassDefinition, SchemaPack
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_schema_object_path,
 )
-from metldata.builtin_transformations.common.instruction import AggregateInstruction
+from metldata.builtin_transformations.common.instruction import TargetInstruction
 from metldata.builtin_transformations.common.utils import content_to_dict, model_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 
@@ -37,7 +37,7 @@ def update_model(
 def add_properties(
     *,
     model: SchemaPack,
-    instructions_by_class: dict[str, list[AggregateInstruction]],
+    instructions_by_class: dict[str, list[TargetInstruction]],
     default_schema: dict,
 ) -> SchemaPack:
     """The target content - object_path(s) are added to the model with the

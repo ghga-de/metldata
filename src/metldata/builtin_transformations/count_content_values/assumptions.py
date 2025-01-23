@@ -22,11 +22,11 @@ from metldata.builtin_transformations.common.assumptions import (
     assert_object_path_exists,
     assert_path_classes_and_relations_exist,
     assert_relation_target_multiplicity,
+    assert_source_content_path_exists,
 )
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
 )
-from metldata.transform.exceptions import ModelAssumptionError
 
 
 def check_model_assumptions(
@@ -41,32 +41,5 @@ def check_model_assumptions(
             assert_class_is_source(path=path, instruction=instruction)
             assert_object_path_exists(model=schema, instruction=instruction)
             assert_relation_target_multiplicity(model=schema, path=path)
-            assert_source_content_path_exists(schema, instruction)
+            assert_source_content_path_exists(schema=schema, instruction=instruction)
 
-
-def assert_source_content_path_exists(
-    schema: SchemaPack, instruction: CountContentValueInstruction
-) -> None:
-    """Ensure that the slot given as 'content path' of the source in the
-    'count content values' transformation config exists in the content schema of
-    the class that is referred in the 'relation path'.
-    """
-    path = instruction.source.relation_path
-    content_path = instruction.source.content_path
-
-    referenced_class = path.target
-
-    class_def = schema.classes.get(referenced_class)
-
-    if not class_def:
-        raise ModelAssumptionError(
-            f"Class {referenced_class} does not exist in the model."
-        )
-
-    content_slot = class_def.content["properties"].get(content_path)
-
-    if not content_slot:
-        raise ModelAssumptionError(
-            f"Class {referenced_class} does not have {content_path} in its content"
-            + " schema."
-        )

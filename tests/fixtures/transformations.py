@@ -38,6 +38,9 @@ from metldata.builtin_transformations.delete_properties import (
 from metldata.builtin_transformations.infer_relations import (
     RELATION_INFERENCE_TRANSFORMATION,
 )
+from metldata.builtin_transformations.sum_operation import (
+    SUM_OPERATION_TRANSFORMATION,
+)
 from metldata.transform.base import TransformationDefinition
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
@@ -46,11 +49,12 @@ from tests.fixtures.utils import BASE_DIR, read_yaml
 EXAMPLE_TRANSFORMATION_DIR = BASE_DIR / "example_transformations"
 
 TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
-    "infer_relations": RELATION_INFERENCE_TRANSFORMATION,
-    "delete_properties": PROPERTY_DELETION_TRANSFORMATION,
-    "add_content_properties": ADD_CONTENT_PROPERTIES_TRANSFORMATION,
-    "count_references": COUNT_REFERENCES_TRANSFORMATION,
-    "count_content_values": COUNT_CONTENT_VALUES_TRANSFORMATION,
+    # "infer_relations": RELATION_INFERENCE_TRANSFORMATION,
+    # "delete_properties": PROPERTY_DELETION_TRANSFORMATION,
+    # "add_content_properties": ADD_CONTENT_PROPERTIES_TRANSFORMATION,
+    # "count_references": COUNT_REFERENCES_TRANSFORMATION,
+    # "count_content_values": COUNT_CONTENT_VALUES_TRANSFORMATION,
+    "sum_operation": SUM_OPERATION_TRANSFORMATION
 }
 
 

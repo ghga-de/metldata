@@ -13,18 +13,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"Generic instruction type protocol."
+"Generic instruction type protocols."
 
 from typing import Protocol, TypeVar
 
 from metldata.builtin_transformations.common import NewContentSchemaPath
+from metldata.builtin_transformations.common.contentschema import SourcePath
 
 
 class InstructionProtocol(Protocol):
-    """Class to fix circular dependency"""
+    """Instruction definition."""
+
+    class_name: str
+
+
+class TargetInstructionProtocol(Protocol):
+    """Instruction definition for target instruction."""
 
     class_name: str
     target_content: NewContentSchemaPath
 
 
-AggregateInstruction = TypeVar("AggregateInstruction", bound=InstructionProtocol)
+class SourceInstructionProtocol(Protocol):
+    """Instruction definition for source instruction"""
+
+    class_name: str
+    source: SourcePath
+
+TargetInstruction = TypeVar("TargetInstruction", bound=TargetInstructionProtocol)
+SourceInstruction = TypeVar("SourceInstruction", bound=SourceInstructionProtocol)
+Instruction = TypeVar("Instruction", bound=InstructionProtocol)
