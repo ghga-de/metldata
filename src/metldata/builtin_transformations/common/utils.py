@@ -63,5 +63,3 @@ def get_relation(element: RelationPathElement, schema: SchemaPack) -> Relation:
     element_active = element.type_ == RelationPathElementType.ACTIVE
     class_name = element.source if element_active else element.target
     return schema.classes[class_name].relations[element.property]
-
-

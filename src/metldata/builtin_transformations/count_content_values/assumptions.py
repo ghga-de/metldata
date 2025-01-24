@@ -42,4 +42,3 @@ def check_model_assumptions(
             assert_object_path_exists(model=schema, instruction=instruction)
             assert_relation_target_multiplicity(model=schema, path=path)
             assert_source_content_path_exists(schema=schema, instruction=instruction)
-
