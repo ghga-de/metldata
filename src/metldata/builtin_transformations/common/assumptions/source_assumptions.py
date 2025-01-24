@@ -28,9 +28,8 @@ from metldata.transform.exceptions import ModelAssumptionError
 def assert_class_is_source(
     *, path: RelationPath, instruction: InstructionProtocol
 ) -> None:
-    """TODO Iterate over the elements of the relation path in the given instruction
-    and validate that the class being modified matches the class specified in the
-    relation path. In a path, source is where the walk starts. this may not belong here
+    """Validate that the class being modified matches the class specified in the
+    relation path.
     """
     class_to_modify = instruction.class_name
     if path.source != class_to_modify:
