@@ -27,11 +27,7 @@ classes:
                             "size":
                               {
                                 "oneOf":
-                                  [
-                                    { "type": "number" },
-                                    { "type": "integer" },
-                                    { "type": "boolean" },
-                                  ],
+                                  [{ "type": "number" }, { "type": "boolean" }],
                               },
                           },
                       },

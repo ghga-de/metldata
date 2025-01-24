@@ -40,6 +40,20 @@ class SourceInstructionProtocol(Protocol):
     class_name: str
     source: SourcePath
 
+
+class TargetSourceInstructionProtocol(Protocol):
+    """Instruction definition for both target and source dependent instructions."""
+
+    class_name: str
+    target_content: NewContentSchemaPath
+    source: SourcePath
+
+
 TargetInstruction = TypeVar("TargetInstruction", bound=TargetInstructionProtocol)
 SourceInstruction = TypeVar("SourceInstruction", bound=SourceInstructionProtocol)
-Instruction = TypeVar("Instruction", bound=InstructionProtocol)
+TargetSourceInstruction = TypeVar(
+    "TargetSourceInstruction", bound=TargetSourceInstructionProtocol
+)
+Instruction = TypeVar(
+    "Instruction", bound=TargetInstructionProtocol | SourceInstructionProtocol
+)

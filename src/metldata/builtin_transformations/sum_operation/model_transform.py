@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Model transformation logic for the 'sum operation' transformation"""
+
 from typing import Any, Final
 
 from schemapack.spec.schemapack import SchemaPack
@@ -23,12 +25,9 @@ from metldata.builtin_transformations.sum_operation.instruction import (
 )
 
 DEFAULT_PROPERTY_SCHEMA: Final[dict[str, Any]] = {
-    "oneOf": [
-        { "type": "number" },
-        { "type": "integer" },
-        { "type": "boolean" }
-      ]
+    "oneOf": [{"type": "number"}, {"type": "boolean"}]
 }
+
 
 def add_sum_content_properties(
     *,
