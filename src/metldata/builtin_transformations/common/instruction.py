@@ -17,8 +17,7 @@
 
 from typing import Protocol, TypeVar
 
-from metldata.builtin_transformations.common import NewContentSchemaPath
-from metldata.builtin_transformations.common.contentschema import SourcePath
+from metldata.builtin_transformations.common import NewContentSchemaPath, SourcePath
 
 
 class InstructionProtocol(Protocol):
