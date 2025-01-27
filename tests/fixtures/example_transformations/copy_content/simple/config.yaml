@@ -20,4 +20,25 @@ copy_content:
       content_path: dac_contact
     target_content:
       object_path: ''
-      property_name: dataset.dac_contact
+      property_name: dac_contact
+  - class_name: Sample
+    source:
+      relation_path: Sample(files)>File
+      content_path: filename
+    target_content:
+      object_path: ''
+      property_name: referenced_filename
+  - class_name: Sample
+    source:
+      relation_path: Sample(files)>File
+      content_path: checksum
+    target_content:
+      object_path: ''
+      property_name: file_checksum
+  - class_name: Sample
+    source:
+      relation_path: Sample(files)>File<(files)Dataset
+      content_path: dac_contact
+    target_content:
+      object_path: ''
+      property_name: dac_contact

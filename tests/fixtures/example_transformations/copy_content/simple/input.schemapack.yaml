@@ -53,7 +53,7 @@ classes:
         targetClass: File
         multiple:
           origin: false
-          target: true
+          target: false
         mandatory:
           origin: false
           target: true

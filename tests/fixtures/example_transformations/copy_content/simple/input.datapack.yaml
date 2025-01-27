@@ -33,13 +33,11 @@ resources:
       content:
         description: Some sample.
       relations:
-        files:
-          - file_a
+        files: file_a
     sample_y:
       content: {}
       relations:
-        files:
-          - file_b
+        files: file_b
   Experiment:
     experiment_i:
       content:

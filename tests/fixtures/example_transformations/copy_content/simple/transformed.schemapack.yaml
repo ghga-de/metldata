@@ -12,7 +12,7 @@ classes:
         "properties":
           {
             "checksum": { "type": "string" },
-            "dataset.dac_contact": { "type": "string" },
+            "dac_contact": { "type": "string" }, # <-
             "filename": { "type": "string" },
             "format": { "type": "string" },
             "size": { "type": "integer" },
@@ -48,13 +48,25 @@ classes:
   Sample:
     id:
       propertyName: alias
-    content: ../../../example_content_schemas/Sample.schema.json
+    content:
+      {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "description": "A sample used to generate files in the context of an experiment.",
+        "properties": {
+          "description": {"type": "string"},
+          "dac_contact": {"type": "string"}, # <-
+          "referenced_filename": {"type": "string"}, # <-
+          "file_checksum": {"type": "string"}, # <-
+        },
+        "type": "object"
+      }
     relations:
       files:
         targetClass: File
         multiple:
           origin: false
-          target: true
+          target: false
         mandatory:
           origin: false
           target: true
