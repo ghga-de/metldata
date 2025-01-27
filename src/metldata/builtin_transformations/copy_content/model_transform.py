@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Copy (sub)schemas of content properties between classes described by a relation path."""
+
 from schemapack.spec.schemapack import ClassDefinition, SchemaPack
 
 from metldata.builtin_transformations.add_content_properties.path import (

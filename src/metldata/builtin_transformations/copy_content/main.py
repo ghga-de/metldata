@@ -30,8 +30,8 @@ from metldata.transform.base import DataTransformer, TransformationDefinition
 
 
 class CopyContentTransformer(DataTransformer[CopyContentConfig]):
-    """A transformer that counts the occurrences of a specified property within an object and
-    adds the value to the content of a target object.
+    """A transformer that sources a specified property from one object and adds it
+    to the content of a target object.
     """
 
     def transform(self, data: DataPack) -> DataPack:  # type: ignore

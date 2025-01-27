@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Models for instructions used in the 'count content values' transformation."""
+"""Models for instructions used in the 'copy content' transformation."""
 
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -22,8 +22,8 @@ from metldata.builtin_transformations.common import NewContentSchemaProperty, So
 
 
 class CopyContentInstruction(BaseSettings):
-    """A model describing an instruction to add a new content property to a class in a
-    schemapack, including an associated default value in corresponding data.
+    """A model describing an instruction to copy a content property from one class in a
+    schemapack to another.
     """
 
     class_name: str = Field(..., description="The name of the class to modify.")

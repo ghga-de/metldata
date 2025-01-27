@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"Assumptions for count references transformation"
+"Assumptions for copy content transformation"
 
 from schemapack.spec.schemapack import SchemaPack
 

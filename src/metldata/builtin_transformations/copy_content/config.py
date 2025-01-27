@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Models used to describe content properties that shall be calculated and added."""
+"""Models used to describe content properties that shall be copied."""
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -24,9 +24,7 @@ from metldata.builtin_transformations.copy_content.instruction import (
 
 
 class CopyContentConfig(BaseSettings):
-    """A Config for a transformation that adds a new property to an object within a
-    content schema
-    """
+    """A Config for a transformation that copies a property from one class to another."""
 
     model_config = SettingsConfigDict(extra="forbid")
 
