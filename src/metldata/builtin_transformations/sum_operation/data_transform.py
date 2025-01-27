@@ -13,32 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Data transformation logic for count content values transformation."""
-
-from collections import Counter
-from typing import Any
+"""Data transformation logic for sum operation transformation."""
 
 from schemapack.spec.datapack import DataPack
 
 from metldata.builtin_transformations.common.data_transform import transform_data
-from metldata.builtin_transformations.count_content_values.instruction import (
-    CountContentValueInstruction,
+from metldata.builtin_transformations.sum_operation.instruction import (
+    SumOperationInstruction,
 )
 
 
-def count_content(
-    *,
-    data: DataPack,
-    instructions_by_class: dict[str, list[CountContentValueInstruction]],
+def sum_content(
+    *, data: DataPack, instructions_by_class: dict[str, list[SumOperationInstruction]]
 ) -> DataPack:
-    """Apply all count content value transformation instructions."""
+    """Apply all transformation instructions."""
     return transform_data(
         data=data,
         instructions_by_class=instructions_by_class,
-        calculate_value=occurrence_counter,
+        calculate_value=sum,
     )
-
-
-def occurrence_counter(values_to_count: list[Any]) -> dict[Any, int]:
-    """Count the occurrences of objects in a list."""
-    return dict(Counter(values_to_count))

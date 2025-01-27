@@ -1,0 +1,8 @@
+sum_operation:
+  - class_name: Dataset
+    target_content:
+      object_path: file_summary.stats
+      property_name: size
+    source:
+      relation_path: Dataset(files)>File
+      content_path: size
