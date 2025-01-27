@@ -30,10 +30,5 @@ def sum_content(
     return transform_data(
         data=data,
         instructions_by_class=instructions_by_class,
-        calculate_value=sum_values,
+        calculate_value=sum,
     )
-
-
-def sum_values(values_to_sum: list[int | float | bool]) -> int | float:
-    """Sum up the values given in a list."""
-    return sum(values_to_sum)
