@@ -15,17 +15,10 @@
 
 """Models for instructions used in the 'count content values' transformation."""
 
-from typing import Any, Final
-
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
-from metldata.builtin_transformations.common import NewContentSchemaPath, SourcePath
-
-DEFAULT_CONTENT_SCHEMA: Final[dict[str, Any]] = {
-    "type": "object",
-    "additionalProperties": True,
-}
+from metldata.builtin_transformations.common import NewContentSchemaProperty, SourcePath
 
 
 class CopyContentInstruction(BaseSettings):
@@ -35,10 +28,10 @@ class CopyContentInstruction(BaseSettings):
 
     class_name: str = Field(..., description="The name of the class to modify.")
 
-    target_content: NewContentSchemaPath = Field(
+    target_content: NewContentSchemaProperty = Field(
         ...,
-        description="NewContentSchemaPath object describing where a new"
-        + " content property will be added.",
+        description="Contains the name of the property to be added to the target"
+        + " content schema.",
     )
 
     source: SourcePath = Field(

@@ -20,7 +20,6 @@ from schemapack.spec.schemapack import SchemaPack
 from metldata.builtin_transformations.common.assumptions import (
     assert_class_is_source,
     assert_no_relation_target_multiplicity,
-    assert_object_path_exists,
     assert_path_classes_and_relations_exist,
 )
 from metldata.builtin_transformations.copy_content.instruction import (
@@ -39,6 +38,3 @@ def check_model_assumptions(
             assert_class_is_source(path=path, instruction=instruction)
             assert_path_classes_and_relations_exist(model=schema, path=path)
             assert_no_relation_target_multiplicity(model=schema, path=path)
-            # does not follow the epic spec, but let's leave it at that for now
-            # might need some custom stuff or refactoring, but that's a todo for later
-            assert_object_path_exists(model=schema, instruction=instruction)

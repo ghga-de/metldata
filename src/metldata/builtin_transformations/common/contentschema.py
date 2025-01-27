@@ -20,7 +20,17 @@ from pydantic_settings import BaseSettings
 from metldata.builtin_transformations.common.path.path import RelationPath
 
 
-class NewContentSchemaPath(BaseSettings):
+class NewContentSchemaProperty(BaseSettings):
+    """A model describing an object property within the content schema that is yet
+    to be added. The model contains the name of a property to be added to an already
+    existing object's schema. As no object path is given, the property is inserted at
+    the content root level.
+    """
+
+    property_name: str = Field(..., description="The name of the property to be added.")
+
+
+class NewContentSchemaPath(NewContentSchemaProperty):
     """A model describing the path of an object property within the content schema that
     is yet to be added. The model comprises a path to an already existing object within
     the content schema and the name of a property to be added to that object's schema
@@ -35,8 +45,6 @@ class NewContentSchemaPath(BaseSettings):
         ),
         examples=["some_property.another_nested_property"],
     )
-
-    property_name: str = Field(..., description="The name of the property to be added.")
 
 
 class SourcePath(BaseSettings):

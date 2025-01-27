@@ -25,6 +25,7 @@ from metldata.builtin_transformations.common.custom_types import (
     MutableResource,
     ResourceId,
 )
+from metldata.builtin_transformations.common.data_transform import get_class_resources
 from metldata.builtin_transformations.common.resolve_path import resolve_path
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.copy_content.instruction import (
@@ -45,13 +46,14 @@ class ContentCopier:
         self.instructions_by_class = instructions_by_class
         self.data = data
         self.modified_data = data_to_dict(self.data)
-        self.resources = self.modified_data["resources"]
 
     def process_instructions(self):
         """Process high-level checks and delegate instruction processing."""
         for class_name, instructions in self.instructions_by_class.items():
             # Check resources exist for class to be modified
-            target_resources = self.resources.get(class_name)
+            target_resources = get_class_resources(
+                data=self.modified_data, class_name=class_name
+            )
             if not target_resources:
                 raise EvitableTransformationError()
 
@@ -69,7 +71,9 @@ class ContentCopier:
     ):
         """Delegate copying for each resource that should be modified."""
         source_class_name = instruction.source.relation_path.target
-        source_resources = self.resources.get(source_class_name)
+        source_resources = get_class_resources(
+            data=self.modified_data, class_name=source_class_name
+        )
         if not source_resources:
             raise EvitableTransformationError()
 
