@@ -22,14 +22,7 @@ classes:
                       {
                         "type": "object",
                         "additionalProperties": true,
-                        "properties":
-                          {
-                            "size":
-                              {
-                                "oneOf":
-                                  [{ "type": "number" }, { "type": "boolean" }],
-                              },
-                          },
+                        "properties": { "size": { "type": "number" } },
                       },
                   },
                 "required": ["stats"],

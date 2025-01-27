@@ -24,9 +24,7 @@ from metldata.builtin_transformations.sum_operation.instruction import (
     SumOperationInstruction,
 )
 
-DEFAULT_PROPERTY_SCHEMA: Final[dict[str, Any]] = {
-    "oneOf": [{"type": "number"}, {"type": "boolean"}]
-}
+DEFAULT_PROPERTY_SCHEMA: Final[dict[str, Any]] = {"type": "number"}
 
 
 def add_sum_content_properties(
