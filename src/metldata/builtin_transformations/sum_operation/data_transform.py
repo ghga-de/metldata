@@ -36,4 +36,4 @@ def sum_content(
 
 def sum_values(values_to_sum: list[int | float | bool]) -> int | float:
     """Sum up the values given in a list."""
-    return sum(val for val in values_to_sum if isinstance(val, int | float | bool))
+    return sum(val for val in values_to_sum)
