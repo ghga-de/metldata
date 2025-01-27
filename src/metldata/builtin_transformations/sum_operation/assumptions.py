@@ -45,10 +45,12 @@ def check_model_assumptions(
             assert_relation_target_multiplicity(model=schema, path=path)
             assert_source_content_path_exists(schema=schema, instruction=instruction)
             assert_class_is_source(path=path, instruction=instruction)
-            assert_data_type(schema, instruction)
+            assert_countable_data_type(schema, instruction)
 
 
-def assert_data_type(schema: SchemaPack, instruction: SumOperationInstruction) -> None:
+def assert_countable_data_type(
+    schema: SchemaPack, instruction: SumOperationInstruction
+) -> None:
     """Ensure that the slot given as 'content path' of an instruction source
     has a data type allowing arithmetic operations.
     """
