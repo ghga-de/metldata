@@ -39,6 +39,5 @@ class SumOperationInstruction(BaseSettings):
 
     source: SourcePath = Field(
         ...,
-        description="A SourcePath object defining the path to the property containing"
-        + "the values to be summed for the new content property.",
+        description="SourcePath to the property containing the values to be summed for the new content property.",
     )
