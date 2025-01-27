@@ -39,10 +39,12 @@ def add_count_content_properties(
     model: SchemaPack,
     instructions_by_class: dict[str, list[CountContentValueInstruction]],
 ) -> SchemaPack:
-    """The target content - object_path(s) are added to the model with the
-    'add_content_properties' step of the workflow. Thus, this function only adds the
-    property_name(s) to the content schema of the classes that are subject to
+    """
+    Adds the property_name(s) to the content schema of the classes that are subject to
     count_content_values transformation.
+
+    Note that the target content - object_path(s) are added to the model with the
+    'add_content_properties' step of the workflow.
     """
     return add_properties(
         model=model,
