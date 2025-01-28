@@ -12,13 +12,21 @@ classes:
         "properties":
           {
             "checksum": { "type": "string" },
-            "dac_contact": { "type": "string" }, # <-
             "filename": { "type": "string" },
             "format": { "type": "string" },
             "size": { "type": "integer" },
+            "dataset_information":
+            {
+              "additionalProperties": false,
+              "properties":
+              {
+                "dac_contact": { "type": "string" } # <-
+              },
+              "type": "object",
+            },
           },
         "required":
-          ["filename", "format", "checksum", "size"],
+          ["filename", "format", "checksum", "size", "dataset_information"],
         "type": "object",
       }
   Dataset:

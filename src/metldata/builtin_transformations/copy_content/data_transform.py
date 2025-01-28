@@ -97,6 +97,7 @@ class ContentCopier:
         content_path = instruction.source.content_path
         relation_path = instruction.source.relation_path
         property_name = instruction.target_content.property_name
+        object_path = instruction.target_content.object_path
 
         source_resource_ids = resolve_path(
             data=self.data, source_resource_id=resource_id, path=relation_path
@@ -122,7 +123,10 @@ class ContentCopier:
         target_resource: MutableResource = target_resources[resource_id]
         # the target property should not be present in the resource
         # of the class that's being modified
-        if target_resource["content"].get(property_name):
+        resolved_resource = resolve_data_object_path(
+            target_resource["content"], object_path
+        )
+        if resolved_resource.get(property_name):
             raise EvitableTransformationError()
 
-        target_resource["content"][property_name] = source_property
+        resolved_resource[property_name] = source_property

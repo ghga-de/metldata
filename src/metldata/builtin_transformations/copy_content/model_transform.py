@@ -62,11 +62,17 @@ def add_content_schema_copy(
 
             # sanity check if property already exists at target class
             property_name = instruction.target_content.property_name
-            if property_name in target_content_schema.get("properties", {}):
+            object_path = instruction.target_content.object_path
+
+            target_schema = resolve_schema_object_path(
+                target_content_schema, object_path
+            )
+
+            if property_name in target_schema.get("properties", {}):
                 raise EvitableTransformationError()
 
             # set content subschema for the selected property
-            target_content_schema.setdefault("properties", {})[property_name] = (
+            target_schema.setdefault("properties", {})[property_name] = (
                 source_content_schema
             )
 

@@ -15,9 +15,14 @@ classes:
             "filename": { "type": "string" },
             "format": { "type": "string" },
             "size": { "type": "integer" },
+            "dataset_information":
+            {
+              "additionalProperties": false,
+              "type": "object",
+            },
           },
         "required":
-          ["filename", "format", "checksum", "size"],
+          ["filename", "format", "checksum", "size", "dataset_information"],
         "type": "object",
       }
   Dataset:

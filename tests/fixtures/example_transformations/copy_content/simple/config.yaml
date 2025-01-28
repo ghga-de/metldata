@@ -20,7 +20,7 @@ copy_content:
       content_path: dac_contact
     target_content:
       property_name: dac_contact
-      object_path: ""
+      object_path: dataset_information
   - class_name: Sample
     source:
       relation_path: Sample(files)>File
