@@ -17,6 +17,5 @@
 
 from metldata.builtin_transformations.common.contentschema import (
     NewContentSchemaPath,  # noqa: F401
-    NewContentSchemaProperty,  # noqa: F401
     SourcePath,  # noqa: F401
 )

@@ -18,7 +18,7 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
-from metldata.builtin_transformations.common import NewContentSchemaProperty, SourcePath
+from metldata.builtin_transformations.common import NewContentSchemaPath, SourcePath
 
 
 class CopyContentInstruction(BaseSettings):
@@ -28,14 +28,14 @@ class CopyContentInstruction(BaseSettings):
 
     class_name: str = Field(..., description="The name of the class to modify.")
 
-    target_content: NewContentSchemaProperty = Field(
+    target_content: NewContentSchemaPath = Field(
         ...,
-        description="Contains the name of the property to be added to the target"
-        + " content schema.",
+        description="NewContentSchemaPath object describing where a"
+        + " content property will be copied to.",
     )
 
     source: SourcePath = Field(
         ...,
         description="SourcePath object defining the path to reach a property"
-        + " from which content values are sourced.",
+        + " from which content values are copied.",
     )
