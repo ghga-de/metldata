@@ -41,5 +41,5 @@ def add_sum_content_properties(
     return add_properties(
         model=model,
         instructions_by_class=instructions_by_class,
-        default_schema=DEFAULT_PROPERTY_SCHEMA,
+        source_schema=DEFAULT_PROPERTY_SCHEMA,
     )

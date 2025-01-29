@@ -15,12 +15,17 @@
 
 "Common functions used in model transformations of individual transformations"
 
+from typing import Any
+
 from schemapack.spec.schemapack import ClassDefinition, SchemaPack
 
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_schema_object_path,
 )
-from metldata.builtin_transformations.common.instruction import TargetInstruction
+from metldata.builtin_transformations.common.instruction import (
+    TargetInstruction,
+    TargetInstructionProtocol,
+)
 from metldata.builtin_transformations.common.utils import content_to_dict, model_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 
@@ -38,12 +43,12 @@ def add_properties(
     *,
     model: SchemaPack,
     instructions_by_class: dict[str, list[TargetInstruction]],
-    default_schema: dict,
+    source_schema: dict[str, Any],
 ) -> SchemaPack:
     """The target content - object_path(s) are added to the model with the
     'add_content_properties' step of the workflow. Thus, this function only adds the
-    property_name(s) to the content schema of the classes that are subject to
-    count_content_values transformation.
+    property_name(s) and schemas to the content schema of the classes that are subject
+    to transformation.
     """
     updated_class_defs: dict[str, ClassDefinition] = {}
     for class_name, cls_instructions in instructions_by_class.items():
@@ -53,21 +58,34 @@ def add_properties(
             raise EvitableTransformationError()
 
         content_schema = content_to_dict(class_def)
-
         for cls_instruction in cls_instructions:
-            object_path = cls_instruction.target_content.object_path
-            property_name = cls_instruction.target_content.property_name
-            try:
-                target_schema = resolve_schema_object_path(content_schema, object_path)
-            except KeyError as exc:
-                raise EvitableTransformationError() from exc
-
-            if property_name in target_schema.get("properties", {}):
-                raise EvitableTransformationError()
-
-            target_schema.setdefault("properties", {})[property_name] = default_schema
+            add_property_per_instruction(
+                cls_instruction=cls_instruction,
+                content_schema=content_schema,
+                source_schema=source_schema,
+            )
 
         updated_class_defs[class_name] = class_def.model_validate(
             {**class_def.model_dump(), "content": content_schema}
         )
     return update_model(model=model, updated_class_defs=updated_class_defs)
+
+
+def add_property_per_instruction(
+    *,
+    cls_instruction: TargetInstructionProtocol,
+    content_schema: dict[str, Any],
+    source_schema: dict[str, Any],
+):
+    """Add property schema for one specific instruction."""
+    object_path = cls_instruction.target_content.object_path
+    property_name = cls_instruction.target_content.property_name
+    try:
+        target_schema = resolve_schema_object_path(content_schema, object_path)
+    except KeyError as exc:
+        raise EvitableTransformationError() from exc
+
+    if property_name in target_schema.get("properties", {}):
+        raise EvitableTransformationError()
+
+    target_schema.setdefault("properties", {})[property_name] = source_schema

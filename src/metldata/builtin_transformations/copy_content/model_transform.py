@@ -20,7 +20,10 @@ from schemapack.spec.schemapack import ClassDefinition, SchemaPack
 from metldata.builtin_transformations.add_content_properties.path import (
     resolve_schema_object_path,
 )
-from metldata.builtin_transformations.common.model_transform import update_model
+from metldata.builtin_transformations.common.model_transform import (
+    add_property_per_instruction,
+    update_model,
+)
 from metldata.builtin_transformations.common.utils import content_to_dict
 from metldata.builtin_transformations.copy_content.instruction import (
     CopyContentInstruction,
@@ -32,27 +35,25 @@ def add_content_schema_copy(
     *,
     model: SchemaPack,
     instructions_by_class: dict[str, list[CopyContentInstruction]],
-) -> SchemaPack:
+) -> SchemaPack:  # type: ignore
     """Modify model to incorporate content (sub)schemas from copy source into the target class."""
     updated_class_defs: dict[str, ClassDefinition] = {}
+
     for class_name, instructions in instructions_by_class.items():
-        target_class_def = model.classes.get(class_name)
-
-        if not target_class_def:
+        class_def = model.classes.get(class_name)
+        if not class_def:
             raise EvitableTransformationError()
+        content_schema = content_to_dict(class_def)
 
-        target_content_schema = content_to_dict(target_class_def)
         for instruction in instructions:
             relation_path = instruction.source.relation_path
+            content_path = instruction.source.content_path
 
-            # fetch class to copy content from
+            # resolve content subschema to copy
             source_class_def = model.classes.get(relation_path.target)
             if not source_class_def:
                 raise EvitableTransformationError()
             source_class_schema = content_to_dict(source_class_def)
-
-            # resolve content subschema to copy
-            content_path = instruction.source.content_path
             try:
                 source_content_schema = resolve_schema_object_path(
                     source_class_schema, content_path
@@ -60,24 +61,13 @@ def add_content_schema_copy(
             except KeyError as exc:
                 raise EvitableTransformationError() from exc
 
-            # sanity check if property already exists at target class
-            property_name = instruction.target_content.property_name
-            object_path = instruction.target_content.object_path
-
-            target_schema = resolve_schema_object_path(
-                target_content_schema, object_path
+            add_property_per_instruction(
+                cls_instruction=instruction,
+                content_schema=content_schema,
+                source_schema=source_content_schema,
             )
 
-            if property_name in target_schema.get("properties", {}):
-                raise EvitableTransformationError()
-
-            # set content subschema for the selected property
-            target_schema.setdefault("properties", {})[property_name] = (
-                source_content_schema
-            )
-
-        updated_class_defs[class_name] = target_class_def.model_validate(
-            {**target_class_def.model_dump(), "content": target_content_schema}
+        updated_class_defs[class_name] = class_def.model_validate(
+            {**class_def.model_dump(), "content": content_schema}
         )
-
     return update_model(model=model, updated_class_defs=updated_class_defs)
