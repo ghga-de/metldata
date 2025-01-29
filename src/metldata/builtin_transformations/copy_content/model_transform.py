@@ -35,7 +35,7 @@ def add_content_schema_copy(
     *,
     model: SchemaPack,
     instructions_by_class: dict[str, list[CopyContentInstruction]],
-) -> SchemaPack:  # type: ignore
+) -> SchemaPack:
     """Modify model to incorporate content (sub)schemas from copy source into the target class."""
     updated_class_defs: dict[str, ClassDefinition] = {}
 
