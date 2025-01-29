@@ -41,11 +41,3 @@ resources:
       content: {}
       relations:
         files: file_b
-  Experiment:
-    experiment_i:
-      content:
-        description: Some experiment.
-      relations:
-        samples:
-          - sample_x
-          - sample_y

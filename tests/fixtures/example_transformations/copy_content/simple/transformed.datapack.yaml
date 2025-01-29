@@ -39,22 +39,12 @@ resources:
       content:
         description: Some sample.
         referenced_filename: file_a.fastq # <-
-        file_checksum: 1a5ac10ab42911dc0224172c118a326d9a4c03969112a2f3eb1ad971e96e92b8 # <-
         dac_contact: dac@example.org # <-
       relations:
         files: file_a
     sample_y:
       content:
         referenced_filename: file_b.fastq # <-
-        file_checksum: 2b5ac10ab42911dc0224172c118a326d9a4c03969112a2f3eb1ad971e96e92c9 # <-
         dac_contact: dac@example.org # <-
       relations:
         files: file_b
-  Experiment:
-    experiment_i:
-      content:
-        description: Some experiment.
-      relations:
-        samples:
-          - sample_x
-          - sample_y
