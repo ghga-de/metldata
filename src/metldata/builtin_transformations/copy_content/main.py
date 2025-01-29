@@ -22,7 +22,7 @@ from metldata.builtin_transformations.copy_content.assumptions import (
     check_model_assumptions,
 )
 from metldata.builtin_transformations.copy_content.config import CopyContentConfig
-from metldata.builtin_transformations.copy_content.data_transform import ContentCopier
+from metldata.builtin_transformations.copy_content.data_transform import copy_content
 from metldata.builtin_transformations.copy_content.model_transform import (
     add_content_schema_copy,
 )
@@ -34,16 +34,15 @@ class CopyContentTransformer(DataTransformer[CopyContentConfig]):
     to the content of a target object.
     """
 
-    def transform(self, data: DataPack) -> DataPack:  # type: ignore
+    def transform(self, data: DataPack) -> DataPack:
         """Transforms data.
 
         Args:
             data: The data as DataPack to be transformed.
         """
-        content_copier = ContentCopier(
+        return copy_content(
             data=data, instructions_by_class=self._config.instructions_by_class()
         )
-        return content_copier.process_instructions()
 
 
 def check_model_assumptions_wrapper(
