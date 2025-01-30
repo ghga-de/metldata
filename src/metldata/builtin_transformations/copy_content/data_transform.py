@@ -38,7 +38,7 @@ def copy_content(
 
 
 def values_to_copy(source_properties: list[Any]):
-    """Validate assumptions and return the source property to be copied."""
+    """Return the single source property to be copied, ensuring no multiplicity."""
     num_source_properties = len(source_properties)
     # copy does not expect multiplicity along the given relation path
     # raise if this is assumption is violated here
