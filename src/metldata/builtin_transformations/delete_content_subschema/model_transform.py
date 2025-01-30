@@ -28,7 +28,7 @@ from metldata.builtin_transformations.common.utils import content_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 
 
-def delete_properties(
+def delete_content_subschema(
     *, model: SchemaPack, properties_by_class: dict[str, list[str]]
 ) -> SchemaPack:
     """Delete content properties from a model.

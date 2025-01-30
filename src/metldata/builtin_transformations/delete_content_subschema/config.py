@@ -14,32 +14,29 @@
 # limitations under the License.
 #
 
-"""Models used to describe content subschemas that shall be deleted."""
+"""Models used to describe content properties that shall be deleted."""
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from metldata.builtin_transformations.delete_content_subschema.instruction import (
-    DeleteSubschemaInstruction,
-)
 
-
-class DeleteSubschemaConfig(BaseSettings):
-    """Config containing content subschemas to be deleted from models and data."""
+class DeleteContentSubschemaConfig(BaseSettings):
+    """Config containing content properties to be deleted from models and data."""
 
     model_config = SettingsConfigDict(extra="forbid")
 
-    delete_subschema_instructions: list[DeleteSubschemaInstruction] = Field(
-        ..., description="A list of instructions for performing subschema deletion."
+    properties_to_delete: dict[str, list[str]] = Field(
+        ...,
+        description=(
+            "A nested dictionary specifying properties that should be deleted per"
+            + " class. The keys refer to classes, the values to the properties that"
+            + " should be deleted from the respective class."
+        ),
+        examples=[
+            {
+                "ClassA": ["some_property", "another_property"],
+                "ClassB": ["some_property"],
+                "ClassC": ["some_property", "yet_another_property"],
+            }
+        ],
     )
-
-    def instructions_by_class(
-        self,
-    ) -> dict[str, list[DeleteSubschemaInstruction]]:
-        """Returns a dictionary of instructions by class (i.e. config for each class)."""
-        instructions_by_class: dict[str, list[DeleteSubschemaInstruction]] = {}
-        for instruction in self.delete_subschema_instructions:
-            instructions_by_class.setdefault(instruction.class_name, []).append(
-                instruction
-            )
-        return instructions_by_class

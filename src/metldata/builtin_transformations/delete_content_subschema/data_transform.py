@@ -22,7 +22,7 @@ from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 
 
-def delete_properties(
+def delete_subschema_properties(
     *, data: DataPack, properties_by_class: dict[str, list[str]]
 ) -> DataPack:
     """Delete the provided content properties from the provided data.
