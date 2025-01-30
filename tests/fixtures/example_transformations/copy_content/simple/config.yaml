@@ -1,0 +1,22 @@
+copy_content:
+  - class_name: File
+    source:
+      relation_path: File<(files)Dataset
+      content_path: dac_contact
+    target_content:
+      property_name: dac_contact
+      object_path: dataset_information
+  - class_name: Sample
+    source:
+      relation_path: Sample(files)>File
+      content_path: filename
+    target_content:
+      property_name: referenced_filename
+      object_path: ""
+  - class_name: Sample
+    source:
+      relation_path: Sample(files)>File<(files)Dataset
+      content_path: dac_contact
+    target_content:
+      property_name: dac_contact
+      object_path: ""

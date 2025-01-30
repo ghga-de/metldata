@@ -134,7 +134,7 @@ def transform_resource(
     if target_content is None:
         raise EvitableTransformationError()
 
-    values_to_count = get_values_to_count(
+    source_values = get_source_values(
         relation_target_ids=relation_target_ids,
         referenced_resources=referenced_resources,
         content_path=instruction.source.content_path,
@@ -143,10 +143,10 @@ def transform_resource(
         data=target_content, instruction=instruction
     )
     target_property = instruction.target_content.property_name
-    target_object[target_property] = calculate_value(values_to_count)
+    target_object[target_property] = calculate_value(source_values)
 
 
-def get_values_to_count(
+def get_source_values(
     *,
     relation_target_ids: ResourceId | ResourceIdSet,
     referenced_resources: MutableClassResources,

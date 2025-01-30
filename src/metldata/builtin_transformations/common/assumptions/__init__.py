@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from metldata.builtin_transformations.common.assumptions.path_assumptions import (
+    assert_no_relation_target_multiplicity,  # noqa: F401
     assert_path_classes_and_relations_exist,  # noqa: F401
     assert_relation_target_multiplicity,  # noqa: F401
 )

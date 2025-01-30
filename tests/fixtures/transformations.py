@@ -26,6 +26,9 @@ from schemapack.spec.schemapack import SchemaPack
 from metldata.builtin_transformations.add_content_properties import (
     ADD_CONTENT_PROPERTIES_TRANSFORMATION,
 )
+from metldata.builtin_transformations.copy_content.main import (
+    COPY_CONTENT_TRANSFORMATION,
+)
 from metldata.builtin_transformations.count_content_values.main import (
     COUNT_CONTENT_VALUES_TRANSFORMATION,
 )
@@ -55,6 +58,7 @@ TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "count_references": COUNT_REFERENCES_TRANSFORMATION,
     "count_content_values": COUNT_CONTENT_VALUES_TRANSFORMATION,
     "sum_operation": SUM_OPERATION_TRANSFORMATION,
+    "copy_content": COPY_CONTENT_TRANSFORMATION,
 }
 
 
