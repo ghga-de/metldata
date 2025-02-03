@@ -18,9 +18,13 @@
 
 from schemapack.spec.schemapack import SchemaPack
 
+from metldata.builtin_transformations.add_content_properties.path import (
+    resolve_schema_object_path,
+)
 from metldata.builtin_transformations.delete_content_subschema.instruction import (
     DeleteContentSubschemaInstruction,
 )
+from metldata.transform.exceptions import ModelAssumptionError
 
 
 def assert_classes_and_properties_exist(
@@ -41,15 +45,21 @@ def assert_classes_and_properties_exist(
             If the assumptions are not met.
     """
     for class_name, instructions in instructions_by_class.items():
-        assert_class_and_properties_exist(
-            schema=schema, class_name=class_name, instructions=instructions
-        )
+        class_def = schema.classes.get(class_name)
 
+        if not class_def:
+            raise ModelAssumptionError(
+                f"Class to be modified {class_name} does not exist in the model."
+            )
 
-def assert_class_and_properties_exist(
-    *,
-    schema: SchemaPack,
-    class_name: str,
-    instructions: list[DeleteContentSubschemaInstruction],
-):
-    """TODO"""
+        for instruction in instructions:
+            # Ensure the property schema at the given path exists in the model
+            try:
+                _ = resolve_schema_object_path(
+                    json_schema=class_def.content,
+                    path=instruction.content_path,
+                )
+            except KeyError as exc:
+                raise ModelAssumptionError(
+                    f"No property exists at the given content path {instruction.content_path}"
+                ) from exc
