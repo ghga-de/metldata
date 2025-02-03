@@ -62,8 +62,8 @@ def delete_subschema_properties(
                 else:
                     # nested property
                     target = resolve_data_object_path(
-                        data=target_resources, path=content_path
+                        data=resource["content"], path=path_parent
                     )
-                    target["properties"].pop(target_property, None)
+                    target.pop(target_property, None)
 
     return DataPack.model_validate(modified_data)

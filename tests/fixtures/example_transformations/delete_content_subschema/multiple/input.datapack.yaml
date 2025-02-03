@@ -3,20 +3,27 @@ resources:
   File:
     file_a:
       content:
+        filename: file_a.fastq
         format: FASTQ
+        checksum: 1a5ac10ab42911dc0224172c118a326d9a4c03969112a2f3eb1ad971e96e92b8
         size: 12321
     file_b:
       content:
+        filename: file_b.fastq
         format: FASTQ
+        checksum: 2b5ac10ab42911dc0224172c118a326d9a4c03969112a2f3eb1ad971e96e92c9
         size: 12314
     file_c:
       content:
+        filename: file_c.fastq
         format: FASTQ
+        checksum: a9c24870071da03f78515e6197048f3a2172e90e597e9250cd01a0cb8f0986ed
         size: 12123
   Dataset:
     dataset_1:
       content:
-        dac_contact: {} # <-
+        dac_contact:
+          email: dac@example.org
       relations:
         files:
           - file_a
@@ -24,7 +31,8 @@ resources:
           - file_c
   Sample:
     sample_x:
-      content: {}
+      content:
+        description: Some sample.
       relations:
         files:
           - file_a

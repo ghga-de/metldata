@@ -1,27 +1,10 @@
-# Transformed content schemas are embedded:
+# a more advanced schemapack:
 schemapack: 0.3.0
 classes:
   File:
     id:
       propertyName: alias
-    content: { # <-
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "additionalProperties": false,
-      "description": "A file is an object that contains information generated from a process, either an Experiment or an Analysis.",
-      "properties": {
-        "format": {
-          "type": "string"
-        },
-        "size": {
-          "type": "integer"
-        }
-      },
-      "required": [
-        "format",
-        "size"
-      ],
-      "type": "object"
-    }
+    content: ../../../example_content_schemas/File.schema.json
   Dataset:
     id:
       propertyName: alias
@@ -33,8 +16,10 @@ classes:
         "dac_contact": {
           "type": "object",
           "additionalProperties": false,
-          "properties": {}, # <-
-          "required": [], # <-
+          "properties": {
+            "email": {"type": "string"},
+          },
+          "required":["email"],
         },
       },
       "type": "object"
@@ -51,14 +36,7 @@ classes:
   Sample:
     id:
       propertyName: alias
-    content: { # <-
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "additionalProperties": false,
-      "description": "A sample used to generate files in the context of an experiment.",
-      "properties": {
-      },
-      "type": "object"
-    }
+    content: ../../../example_content_schemas/Sample.schema.json
     relations:
       files:
         targetClass: File
