@@ -18,12 +18,20 @@
 
 from schemapack.spec.datapack import DataPack
 
+from metldata.builtin_transformations.add_content_properties.path import (
+    resolve_data_object_path,
+)
+from metldata.builtin_transformations.common.data_transform import get_class_resources
 from metldata.builtin_transformations.common.utils import data_to_dict
-from metldata.transform.exceptions import EvitableTransformationError
+from metldata.builtin_transformations.delete_content_subschema.instruction import (
+    DeleteContentSubschemaInstruction,
+)
 
 
 def delete_subschema_properties(
-    *, data: DataPack, properties_by_class: dict[str, list[str]]
+    *,
+    data: DataPack,
+    instructions_by_class: dict[str, list[DeleteContentSubschemaInstruction]],
 ) -> DataPack:
     """Delete the provided content properties from the provided data.
 
@@ -38,14 +46,24 @@ def delete_subschema_properties(
     """
     modified_data = data_to_dict(data)
 
-    for class_name, properties in properties_by_class.items():
-        class_resources = modified_data["resources"].get(class_name)
+    for class_name, instructions in instructions_by_class.items():
+        target_resources = get_class_resources(
+            data=modified_data, class_name=class_name
+        )
+        for instruction in instructions:
+            content_path = instruction.content_path
 
-        if not class_resources:
-            raise EvitableTransformationError()
-
-        for resource in class_resources.values():
-            for property in properties:
-                resource["content"].pop(property, None)
+            # resolve is one layer to deep, go one step up in content path
+            path_parent, _, target_property = content_path.rpartition(".")
+            for resource in target_resources.values():
+                if not path_parent:
+                    # property directly in top level content
+                    resource["content"].pop(target_property, None)
+                else:
+                    # nested property
+                    target = resolve_data_object_path(
+                        data=target_resources, path=content_path
+                    )
+                    target["properties"].pop(target_property, None)
 
     return DataPack.model_validate(modified_data)

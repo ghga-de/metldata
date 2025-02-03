@@ -19,15 +19,17 @@
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.delete_content_subschema import (
-    data_transform,
-    model_transform,
-)
 from metldata.builtin_transformations.delete_content_subschema.assumptions import (
     assert_classes_and_properties_exist,
 )
 from metldata.builtin_transformations.delete_content_subschema.config import (
     DeleteContentSubschemaConfig,
+)
+from metldata.builtin_transformations.delete_content_subschema.data_transform import (
+    delete_subschema_properties,
+)
+from metldata.builtin_transformations.delete_content_subschema.model_transform import (
+    delete_content_subschema,
 )
 from metldata.transform.base import (
     DataTransformer,
@@ -48,8 +50,8 @@ class PropertyDeletionDataTransformer(DataTransformer[DeleteContentSubschemaConf
             DataTransformationError:
                 if the transformation fails.
         """
-        return data_transform.delete_subschema_properties(
-            data=data, properties_by_class=self._config.properties_to_delete
+        return delete_subschema_properties(
+            data=data, instructions_by_class=self._config.instructions_by_class()
         )
 
 
@@ -64,23 +66,27 @@ def check_model_assumptions(
             if the model does not fulfill the assumptions.
     """
     assert_classes_and_properties_exist(
-        model=model, properties_by_class=config.properties_to_delete
+        schema=model, instructions_by_class=config.instructions_by_class()
     )
 
 
-def transform_model(model: SchemaPack, config: DeleteContentSubschemaConfig) -> SchemaPack:
+def transform_model(
+    model: SchemaPack, config: DeleteContentSubschemaConfig
+) -> SchemaPack:
     """Transform the data model.
 
     Raises:
         DataModelTransformationError:
             if the transformation fails.
     """
-    return model_transform.delete_content_subschema(
-        model=model, properties_by_class=config.properties_to_delete
+    return delete_content_subschema(
+        model=model, instructions_by_class=config.instructions_by_class()
     )
 
 
-DELETE_CONTENT_SUBSCHEMA_TRANSFORMATION = TransformationDefinition[DeleteContentSubschemaConfig](
+DELETE_CONTENT_SUBSCHEMA_TRANSFORMATION = TransformationDefinition[
+    DeleteContentSubschemaConfig
+](
     config_cls=DeleteContentSubschemaConfig,
     check_model_assumptions=check_model_assumptions,
     transform_model=transform_model,

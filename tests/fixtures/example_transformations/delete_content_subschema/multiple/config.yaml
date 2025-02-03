@@ -1,8 +1,9 @@
-properties_to_delete:
-  File:
-    # required properties:
-    - filename
-    - checksum
-  Sample:
-    # optional properties not part of all samples in the input data:
-    - description
+delete_content_subschema:
+  # required properties:
+  - class_name: File
+    content_path: filename
+  - class_name: File
+    content_path: checksum
+  # optional properties not part of all samples in the input data:
+  - class_name: Sample
+    content_path: description

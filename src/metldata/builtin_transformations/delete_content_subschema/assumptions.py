@@ -18,32 +18,38 @@
 
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.transform.exceptions import ModelAssumptionError
+from metldata.builtin_transformations.delete_content_subschema.instruction import (
+    DeleteContentSubschemaInstruction,
+)
 
 
 def assert_classes_and_properties_exist(
-    *, model: SchemaPack, properties_by_class: dict[str, list[str]]
+    *,
+    schema: SchemaPack,
+    instructions_by_class: dict[str, list[DeleteContentSubschemaInstruction]],
 ) -> None:
     """Assert that all classes and properties exist in the model.
 
     Args:
         model:
             The model based on SchemaPack to check.
-        properties_by_class:
-            A dictionary mapping class names to lists of content properties to delete.
+        instructions_by_class:
+            A dictionary mapping class names to instructions describing which content should be deleted.
 
     Raises:
         ModelAssumptionError:
             If the assumptions are not met.
     """
-    for class_name, properties in properties_by_class.items():
-        if class_name not in model.classes:
-            raise ModelAssumptionError(
-                f"Class {class_name} does not exist in the model."
-            )
+    for class_name, instructions in instructions_by_class.items():
+        assert_class_and_properties_exist(
+            schema=schema, class_name=class_name, instructions=instructions
+        )
 
-        for property in properties:
-            if property not in model.classes[class_name].content.get("properties", {}):
-                raise ModelAssumptionError(
-                    f"Property {property} does not exist in class {class_name}."
-                )
+
+def assert_class_and_properties_exist(
+    *,
+    schema: SchemaPack,
+    class_name: str,
+    instructions: list[DeleteContentSubschemaInstruction],
+):
+    """TODO"""

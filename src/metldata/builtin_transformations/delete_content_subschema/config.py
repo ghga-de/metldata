@@ -19,24 +19,30 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from metldata.builtin_transformations.delete_content_subschema.instruction import (
+    DeleteContentSubschemaInstruction,
+)
+
 
 class DeleteContentSubschemaConfig(BaseSettings):
     """Config containing content properties to be deleted from models and data."""
 
     model_config = SettingsConfigDict(extra="forbid")
 
-    properties_to_delete: dict[str, list[str]] = Field(
+    delete_content_subschema: list[DeleteContentSubschemaInstruction] = Field(
         ...,
         description=(
-            "A nested dictionary specifying properties that should be deleted per"
-            + " class. The keys refer to classes, the values to the properties that"
-            + " should be deleted from the respective class."
+            "A list of instructions to remove content properties from the model and data."
         ),
-        examples=[
-            {
-                "ClassA": ["some_property", "another_property"],
-                "ClassB": ["some_property"],
-                "ClassC": ["some_property", "yet_another_property"],
-            }
-        ],
     )
+
+    def instructions_by_class(
+        self,
+    ) -> dict[str, list[DeleteContentSubschemaInstruction]]:
+        """Returns a dictionary of instructions by class."""
+        instructions_by_class: dict[str, list[DeleteContentSubschemaInstruction]] = {}
+        for instruction in self.delete_content_subschema:
+            instructions_by_class.setdefault(instruction.class_name, []).append(
+                instruction
+            )
+        return instructions_by_class
