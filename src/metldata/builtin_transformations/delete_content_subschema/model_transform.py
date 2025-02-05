@@ -73,6 +73,9 @@ def delete_content_subschema(
             if "required" in target_schema:
                 with suppress(ValueError):
                     target_schema["required"].remove(target_property)
+                # if no required properties are left, remove the list
+                if len(target_schema["required"]) == 0:
+                    target_schema.pop("required", [])
 
         updated_class_defs[class_name] = class_def.model_validate(
             {**class_def.model_dump(), "content": content_schema}

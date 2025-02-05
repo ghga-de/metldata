@@ -21,6 +21,13 @@ classes:
           },
           "required":["email"],
         },
+        "remove_me": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "nested": {"type": "string"},
+          },
+        },
       },
       "type": "object"
     }

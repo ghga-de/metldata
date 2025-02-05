@@ -10,3 +10,5 @@ delete_content_subschema:
   # nested properties
   - class_name: Dataset
     content_path: dac_contact.email
+  - class_name: Dataset
+    content_path: remove_me

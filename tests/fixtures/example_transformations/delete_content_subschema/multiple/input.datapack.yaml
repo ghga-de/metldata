@@ -24,6 +24,8 @@ resources:
       content:
         dac_contact:
           email: dac@example.org
+        remove_me:
+          nested: dummy
       relations:
         files:
           - file_a

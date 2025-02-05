@@ -34,7 +34,6 @@ classes:
           "type": "object",
           "additionalProperties": false,
           "properties": {}, # <-
-          "required": [], # <-
         },
       },
       "type": "object"
