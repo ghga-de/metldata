@@ -19,15 +19,17 @@
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.delete_properties import (
-    data_transform,
-    model_transform,
-)
-from metldata.builtin_transformations.delete_properties.assumptions import (
+from metldata.builtin_transformations.delete_content_subschema.assumptions import (
     assert_classes_and_properties_exist,
 )
-from metldata.builtin_transformations.delete_properties.config import (
-    PropertyDeletionConfig,
+from metldata.builtin_transformations.delete_content_subschema.config import (
+    DeleteContentSubschemaConfig,
+)
+from metldata.builtin_transformations.delete_content_subschema.data_transform import (
+    delete_subschema_properties,
+)
+from metldata.builtin_transformations.delete_content_subschema.model_transform import (
+    delete_content_subschema,
 )
 from metldata.transform.base import (
     DataTransformer,
@@ -35,7 +37,7 @@ from metldata.transform.base import (
 )
 
 
-class PropertyDeletionDataTransformer(DataTransformer[PropertyDeletionConfig]):
+class PropertyDeletionDataTransformer(DataTransformer[DeleteContentSubschemaConfig]):
     """A transformer that deletes content properties from data."""
 
     def transform(self, data: DataPack) -> DataPack:
@@ -48,14 +50,14 @@ class PropertyDeletionDataTransformer(DataTransformer[PropertyDeletionConfig]):
             DataTransformationError:
                 if the transformation fails.
         """
-        return data_transform.delete_properties(
-            data=data, properties_by_class=self._config.properties_to_delete
+        return delete_subschema_properties(
+            data=data, instructions_by_class=self._config.instructions_by_class()
         )
 
 
 def check_model_assumptions(
     model: SchemaPack,
-    config: PropertyDeletionConfig,
+    config: DeleteContentSubschemaConfig,
 ) -> None:
     """Check the assumptions of the model.
 
@@ -64,24 +66,28 @@ def check_model_assumptions(
             if the model does not fulfill the assumptions.
     """
     assert_classes_and_properties_exist(
-        model=model, properties_by_class=config.properties_to_delete
+        schema=model, instructions_by_class=config.instructions_by_class()
     )
 
 
-def transform_model(model: SchemaPack, config: PropertyDeletionConfig) -> SchemaPack:
+def transform_model(
+    model: SchemaPack, config: DeleteContentSubschemaConfig
+) -> SchemaPack:
     """Transform the data model.
 
     Raises:
         DataModelTransformationError:
             if the transformation fails.
     """
-    return model_transform.delete_properties(
-        model=model, properties_by_class=config.properties_to_delete
+    return delete_content_subschema(
+        model=model, instructions_by_class=config.instructions_by_class()
     )
 
 
-PROPERTY_DELETION_TRANSFORMATION = TransformationDefinition[PropertyDeletionConfig](
-    config_cls=PropertyDeletionConfig,
+DELETE_CONTENT_SUBSCHEMA_TRANSFORMATION = TransformationDefinition[
+    DeleteContentSubschemaConfig
+](
+    config_cls=DeleteContentSubschemaConfig,
     check_model_assumptions=check_model_assumptions,
     transform_model=transform_model,
     data_transformer_factory=PropertyDeletionDataTransformer,
