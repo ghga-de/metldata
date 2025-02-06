@@ -38,6 +38,9 @@ from metldata.builtin_transformations.count_references import (
 from metldata.builtin_transformations.delete_content_subschema import (
     DELETE_CONTENT_SUBSCHEMA_TRANSFORMATION,
 )
+from metldata.builtin_transformations.delete_relations import (
+    DELETE_RELATIONS_TRANSFORMATION,
+)
 from metldata.builtin_transformations.infer_relations import (
     RELATION_INFERENCE_TRANSFORMATION,
 )
@@ -59,6 +62,7 @@ TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "count_content_values": COUNT_CONTENT_VALUES_TRANSFORMATION,
     "sum_operation": SUM_OPERATION_TRANSFORMATION,
     "copy_content": COPY_CONTENT_TRANSFORMATION,
+    "delete_relations": DELETE_RELATIONS_TRANSFORMATION,
 }
 
 
