@@ -1,8 +1,0 @@
-properties_to_delete:
-  File:
-    # required properties:
-    - filename
-    - checksum
-  Sample:
-    # optional properties not part of all samples in the input data:
-    - description

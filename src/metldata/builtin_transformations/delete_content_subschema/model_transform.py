@@ -23,13 +23,21 @@ from schemapack.spec.schemapack import (
     SchemaPack,
 )
 
+from metldata.builtin_transformations.add_content_properties.path import (
+    resolve_schema_object_path,
+)
 from metldata.builtin_transformations.common.model_transform import update_model
 from metldata.builtin_transformations.common.utils import content_to_dict
+from metldata.builtin_transformations.delete_content_subschema.instruction import (
+    DeleteContentSubschemaInstruction,
+)
 from metldata.transform.exceptions import EvitableTransformationError
 
 
-def delete_properties(
-    *, model: SchemaPack, properties_by_class: dict[str, list[str]]
+def delete_content_subschema(
+    *,
+    model: SchemaPack,
+    instructions_by_class: dict[str, list[DeleteContentSubschemaInstruction]],
 ) -> SchemaPack:
     """Delete content properties from a model.
 
@@ -43,7 +51,7 @@ def delete_properties(
         The model with the specified content properties being deleted.
     """
     updated_class_defs: dict[str, ClassDefinition] = {}
-    for class_name, properties in properties_by_class.items():
+    for class_name, instructions in instructions_by_class.items():
         class_def = model.classes.get(class_name)
 
         if not class_def:
@@ -51,15 +59,23 @@ def delete_properties(
 
         content_schema = content_to_dict(class_def)
 
-        for property in properties:
-            if "properties" not in content_schema:
-                raise EvitableTransformationError()
+        for instruction in instructions:
+            content_path = instruction.content_path
+            target_schema = content_schema
 
-            content_schema["properties"].pop(property, None)
+            # resolve is one layer to deep, go one step up in content path
+            path_parent, _, target_property = content_path.rpartition(".")
 
-            if "required" in content_schema:
+            if path_parent:
+                target_schema = resolve_schema_object_path(content_schema, path_parent)
+
+            target_schema["properties"].pop(target_property)
+            if "required" in target_schema:
                 with suppress(ValueError):
-                    content_schema["required"].remove(property)
+                    target_schema["required"].remove(target_property)
+                # if no required properties are left, remove the list
+                if len(target_schema["required"]) == 0:
+                    target_schema.pop("required", [])
 
         updated_class_defs[class_name] = class_def.model_validate(
             {**class_def.model_dump(), "content": content_schema}

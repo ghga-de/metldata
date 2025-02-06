@@ -16,7 +16,7 @@ resources:
   Dataset:
     dataset_1:
       content:
-        dac_contact: dac@example.org
+        dac_contact: {} # <-
       relations:
         files:
           - file_a

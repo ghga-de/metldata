@@ -35,8 +35,8 @@ from metldata.builtin_transformations.count_content_values.main import (
 from metldata.builtin_transformations.count_references import (
     COUNT_REFERENCES_TRANSFORMATION,
 )
-from metldata.builtin_transformations.delete_properties import (
-    PROPERTY_DELETION_TRANSFORMATION,
+from metldata.builtin_transformations.delete_content_subschema import (
+    DELETE_CONTENT_SUBSCHEMA_TRANSFORMATION,
 )
 from metldata.builtin_transformations.infer_relations import (
     RELATION_INFERENCE_TRANSFORMATION,
@@ -53,7 +53,7 @@ EXAMPLE_TRANSFORMATION_DIR = BASE_DIR / "example_transformations"
 
 TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "infer_relations": RELATION_INFERENCE_TRANSFORMATION,
-    "delete_properties": PROPERTY_DELETION_TRANSFORMATION,
+    "delete_content_subschema": DELETE_CONTENT_SUBSCHEMA_TRANSFORMATION,
     "add_content_properties": ADD_CONTENT_PROPERTIES_TRANSFORMATION,
     "count_references": COUNT_REFERENCES_TRANSFORMATION,
     "count_content_values": COUNT_CONTENT_VALUES_TRANSFORMATION,

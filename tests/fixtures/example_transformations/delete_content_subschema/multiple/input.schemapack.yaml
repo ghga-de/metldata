@@ -1,31 +1,36 @@
-# Transformed content schemas are embedded:
+# a more advanced schemapack:
 schemapack: 0.3.0
 classes:
   File:
     id:
       propertyName: alias
-    content: { # <-
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "additionalProperties": false,
-      "description": "A file is an object that contains information generated from a process, either an Experiment or an Analysis.",
-      "properties": {
-        "format": {
-          "type": "string"
-        },
-        "size": {
-          "type": "integer"
-        }
-      },
-      "required": [
-        "format",
-        "size"
-      ],
-      "type": "object"
-    }
+    content: ../../../example_content_schemas/File.schema.json
   Dataset:
     id:
       propertyName: alias
-    content: ../../../example_content_schemas/Dataset.schema.json
+    content: {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "additionalProperties": false,
+      "description": "A dataset that is a collection of files.",
+      "properties": {
+        "dac_contact": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "email": {"type": "string"},
+          },
+          "required":["email"],
+        },
+        "remove_me": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "nested": {"type": "string"},
+          },
+        },
+      },
+      "type": "object"
+    }
     relations:
       files:
         targetClass: File
@@ -38,14 +43,7 @@ classes:
   Sample:
     id:
       propertyName: alias
-    content: { # <-
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "additionalProperties": false,
-      "description": "A sample used to generate files in the context of an experiment.",
-      "properties": {
-      },
-      "type": "object"
-    }
+    content: ../../../example_content_schemas/Sample.schema.json
     relations:
       files:
         targetClass: File
