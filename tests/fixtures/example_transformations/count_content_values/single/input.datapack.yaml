@@ -38,10 +38,13 @@ resources:
   Sample:
     sample_a:
       content:
-        description: tissue
+        biomaterial:
+          description: tissue
     sample_b:
       content:
-        description: blood
+        biomaterial:
+          description: blood
     sample_c:
       content:
-        description: tissue
+        biomaterial:
+          description: tissue
