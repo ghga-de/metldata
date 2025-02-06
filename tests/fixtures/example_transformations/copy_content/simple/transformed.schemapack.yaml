@@ -12,21 +12,22 @@ classes:
         "properties":
           {
             "checksum": { "type": "string" },
-            "filename": { "type": "string" },
+            "file_info":
+              {
+                "additionalProperties": false,
+                "type": "object",
+                "properties": { "filename": { "type": "string" } },
+              },
             "format": { "type": "string" },
             "size": { "type": "integer" },
-            "dataset_information":
-            {
-              "additionalProperties": false,
-              "properties":
-              {
-                "dac_contact": { "type": "string" } # <-
-              },
-              "type": "object",
-            },
+            "dataset_information": {
+                "additionalProperties": false,
+                "properties": { "dac_contact": { "type": "string" } },
+                "type": "object",
+              }, # <-
           },
         "required":
-          ["filename", "format", "checksum", "size", "dataset_information"],
+          ["file_info", "format", "checksum", "size", "dataset_information"],
         "type": "object",
       }
   Dataset:
@@ -51,11 +52,11 @@ classes:
         "additionalProperties": false,
         "description": "A sample used to generate files in the context of an experiment.",
         "properties": {
-          "description": {"type": "string"},
-          "dac_contact": {"type": "string"}, # <-
-          "referenced_filename": {"type": "string"}, # <-
-        },
-        "type": "object"
+            "description": { "type": "string" },
+            "dac_contact": { "type": "string" },
+            "referenced_filename": { "type": "string" },
+          }, # <- # <-
+        "type": "object",
       }
     relations:
       files:
