@@ -50,6 +50,12 @@ def content_to_dict(class_def: ClassDefinition) -> dict[str, Any]:
     return class_def_dict["content"]
 
 
+def relations_to_dict(class_def: ClassDefinition) -> dict[str, Any]:
+    """Converts a relation schema into a dictionary."""
+    class_def_dict = json.loads(class_def.model_dump_json())
+    return class_def_dict["relations"]
+
+
 def get_relation(element: RelationPathElement, schema: SchemaPack) -> Relation:
     """Get the relation object for a path element.
 

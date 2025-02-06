@@ -1,0 +1,5 @@
+delete_relations:
+  - class_name: Sample
+    relation_name: files
+  - class_name: Experiment
+    relation_name: samples
