@@ -17,12 +17,12 @@
 
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
-    resolve_schema_object_path,
-)
 from metldata.builtin_transformations.common.instruction import (
     InstructionProtocol,
     SourceInstructionProtocol,
+)
+from metldata.builtin_transformations.common.model_transform import (
+    resolve_schema_object_path,
 )
 from metldata.builtin_transformations.common.path.path import RelationPath
 from metldata.transform.exceptions import ModelAssumptionError

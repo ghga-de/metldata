@@ -17,11 +17,9 @@
 
 from schemapack.spec.schemapack import ClassDefinition, SchemaPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
-    resolve_schema_object_path,
-)
 from metldata.builtin_transformations.common.model_transform import (
     add_property_per_instruction,
+    resolve_schema_object_path,
     update_model,
 )
 from metldata.builtin_transformations.common.utils import content_to_dict

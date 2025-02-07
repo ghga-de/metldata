@@ -17,16 +17,13 @@
 specific slot and adding those to a datapack.
 """
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from typing import Any
 
 from schemapack._internals.spec.custom_types import ResourceId
 from schemapack._internals.spec.datapack import ResourceIdSet
 from schemapack.spec.datapack import DataPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
-    resolve_data_object_path,
-)
 from metldata.builtin_transformations.common.custom_types import (
     MutableClassResources,
     MutableDatapack,
@@ -175,3 +172,25 @@ def get_modification_target(
     if not isinstance(target, dict) or property in target:
         raise EvitableTransformationError()
     return target
+
+
+def resolve_data_object_path(data: Mapping, path: str) -> Any:
+    """Given a mapping, resolve the dot-separated path to a property. Return the
+    property value.
+
+    Args:
+        data:
+            The JSON object.
+        path:
+            The dot-separated path to the property.
+
+    Raises:
+        KeyError:
+            If the path does not exist in the data.
+
+    Returns: The value of the property at the given path.
+    """
+    if path:
+        for key in path.split("."):
+            data = data[key]
+    return data

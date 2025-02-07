@@ -15,13 +15,11 @@
 
 "Common functions used in model transformations of individual transformations"
 
+from collections.abc import Mapping
 from typing import Any
 
 from schemapack.spec.schemapack import ClassDefinition, SchemaPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
-    resolve_schema_object_path,
-)
 from metldata.builtin_transformations.common.instruction import (
     TargetInstruction,
     TargetInstructionProtocol,
@@ -89,3 +87,25 @@ def add_property_per_instruction(
         raise EvitableTransformationError()
 
     target_schema.setdefault("properties", {})[property_name] = source_schema
+
+
+def resolve_schema_object_path(json_schema: Mapping[str, Any], path: str) -> Any:
+    """Given a JSON schema describing an object, resolve the dot-separated path to a
+    property. Return the property schema.
+
+    Args:
+        json_schema:
+            The JSON schema of the object.
+        path:
+            The dot-separated path to the property.
+
+    Raises:
+        KeyError:
+            If the path does not exist in the schema.
+
+    Returns: The schema of the property at the given path.
+    """
+    if path:
+        for key in path.split("."):
+            json_schema = json_schema["properties"][key]
+    return json_schema

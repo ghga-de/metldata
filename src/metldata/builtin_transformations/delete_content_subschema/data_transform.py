@@ -18,10 +18,10 @@
 
 from schemapack.spec.datapack import DataPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
+from metldata.builtin_transformations.common.data_transform import (
+    get_class_resources,
     resolve_data_object_path,
 )
-from metldata.builtin_transformations.common.data_transform import get_class_resources
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.delete_content_subschema.instruction import (
     DeleteContentSubschemaInstruction,

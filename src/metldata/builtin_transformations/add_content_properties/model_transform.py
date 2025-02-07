@@ -24,10 +24,10 @@ from schemapack.spec.schemapack import (
 from metldata.builtin_transformations.add_content_properties.instruction import (
     AddContentPropertyInstruction,
 )
-from metldata.builtin_transformations.add_content_properties.path import (
+from metldata.builtin_transformations.common.model_transform import (
     resolve_schema_object_path,
+    update_model,
 )
-from metldata.builtin_transformations.common.model_transform import update_model
 from metldata.builtin_transformations.common.utils import content_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 

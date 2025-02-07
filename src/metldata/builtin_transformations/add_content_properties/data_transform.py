@@ -21,7 +21,7 @@ from schemapack.spec.datapack import DataPack
 from metldata.builtin_transformations.add_content_properties.instruction import (
     AddContentPropertyInstruction,
 )
-from metldata.builtin_transformations.add_content_properties.path import (
+from metldata.builtin_transformations.common.data_transform import (
     resolve_data_object_path,
 )
 from metldata.builtin_transformations.common.utils import data_to_dict
