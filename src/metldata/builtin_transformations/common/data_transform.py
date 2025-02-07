@@ -153,7 +153,6 @@ def get_source_values(
     content_path: str,
 ) -> list[Any]:
     """Get countable properties from all resources referred to by the relation."""
-    # Schema that includes the property that is of interest.
     try:
         return [
             resolve_data_object_path(
