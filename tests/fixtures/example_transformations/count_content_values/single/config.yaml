@@ -5,4 +5,4 @@ count_content_values:
       property_name: description
     source:
       relation_path: Dataset(files)>File(samples)>Sample
-      content_path: description
+      content_path: biomaterial.description

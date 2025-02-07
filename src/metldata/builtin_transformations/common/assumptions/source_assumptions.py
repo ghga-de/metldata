@@ -17,6 +17,9 @@
 
 from schemapack.spec.schemapack import SchemaPack
 
+from metldata.builtin_transformations.add_content_properties.path import (
+    resolve_schema_object_path,
+)
 from metldata.builtin_transformations.common.instruction import (
     InstructionProtocol,
     SourceInstructionProtocol,
@@ -57,7 +60,7 @@ def assert_source_content_path_exists(
             f"Class {referenced_class} does not exist in the model."
         )
 
-    content_slot = class_def.content["properties"].get(content_path)
+    content_slot = resolve_schema_object_path(class_def.content, content_path)
 
     if not content_slot:
         raise ModelAssumptionError(

@@ -17,6 +17,9 @@
 
 from schemapack.spec.schemapack import SchemaPack
 
+from metldata.builtin_transformations.add_content_properties.path import (
+    resolve_schema_object_path,
+)
 from metldata.builtin_transformations.common.assumptions import (
     assert_class_is_source,
     assert_object_path_exists,
@@ -66,7 +69,7 @@ def assert_countable_data_type(
             f"Class {referenced_class} does not exist in the model."
         )
 
-    content_slot = class_def.content["properties"].get(content_path)
+    content_slot = resolve_schema_object_path(class_def.content, content_path)
 
     if content_slot["type"] not in {"integer", "number", "boolean"}:
         raise ModelAssumptionError(

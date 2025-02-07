@@ -6,3 +6,10 @@ sum_operation:
     source:
       relation_path: Dataset(files)>File
       content_path: size
+  - class_name: Dataset
+    target_content:
+      object_path: file_summary.stats
+      property_name: submitted_files
+    source:
+      relation_path: Dataset(files)>File
+      content_path: submission.included

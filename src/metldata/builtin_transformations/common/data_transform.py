@@ -155,7 +155,9 @@ def get_source_values(
     """Get countable properties from all resources referred to by the relation."""
     try:
         return [
-            referenced_resources[resource_id]["content"].get(content_path)
+            resolve_data_object_path(
+                referenced_resources[resource_id]["content"], content_path
+            )
             for resource_id in relation_target_ids
         ]
     except KeyError as exc:
