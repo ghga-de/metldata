@@ -17,6 +17,7 @@
 """Transformation test cases."""
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from pydantic import BaseModel
 from schemapack import load_datapack, load_schemapack
@@ -52,7 +53,8 @@ from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR, read_yaml
 
-EXAMPLE_TRANSFORMATION_DIR = BASE_DIR / "example_transformations"
+HAPPY_TRANSFORMATION_DIR = BASE_DIR / "happy_transformations"
+UNHAPPY_TRANSFORMATION_DIR = BASE_DIR / "unhappy_transformations"
 
 TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "infer_relations": RELATION_INFERENCE_TRANSFORMATION,
@@ -84,13 +86,11 @@ class TransformationTestCase:
 
 
 def _read_test_case(
-    *,
-    transformation_name: str,
-    case_name: str,
+    *, transformation_name: str, case_name: str, base_dir: Path
 ) -> TransformationTestCase:
     """Read a test case for a transformation."""
     transformation_definition = TRANSFORMATIONS_BY_NAME[transformation_name]
-    case_dir = EXAMPLE_TRANSFORMATION_DIR / transformation_name / case_name
+    case_dir = base_dir / transformation_name / case_name
     config_path = case_dir / "config.yaml"
     input_model_path = case_dir / "input.schemapack.yaml"
     input_data_path = case_dir / "input.datapack.yaml"
@@ -121,20 +121,46 @@ def _read_test_case(
     )
 
 
-def _read_all_test_cases() -> list[TransformationTestCase]:
+def _read_test_case_variant(transformation_base_dir: Path, transformation_name: str):
+    """Read from specific base dir to distinguish between happy/unhappy test cases."""
+    transformation_dir = transformation_base_dir / transformation_name
+    test_cases = []
+
+    if transformation_dir.exists():
+        for path in transformation_dir.iterdir():
+            if path.is_dir():
+                test_cases.append(
+                    _read_test_case(
+                        transformation_name=transformation_name,
+                        case_name=path.name,
+                        base_dir=transformation_base_dir,
+                    )
+                )
+    return test_cases
+
+
+def _read_all_test_cases() -> (
+    tuple[list[TransformationTestCase], list[TransformationTestCase]]
+):
     """Read all test cases for a transformation."""
-    return [
-        _read_test_case(
-            transformation_name=transformation_name,
-            case_name=case_name,
+    happy_test_cases = []
+    unhappy_test_cases = []
+
+    for transformation_name in TRANSFORMATIONS_BY_NAME:
+        happy_test_cases.extend(
+            _read_test_case_variant(
+                transformation_base_dir=HAPPY_TRANSFORMATION_DIR,
+                transformation_name=transformation_name,
+            )
         )
-        for transformation_name in TRANSFORMATIONS_BY_NAME
-        for case_name in [
-            path.name
-            for path in (EXAMPLE_TRANSFORMATION_DIR / transformation_name).iterdir()
-            if path.is_dir()
-        ]
-    ]
+        unhappy_test_cases.extend(
+            _read_test_case_variant(
+                transformation_base_dir=UNHAPPY_TRANSFORMATION_DIR,
+                transformation_name=transformation_name,
+            )
+        )
+
+    return happy_test_cases, unhappy_test_cases
 
 
-TRANSFORMATION_TEST_CASES = _read_all_test_cases()
+HAPPY_TEST_CASES, UNHAPPY_TEST_CASES = _read_all_test_cases()
