@@ -55,7 +55,7 @@ classes:
             "description": { "type": "string" },
             "dac_contact": { "type": "string" },
             "referenced_filename": { "type": "string" },
-          }, # <- # <-
+          }, # <-
         "type": "object",
       }
     relations:
