@@ -21,6 +21,23 @@ from pydantic_settings import BaseSettings
 from metldata.builtin_transformations.common import NewContentSchemaPath, SourcePath
 
 
+class CopyContentSchemaPath(NewContentSchemaPath):
+    """Specialized version of NewContentSchemaPath that adds a default object path to
+    remove the necessity to explicitly specify an empty object path for properties to
+    be copied to the root class content.
+    """
+
+    object_path: str = Field(
+        "",
+        description=(
+            "The path to the content object to which a property shall be added. The"
+            + " path must be specified in dot notation, equivalently to JavaScript"
+            + " property accessors."
+        ),
+        examples=["some_property.another_nested_property"],
+    )
+
+
 class CopyContentInstruction(BaseSettings):
     """A model describing an instruction to copy a content property from one class in a
     schemapack to another.
@@ -28,7 +45,7 @@ class CopyContentInstruction(BaseSettings):
 
     class_name: str = Field(..., description="The name of the class to modify.")
 
-    target_content: NewContentSchemaPath = Field(
+    target_content: CopyContentSchemaPath = Field(
         ...,
         description="NewContentSchemaPath object describing where a"
         + " content property will be copied to.",
