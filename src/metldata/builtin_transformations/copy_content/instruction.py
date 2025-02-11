@@ -18,7 +18,12 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
-from metldata.builtin_transformations.common import NewContentSchemaPath, SourcePath
+from metldata.builtin_transformations.common import SourcePath
+from metldata.builtin_transformations.common.contentschema import NewContentSchemaPath
+from metldata.builtin_transformations.common.instruction import (
+    TargetInstructionProtocol,
+    TargetSourceInstructionProtocol,
+)
 
 
 class CopyContentSchemaPath(NewContentSchemaPath):
@@ -37,8 +42,12 @@ class CopyContentSchemaPath(NewContentSchemaPath):
         examples=["some_property.another_nested_property"],
     )
 
+    property_name: str = Field(..., description="The name of the property to be added.")
 
-class CopyContentInstruction(BaseSettings):
+
+class CopyContentInstruction(
+    BaseSettings, TargetInstructionProtocol, TargetSourceInstructionProtocol
+):
     """A model describing an instruction to copy a content property from one class in a
     schemapack to another.
     """
