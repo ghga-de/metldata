@@ -60,7 +60,7 @@ def add_content_schema_copy(
                 raise EvitableTransformationError() from exc
 
             add_property_per_instruction(
-                cls_instruction=instruction,
+                cls_instruction=instruction,  # type: ignore
                 content_schema=content_schema,
                 source_schema=source_content_schema,
             )

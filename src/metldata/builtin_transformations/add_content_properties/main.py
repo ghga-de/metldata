@@ -47,7 +47,7 @@ class AddContentPropertiesTransformer(DataTransformer[AddContentPropertiesConfig
             data: The data as DataPack to be transformed.
         """
         return add_properties(
-            data=data, instructions_by_class=self._config.instructions_by_class()
+            data=data, instructions_by_class=self._config.instructions_by_class
         )
 
 
@@ -62,7 +62,7 @@ def check_model_assumptions_wrapper(
             if the model does not fulfill the assumptions.
     """
     check_model_assumptions(
-        schema=model, instructions_by_class=config.instructions_by_class()
+        schema=model, instructions_by_class=config.instructions_by_class
     )
 
 
@@ -71,7 +71,7 @@ def transform_model(
 ) -> SchemaPack:
     """Transform the data model."""
     return add_content_properties(
-        model=model, instructions_by_class=config.instructions_by_class()
+        model=model, instructions_by_class=config.instructions_by_class
     )
 
 

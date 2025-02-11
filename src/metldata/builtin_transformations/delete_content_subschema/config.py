@@ -16,9 +16,12 @@
 
 """Models used to describe content properties that shall be deleted."""
 
+from functools import cached_property
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from metldata.builtin_transformations.common.instruction import instructions_by_class
 from metldata.builtin_transformations.delete_content_subschema.instruction import (
     DeleteContentSubschemaInstruction,
 )
@@ -36,13 +39,7 @@ class DeleteContentSubschemaConfig(BaseSettings):
         ),
     )
 
-    def instructions_by_class(
-        self,
-    ) -> dict[str, list[DeleteContentSubschemaInstruction]]:
+    @cached_property
+    def instructions_by_class(self):
         """Returns a dictionary of instructions by class."""
-        instructions_by_class: dict[str, list[DeleteContentSubschemaInstruction]] = {}
-        for instruction in self.delete_content_subschema:
-            instructions_by_class.setdefault(instruction.class_name, []).append(
-                instruction
-            )
-        return instructions_by_class
+        return instructions_by_class(self.delete_content_subschema)

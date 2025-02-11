@@ -14,9 +14,12 @@
 # limitations under the License.
 """Models used to describe count content properties that shall be calculated and added."""
 
+from functools import cached_property
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from metldata.builtin_transformations.common.instruction import instructions_by_class
 from metldata.builtin_transformations.count_references.instruction import (
     AddReferenceCountPropertyInstruction,
 )
@@ -36,15 +39,7 @@ class CountReferencesConfig(BaseSettings):
         examples=[],
     )
 
-    def instructions_by_class(
-        self,
-    ) -> dict[str, list[AddReferenceCountPropertyInstruction]]:
-        """Returns a dictionary of instructions by class (i.e. config for each class)."""
-        instructions_by_class: dict[
-            str, list[AddReferenceCountPropertyInstruction]
-        ] = {}
-        for instruction in self.count_references:
-            instructions_by_class.setdefault(instruction.class_name, []).append(
-                instruction
-            )
-        return instructions_by_class
+    @cached_property
+    def instructions_by_class(self):
+        """Returns a dictionary of instructions by class."""
+        return instructions_by_class(self.count_references)
