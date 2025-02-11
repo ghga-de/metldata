@@ -16,6 +16,7 @@
 "Common functions used in model transformations of individual transformations"
 
 from collections.abc import Mapping
+from copy import deepcopy
 from typing import Any
 
 from schemapack.spec.schemapack import ClassDefinition, SchemaPack
@@ -86,7 +87,7 @@ def add_property_per_instruction(
     if property_name in target_schema.get("properties", {}):
         raise EvitableTransformationError()
 
-    target_schema.setdefault("properties", {})[property_name] = source_schema
+    target_schema.setdefault("properties", {})[property_name] = deepcopy(source_schema)
 
 
 def resolve_schema_object_path(json_schema: Mapping[str, Any], path: str) -> Any:
