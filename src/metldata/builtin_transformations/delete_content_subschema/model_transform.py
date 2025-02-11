@@ -69,13 +69,13 @@ def delete_content_subschema(
             if path_parent:
                 target_schema = resolve_schema_object_path(content_schema, path_parent)
 
-            target_schema["properties"].pop(target_property)
+            del target_schema["properties"][target_property]
             if "required" in target_schema:
                 with suppress(ValueError):
                     target_schema["required"].remove(target_property)
                 # if no required properties are left, remove the list
                 if len(target_schema["required"]) == 0:
-                    target_schema.pop("required", [])
+                    del target_schema["required"]
 
         updated_class_defs[class_name] = class_def.model_validate(
             {**class_def.model_dump(), "content": content_schema}
