@@ -20,12 +20,12 @@ import pytest
 
 from metldata.transform.handling import TransformationHandler
 from tests.fixtures.transformations import (
-    HAPPY_TEST_CASES,
+    UNHAPPY_TEST_CASES,
     TransformationTestCase,
 )
 
 
-@pytest.mark.parametrize("test_case", HAPPY_TEST_CASES, ids=str)
+@pytest.mark.parametrize("test_case", UNHAPPY_TEST_CASES, ids=str)
 def test_model_transformations(
     test_case: TransformationTestCase,
 ):
@@ -40,7 +40,7 @@ def test_model_transformations(
     assert transformed_model == test_case.transformed_model
 
 
-@pytest.mark.parametrize("test_case", HAPPY_TEST_CASES, ids=str)
+@pytest.mark.parametrize("test_case", UNHAPPY_TEST_CASES, ids=str)
 def test_data_transformations(
     test_case: TransformationTestCase,
 ):
