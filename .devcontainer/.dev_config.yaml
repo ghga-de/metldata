@@ -295,7 +295,7 @@ artifact_infos:
         },
     },
   ]
-db_connection_str: "mongodb://mongodb:27017"
+mongo_dsn: "mongodb://mongodb:27017"
 db_name: dev_db
 loader_token_hashes:
   ["09e5724dab34b50fe2db5ebae7ac5eac4ef2904d105f8f2b3d5a4cb2c7f43da4"]
