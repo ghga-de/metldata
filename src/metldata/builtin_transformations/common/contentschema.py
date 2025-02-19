@@ -27,7 +27,7 @@ class NewContentSchemaPath(BaseSettings):
     """
 
     object_path: str = Field(
-        ...,
+        default=...,
         description=(
             "The path to the content object to which a property shall be added. The"
             + " path must be specified in dot notation, equivalently to JavaScript"
@@ -36,7 +36,9 @@ class NewContentSchemaPath(BaseSettings):
         examples=["some_property.another_nested_property"],
     )
 
-    property_name: str = Field(..., description="The name of the property to be added.")
+    property_name: str = Field(
+        default=..., description="The name of the property to be added."
+    )
 
 
 class SourcePath(BaseSettings):
@@ -46,8 +48,8 @@ class SourcePath(BaseSettings):
     """
 
     relation_path: RelationPath = Field(
-        ...,
+        default=...,
         description="A RelationPath establishing how to navigate between classes.",
         examples=["ClassA(relation)>ClassB"],
     )
-    content_path: str = Field(..., description="Content schema property name.")
+    content_path: str = Field(default=..., description="Content schema property name.")

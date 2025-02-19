@@ -17,7 +17,9 @@
 
 from schemapack.spec.datapack import DataPack
 
-from metldata.builtin_transformations.common.resolve_path import resolve_path
+from metldata.builtin_transformations.common.resolve_path import (
+    resolve_path,
+)
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.count_references.instruction import (
     AddReferenceCountPropertyInstruction,

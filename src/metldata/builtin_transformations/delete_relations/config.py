@@ -32,7 +32,7 @@ class DeleteRelationsConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     delete_relations: list[DeleteRelationInstruction] = Field(
-        ...,
+        default=...,
         description="A list of instructions describing which relation is removed from"
         + " which class.",
     )

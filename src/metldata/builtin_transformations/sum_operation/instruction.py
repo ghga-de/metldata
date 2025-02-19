@@ -29,15 +29,15 @@ class SumOperationInstruction(BaseSettings):
     the sum of values from another property.
     """
 
-    class_name: str = Field(..., description="The name of the class to modify.")
+    class_name: str = Field(default=..., description="The name of the class to modify.")
 
     target_content: NewContentSchemaPath = Field(
-        ...,
+        default=...,
         description="NewContentSchemaPath object describing where a new"
         + " content property will be added.",
     )
 
     source: SourcePath = Field(
-        ...,
+        default=...,
         description="SourcePath to the property containing the values to be summed for the new content property.",
     )

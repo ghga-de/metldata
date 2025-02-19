@@ -35,7 +35,7 @@ class SumOperationConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     sum_operation: list[SumOperationInstruction] = Field(
-        ...,
+        default=...,
         description=(
             "A list of instructions of for performing sum operations"
             + " and adding the corresponding properties to the model and data."

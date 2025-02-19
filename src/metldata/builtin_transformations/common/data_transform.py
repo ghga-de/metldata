@@ -17,7 +17,7 @@
 specific slot and adding those to a datapack.
 """
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from typing import Any
 
 from schemapack._internals.spec.custom_types import ResourceId
@@ -37,7 +37,10 @@ from metldata.builtin_transformations.common.instruction import (
     TargetSourceInstructionProtocol,
 )
 from metldata.builtin_transformations.common.path.path import RelationPath
-from metldata.builtin_transformations.common.resolve_path import resolve_path
+from metldata.builtin_transformations.common.resolve_path import (
+    resolve_data_object_path,
+    resolve_path,
+)
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 
@@ -172,25 +175,3 @@ def get_modification_target(
     if not isinstance(target, dict) or property in target:
         raise EvitableTransformationError()
     return target
-
-
-def resolve_data_object_path(data: Mapping, path: str) -> Any:
-    """Given a mapping, resolve the dot-separated path to a property. Return the
-    property value.
-
-    Args:
-        data:
-            The JSON object.
-        path:
-            The dot-separated path to the property.
-
-    Raises:
-        KeyError:
-            If the path does not exist in the data.
-
-    Returns: The value of the property at the given path.
-    """
-    if path:
-        for key in path.split("."):
-            data = data[key]
-    return data

@@ -35,7 +35,7 @@ class AddContentPropertiesConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     add_content_properties: list[AddContentPropertyInstruction] = Field(
-        ...,
+        default=...,
         description=(
             "A list of instructions to add content properties to the model and data."
         ),

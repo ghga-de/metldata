@@ -33,7 +33,7 @@ class RelationInferenceConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     inferred_relations: dict[str, dict[str, RelationDetails]] = Field(
-        ...,
+        default=...,
         description=(
             "A nested dictionary describing instructions to infer relations based"
             + " on existing relations. On the first level keys refer to classes to"

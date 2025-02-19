@@ -33,7 +33,7 @@ class DeleteContentSubschemaConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     delete_content_subschema: list[DeleteContentSubschemaInstruction] = Field(
-        ...,
+        default=...,
         description=(
             "A list of instructions to remove content properties from the model and data."
         ),

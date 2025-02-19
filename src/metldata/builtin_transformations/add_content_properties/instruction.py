@@ -33,7 +33,7 @@ class AddContentPropertyInstruction(BaseSettings):
     schemapack, including an associated default value in corresponding data.
     """
 
-    class_name: str = Field(..., description="The name of the class to modify.")
+    class_name: str = Field(default=..., description="The name of the class to modify.")
 
     target_content: NewContentSchemaPath
 

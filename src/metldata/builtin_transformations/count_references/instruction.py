@@ -28,15 +28,15 @@ class AddReferenceCountPropertyInstruction(BaseSettings):
     classes are connected.
     """
 
-    class_name: str = Field(..., description="The name of the class to modify.")
+    class_name: str = Field(default=..., description="The name of the class to modify.")
 
     target_content: NewContentSchemaPath = Field(
-        ...,
+        default=...,
         description="A NewContentSchemaPath that describes a path to an already"
         + " existing object within the content schema and the name of a property to be"
         + " added to that object's schema",
     )
     source_relation_path: RelationPath = Field(
-        ...,
+        default=...,
         description="The path describing the relation between the classes of a metadata model.",
     )

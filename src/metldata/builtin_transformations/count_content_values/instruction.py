@@ -33,16 +33,16 @@ class CountContentValueInstruction(BaseSettings):
     schemapack, including an associated default value in corresponding data.
     """
 
-    class_name: str = Field(..., description="The name of the class to modify.")
+    class_name: str = Field(default=..., description="The name of the class to modify.")
 
     target_content: NewContentSchemaPath = Field(
-        ...,
+        default=...,
         description="NewContentSchemaPath object describing where a new"
         + " content property will be added.",
     )
 
     source: SourcePath = Field(
-        ...,
+        default=...,
         description="SourcePath object defining the path to reach a property"
         + " from which content values are sourced.",
     )

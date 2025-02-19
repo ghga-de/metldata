@@ -32,7 +32,7 @@ def copy_content(
     """Apply all transformation instructions."""
     return transform_data(
         data=data,
-        instructions_by_class=instructions_by_class,  # type: ignore
+        instructions_by_class=instructions_by_class,
         calculate_value=values_to_copy,
     )
 

@@ -31,7 +31,7 @@ class CountReferencesConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     count_references: list[AddReferenceCountPropertyInstruction] = Field(
-        ...,
+        default=...,
         description=(
             "A list of instructions describing for which class and"
             + " corresponding relation path references should be counted."

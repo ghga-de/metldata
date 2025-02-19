@@ -32,7 +32,7 @@ class CopyContentConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     copy_content: list[CopyContentInstruction] = Field(
-        ...,
+        default=...,
         description=(
             "A list of instructions to add content properties to the model and data."
         ),

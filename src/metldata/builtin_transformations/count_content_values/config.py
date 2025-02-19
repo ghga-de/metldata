@@ -34,7 +34,7 @@ class CountContentValuesConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     count_content_values: list[CountContentValueInstruction] = Field(
-        ...,
+        default=...,
         description=(
             "A list of instructions to add content properties to the model and data."
         ),

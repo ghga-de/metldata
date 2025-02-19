@@ -47,7 +47,9 @@ Here is a brief summary of the principle steps of transformation:
 from schemapack.spec.custom_types import ResourceId
 from schemapack.spec.datapack import DataPack, Resource
 
-from metldata.builtin_transformations.common.resolve_path import resolve_path
+from metldata.builtin_transformations.common.resolve_path import (
+    resolve_path,
+)
 from metldata.builtin_transformations.infer_relations.relations import (
     InferenceInstruction,
 )

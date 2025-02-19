@@ -9,12 +9,14 @@ copy_content:
   - class_name: Sample
     target_content:
       property_name: referenced_filename
+      object_path: ""
     source:
       relation_path: Sample(files)>File
       content_path: file_info.filename
   - class_name: Sample
     target_content:
       property_name: dac_contact
+      object_path: ""
     source:
       relation_path: Sample(files)>File<(files)Dataset
       content_path: dac_contact
