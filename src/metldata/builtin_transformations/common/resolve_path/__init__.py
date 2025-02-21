@@ -15,7 +15,7 @@
 
 """Common relation and object path related functionality."""
 
-from metldata.builtin_transformations.common.resolve_path.resolve_path_elements import (
+from metldata.builtin_transformations.common.resolve_path.resolve_path_element_relations import (
     resolve_path,  # noqa: F401
 )
 from metldata.builtin_transformations.common.resolve_path.resolve_path_properties import (
