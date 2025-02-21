@@ -15,9 +15,12 @@
 
 """Models used to describe content properties that shall be copied."""
 
+from functools import cached_property
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from metldata.builtin_transformations.common.instruction import instructions_by_class
 from metldata.builtin_transformations.copy_content.instruction import (
     CopyContentInstruction,
 )
@@ -29,19 +32,13 @@ class CopyContentConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     copy_content: list[CopyContentInstruction] = Field(
-        ...,
+        default=...,
         description=(
             "A list of instructions to add content properties to the model and data."
         ),
     )
 
-    def instructions_by_class(
-        self,
-    ) -> dict[str, list[CopyContentInstruction]]:
+    @cached_property
+    def instructions_by_class(self):
         """Returns a dictionary of instructions by class."""
-        instructions_by_class: dict[str, list[CopyContentInstruction]] = {}
-        for instruction in self.copy_content:
-            instructions_by_class.setdefault(instruction.class_name, []).append(
-                instruction
-            )
-        return instructions_by_class
+        return instructions_by_class(self.copy_content)

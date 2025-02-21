@@ -17,14 +17,14 @@
 
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
-    resolve_schema_object_path,
-)
 from metldata.builtin_transformations.common.assumptions import (
     assert_class_is_source,
     assert_object_path_exists,
     assert_path_classes_and_relations_exist,
     assert_relation_target_multiplicity,
+)
+from metldata.builtin_transformations.common.model_transform import (
+    resolve_schema_object_path,
 )
 from metldata.builtin_transformations.count_content_values.assumptions import (
     assert_source_content_path_exists,

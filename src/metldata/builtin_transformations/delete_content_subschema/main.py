@@ -51,7 +51,7 @@ class PropertyDeletionDataTransformer(DataTransformer[DeleteContentSubschemaConf
                 if the transformation fails.
         """
         return delete_subschema_properties(
-            data=data, instructions_by_class=self._config.instructions_by_class()
+            data=data, instructions_by_class=self._config.instructions_by_class
         )
 
 
@@ -66,7 +66,7 @@ def check_model_assumptions(
             if the model does not fulfill the assumptions.
     """
     assert_classes_and_properties_exist(
-        schema=model, instructions_by_class=config.instructions_by_class()
+        schema=model, instructions_by_class=config.instructions_by_class
     )
 
 
@@ -80,7 +80,7 @@ def transform_model(
             if the transformation fails.
     """
     return delete_content_subschema(
-        model=model, instructions_by_class=config.instructions_by_class()
+        model=model, instructions_by_class=config.instructions_by_class
     )
 
 

@@ -15,9 +15,12 @@
 
 """Models used to describe sum operations that shall be calculated and added."""
 
+from functools import cached_property
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from metldata.builtin_transformations.common.instruction import instructions_by_class
 from metldata.builtin_transformations.sum_operation.instruction import (
     SumOperationInstruction,
 )
@@ -32,20 +35,14 @@ class SumOperationConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     sum_operation: list[SumOperationInstruction] = Field(
-        ...,
+        default=...,
         description=(
             "A list of instructions of for performing sum operations"
             + " and adding the corresponding properties to the model and data."
         ),
     )
 
-    def instructions_by_class(
-        self,
-    ) -> dict[str, list[SumOperationInstruction]]:
-        """Returns a dictionary of instructions by class (i.e. config for each class)."""
-        instructions_by_class: dict[str, list[SumOperationInstruction]] = {}
-        for instruction in self.sum_operation:
-            instructions_by_class.setdefault(instruction.class_name, []).append(
-                instruction
-            )
-        return instructions_by_class
+    @cached_property
+    def instructions_by_class(self):
+        """Returns a dictionary of instructions by class."""
+        return instructions_by_class(self.sum_operation)

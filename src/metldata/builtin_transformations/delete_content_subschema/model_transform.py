@@ -23,10 +23,10 @@ from schemapack.spec.schemapack import (
     SchemaPack,
 )
 
-from metldata.builtin_transformations.add_content_properties.path import (
+from metldata.builtin_transformations.common.model_transform import (
     resolve_schema_object_path,
+    update_model,
 )
-from metldata.builtin_transformations.common.model_transform import update_model
 from metldata.builtin_transformations.common.utils import content_to_dict
 from metldata.builtin_transformations.delete_content_subschema.instruction import (
     DeleteContentSubschemaInstruction,
@@ -69,13 +69,13 @@ def delete_content_subschema(
             if path_parent:
                 target_schema = resolve_schema_object_path(content_schema, path_parent)
 
-            target_schema["properties"].pop(target_property)
+            del target_schema["properties"][target_property]
             if "required" in target_schema:
                 with suppress(ValueError):
                     target_schema["required"].remove(target_property)
                 # if no required properties are left, remove the list
                 if len(target_schema["required"]) == 0:
-                    target_schema.pop("required", [])
+                    del target_schema["required"]
 
         updated_class_defs[class_name] = class_def.model_validate(
             {**class_def.model_dump(), "content": content_schema}

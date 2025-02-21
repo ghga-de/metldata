@@ -15,9 +15,12 @@
 
 """Models used to describe relations that shall be deleted."""
 
+from functools import cached_property
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from metldata.builtin_transformations.common.instruction import instructions_by_class
 from metldata.builtin_transformations.delete_relations.instruction import (
     DeleteRelationInstruction,
 )
@@ -29,18 +32,12 @@ class DeleteRelationsConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     delete_relations: list[DeleteRelationInstruction] = Field(
-        ...,
+        default=...,
         description="A list of instructions describing which relation is removed from"
         + " which class.",
     )
 
-    def instructions_by_class(
-        self,
-    ) -> dict[str, list[DeleteRelationInstruction]]:
-        """Returns a dictionary of instructions by class (i.e. config for each class)."""
-        instructions_by_class: dict[str, list[DeleteRelationInstruction]] = {}
-        for instruction in self.delete_relations:
-            instructions_by_class.setdefault(instruction.class_name, []).append(
-                instruction
-            )
-        return instructions_by_class
+    @cached_property
+    def instructions_by_class(self):
+        """Returns a dictionary of instructions by class."""
+        return instructions_by_class(self.delete_relations)

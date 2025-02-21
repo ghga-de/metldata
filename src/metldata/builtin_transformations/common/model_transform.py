@@ -15,16 +15,17 @@
 
 "Common functions used in model transformations of individual transformations"
 
+from copy import deepcopy
 from typing import Any
 
 from schemapack.spec.schemapack import ClassDefinition, SchemaPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
-    resolve_schema_object_path,
-)
 from metldata.builtin_transformations.common.instruction import (
     TargetInstruction,
     TargetInstructionProtocol,
+)
+from metldata.builtin_transformations.common.resolve_path import (
+    resolve_schema_object_path,
 )
 from metldata.builtin_transformations.common.utils import content_to_dict, model_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
@@ -88,4 +89,4 @@ def add_property_per_instruction(
     if property_name in target_schema.get("properties", {}):
         raise EvitableTransformationError()
 
-    target_schema.setdefault("properties", {})[property_name] = source_schema
+    target_schema.setdefault("properties", {})[property_name] = deepcopy(source_schema)

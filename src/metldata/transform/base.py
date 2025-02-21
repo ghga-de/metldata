@@ -78,24 +78,24 @@ class TransformationDefinition(BaseModel, Generic[Config]):
     """A model for describing a transformation."""
 
     config_cls: type[Config] = Field(
-        ..., description="The config model of the transformation."
+        default=..., description="The config model of the transformation."
     )
     check_model_assumptions: Callable[[SchemaPack, Config], None] = Field(
-        ...,
+        default=...,
         description=(
             "A function that checks the assumptions made about the input model."
             + " Raises a ModelAssumptionError if the assumptions are not met."
         ),
     )
     transform_model: Callable[[SchemaPack, Config], SchemaPack] = Field(
-        ...,
+        default=...,
         description=(
             "A function to transform the model. Raises a"
             + " ModelTransformationError if the transformation fails."
         ),
     )
     data_transformer_factory: type[DataTransformer] = Field(
-        ...,
+        default=...,
         description=(
             "A class for transforming data. Raises a DataTransformationError"
             + " if the transformation fails."
@@ -111,9 +111,9 @@ class WorkflowStepBase(BaseModel, ABC):
     """A base class for workflow steps."""
 
     model_config = ConfigDict(frozen=True)
-    description: str = Field(..., description="A description of the step.")
+    description: str = Field(default=..., description="A description of the step.")
     input: str | None = Field(
-        ...,
+        default=...,
         description=(
             "The name of the workflow step from which the output is used as input"
             + " for this step. If this is the first step, set to None."
@@ -125,7 +125,7 @@ class WorkflowStep(WorkflowStepBase):
     """A single step in a transformation workflow."""
 
     transformation_definition: TransformationDefinition = Field(
-        ...,
+        default=...,
         description="The transformation to be executed in this step.",
     )
 
@@ -134,16 +134,16 @@ class WorkflowDefinition(BaseModel):
     """A definition of a transformation workflow."""
 
     model_config = ConfigDict(frozen=True)
-    description: str = Field(..., description="A description of the workflow.")
+    description: str = Field(default=..., description="A description of the workflow.")
     steps: dict[str, WorkflowStep] = Field(
-        ...,
+        default=...,
         description=(
             "A dictionary of workflow steps. The keys are the names of the steps, and"
             + " the values are the workflow steps themselves."
         ),
     )
     artifacts: dict[str, str] = Field(
-        ...,
+        default=...,
         description=(
             "A dictionary of artifacts that are output by this workflow."
             + " The keys are the names of the artifacts, and the values are the names"
@@ -245,19 +245,19 @@ class ArtifactResource(BaseModel):
     """
 
     class_name: ClassName = Field(
-        ..., description="The name of the class of the resource."
+        default=..., description="The name of the class of the resource."
     )
-    resource_id: ResourceId = Field(..., description="The id of the resource.")
+    resource_id: ResourceId = Field(default=..., description="The id of the resource.")
     datapack: DataPack = Field(
-        ...,
+        default=...,
         description="A rooted datapack describing the resource and all its dependencies.",
     )
     model: SchemaPack = Field(
-        ...,
+        default=...,
         description="A rooted schemapack describing the schema of the rooted datapack.",
     )
     integrated: Json = Field(
-        ...,
+        default=...,
         description="An integrated representation of the resource in JSON format.",
     )
 
@@ -265,13 +265,15 @@ class ArtifactResource(BaseModel):
 class WorkflowArtifact(BaseModel):
     """An artifact output by a workflow in the context of specific input data."""
 
-    artifact_name: ArtifactName = Field(..., description="The name of the artifact.")
+    artifact_name: ArtifactName = Field(
+        default=..., description="The name of the artifact."
+    )
     data: DataPack = Field(
-        ...,
+        default=...,
         description="A datapack containing all resources of the artifact.",
     )
     model: SchemaPack = Field(
-        ...,
+        default=...,
         description="A schemapack describing the artifact.",
     )
 

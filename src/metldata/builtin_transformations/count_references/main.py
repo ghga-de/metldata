@@ -43,7 +43,7 @@ class CountReferencesTransformer(DataTransformer[CountReferencesConfig]):
             data: The data as DataPack to be transformed.
         """
         return count_references(
-            data=data, instructions_by_class=self._config.instructions_by_class()
+            data=data, instructions_by_class=self._config.instructions_by_class
         )
 
 
@@ -57,7 +57,7 @@ def check_model_assumptions_wrapper(
             if the model does not fulfill the assumptions.
     """
     check_model_assumptions(
-        schema=model, instructions_by_class=config.instructions_by_class()
+        schema=model, instructions_by_class=config.instructions_by_class
     )
 
 
@@ -69,7 +69,7 @@ def transform_model(model: SchemaPack, config: CountReferencesConfig) -> SchemaP
             if the transformation fails.
     """
     return add_count_references(
-        model=model, instructions_by_class=config.instructions_by_class()
+        model=model, instructions_by_class=config.instructions_by_class
     )
 
 

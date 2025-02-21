@@ -24,9 +24,6 @@ from schemapack._internals.spec.custom_types import ResourceId
 from schemapack._internals.spec.datapack import ResourceIdSet
 from schemapack.spec.datapack import DataPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
-    resolve_data_object_path,
-)
 from metldata.builtin_transformations.common.custom_types import (
     MutableClassResources,
     MutableDatapack,
@@ -40,7 +37,10 @@ from metldata.builtin_transformations.common.instruction import (
     TargetSourceInstructionProtocol,
 )
 from metldata.builtin_transformations.common.path.path import RelationPath
-from metldata.builtin_transformations.common.resolve_path import resolve_path
+from metldata.builtin_transformations.common.resolve_path import (
+    resolve_data_object_path,
+    resolve_path,
+)
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.transform.exceptions import EvitableTransformationError
 

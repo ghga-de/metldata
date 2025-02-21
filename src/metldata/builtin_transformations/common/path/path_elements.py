@@ -40,20 +40,20 @@ class RelationPathElement(BaseModel):
     """
 
     type_: RelationPathElementType = Field(
-        ...,
+        default=...,
         description=(
             "The type of relation. Active or passive as explained in the"
             + " RelationPathElementType enum."
         ),
     )
     source: str = Field(
-        ..., description="The name of the source class that is referencing."
+        default=..., description="The name of the source class that is referencing."
     )
     target: str = Field(
-        ..., description="The name of the target class that is referenced."
+        default=..., description="The name of the target class that is referenced."
     )
     property: str = Field(
-        ...,
+        default=...,
         description=(
             "The name of the property that holds the relation."
             + " In case of a active type, the property is part of the source class."

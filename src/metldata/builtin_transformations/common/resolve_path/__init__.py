@@ -13,18 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Models for instructions used in the 'delete content subschema' transformation."""
+"""Common relation and object path related functionality."""
 
-from pydantic import Field
-from pydantic_settings import BaseSettings
-
-
-class DeleteContentSubschemaInstruction(BaseSettings):
-    """A model describing an instruction to remove a content subschema and associated
-    property from a given class.
-    """
-
-    class_name: str = Field(default=..., description="The name of the class to modify.")
-    content_path: str = Field(
-        default=..., description="Path to content schema property."
-    )
+from metldata.builtin_transformations.common.resolve_path.resolve_path_element_relations import (
+    resolve_path,  # noqa: F401
+)
+from metldata.builtin_transformations.common.resolve_path.resolve_path_properties import (
+    resolve_data_object_path,  # noqa: F401
+    resolve_schema_object_path,  # noqa: F401
+)

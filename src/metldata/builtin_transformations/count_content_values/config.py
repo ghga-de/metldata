@@ -15,9 +15,12 @@
 
 """Models used to describe content properties that shall be calculated and added."""
 
+from functools import cached_property
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from metldata.builtin_transformations.common.instruction import instructions_by_class
 from metldata.builtin_transformations.count_content_values.instruction import (
     CountContentValueInstruction,
 )
@@ -31,19 +34,13 @@ class CountContentValuesConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="forbid")
 
     count_content_values: list[CountContentValueInstruction] = Field(
-        ...,
+        default=...,
         description=(
             "A list of instructions to add content properties to the model and data."
         ),
     )
 
-    def instructions_by_class(
-        self,
-    ) -> dict[str, list[CountContentValueInstruction]]:
+    @cached_property
+    def instructions_by_class(self):
         """Returns a dictionary of instructions by class."""
-        instructions_by_class: dict[str, list[CountContentValueInstruction]] = {}
-        for instruction in self.count_content_values:
-            instructions_by_class.setdefault(instruction.class_name, []).append(
-                instruction
-            )
-        return instructions_by_class
+        return instructions_by_class(self.count_content_values)

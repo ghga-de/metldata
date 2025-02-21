@@ -22,6 +22,8 @@ from pydantic_settings import BaseSettings
 class DeleteRelationInstruction(BaseSettings):
     """A model describing an instruction for deleting a relation of a class."""
 
-    class_name: str = Field(..., description="The name of the class to modify.")
+    class_name: str = Field(default=..., description="The name of the class to modify.")
 
-    relation_name: str = Field(..., description="Name of the relation to be deleted.")
+    relation_name: str = Field(
+        default=..., description="Name of the relation to be deleted."
+    )

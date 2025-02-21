@@ -18,7 +18,7 @@
 
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
+from metldata.builtin_transformations.common.model_transform import (
     resolve_schema_object_path,
 )
 from metldata.builtin_transformations.delete_content_subschema.instruction import (

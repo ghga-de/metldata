@@ -56,3 +56,13 @@ TargetSourceInstruction = TypeVar(
 Instruction = TypeVar(
     "Instruction", bound=TargetInstructionProtocol | SourceInstructionProtocol
 )
+
+
+def instructions_by_class(
+    instructions: list[Instruction],
+) -> dict[str, list[Instruction]]:
+    """Returns a dictionary of instructions by class."""
+    instructions_by_class: dict[str, list[Instruction]] = {}
+    for instruction in instructions:
+        instructions_by_class.setdefault(instruction.class_name, []).append(instruction)
+    return instructions_by_class

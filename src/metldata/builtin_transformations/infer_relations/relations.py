@@ -29,7 +29,7 @@ class RelationDetails(BaseModel):
     """
 
     path: RelationPath = Field(
-        ...,
+        default=...,
         description=(
             "The path to reconstruct the new relation based on existing relations."
         ),
@@ -44,11 +44,12 @@ class InferenceInstruction(RelationDetails):
     model_config = ConfigDict(frozen=True)
 
     source: str = Field(
-        ..., description="The source class to which this relation should be added."
+        default=...,
+        description="The source class to which this relation should be added.",
     )
-    target: str = Field(..., description="The class targeted by this relation.")
+    target: str = Field(default=..., description="The class targeted by this relation.")
     new_property: str = Field(
-        ...,
+        default=...,
         description=(
             "The name of the new property in the source to store the inferred relation."
         ),

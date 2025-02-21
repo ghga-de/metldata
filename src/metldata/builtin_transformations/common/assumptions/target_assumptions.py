@@ -20,11 +20,11 @@ from typing import Any
 
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
-    resolve_schema_object_path,
-)
 from metldata.builtin_transformations.common.instruction import (
     TargetInstructionProtocol,
+)
+from metldata.builtin_transformations.common.model_transform import (
+    resolve_schema_object_path,
 )
 from metldata.transform.exceptions import ModelAssumptionError
 

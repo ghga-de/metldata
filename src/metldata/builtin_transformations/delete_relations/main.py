@@ -50,7 +50,7 @@ class DeleteRelationsDataTransformer(DataTransformer[DeleteRelationsConfig]):
                 if the transformation fails.
         """
         return delete_data_relations(
-            data=data, instructions_by_class=self._config.instructions_by_class()
+            data=data, instructions_by_class=self._config.instructions_by_class
         )
 
 
@@ -64,7 +64,7 @@ def check_model_assumptions_wrapper(
             if the model does not fulfill the assumptions.
     """
     check_model_assumptions(
-        schema=model, instructions_by_class=config.instructions_by_class()
+        schema=model, instructions_by_class=config.instructions_by_class
     )
 
 
@@ -76,7 +76,7 @@ def transform_model(model: SchemaPack, config: DeleteRelationsConfig) -> SchemaP
             if the transformation fails.
     """
     return delete_model_relations(
-        model=model, instructions_by_class=config.instructions_by_class()
+        model=model, instructions_by_class=config.instructions_by_class
     )
 
 

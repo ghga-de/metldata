@@ -16,12 +16,14 @@
 
 """Logic for transforming data."""
 
+from contextlib import suppress
+
 from schemapack.spec.datapack import DataPack
 
-from metldata.builtin_transformations.add_content_properties.path import (
+from metldata.builtin_transformations.common.data_transform import (
+    get_class_resources,
     resolve_data_object_path,
 )
-from metldata.builtin_transformations.common.data_transform import get_class_resources
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.delete_content_subschema.instruction import (
     DeleteContentSubschemaInstruction,
@@ -58,12 +60,14 @@ def delete_subschema_properties(
             for resource in target_resources.values():
                 if not path_parent:
                     # property directly in top level content
-                    resource["content"].pop(target_property, None)
+                    with suppress(KeyError):
+                        del resource["content"][target_property]
                 else:
                     # nested property
                     target = resolve_data_object_path(
                         data=resource["content"], path=path_parent
                     )
-                    target.pop(target_property, None)
+                    with suppress(KeyError):
+                        del target[target_property]
 
     return DataPack.model_validate(modified_data)
