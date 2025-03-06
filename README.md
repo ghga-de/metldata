@@ -331,7 +331,7 @@ The service requires the following configuration parameters:
   ```
 
 
-- **`resource_change_event_topic`** *(string, required)*: Name of the topic used for events informing other services about resource changes, i.e. deletion or insertion.
+- **`resource_change_topic`** *(string, required)*: Name of the topic used for events informing other services about resource changes, i.e. deletion or insertion.
 
 
   Examples:
@@ -341,7 +341,7 @@ The service requires the following configuration parameters:
   ```
 
 
-- **`resource_deletion_event_type`** *(string, required)*: Type used for events indicating the deletion of a previously existing resource.
+- **`resource_deletion_type`** *(string, required)*: Type used for events indicating the deletion of a previously existing resource.
 
 
   Examples:
@@ -361,7 +361,7 @@ The service requires the following configuration parameters:
   ```
 
 
-- **`dataset_change_event_topic`** *(string, required)*: Name of the topic announcing, among other things, the list of files included in a new dataset.
+- **`dataset_change_topic`** *(string, required)*: Name of the topic announcing, among other things, the list of files included in a new dataset.
 
 
   Examples:
