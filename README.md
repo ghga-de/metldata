@@ -311,26 +311,6 @@ The service requires the following configuration parameters:
   ```
 
 
-- **`primary_artifact_name`** *(string, required)*: Name of the artifact from which the information for outgoing change events is derived.
-
-
-  Examples:
-
-  ```json
-  "embedded_public"
-  ```
-
-
-- **`primary_dataset_name`** *(string, required)*: Name of the resource class corresponding to the embedded_dataset slot.
-
-
-  Examples:
-
-  ```json
-  "EmbeddedDataset"
-  ```
-
-
 - **`resource_change_topic`** *(string, required)*: Name of the topic used for events informing other services about resource changes, i.e. deletion or insertion.
 
 
@@ -388,6 +368,26 @@ The service requires the following configuration parameters:
 
   ```json
   "dataset_created"
+  ```
+
+
+- **`primary_artifact_name`** *(string, required)*: Name of the artifact from which the information for outgoing change events is derived.
+
+
+  Examples:
+
+  ```json
+  "embedded_public"
+  ```
+
+
+- **`primary_dataset_name`** *(string, required)*: Name of the resource class corresponding to the embedded_dataset slot.
+
+
+  Examples:
+
+  ```json
+  "EmbeddedDataset"
   ```
 
 
