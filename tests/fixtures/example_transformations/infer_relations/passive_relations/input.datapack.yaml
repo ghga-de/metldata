@@ -25,13 +25,17 @@ resources:
         dac_contact: dac@example.org
       relations:
         files:
-          - file_a
-          - file_b
+          targetClass: File
+          targetResources:
+            - file_a
+            - file_b
     dataset_2:
       content:
         dac_contact: dac@example.org
       relations:
         files:
-          - file_a
+          targetClass: File
+          targetResources:
+            - file_a
   Sample: {}
   Experiment: {}

@@ -10,9 +10,11 @@ resources:
             submitted_files: 2 # <-
       relations:
         files:
-          - file_a
-          - file_b
-          - file_c
+          targetClass: File
+          targetResources:
+            - file_a
+            - file_b
+            - file_c
   File:
     file_a:
       content:

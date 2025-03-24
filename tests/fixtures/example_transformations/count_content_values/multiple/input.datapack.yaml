@@ -8,25 +8,33 @@ resources:
           stats: {}
       relations:
         biospecimens:
-          - bios_a
-          - bios_b
-          - bios_c
+          targetClass: Biospecimen
+          targetResources:
+            - bios_a
+            - bios_b
+            - bios_c
   Biospecimen:
     bios_a:
       content:
         tissue: blood
       relations:
-        individuals: indv_a
+        individuals:
+          targetClass: Individual
+          targetResources: indv_a
     bios_b:
       content:
         tissue: subcutaneous_adipose_tissue
       relations:
-        individuals: indv_b
+        individuals:
+          targetClass: Individual
+          targetResources: indv_b
     bios_c:
       content:
         tissue: blood
       relations:
-        individuals: indv_b
+        individuals:
+          targetClass: Individual
+          targetResources: indv_b
   Individual:
     indv_a:
       content:

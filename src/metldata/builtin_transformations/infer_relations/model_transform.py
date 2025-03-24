@@ -18,9 +18,9 @@
 
 from schemapack.spec.schemapack import (
     ClassDefinition,
+    ClassRelation,
     MandatoryRelationSpec,
     MultipleRelationSpec,
-    Relation,
     SchemaPack,
 )
 
@@ -126,7 +126,7 @@ def add_inferred_relations(
 
         mandatory = infer_mandatory_from_path(instruction.path, model)
         multiple = infer_multiplicity_from_path(instruction.path, model)
-        new_relation = Relation.model_validate(
+        new_relation = ClassRelation.model_validate(
             {
                 "targetClass": instruction.target,
                 "mandatory": mandatory,
