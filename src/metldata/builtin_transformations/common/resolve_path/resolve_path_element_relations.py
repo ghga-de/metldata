@@ -61,7 +61,12 @@ def resolve_active_path_element(
 
     if not source_resource:
         raise EvitableTransformationError()
-    target_resource_ids = source_resource.relations.get(path_element.property)
+    target_resource_relations = source_resource.relations.get(path_element.property)
+    target_resource_ids = (
+        target_resource_relations.targetResources
+        if target_resource_relations
+        else frozenset()
+    )
     if target_resource_ids is None:
         target_resource_ids = frozenset()
     elif isinstance(target_resource_ids, str):
@@ -99,7 +104,12 @@ def resolve_passive_path_element(
     target_resource_ids = set()
 
     for candidate_resource_id, candidate_resource in candidate_resources.items():
-        relation = candidate_resource.relations.get(path_element.property, frozenset())
+        try:
+            relation = candidate_resource.relations[
+                path_element.property
+            ].targetResources
+        except KeyError:
+            relation = frozenset()
         if (
             isinstance(relation, frozenset) and source_resource_id in relation
         ) or source_resource_id == relation:

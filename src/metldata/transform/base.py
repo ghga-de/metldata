@@ -286,10 +286,10 @@ class WorkflowArtifact(BaseModel):
         for class_name, resources in self.data.resources.items():
             for resource_id in resources:
                 rooted_schemapack, rooted_datapack = isolate(
-                    datapack=self.data,
-                    class_name=class_name,
-                    resource_id=resource_id,
+                    root_class_name=class_name,
+                    root_resource_id=resource_id,
                     schemapack=self.model,
+                    datapack=self.data,
                 )
                 integrated_json = denormalize(
                     datapack=rooted_datapack,
