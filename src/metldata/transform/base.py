@@ -173,8 +173,7 @@ class WorkflowDefinition(BaseModel):
                 continue
             if step.input not in steps:
                 raise ValueError(
-                    f"Step {step.input} referenced in step {
-                        step_name} is not defined."
+                    f"Step {step.input} referenced in step {step_name} is not defined."
                 )
 
         if not step_with_no_input_found:
@@ -199,7 +198,8 @@ class WorkflowDefinition(BaseModel):
             if step_name not in steps:
                 raise ValueError(
                     f"Step {step_name} referenced in artifact {
-                        artifact_name} is not defined."
+                        artifact_name
+                    } is not defined."
                 )
 
         return values
