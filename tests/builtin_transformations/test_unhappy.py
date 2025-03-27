@@ -38,6 +38,7 @@ def test_model_transformations(
     test_case: TransformationTestCase,
 ):
     """Test the happy path of transforming a model."""
+    # fetch test ID from FixtureRequest to get exception from dict
     test_id = request.node.callspec.id
     expected_exception = MODEL_TRANSFORMATION_ERRORS.get(test_id)
     with pytest.raises(expected_exception) if expected_exception else nullcontext():
@@ -57,7 +58,7 @@ def test_data_transformations(
     test_case: TransformationTestCase,
 ):
     """Test the happy path of transforming data for a model."""
-    # fetch test ID from FixtureRequest to get exception from map
+    # fetch test ID from FixtureRequest to get exception from dict
     test_id = request.node.callspec.id
     expected_exception = MODEL_TRANSFORMATION_ERRORS.get(test_id)
     handler = TransformationHandler(
