@@ -139,9 +139,9 @@ def _read_test_case_variant(transformation_base_dir: Path, transformation_name: 
     return test_cases
 
 
-def _read_all_test_cases() -> (
-    tuple[list[TransformationTestCase], list[TransformationTestCase]]
-):
+def _read_all_test_cases() -> tuple[
+    list[TransformationTestCase], list[TransformationTestCase]
+]:
     """Read all test cases for a transformation."""
     happy_test_cases = []
     unhappy_test_cases = []
