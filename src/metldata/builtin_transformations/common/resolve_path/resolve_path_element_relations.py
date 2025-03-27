@@ -104,12 +104,14 @@ def resolve_passive_path_element(
     target_resource_ids = set()
 
     for candidate_resource_id, candidate_resource in candidate_resources.items():
-        try:
-            relation = candidate_resource.relations[
-                path_element.property
-            ].targetResources
-        except KeyError:
-            relation = frozenset()
+        candidate_resource_relations = candidate_resource.relations.get(
+            path_element.property
+        )
+        relation = (
+            candidate_resource_relations.targetResources
+            if candidate_resource_relations
+            else frozenset()
+        )
         if (
             isinstance(relation, frozenset) and source_resource_id in relation
         ) or source_resource_id == relation:
