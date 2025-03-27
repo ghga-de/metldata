@@ -31,16 +31,22 @@ resources:
         dac_contact: dac@example.org
       relations:
         files:
-          - file_a
-          - file_b
-          - file_c
+          targetClass: File
+          targetResources:
+            - file_a
+            - file_b
+            - file_c
   Sample:
     sample_x:
       content:
         description: Some sample.
       relations:
-        files: file_a
+        files:
+          targetClass: File
+          targetResources: file_a
     sample_y:
       content: {}
       relations:
-        files: file_b
+        files:
+          targetClass: File
+          targetResources: file_b

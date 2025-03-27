@@ -33,22 +33,28 @@ resources:
           count: 2
       relations:
         files:
-          - file_a
-          - file_b
-          - file_c
+          targetClass: File
+          targetResources:
+            - file_a
+            - file_b
+            - file_c
   Sample:
     sample_x:
       content:
         description: Some sample.
       relations:
         files:
-          - file_a
-          - file_b
+          targetClass: File
+          targetResources:
+            - file_a
+            - file_b
     sample_y:
       content: {}
       relations:
         files:
-          - file_c
+          targetClass: File
+          targetResources:
+            - file_c
   Experiment:
     experiment_i:
       content:
@@ -57,5 +63,7 @@ resources:
           count: 2
       relations:
         samples:
-          - sample_x
-          - sample_y
+          targetClass: Sample
+          targetResources:
+            - sample_x
+            - sample_y

@@ -1,4 +1,4 @@
-# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,7 +61,12 @@ def resolve_active_path_element(
 
     if not source_resource:
         raise EvitableTransformationError()
-    target_resource_ids = source_resource.relations.get(path_element.property)
+    target_resource_relations = source_resource.relations.get(path_element.property)
+    target_resource_ids = (
+        target_resource_relations.targetResources
+        if target_resource_relations
+        else frozenset()
+    )
     if target_resource_ids is None:
         target_resource_ids = frozenset()
     elif isinstance(target_resource_ids, str):
@@ -99,7 +104,14 @@ def resolve_passive_path_element(
     target_resource_ids = set()
 
     for candidate_resource_id, candidate_resource in candidate_resources.items():
-        relation = candidate_resource.relations.get(path_element.property, frozenset())
+        candidate_resource_relations = candidate_resource.relations.get(
+            path_element.property
+        )
+        relation = (
+            candidate_resource_relations.targetResources
+            if candidate_resource_relations
+            else frozenset()
+        )
         if (
             isinstance(relation, frozenset) and source_resource_id in relation
         ) or source_resource_id == relation:

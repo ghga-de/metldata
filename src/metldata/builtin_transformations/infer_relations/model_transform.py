@@ -1,4 +1,4 @@
-# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +18,9 @@
 
 from schemapack.spec.schemapack import (
     ClassDefinition,
+    ClassRelation,
     MandatoryRelationSpec,
     MultipleRelationSpec,
-    Relation,
     SchemaPack,
 )
 
@@ -126,7 +126,7 @@ def add_inferred_relations(
 
         mandatory = infer_mandatory_from_path(instruction.path, model)
         multiple = infer_multiplicity_from_path(instruction.path, model)
-        new_relation = Relation.model_validate(
+        new_relation = ClassRelation.model_validate(
             {
                 "targetClass": instruction.target,
                 "mandatory": mandatory,

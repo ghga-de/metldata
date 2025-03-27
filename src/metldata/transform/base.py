@@ -1,4 +1,4 @@
-# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -173,8 +173,7 @@ class WorkflowDefinition(BaseModel):
                 continue
             if step.input not in steps:
                 raise ValueError(
-                    f"Step {step.input} referenced in step {
-                        step_name} is not defined."
+                    f"Step {step.input} referenced in step {step_name} is not defined."
                 )
 
         if not step_with_no_input_found:
@@ -199,7 +198,8 @@ class WorkflowDefinition(BaseModel):
             if step_name not in steps:
                 raise ValueError(
                     f"Step {step_name} referenced in artifact {
-                        artifact_name} is not defined."
+                        artifact_name
+                    } is not defined."
                 )
 
         return values
@@ -286,10 +286,10 @@ class WorkflowArtifact(BaseModel):
         for class_name, resources in self.data.resources.items():
             for resource_id in resources:
                 rooted_schemapack, rooted_datapack = isolate(
-                    datapack=self.data,
-                    class_name=class_name,
-                    resource_id=resource_id,
+                    root_class_name=class_name,
+                    root_resource_id=resource_id,
                     schemapack=self.model,
+                    datapack=self.data,
                 )
                 integrated_json = denormalize(
                     datapack=rooted_datapack,

@@ -1,4 +1,4 @@
-# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@ from schemapack import dumps_datapack, dumps_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import (
     ClassDefinition,
-    Relation,
+    ClassRelation,
     SchemaPack,
 )
 
@@ -56,7 +56,7 @@ def relations_to_dict(class_def: ClassDefinition) -> dict[str, Any]:
     return class_def_dict["relations"]
 
 
-def get_relation(element: RelationPathElement, schema: SchemaPack) -> Relation:
+def get_relation(element: RelationPathElement, schema: SchemaPack) -> ClassRelation:
     """Get the relation object for a path element.
 
     Args:
