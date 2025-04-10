@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2021 - 2024 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,8 +25,8 @@ from pathlib import Path
 from string import Template
 
 import jsonschema2md
+from casefy import kebabcase, titlecase
 from pydantic import BaseModel, Field
-from stringcase import spinalcase, titlecase
 
 from script_utils.cli import echo_failure, echo_success, run
 
@@ -61,7 +61,7 @@ class PackageName(BaseModel):
     """The name of a package and it's different representations."""
 
     repo_name: str = Field(..., description="The name of the repo")
-    name: str = Field(..., description="The full name of the package in spinal case.")
+    name: str = Field(..., description="The full name of the package in kebab case.")
     title: str = Field(..., description="The name of the package formatted as title.")
 
 
@@ -121,7 +121,7 @@ def read_package_name() -> PackageName:
         raise RuntimeError("The name of the git origin could not be resolved.")
     git_origin_name = stdout.decode("utf-8").strip()
 
-    repo_name = spinalcase(git_origin_name)
+    repo_name = kebabcase(git_origin_name)
     name = (
         "my-microservice"
         if repo_name == "microservice-repository-template"
@@ -195,8 +195,8 @@ def get_package_details() -> PackageDetails:
     description = read_package_description()
     config_description = generate_config_docs()
     return PackageDetails(
-        **header.dict(),
-        **name.dict(),
+        **header.model_dump(),
+        **name.model_dump(),
         description=description,
         config_description=config_description,
         design_description=read_design_description(),
@@ -210,7 +210,7 @@ def generate_single_readme(*, details: PackageDetails) -> str:
 
     template_content = README_TEMPLATE_PATH.read_text()
     template = Template(template_content)
-    return template.substitute(details.dict())
+    return template.substitute(details.model_dump())
 
 
 def main(check: bool = False) -> None:
