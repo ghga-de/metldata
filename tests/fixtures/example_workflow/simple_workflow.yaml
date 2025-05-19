@@ -1,0 +1,28 @@
+input: ghga_uemim_2.0.0
+output: ghga_stats
+operations:
+  # Delete classes - this will automatically delete the obsolete relations
+  - name: delete_class
+    description: "Delete class {{ item }}"
+    args:
+      class_name: "{{ item }}"
+    loop:
+      - Dataset
+      - Sample
+      - Experiment
+
+      # # Resolved loop for delete_class
+      # - name: delete_class
+      #   description: "Delete class Dataset"
+      #   args:
+      #     class_name: "Dataset"
+
+      # - name: delete_class
+      #   description: "Delete class Sample"
+      #   args:
+      #     class_name: "Sample"
+
+      # - name: delete_class
+      #   description: "Delete class Experiment"
+      #   args:
+      #     class_name: "Experiment"
