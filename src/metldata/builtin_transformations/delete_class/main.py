@@ -74,7 +74,7 @@ def transform_model(model: SchemaPack, config: DeleteClassConfig) -> SchemaPack:
     return delete_model_class(model=model, transformation_config=config)
 
 
-DELETE_RELATIONS_TRANSFORMATION = TransformationDefinition[DeleteClassConfig](
+DELETE_CLASS_TRANSFORMATION = TransformationDefinition[DeleteClassConfig](
     config_cls=DeleteClassConfig,
     check_model_assumptions=check_model_assumptions_wrapper,
     transform_model=transform_model,

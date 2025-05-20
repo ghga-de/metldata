@@ -18,7 +18,18 @@
 from typing import TypeVar
 
 from pydantic import BaseModel, Field
+from schemapack import SchemaPack
 
+
+class WorkflowTemplate(BaseModel):
+    """Base class for workflow templates."""
+
+    input: str = Field(default=..., description="Model version")
+    output: str = Field(default=..., description="Output name")
+
+    operations: list[dict] = Field(
+        default=..., description="The steps of the workflow."
+    )
 
 class WorkflowStepBase(BaseModel):
     """Base class for workflow steps."""

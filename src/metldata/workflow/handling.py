@@ -13,50 +13,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
+from typing import Any
 
-from jinja2 import Template
+from schemapack.spec.schemapack import SchemaPack
 
-from metldata.workflow.base import Workflow, WorkflowStep, WorkflowStepPrecursor
-
-
-def apply_template(step_template: str, variable: object) -> str:
-    """Apply a template to a workflow step."""
-    # This is a placeholder implementation.
-    template = Template(step_template)
-    rendered_output = template.render(item=variable)
-    return rendered_output
+from metldata.transform.handling import TransformationHandler
+from metldata.workflow.base import Workflow, WorkflowStep
 
 
-def generate_step_precursors(template: dict) -> list[WorkflowStepPrecursor]:
-    """Generate workflow step precursors from a template."""
-    # This is a placeholder implementation.
-    return [
-        WorkflowStepPrecursor.model_validate(item) for item in template["operations"]
-    ]
+class WorkflowStepHandler:
+    """Used for linking workflow step to transformations"""
 
+    def __init__(self, workflow_step: WorkflowStep, input_model: SchemaPack):
+        self.workflow_step = workflow_step
+        self.input_model = input_model
 
-def expand_loop(precursor: WorkflowStepPrecursor):
-    """Expand a loop in a workflow step precursor."""
-    # This is a placeholder implementation.
-    precursor_json = precursor.model_dump()
-    del precursor_json["loop"]
-    return [
-        WorkflowStep.model_validate_json(
-            apply_template(json.dumps(precursor_json), item)
+    def run(self, transformation_registry: dict[str, Any]):
+        """Run a singe workflow step."""
+        step_name = self.workflow_step.name
+        step_args = self.workflow_step.args
+
+        if step_name not in transformation_registry:
+            raise ValueError(f"Unknown transformation: {step_name}")
+
+        transformation_definition = transformation_registry[step_name]
+        return TransformationHandler(
+            transformation_definition=transformation_definition,
+            transformation_config=step_args,
+            input_model=self.input_model,
         )
-        for item in precursor.loop
-    ]
 
 
-def expand_loops(precursors: list[WorkflowStepPrecursor]) -> list[WorkflowStep]:
-    """Expand loops in a list of workflow step precursors."""
-    expanded_steps = []
-    for precursor in precursors:
-        expanded_steps.extend(expand_loop(precursor))
-    return expanded_steps
 
+class WorkflowHandler:
+    """Executes a workflow step by step."""
 
-def render_workflow(input, output, precursors: list[WorkflowStepPrecursor]) -> Workflow:
-    """Function."""
-    return Workflow(input=input, output=output, operations=expand_loops(precursors))
+    def __init__(self, workflow: Workflow, transformation_registry: dict[str, Any]):
+        self.workflow = workflow
+        self.transformation_registry = transformation_registry
+
+    def run(self) -> SchemaPack:
+        input_model = self.workflow.input
+
+        for step in self.workflow.operations:
+            step_handler = WorkflowStepHandler(
+                workflow_step=step, input_model=input_model
+            ).run(self.transformation_registry)
+            input_model = step_handler.transformed_model
+
+        return input_model  # Final model after all steps
