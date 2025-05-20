@@ -13,8 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from functools import cached_property
+from pathlib import Path
 from typing import Any
 
+from schemapack import load_schemapack
+from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.transform.handling import TransformationHandler
@@ -44,21 +48,32 @@ class WorkflowStepHandler:
         )
 
 
-
 class WorkflowHandler:
     """Executes a workflow step by step."""
 
     def __init__(self, workflow: Workflow, transformation_registry: dict[str, Any]):
         self.workflow = workflow
         self.transformation_registry = transformation_registry
+        # model registry folder and its fixed value are temporary implementations.
+        self.model_registry = Path("/workspace/tests/fixtures/model_registry")
 
-    def run(self) -> SchemaPack:
-        input_model = self.workflow.input
+    @cached_property
+    def input_model(self) -> SchemaPack:
+        """Fetch the workflow's input model."""
+        file_path = self.model_registry / self.workflow.input
+        if not file_path.exists():
+            raise FileNotFoundError(f"Input model file not found: {file_path}")
+        return load_schemapack(file_path)
+
+    def run(self, data: DataPack) -> tuple[SchemaPack, DataPack]:
+        """Run the workflow step by step, transform the model and the data."""
+        model = self.input_model
 
         for step in self.workflow.operations:
             step_handler = WorkflowStepHandler(
-                workflow_step=step, input_model=input_model
+                workflow_step=step, input_model=model
             ).run(self.transformation_registry)
-            input_model = step_handler.transformed_model
+            model = step_handler.transformed_model
+            data = step_handler.transform_data(data)
 
-        return input_model  # Final model after all steps
+        return model, data
