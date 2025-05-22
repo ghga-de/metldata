@@ -13,36 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
+"""Test the workflow execution using pre-defined test cases."""
 
-from schemapack import load_datapack, load_schemapack
-
-from metldata.builtin_transformations.delete_class.main import (
-    DELETE_CLASS_TRANSFORMATION,
-)
-from metldata.workflow.handling import WorkflowHandler
 from tests.fixtures.data import ADVANCED_DATA
-from tests.fixtures.models import ADVANCED_MODEL
-from tests.fixtures.workflow_templates import SIMPLE_WORKFLOW
-
-TRANSFORMATION_REGISTRY = {"delete_class": DELETE_CLASS_TRANSFORMATION}
-MODEL_REGISTRY = Path("/workspace/tests/fixtures/example_models")
 
 
-def test_workflow_outputs():
+def test_workflow_outputs(
+    workflow_handler,
+    expected_workflow_output_data,
+    expected_workflow_output_model,
+):
     """Test the data created after workflow execution."""
-    expected_workflow_output_data = load_datapack(
-        Path("/workspace/tests/fixtures/example_workflows/transformed.datapack.yaml")
-    )
-    expected_workflow_output_model = load_schemapack(
-        Path("/workspace/tests/fixtures/example_workflows/transformed.schemapack.yaml")
-    )
-
-    workflow_result = WorkflowHandler(
-        workflow=SIMPLE_WORKFLOW,
-        model_registry=MODEL_REGISTRY,
-        transformation_registry=TRANSFORMATION_REGISTRY,
-    ).run(data=ADVANCED_DATA)
-
+    workflow_result = workflow_handler.run(data=ADVANCED_DATA)
     assert workflow_result.data == expected_workflow_output_data
     assert workflow_result.model == expected_workflow_output_model
