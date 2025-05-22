@@ -1,0 +1,7 @@
+# a more advanced schemapack:
+schemapack: 0.3.0
+classes:
+  File:
+    id:
+      propertyName: alias
+    content: ../example_content_schemas/File.schema.json

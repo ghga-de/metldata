@@ -18,10 +18,3 @@ from metldata.builtin_transformations.common.assumptions.path_assumptions import
     assert_path_classes_and_relations_exist,  # noqa: F401
     assert_relation_target_multiplicity,  # noqa: F401
 )
-from metldata.builtin_transformations.common.assumptions.source_assumptions import (
-    assert_class_is_source,  # noqa: F401
-    assert_source_content_path_exists,  # noqa: F401
-)
-from metldata.builtin_transformations.common.assumptions.target_assumptions import (
-    assert_object_path_exists,  # noqa: F401
-)

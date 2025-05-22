@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Logic for executing workflows."""
+
+from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
 from typing import Any
@@ -23,6 +26,14 @@ from schemapack.spec.schemapack import SchemaPack
 
 from metldata.transform.handling import TransformationHandler
 from metldata.workflow.base import Workflow, WorkflowStep
+
+
+@dataclass
+class WorkflowResult:
+    """Model and data after workflow execution."""
+
+    model: SchemaPack
+    data: DataPack
 
 
 class WorkflowStepHandler:
@@ -43,7 +54,7 @@ class WorkflowStepHandler:
         transformation_definition = transformation_registry[step_name]
         return TransformationHandler(
             transformation_definition=transformation_definition,
-            transformation_config=step_args,
+            transformation_config=transformation_definition.config_cls(**step_args),
             input_model=self.input_model,
         )
 
@@ -51,11 +62,16 @@ class WorkflowStepHandler:
 class WorkflowHandler:
     """Executes a workflow step by step."""
 
-    def __init__(self, workflow: Workflow, transformation_registry: dict[str, Any]):
+    def __init__(
+        self,
+        workflow: Workflow,
+        transformation_registry: dict[str, Any],
+        model_registry: Path,
+    ):
         self.workflow = workflow
         self.transformation_registry = transformation_registry
-        # model registry folder and its fixed value are temporary implementations.
-        self.model_registry = Path("/workspace/tests/fixtures/model_registry")
+        # model registry is a temporary implementations.
+        self.model_registry = model_registry
 
     @cached_property
     def input_model(self) -> SchemaPack:
@@ -65,7 +81,7 @@ class WorkflowHandler:
             raise FileNotFoundError(f"Input model file not found: {file_path}")
         return load_schemapack(file_path)
 
-    def run(self, data: DataPack) -> tuple[SchemaPack, DataPack]:
+    def run(self, data: DataPack) -> WorkflowResult:
         """Run the workflow step by step, transform the model and the data."""
         model = self.input_model
 
@@ -76,4 +92,4 @@ class WorkflowHandler:
             model = step_handler.transformed_model
             data = step_handler.transform_data(data)
 
-        return model, data
+        return WorkflowResult(model=model, data=data)

@@ -1,4 +1,4 @@
-input: ghga_uemim_2.0.0
+input: advanced.schemapack.yaml
 output: ghga_stats
 operations:
   # Delete classes - this will automatically delete the obsolete relations

@@ -13,7 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Logic for transforming data."""
+"""Data transformation logic for the 'delete class' transformation"""
+
+from copy import deepcopy
 
 from schemapack.spec.datapack import DataPack
 
@@ -27,16 +29,7 @@ from metldata.transform.exceptions import EvitableTransformationError
 def delete_data_class(
     *, data: DataPack, transformation_config: DeleteClassConfig
 ) -> DataPack:
-    """Delete the provided class relations from the provided data.
-
-    Args:
-        data:
-            The data based on DataPack to delete the relations from.
-        instructions_by_class:
-            A dictionary mapping class names to lists of delete relation instructions.
-    Returns:
-        The data with the specified relations being deleted.
-    """
+    """Delete class from the provided data."""
     modified_data = data_to_dict(data)
 
     try:
@@ -44,4 +37,34 @@ def delete_data_class(
     except KeyError as exc:
         raise EvitableTransformationError() from exc
 
+    _remove_relations_from_data(
+        modified_data=modified_data,
+        original_data=data,
+        target_class=transformation_config.class_name,
+    )
     return DataPack.model_validate(modified_data)
+
+
+def _remove_relations_from_data(
+    *, modified_data: dict, original_data: DataPack, target_class: str
+) -> None:
+    """Remove relations associated to deleted class from the data.
+
+    Args:
+        modified_data (dict): Dictionary representation of the data
+        original_data (DataPack): Original data
+        target_class (str): Name of the class to be deleted
+    """
+    for class_name, class_resources in original_data.resources.items():
+        if class_name == target_class:
+            continue
+
+        for resource_id, resource in class_resources.items():
+            filtered_relations = {
+                name: spec
+                for name, spec in resource.relations.items()
+                if spec.targetClass != target_class
+            }
+            modified_data["resources"][class_name][resource_id]["relations"] = (
+                filtered_relations
+            )

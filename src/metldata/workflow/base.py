@@ -23,20 +23,25 @@ from pydantic import BaseModel, Field
 class WorkflowTemplate(BaseModel):
     """Base class for workflow templates."""
 
-    input: str = Field(default=..., description="Model version")
-    output: str = Field(default=..., description="Output name")
+    input: str = Field(
+        default=..., description="The input model version to be subject transformed."
+    )
+    output: str = Field(
+        default=...,
+        description="Identifier for the resulting model the workflow is applied.",
+    )
 
     operations: list[dict] = Field(
-        default=..., description="The steps of the workflow."
+        default=..., description="List of operations to apply during the workflow"
     )
 
 
 class WorkflowStepBase(BaseModel):
     """Base class for workflow steps."""
 
-    name: str
+    name: str = Field(default=..., description="")
     description: str = Field(default=..., description="A description of the step.")
-    args: object
+    args: object = Field(default=..., description="")
 
 
 class WorkflowStepPrecursor(WorkflowStepBase):

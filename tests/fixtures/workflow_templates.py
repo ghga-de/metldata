@@ -12,3 +12,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""Example workflow templates."""
+
+import yaml
+
+from metldata.workflow.base import WorkflowTemplate
+from metldata.workflow.builder import WorkflowBuilder
+from tests.fixtures.utils import BASE_DIR
+
+EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
+
+
+def _get_example_workflow(name: str) -> WorkflowTemplate:
+    """Get example workflow from a YAML file."""
+    with open(EXAMPLE_WORKFLOW_DIR / f"{name}.workflow.yaml") as file:
+        workflow_template = yaml.safe_load(file)
+    return WorkflowTemplate.model_validate(workflow_template)
+
+
+SIMPLE_TEMPLATE = _get_example_workflow("simple")
+
+SIMPLE_WORKFLOW = WorkflowBuilder(template=SIMPLE_TEMPLATE).build()

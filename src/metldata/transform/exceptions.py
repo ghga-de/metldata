@@ -30,14 +30,6 @@ class MultiplicityError(ModelAssumptionError):
     """
 
 
-class NotDirectRelationError(ModelAssumptionError):
-    """Raised when a relation_path describes an indirect relation between two classes.
-    A direct relation is when a class directly refers to another class through
-    its relations. That relation can be denoted both with active and passive relation
-    types (e.g. 'A(relation_b)>B', 'B<(relation_b)A)'.
-    """
-
-
 class ModelTransformationError(RuntimeError):
     """Raised when a transformation failed when applied to the schemapack-based model.
     This exception should only be raised when the error could not have been caught

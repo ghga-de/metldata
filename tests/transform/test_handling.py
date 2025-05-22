@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""Test the handling module. Only edge cases that are not covered by tests
+"""Test the transformation handling module. Only edge cases that are not covered by tests
 with builtin transformations are tested here.
 """
 

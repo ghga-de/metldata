@@ -14,8 +14,3 @@
 # limitations under the License.
 
 """Common models and functions for the built-in transformations."""
-
-from metldata.builtin_transformations.common.contentschema import (
-    NewContentSchemaPath,  # noqa: F401
-    SourcePath,  # noqa: F401
-)
