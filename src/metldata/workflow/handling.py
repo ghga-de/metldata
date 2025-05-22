@@ -15,41 +15,56 @@
 
 """Logic for executing workflows."""
 
-from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
 from typing import Any
 
+from pydantic import BaseModel, ConfigDict
 from schemapack import load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.transform.handling import TransformationHandler
 from metldata.workflow.base import Workflow, WorkflowStep
+from metldata.workflow.exceptions import ModelNotFoundError, UnknownTransformationError
 
 
-@dataclass
-class WorkflowResult:
+class WorkflowResult(BaseModel):
     """Model and data after workflow execution."""
+
+    model_config = ConfigDict(frozen=True)
 
     model: SchemaPack
     data: DataPack
 
 
 class WorkflowStepHandler:
-    """Used for linking workflow step to transformations"""
+    """Handles the execution of a single workflow step by linking it to the appropriate
+    transformation.
+
+    Attributes:
+    workflow_step (WorkflowStep): The workflow step to be executed.
+    input_model (SchemaPack): The input model to be used for the transformation.
+    """
 
     def __init__(self, workflow_step: WorkflowStep, input_model: SchemaPack):
         self.workflow_step = workflow_step
         self.input_model = input_model
 
     def run(self, transformation_registry: dict[str, Any]):
-        """Run a singe workflow step."""
+        """Executes the workflow step by retrieving the corresponding transformation
+        from the registry and initializing a TransformationHandler.
+
+        Raises a ValueError if the transformation is not found in the registry.
+        """
         step_name = self.workflow_step.name
         step_args = self.workflow_step.args
 
         if step_name not in transformation_registry:
-            raise ValueError(f"Unknown transformation: {step_name}")
+            raise UnknownTransformationError(
+                f"Invalid transformation name. {step_name} does not exist in the "
+                "transformation registry."
+            )
 
         transformation_definition = transformation_registry[step_name]
         return TransformationHandler(
@@ -60,7 +75,16 @@ class WorkflowStepHandler:
 
 
 class WorkflowHandler:
-    """Executes a workflow step by step."""
+    """Handles the execution of a workflow, applying a sequence of transformations
+    to a datapack and associated schemapack.
+
+    Attributes:
+        workflow (Workflow): The workflow to be executed.
+        transformation_registry (dict[str, Any]): A mapping from transformation names
+            to their definitions.
+        model_registry (Path): The directory containing available model files.
+
+    """
 
     def __init__(
         self,
@@ -70,19 +94,22 @@ class WorkflowHandler:
     ):
         self.workflow = workflow
         self.transformation_registry = transformation_registry
-        # model registry is a temporary implementations.
+        # model registry is a temporary implementation.
         self.model_registry = model_registry
 
     @cached_property
     def input_model(self) -> SchemaPack:
-        """Fetch the workflow's input model."""
+        """Load the workflow's initial input model from the model registry."""
         file_path = self.model_registry / self.workflow.input
         if not file_path.exists():
-            raise FileNotFoundError(f"Input model file not found: {file_path}")
+            raise ModelNotFoundError(f"Input model file not found: {file_path}")
+
         return load_schemapack(file_path)
 
     def run(self, data: DataPack) -> WorkflowResult:
-        """Run the workflow step by step, transform the model and the data."""
+        """Executes the workflow, applying each transformation in sequence to the model
+        and data, and returns the final model and data as a WorkflowResult.
+        """
         model = self.input_model
 
         for step in self.workflow.operations:

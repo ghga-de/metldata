@@ -12,3 +12,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
+"""Defining workflow related exceptions."""
+
+
+class UnknownTransformationError(Exception):
+    """Raised when a transformation name is not found in the transformation registry."""
+
+
+class ModelNotFoundError(FileNotFoundError):
+    """Raised when a model file is not found in the model registry."""

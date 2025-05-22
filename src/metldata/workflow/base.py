@@ -37,34 +37,57 @@ class WorkflowTemplate(BaseModel):
 
 
 class WorkflowStepBase(BaseModel):
-    """Base class for workflow steps."""
+    """Represents a single step within a workflow, defining a transformation to be applied."""
 
-    name: str = Field(default=..., description="")
-    description: str = Field(default=..., description="A description of the step.")
-    args: object = Field(default=..., description="")
+    name: str = Field(
+        default=...,
+        description="The name of the transformation that corresponds to an entry"
+        + " in the transformation registry.",
+    )
+    description: str = Field(description="A description explaining the workflow step.")
+    args: object = Field(
+        default=...,
+        description="The arguments or parameters required by the transformation."
+        + " These are passed to the transformation definition and vary depending"
+        + " on the transformation type.",
+    )
 
 
 class WorkflowStepPrecursor(WorkflowStepBase):
-    """Precursor model with loop specification"""
+    """Represents a precursor model with loop specification by extending
+    'WorkflowStepBase' with loop attribute.
+    """
 
-    loop: list[object] = []
+    loop: list[object] = Field(
+        default_factory=list,
+        description="Optional list specifying loop parameters for the workflow step.",
+    )
 
 
-TConfig = TypeVar("TConfig", bound=BaseModel)
+TransformationConfig = TypeVar("TransformationConfig", bound=BaseModel)
 
 
-class WorkflowStep[TConfig](WorkflowStepBase):
-    """Fully derived workflow step model"""
+class WorkflowStep[TransformationConfig](WorkflowStepBase):
+    """Represents a fully derived workflow step model."""
 
-    args: TConfig
+    args: TransformationConfig = Field(
+        default=..., description="The configuration arguments for the workflow step."
+    )
 
 
 class Workflow(BaseModel):
-    """Base class for workflow."""
+    """Represents a workflow consisting of a sequence of transformation steps."""
 
-    input: str = Field(default=..., description="Model version")
-    output: str = Field(default=..., description="Output name")
+    input: str = Field(
+        default=...,
+        description="The model version that serves as the input to the workflow.",
+    )
+    output: str = Field(
+        default=...,
+        description="The identifier or name for the output produced by the workflow.",
+    )
 
     operations: list[WorkflowStep] = Field(
-        default=..., description="The steps of the workflow."
+        default=...,
+        description="The ordered list of workflow steps to be applied to the input model.",
     )
