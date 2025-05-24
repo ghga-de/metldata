@@ -36,22 +36,21 @@ class WorkflowBuilder:
     def __init__(self, template: WorkflowTemplate):
         self.template = template
 
+    def build(self) -> Workflow:
+        """Build and return a Workflow object based on the template, with all loops expanded."""
+        precursors = self.generate_step_precursors()
+        operations = self.expand_loops(precursors)
+        return Workflow(
+            input=self.template.input,
+            output=self.template.output,
+            operations=operations,
+        )
+
     def generate_step_precursors(self) -> list[WorkflowStepPrecursor]:
         """Generate workflow step precursors from the template's operations."""
         return [
             WorkflowStepPrecursor.model_validate(item)
             for item in self.template.operations
-        ]
-
-    def expand_loop(self, precursor: WorkflowStepPrecursor) -> list[WorkflowStep]:
-        """Expand a loop in a workflow step precursor, producing multiple workflow steps."""
-        precursor_json = precursor.model_dump()
-        del precursor_json["loop"]
-        return [
-            WorkflowStep.model_validate_json(
-                apply_template(json.dumps(precursor_json), item)
-            )
-            for item in precursor.loop
         ]
 
     def expand_loops(
@@ -63,12 +62,13 @@ class WorkflowBuilder:
             expanded_steps.extend(self.expand_loop(precursor))
         return expanded_steps
 
-    def build(self) -> Workflow:
-        """Build and return a Workflow object based on the template, with all loops expanded."""
-        precursors = self.generate_step_precursors()
-        operations = self.expand_loops(precursors)
-        return Workflow(
-            input=self.template.input,
-            output=self.template.output,
-            operations=operations,
-        )
+    def expand_loop(self, precursor: WorkflowStepPrecursor) -> list[WorkflowStep]:
+        """Expand a loop in a workflow step precursor, producing multiple workflow steps."""
+        precursor_json = precursor.model_dump()
+        del precursor_json["loop"]
+        return [
+            WorkflowStep.model_validate_json(
+                apply_template(json.dumps(precursor_json), item)
+            )
+            for item in precursor.loop
+        ]

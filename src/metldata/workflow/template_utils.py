@@ -15,11 +15,11 @@
 
 """Utility functions for handling Jinja2 templates in workflows."""
 
-from jinja2 import Template
+from jinja2.sandbox import ImmutableSandboxedEnvironment
+
+env = ImmutableSandboxedEnvironment()
 
 
 def apply_template(step_template: str, variable: object) -> str:
     """Renders a Jinja2 template with the provided variable."""
-    template = Template(step_template)
-    rendered_output = template.render(item=variable)
-    return rendered_output
+    return env.from_string(step_template).render(item=variable)

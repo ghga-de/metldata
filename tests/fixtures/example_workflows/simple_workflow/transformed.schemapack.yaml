@@ -4,4 +4,4 @@ classes:
   File:
     id:
       propertyName: alias
-    content: ../example_content_schemas/File.schema.json
+    content: ../../example_content_schemas/File.schema.json

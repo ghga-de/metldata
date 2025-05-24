@@ -15,63 +15,94 @@
 
 """Example workflow templates."""
 
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
-import pytest
 import yaml
 from schemapack import load_datapack, load_schemapack
+from schemapack.spec.datapack import DataPack
+from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.delete_class.main import (
     DELETE_CLASS_TRANSFORMATION,
 )
-from metldata.workflow.base import WorkflowTemplate
+from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
-from metldata.workflow.handling import WorkflowHandler
+from tests.fixtures.data import ADVANCED_DATA
+from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR
 
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
+WORKFLOW_BY_NAME: list[str] = ["simple_workflow"]
 TRANSFORMATION_REGISTRY = {"delete_class": DELETE_CLASS_TRANSFORMATION}
 MODEL_REGISTRY = Path("/workspace/tests/fixtures/example_models")
 
 
-def _get_example_workflow(name: str) -> WorkflowTemplate:
+@dataclass(frozen=True)
+class WorkflowTestCase:
+    """A test case for a workflow."""
+
+    case_name: str
+    workflow: Workflow
+    input_model: SchemaPack
+    input_data: DataPack
+    transformed_model: SchemaPack
+    transformed_data: DataPack
+    model_registry: Path = MODEL_REGISTRY
+    transformation_registry: dict[str, Any] = field(
+        default_factory=lambda: TRANSFORMATION_REGISTRY
+    )
+
+    def __str__(self) -> str:  # noqa: D105
+        return f"{self.case_name}"
+
+
+def _get_workflow(workflow_path: Path) -> Workflow:
     """Get example workflow from a YAML file."""
-    with open(EXAMPLE_WORKFLOW_DIR / f"{name}.workflow.yaml") as file:
+    with open(workflow_path) as file:
         workflow_template = yaml.safe_load(file)
-    return WorkflowTemplate.model_validate(workflow_template)
+    template = WorkflowTemplate.model_validate(workflow_template)
+    return WorkflowBuilder(template=template).build()
 
 
-SIMPLE_TEMPLATE = _get_example_workflow("simple")
-SIMPLE_WORKFLOW = WorkflowBuilder(template=SIMPLE_TEMPLATE).build()
+def _read_test_case(
+    *,
+    case_name: str,
+) -> WorkflowTestCase:
+    """Read a test case for a workflow."""
+    case_dir = EXAMPLE_WORKFLOW_DIR / case_name
+    workflow_path = case_dir / "workflow.yaml"
+    input_model_path = case_dir / "input.schemapack.yaml"
+    input_data_path = case_dir / "input.datapack.yaml"
+    transformed_model_path = case_dir / "transformed.schemapack.yaml"
+    transformed_data_path = case_dir / "transformed.datapack.yaml"
 
+    input_model = (
+        load_schemapack(input_model_path)
+        if input_model_path.exists()
+        else ADVANCED_MODEL
+    )
+    input_data = (
+        load_datapack(input_data_path) if input_data_path.exists() else ADVANCED_DATA
+    )
+    transformed_model = load_schemapack(transformed_model_path)
+    transformed_data = load_datapack(transformed_data_path)
+    workflow = _get_workflow(workflow_path)
 
-@pytest.fixture
-def expected_workflow_output_data():
-    """Fixture that loads and returns the expected workflow output data
-    from a datapack YAML file.
-    """
-    return load_datapack(
-        Path("/workspace/tests/fixtures/example_workflows/transformed.datapack.yaml")
+    return WorkflowTestCase(
+        case_name=case_name,
+        workflow=workflow,
+        input_model=input_model,
+        input_data=input_data,
+        transformed_model=transformed_model,
+        transformed_data=transformed_data,
     )
 
 
-@pytest.fixture
-def expected_workflow_output_model():
-    """Fixture that loads and returns the expected workflow output model
-    from a schemapack YAML file.
-    """
-    return load_schemapack(
-        Path("/workspace/tests/fixtures/example_workflows/transformed.schemapack.yaml")
-    )
+def _read_all_test_cases() -> list[WorkflowTestCase]:
+    """Read all test cases for a workflow execution."""
+    return [_read_test_case(case_name=case_name) for case_name in WORKFLOW_BY_NAME]
 
 
-@pytest.fixture
-def workflow_handler():
-    """Fixture that creates and returns a WorkflowHandler instance
-    with a simple workflow and the necessary registries.
-    """
-    return WorkflowHandler(
-        workflow=SIMPLE_WORKFLOW,
-        model_registry=MODEL_REGISTRY,
-        transformation_registry=TRANSFORMATION_REGISTRY,
-    )
+WORKFLOW_TEST_CASES = _read_all_test_cases()

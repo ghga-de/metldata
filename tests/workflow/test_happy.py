@@ -15,15 +15,19 @@
 
 """Test the workflow execution using pre-defined test cases."""
 
-from tests.fixtures.data import ADVANCED_DATA
+import pytest
+
+from metldata.workflow.handling import WorkflowHandler
+from tests.fixtures.workflow import WORKFLOW_TEST_CASES, WorkflowTestCase
 
 
-def test_workflow_outputs(
-    workflow_handler,
-    expected_workflow_output_data,
-    expected_workflow_output_model,
-):
-    """Test the data created after workflow execution."""
-    workflow_result = workflow_handler.run(data=ADVANCED_DATA)
-    assert workflow_result.data == expected_workflow_output_data
-    assert workflow_result.model == expected_workflow_output_model
+@pytest.mark.parametrize("workflow_case", WORKFLOW_TEST_CASES, ids=str)
+def test_workflow_outputs(workflow_case: WorkflowTestCase):
+    """Test the happy path of running a workflow."""
+    workflow_result = WorkflowHandler(
+        workflow=workflow_case.workflow,
+        model_registry=workflow_case.model_registry,
+        transformation_registry=workflow_case.transformation_registry,
+    ).run(data=workflow_case.input_data)
+    assert workflow_result.data == workflow_case.transformed_data
+    assert workflow_result.model == workflow_case.transformed_model
