@@ -15,8 +15,6 @@
 
 """Data transformation logic for the 'delete class' transformation"""
 
-from copy import deepcopy
-
 from schemapack.spec.datapack import DataPack
 
 from metldata.builtin_transformations.common.utils import data_to_dict
