@@ -23,11 +23,24 @@ from metldata.builtin_transformations.common.assumptions.path_assumptions import
 from metldata.builtin_transformations.delete_class.config import (
     DeleteClassConfig,
 )
+from metldata.transform.exceptions import ModelAssumptionError
 
 
 def check_model_assumptions(
-    schema: SchemaPack,
+    model: SchemaPack,
     transformation_config: DeleteClassConfig,
 ) -> None:
     """Check model assumptions for the delete reference transformation."""
-    check_class_exists(model=schema, class_name=transformation_config.class_name)
+    check_class_exists(model=model, class_name=transformation_config.class_name)
+    check_class_is_not_root(
+        model=model,
+        class_name=transformation_config.class_name,
+    )
+
+
+def check_class_is_not_root(model: SchemaPack, class_name: str):
+    """Check that the class to be deleted is not a root class."""
+    if model.rootClass == class_name:
+        raise ModelAssumptionError(
+            f"The class '{class_name}' is a root class and cannot be deleted."
+        )
