@@ -36,7 +36,7 @@ from tests.fixtures.utils import BASE_DIR
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
 WORKFLOW_BY_NAME: list[str] = ["simple_workflow"]
 TRANSFORMATION_REGISTRY = {"delete_class": DELETE_CLASS_TRANSFORMATION}
-MODEL_REGISTRY = Path("/workspace/tests/fixtures/example_models")
+MODEL_REGISTRY = BASE_DIR / "example_models"
 
 
 @dataclass(frozen=True)
