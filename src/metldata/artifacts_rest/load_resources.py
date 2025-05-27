@@ -217,6 +217,7 @@ async def process_resource_upsert(
     )
     dac_alias = cast(str, lookup_slot_in_resource(resource=dac, slot_name="alias"))
     dac_email = cast(str, lookup_slot_in_resource(resource=dac, slot_name="email"))
+    dac_email = dac_email.replace("[dot]", ".").replace("[at]", "@")
     dataset_overview = MetadataDatasetOverview(
         accession=resource.id_,
         title=dataset_title,
