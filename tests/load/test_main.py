@@ -72,6 +72,10 @@ async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # no
             payload["dac_alias"]
             == dataset["data_access_policy"]["data_access_committee"]["alias"]
         )
+        assert (
+            payload["dac_email"]
+            == dataset["data_access_policy"]["data_access_committee"]["email"]
+        )
 
     # check that the artifact resources were loaded based on an example:
     expected_artifact_name = "embedded_public"
