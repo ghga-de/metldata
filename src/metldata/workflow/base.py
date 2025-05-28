@@ -28,7 +28,7 @@ class WorkflowTemplate(BaseModel):
     )
     output: str = Field(
         default=...,
-        description="Identifier for the resulting model the workflow is applied.",
+        description="Identifier for the resulting model after the workflow is applied.",
     )
 
     operations: list[dict] = Field(
