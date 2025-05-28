@@ -20,6 +20,6 @@ from pydantic_settings import BaseSettings
 
 
 class DeleteClassConfig(BaseSettings):
-    """A model describing an instruction for deleting a relation of a class."""
+    """A model describing an instruction for deleting a class ."""
 
     class_name: str = Field(default=..., description="The name of the class to delete.")
