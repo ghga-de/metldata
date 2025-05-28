@@ -19,7 +19,7 @@
 
 def test_workflow_handler_input_model_invalid():
     """Test."""
-    # test returning the error message if the workflow input model is not supported
+    # test if the correct error message is returned if the workflow input model is not supported
     pass
 
 
