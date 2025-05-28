@@ -25,9 +25,9 @@ from tests.fixtures.workflow import WORKFLOW_TEST_CASES, WorkflowTestCase
 def test_workflow_outputs(test_case: WorkflowTestCase):
     """Test the happy path of running a workflow."""
     workflow_result = WorkflowHandler(
-        workflow=workflow_case.workflow,
-        model_registry=workflow_case.model_registry,
-        transformation_registry=workflow_case.transformation_registry,
-    ).run(data=workflow_case.input_data)
-    assert workflow_result.data == workflow_case.transformed_data
-    assert workflow_result.model == workflow_case.transformed_model
+        workflow=test_case.workflow,
+        model_registry=test_case.model_registry,
+        transformation_registry=test_case.transformation_registry,
+    ).run(data=test_case.input_data)
+    assert workflow_result.data == test_case.transformed_data
+    assert workflow_result.model == test_case.transformed_model

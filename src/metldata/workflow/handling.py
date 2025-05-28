@@ -115,7 +115,7 @@ class WorkflowHandler:
         for step in self.workflow.operations:
             step_handler = WorkflowStepHandler(
                 workflow_step=step, input_model=model
-            ).run(self.transformation_registry)
+            ).execute(self.transformation_registry)
             model = step_handler.transformed_model
             data = step_handler.transform_data(data)
 
