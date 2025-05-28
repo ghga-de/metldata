@@ -13,4 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Common models and functions for the built-in transformations."""
+"""Utility functions for handling Jinja2 templates in workflows."""
+
+from jinja2.sandbox import ImmutableSandboxedEnvironment
+
+env = ImmutableSandboxedEnvironment()
+
+
+def apply_template(step_template: str, **variables: object) -> str:
+    """Renders a Jinja2 template with the provided variable."""
+    return env.from_string(step_template).render(**variables)

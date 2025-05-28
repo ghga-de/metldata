@@ -12,58 +12,65 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-"""Transformation test cases."""
+"""Example workflow templates."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 
-from pydantic import BaseModel
+import yaml
 from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.delete_class import (
+from metldata.builtin_transformations.delete_class.main import (
     DELETE_CLASS_TRANSFORMATION,
 )
-from metldata.transform.base import TransformationDefinition
+from metldata.workflow.base import Workflow, WorkflowTemplate
+from metldata.workflow.builder import WorkflowBuilder
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
-from tests.fixtures.utils import BASE_DIR, read_yaml
+from tests.fixtures.utils import BASE_DIR
 
-EXAMPLE_TRANSFORMATION_DIR = BASE_DIR / "example_transformations"
-
-TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
-    "delete_class": DELETE_CLASS_TRANSFORMATION,
-}
+EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
+WORKFLOW_BY_NAME: list[str] = ["simple_workflow"]
+TRANSFORMATION_REGISTRY = {"delete_class": DELETE_CLASS_TRANSFORMATION}
 
 
 @dataclass(frozen=True)
-class TransformationTestCase:
-    """A test case for a transformation."""
+class WorkflowTestCase:
+    """A test case for a workflow."""
 
-    transformation_name: str
     case_name: str
-    transformation_definition: TransformationDefinition
-    config: BaseModel
+    workflow: Workflow
     input_model: SchemaPack
     input_data: DataPack
     transformed_model: SchemaPack
     transformed_data: DataPack
+    transformation_registry: dict[str, Any] = field(
+        default_factory=lambda: TRANSFORMATION_REGISTRY
+    )
 
     def __str__(self) -> str:  # noqa: D105
-        return f"{self.transformation_name}-{self.case_name}"
+        return f"{self.case_name}"
+
+
+def _get_workflow(workflow_path: Path) -> Workflow:
+    """Get example workflow from a YAML file."""
+    with open(workflow_path) as file:
+        workflow_template = yaml.safe_load(file)
+    template = WorkflowTemplate.model_validate(workflow_template)
+    return WorkflowBuilder(template=template).build()
 
 
 def _read_test_case(
     *,
-    transformation_name: str,
     case_name: str,
-) -> TransformationTestCase:
-    """Read a test case for a transformation."""
-    transformation_definition = TRANSFORMATIONS_BY_NAME[transformation_name]
-    case_dir = EXAMPLE_TRANSFORMATION_DIR / transformation_name / case_name
-    config_path = case_dir / "config.yaml"
+) -> WorkflowTestCase:
+    """Read a test case for a workflow."""
+    case_dir = EXAMPLE_WORKFLOW_DIR / case_name
+    workflow_path = case_dir / "workflow.yaml"
     input_model_path = case_dir / "input.schemapack.yaml"
     input_data_path = case_dir / "input.datapack.yaml"
     transformed_model_path = case_dir / "transformed.schemapack.yaml"
@@ -79,13 +86,11 @@ def _read_test_case(
     )
     transformed_model = load_schemapack(transformed_model_path)
     transformed_data = load_datapack(transformed_data_path)
-    config = transformation_definition.config_cls(**read_yaml(config_path))
+    workflow = _get_workflow(workflow_path)
 
-    return TransformationTestCase(
-        transformation_name=transformation_name,
+    return WorkflowTestCase(
         case_name=case_name,
-        transformation_definition=transformation_definition,
-        config=config,
+        workflow=workflow,
         input_model=input_model,
         input_data=input_data,
         transformed_model=transformed_model,
@@ -93,20 +98,9 @@ def _read_test_case(
     )
 
 
-def _read_all_test_cases() -> list[TransformationTestCase]:
-    """Read all test cases for a transformation."""
-    return [
-        _read_test_case(
-            transformation_name=transformation_name,
-            case_name=case_name,
-        )
-        for transformation_name in TRANSFORMATIONS_BY_NAME
-        for case_name in [
-            path.name
-            for path in (EXAMPLE_TRANSFORMATION_DIR / transformation_name).iterdir()
-            if path.is_dir()
-        ]
-    ]
+def _read_all_test_cases() -> list[WorkflowTestCase]:
+    """Read all test cases for a workflow execution."""
+    return [_read_test_case(case_name=case_name) for case_name in WORKFLOW_BY_NAME]
 
 
-TRANSFORMATION_TEST_CASES = _read_all_test_cases()
+WORKFLOW_TEST_CASES = _read_all_test_cases()
