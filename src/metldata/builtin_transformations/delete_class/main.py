@@ -78,5 +78,5 @@ DELETE_CLASS_TRANSFORMATION = TransformationDefinition[DeleteClassConfig](
     config_cls=DeleteClassConfig,
     check_model_assumptions=check_model_assumptions_wrapper,
     transform_model=transform_model,
-    data_transformer_factory=DeleteRelationsDataTransformer,
+    data_transformer_factory=DeleteClassTransformer,
 )
