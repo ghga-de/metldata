@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Test the workflow execution using pre-defined test cases."""
+"""Test workflow execution using pre-defined test cases."""
 
 import pytest
 
