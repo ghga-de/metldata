@@ -55,7 +55,7 @@ class WorkflowStepBase(BaseModel):
 
 class WorkflowStepPrecursor(WorkflowStepBase):
     """Represents a precursor model with loop specification by extending
-    'WorkflowStepBase' with loop attribute.
+    'WorkflowStepBase' with a loop attribute.
     """
 
     loop: list[object] = Field(
