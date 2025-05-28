@@ -36,7 +36,7 @@ from metldata.transform.base import (
 )
 
 
-class DeleteRelationsDataTransformer(DataTransformer[DeleteClassConfig]):
+class DeleteClassTransformer(DataTransformer[DeleteClassConfig]):
     """A transformer that deletes relation from data."""
 
     def transform(self, data: DataPack) -> DataPack:
