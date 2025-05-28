@@ -24,7 +24,7 @@ class WorkflowTemplate(BaseModel):
     """Base class for workflow templates."""
 
     input: str = Field(
-        default=..., description="The input model version to be subject transformed."
+        default=..., description="The input model version for the transformation subject."
     )
     output: str = Field(
         default=...,
