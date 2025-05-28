@@ -26,6 +26,6 @@ def test_workflow_handler_input_model_invalid():
 # test to implement if we keep an output model registry, like supported egress models.
 def test_output_data_against_workflow_output_model():
     """Test."""
-    # test if the correct error message is returned when the data at the end of the 
+    # test if the correct error message is returned when the data at the end of the
     # workflow execution fails to match the workflow output model
     pass
