@@ -21,8 +21,8 @@ from metldata.workflow.handling import WorkflowHandler
 from tests.fixtures.workflow import WORKFLOW_TEST_CASES, WorkflowTestCase
 
 
-@pytest.mark.parametrize("workflow_case", WORKFLOW_TEST_CASES, ids=str)
-def test_workflow_outputs(workflow_case: WorkflowTestCase):
+@pytest.mark.parametrize("test_case", WORKFLOW_TEST_CASES, ids=str)
+def test_workflow_outputs(test_case: WorkflowTestCase):
     """Test the happy path of running a workflow."""
     workflow_result = WorkflowHandler(
         workflow=workflow_case.workflow,
