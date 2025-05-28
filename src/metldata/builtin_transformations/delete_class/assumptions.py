@@ -30,7 +30,7 @@ def check_model_assumptions(
     model: SchemaPack,
     transformation_config: DeleteClassConfig,
 ) -> None:
-    """Check model assumptions for the delete reference transformation."""
+    """Check model assumptions for the delete class transformation."""
     check_class_exists(model=model, class_name=transformation_config.class_name)
     check_class_is_not_root(
         model=model,
