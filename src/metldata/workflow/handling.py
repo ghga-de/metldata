@@ -15,18 +15,15 @@
 
 """Logic for executing workflows."""
 
-from functools import cached_property
-from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
-from schemapack import load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.transform.handling import TransformationHandler
 from metldata.workflow.base import Workflow, WorkflowStep
-from metldata.workflow.exceptions import ModelNotFoundError, UnknownTransformationError
+from metldata.workflow.exceptions import UnknownTransformationError
 
 
 class WorkflowResult(BaseModel):
@@ -51,7 +48,7 @@ class WorkflowStepHandler:
         self.workflow_step = workflow_step
         self.input_model = input_model
 
-    def execute(self, transformation_registry: dict[str, Any]):
+    def execute(self, transformation_registry: dict[str, Any]) -> TransformationHandler:
         """Executes the workflow step by retrieving the corresponding transformation
         from the registry and initializing a TransformationHandler.
 
@@ -82,7 +79,8 @@ class WorkflowHandler:
         workflow (Workflow): The workflow to be executed.
         transformation_registry (dict[str, Any]): A mapping from transformation names
             to their definitions.
-        model_registry (Path): The directory containing available model files.
+        input_model (SchemaPack): The initial schema model that will be transformed by
+            the workflow.
 
     """
 
@@ -90,21 +88,11 @@ class WorkflowHandler:
         self,
         workflow: Workflow,
         transformation_registry: dict[str, Any],
-        model_registry: Path,
+        input_model: SchemaPack,
     ):
         self.workflow = workflow
         self.transformation_registry = transformation_registry
-        # model registry is a temporary implementation.
-        self.model_registry = model_registry
-
-    @cached_property
-    def input_model(self) -> SchemaPack:
-        """Load the workflow's initial input model from the model registry."""
-        file_path = self.model_registry / self.workflow.input
-        if not file_path.exists():
-            raise ModelNotFoundError(f"Input model file not found: {file_path}")
-
-        return load_schemapack(file_path)
+        self.input_model = input_model
 
     def run(self, data: DataPack) -> WorkflowResult:
         """Executes the workflow, applying each transformation in sequence to the model
@@ -113,10 +101,10 @@ class WorkflowHandler:
         model = self.input_model
 
         for step in self.workflow.operations:
-            step_handler = WorkflowStepHandler(
+            transformation_handler = WorkflowStepHandler(
                 workflow_step=step, input_model=model
             ).execute(self.transformation_registry)
-            model = step_handler.transformed_model
-            data = step_handler.transform_data(data)
+            model = transformation_handler.transformed_model
+            data = transformation_handler.transform_data(data)
 
         return WorkflowResult(model=model, data=data)

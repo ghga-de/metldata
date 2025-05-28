@@ -59,9 +59,9 @@ def _remove_relations_from_data(
 
         for resource_id, resource in class_resources.items():
             filtered_relations = {
-                name: spec
-                for name, spec in resource.relations.items()
-                if spec.targetClass != target_class
+                name: specification
+                for name, specification in resource.relations.items()
+                if specification.targetClass != target_class
             }
             modified_data["resources"][class_name][resource_id]["relations"] = (
                 filtered_relations

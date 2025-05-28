@@ -18,21 +18,17 @@
 from typing import TypeVar
 
 from pydantic import BaseModel, Field
+from pydantic_settings import BaseSettings
+
+TransformationConfig = TypeVar("TransformationConfig", bound=BaseSettings)
 
 
 class WorkflowTemplate(BaseModel):
     """Base class for workflow templates."""
 
-    input: str = Field(
-        default=..., description="The input model version for the transformation subject."
-    )
-    output: str = Field(
-        default=...,
-        description="Identifier for the resulting model after the workflow is applied.",
-    )
-
     operations: list[dict] = Field(
-        default=..., description="List of operations to apply during the workflow"
+        default=...,
+        description="List of operations to apply during the workflow in the given order.",
     )
 
 
@@ -64,11 +60,8 @@ class WorkflowStepPrecursor(WorkflowStepBase):
     )
 
 
-TransformationConfig = TypeVar("TransformationConfig", bound=BaseModel)
-
-
 class WorkflowStep[TransformationConfig](WorkflowStepBase):
-    """Represents a fully derived workflow step model."""
+    """Represents a workflow step model with typed transformation arguments."""
 
     args: TransformationConfig = Field(
         default=..., description="The configuration arguments for the workflow step."
@@ -77,15 +70,6 @@ class WorkflowStep[TransformationConfig](WorkflowStepBase):
 
 class Workflow(BaseModel):
     """Represents a workflow consisting of a sequence of transformation steps."""
-
-    input: str = Field(
-        default=...,
-        description="The model version that serves as the input to the workflow.",
-    )
-    output: str = Field(
-        default=...,
-        description="The identifier or name for the output produced by the workflow.",
-    )
 
     operations: list[WorkflowStep] = Field(
         default=...,

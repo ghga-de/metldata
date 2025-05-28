@@ -20,6 +20,6 @@ from jinja2.sandbox import ImmutableSandboxedEnvironment
 env = ImmutableSandboxedEnvironment()
 
 
-def apply_template(step_template: str, variable: object) -> str:
+def apply_template(step_template: str, **variables: object) -> str:
     """Renders a Jinja2 template with the provided variable."""
-    return env.from_string(step_template).render(item=variable)
+    return env.from_string(step_template).render(**variables)

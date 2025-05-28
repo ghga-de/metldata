@@ -24,10 +24,11 @@ from tests.fixtures.workflow import WORKFLOW_TEST_CASES, WorkflowTestCase
 @pytest.mark.parametrize("test_case", WORKFLOW_TEST_CASES, ids=str)
 def test_workflow_outputs(test_case: WorkflowTestCase):
     """Test the happy path of running a workflow."""
-    workflow_result = WorkflowHandler(
+    handler = workflow_result = WorkflowHandler(
         workflow=test_case.workflow,
-        model_registry=test_case.model_registry,
         transformation_registry=test_case.transformation_registry,
-    ).run(data=test_case.input_data)
+        input_model=test_case.input_model,
+    )
+    workflow_result = handler.run(data=test_case.input_data)
     assert workflow_result.data == test_case.transformed_data
     assert workflow_result.model == test_case.transformed_model

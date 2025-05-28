@@ -41,16 +41,14 @@ class WorkflowBuilder:
         precursors = self.generate_step_precursors()
         operations = self.expand_loops(precursors)
         return Workflow(
-            input=self.template.input,
-            output=self.template.output,
             operations=operations,
         )
 
     def generate_step_precursors(self) -> list[WorkflowStepPrecursor]:
         """Generate workflow step precursors from the template's operations."""
         return [
-            WorkflowStepPrecursor.model_validate(item)
-            for item in self.template.operations
+            WorkflowStepPrecursor.model_validate(operation)
+            for operation in self.template.operations
         ]
 
     def expand_loops(
@@ -68,7 +66,7 @@ class WorkflowBuilder:
         del precursor_json["loop"]
         return [
             WorkflowStep.model_validate_json(
-                apply_template(json.dumps(precursor_json), item)
+                apply_template(json.dumps(precursor_json), item=value)
             )
-            for item in precursor.loop
+            for value in precursor.loop
         ]

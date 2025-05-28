@@ -36,7 +36,6 @@ from tests.fixtures.utils import BASE_DIR
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
 WORKFLOW_BY_NAME: list[str] = ["simple_workflow"]
 TRANSFORMATION_REGISTRY = {"delete_class": DELETE_CLASS_TRANSFORMATION}
-MODEL_REGISTRY = BASE_DIR / "example_models"
 
 
 @dataclass(frozen=True)
@@ -49,7 +48,6 @@ class WorkflowTestCase:
     input_data: DataPack
     transformed_model: SchemaPack
     transformed_data: DataPack
-    model_registry: Path = MODEL_REGISTRY
     transformation_registry: dict[str, Any] = field(
         default_factory=lambda: TRANSFORMATION_REGISTRY
     )
