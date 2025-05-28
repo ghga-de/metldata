@@ -24,7 +24,7 @@ from tests.fixtures.workflow import WORKFLOW_TEST_CASES, WorkflowTestCase
 @pytest.mark.parametrize("test_case", WORKFLOW_TEST_CASES, ids=str)
 def test_workflow_outputs(test_case: WorkflowTestCase):
     """Test the happy path of running a workflow."""
-    handler = workflow_result = WorkflowHandler(
+    handler = WorkflowHandler(
         workflow=test_case.workflow,
         transformation_registry=test_case.transformation_registry,
         input_model=test_case.input_model,
