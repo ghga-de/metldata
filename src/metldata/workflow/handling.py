@@ -51,7 +51,7 @@ class WorkflowStepHandler:
         self.workflow_step = workflow_step
         self.input_model = input_model
 
-    def run(self, transformation_registry: dict[str, Any]):
+    def execute(self, transformation_registry: dict[str, Any]):
         """Executes the workflow step by retrieving the corresponding transformation
         from the registry and initializing a TransformationHandler.
 
