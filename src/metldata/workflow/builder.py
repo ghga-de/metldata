@@ -16,6 +16,7 @@
 """Logic to build a workflow from a template."""
 
 import json
+from collections.abc import Mapping
 
 from metldata.workflow.base import (
     Workflow,
@@ -57,16 +58,35 @@ class WorkflowBuilder:
         """Expand all loops in a list of workflow step precursors."""
         expanded_steps = []
         for precursor in precursors:
-            expanded_steps.extend(self.expand_loop(precursor))
+            if precursor.loop:
+                expanded_steps.extend(self.expand_loop(precursor))
+            else:
+                expanded_steps.append(self.evaluate_non_loop(precursor))
         return expanded_steps
 
     def expand_loop(self, precursor: WorkflowStepPrecursor) -> list[WorkflowStep]:
         """Expand a loop in a workflow step precursor, producing multiple workflow steps."""
         precursor_json = precursor.model_dump()
         del precursor_json["loop"]
-        return [
-            WorkflowStep.model_validate_json(
-                apply_template(json.dumps(precursor_json), item=value)
-            )
-            for value in precursor.loop
-        ]
+
+        workflow_steps: list[WorkflowStep] = []
+        for args in precursor.loop:
+            if isinstance(args, Mapping):
+                workflow_steps.append(
+                    WorkflowStep.model_validate_json(
+                        apply_template(json.dumps(precursor_json), **args)
+                    )
+                )
+            else:
+                workflow_steps.append(
+                    WorkflowStep.model_validate_json(
+                        apply_template(json.dumps(precursor_json), item=args)
+                    )
+                )
+        return workflow_steps
+
+    def evaluate_non_loop(self, precursor: WorkflowStepPrecursor) -> WorkflowStep:
+        """Evaluate args for non-loop workflow steps."""
+        return WorkflowStep.model_validate_json(
+            apply_template(precursor.model_dump_json(), **precursor.args)
+        )

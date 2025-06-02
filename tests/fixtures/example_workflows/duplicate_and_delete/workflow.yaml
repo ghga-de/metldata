@@ -1,0 +1,16 @@
+operations:
+  # Duplicate one of the classes prior to deletion
+  - name: duplicate_class
+    description: "Create a duplicate of class Dataset named MyDataset"
+    args:
+      source_class_name: Dataset
+      target_class_name: MyDataset
+  # Delete classes - this will automatically delete the obsolete relations
+  - name: delete_class
+    description: "Delete class {{ item }}"
+    args:
+      class_name: "{{ item }}"
+    loop:
+      - Dataset
+      - Sample
+      - Experiment

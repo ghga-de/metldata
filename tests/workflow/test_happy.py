@@ -17,6 +17,7 @@
 
 import pytest
 
+from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.workflow.handling import WorkflowHandler
 from tests.fixtures.workflow import WORKFLOW_TEST_CASES, WorkflowTestCase
 
@@ -30,5 +31,15 @@ def test_workflow_outputs(test_case: WorkflowTestCase):
         input_model=test_case.input_model,
     )
     workflow_result = handler.run(data=test_case.input_data)
-    assert workflow_result.data == test_case.transformed_data
+    if workflow_result.data != test_case.transformed_data:
+        import json
+
+        with open("expected.json", "w") as expected:
+            json.dump(data_to_dict(test_case.transformed_data), expected, indent=2)
+
+        with open("actual.json", "w") as actual:
+            json.dump(data_to_dict(workflow_result.data), actual, indent=2)
+
+        assert False
+
     assert workflow_result.model == test_case.transformed_model
