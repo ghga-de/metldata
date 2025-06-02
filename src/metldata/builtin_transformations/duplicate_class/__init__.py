@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""A transformation to delete relations."""
+"""Subpackage containing functionality to duplicate a class."""
 
 # shortcuts:
 from metldata.builtin_transformations.duplicate_class.main import (  # noqa: F401

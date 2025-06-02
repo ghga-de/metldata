@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""A transformation to delete references."""
+"""A transformation to duplicate classes."""
 
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
@@ -37,7 +37,7 @@ from metldata.transform.base import (
 
 
 class DuplicateClassDataTransformer(DataTransformer[DuplicateClassConfig]):
-    """A transformer that deletes relation from data."""
+    """A transformer that copies content between a source and target class."""
 
     def transform(self, data: DataPack) -> DataPack:
         """Transforms data.

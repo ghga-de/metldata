@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Model transformation logic for the 'delete relations' transformation"""
+"""Model transformation logic for the 'duplicate class' transformation"""
 
 from schemapack.spec.schemapack import SchemaPack
 
@@ -29,7 +29,7 @@ def duplicate_model_class(
     model: SchemaPack,
     transformation_config: DuplicateClassConfig,
 ) -> SchemaPack:
-    """Delete relations from the model."""
+    """Duplicate a source class in the model using a given target class name."""
     mutable_model = model_to_dict(model)
 
     source_class_name = transformation_config.source_class_name

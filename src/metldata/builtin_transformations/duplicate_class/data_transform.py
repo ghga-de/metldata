@@ -27,15 +27,15 @@ from metldata.transform.exceptions import EvitableTransformationError
 def duplicate_data_class(
     *, data: DataPack, transformation_config: DuplicateClassConfig
 ) -> DataPack:
-    """Delete the provided class relations from the provided data.
+    """Copy the provided class content to the target class.
 
     Args:
         data:
-            The data based on DataPack to delete the relations from.
-        instructions_by_class:
-            A dictionary mapping class names to lists of delete relation instructions.
+            The data based on DataPack to copy class content into.
+        transformation_config:
+            Config class specifying the source and target class for the copy operation.
     Returns:
-        The data with the specified relations being deleted.
+        A DataPack with the source class content copied to the target class.
     """
     modified_data = data_to_dict(data)
 

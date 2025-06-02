@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"Assumptions for delete reference transformation"
+"Assumptions for the duplicate class transformation."
 
 from schemapack.spec.schemapack import SchemaPack
 
@@ -30,7 +30,7 @@ def check_model_assumptions(
     schema: SchemaPack,
     transformation_config: DuplicateClassConfig,
 ) -> None:
-    """Check model assumptions for the delete reference transformation."""
+    """Check model assumptions for the duplicate class transformation."""
     check_class_exists(model=schema, class_name=transformation_config.source_class_name)
     check_class_does_not_exist(
         model=schema, class_name=transformation_config.target_class_name
