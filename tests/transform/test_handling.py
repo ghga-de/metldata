@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-"""Test the handling module. Only edge cases that are not covered by tests
+"""Test the transformation handling module. Only edge cases that are not covered by tests
 with builtin transformations are tested here.
 """
 
@@ -27,15 +27,12 @@ from metldata.builtin_transformations.null.config import NullConfig
 from metldata.transform.base import (
     DataTransformer,
     TransformationDefinition,
-    WorkflowDefinition,
-    WorkflowStep,
 )
 from metldata.transform.exceptions import ModelAssumptionError, ModelTransformationError
 from metldata.transform.handling import (
     PostTransformValidationError,
     PreTransformValidationError,
     TransformationHandler,
-    WorkflowHandler,
 )
 from tests.fixtures.data import INVALID_MINIMAL_DATA, MINIMAL_DATA
 from tests.fixtures.models import MINIMAL_MODEL
@@ -152,41 +149,3 @@ def test_transformation_handler_transformed_data_invalid():
 
     with pytest.raises(PostTransformValidationError):
         _ = transformation_handler.transform_data(MINIMAL_DATA)
-
-
-def test_workflow_handler_happy():
-    """Test the happy path of using a WorkflowHandler."""
-    null_workflow = WorkflowDefinition(
-        description="A workflow for testing.",
-        steps={
-            "step1": WorkflowStep(
-                description="A dummy step.",
-                transformation_definition=NULL_TRANSFORMATION,
-                input=None,
-            ),
-            "step2": WorkflowStep(
-                description="Another dummy step.",
-                transformation_definition=NULL_TRANSFORMATION,
-                input="step1",
-            ),
-        },
-        artifacts={
-            "step1_output": "step1",
-            "step2_output": "step2",
-        },
-    )
-
-    workflow_handler = WorkflowHandler(
-        workflow_definition=null_workflow,
-        workflow_config=null_workflow.config_cls.model_validate(
-            {"step1": {}, "step2": {}}
-        ),
-        input_model=MINIMAL_MODEL,
-    )
-
-    artifacts = workflow_handler.run(data=MINIMAL_DATA)
-
-    # Since a null workflow was used, compare to the input:
-    assert (
-        artifacts["step1_output"].data == artifacts["step2_output"].data == MINIMAL_DATA
-    )

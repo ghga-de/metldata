@@ -1,5 +1,0 @@
-inferred_relations:
-  File:
-    datasets:
-      path: "File<(files)Dataset"
-      allow_multiple: true

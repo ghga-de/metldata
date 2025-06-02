@@ -13,4 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Common models and functions for the built-in transformations."""
+
+"""Test the workflow handling module."""
+
+
+def test_workflow_handler_input_model_invalid():
+    """Test."""
+    # test if the correct error message is returned if the workflow input model is not supported
+    pass
+
+
+# test to implement if we keep an output model registry, like supported egress models.
+def test_output_data_against_workflow_output_model():
+    """Test."""
+    # test if the correct error message is returned when the data at the end of the
+    # workflow execution fails to match the workflow output model
+    pass

@@ -13,4 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Common models and functions for the built-in transformations."""
+"""Models and functions for workflows."""

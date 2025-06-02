@@ -13,4 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Common models and functions for the built-in transformations."""
+"""A transformation to delete relations."""
+
+# shortcuts:
+from metldata.builtin_transformations.delete_class.main import (  # noqa: F401
+    DELETE_CLASS_TRANSFORMATION,
+)
