@@ -12,13 +12,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-"""Built-in transformations"""
+"""Models for instructions used in the 'delete class' transformation."""
 
-from metldata.builtin_transformations.delete_class import (
-    DELETE_CLASS_TRANSFORMATION,  # noqa: F401
-)
-from metldata.builtin_transformations.duplicate_class import (
-    DUPLICATE_CLASS_TRANSFORMATION,  # noqa: F401
-)
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+
+class DuplicateClassConfig(BaseSettings):
+    """A model describing an instruction for duplicating a class."""
+
+    source_class_name: str = Field(
+        default=..., description="The name of the class to duplicate."
+    )
+    target_class_name: str = Field(
+        default=..., description="The class name for the copy."
+    )

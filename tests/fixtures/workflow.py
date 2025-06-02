@@ -24,8 +24,9 @@ from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.delete_class.main import (
+from metldata.builtin_transformations import (
     DELETE_CLASS_TRANSFORMATION,
+    DUPLICATE_CLASS_TRANSFORMATION,
 )
 from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
@@ -35,7 +36,10 @@ from tests.fixtures.utils import BASE_DIR
 
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
 WORKFLOW_BY_NAME: list[str] = ["simple_workflow"]
-TRANSFORMATION_REGISTRY = {"delete_class": DELETE_CLASS_TRANSFORMATION}
+TRANSFORMATION_REGISTRY = {
+    "delete_class": DELETE_CLASS_TRANSFORMATION,
+    "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
+}
 
 
 @dataclass(frozen=True)

@@ -60,6 +60,12 @@ def check_class_exists(*, model: SchemaPack, class_name: str) -> None:
         raise ModelAssumptionError(f"Class {class_name} not found in model.")
 
 
+def check_class_does_not_exist(*, model: SchemaPack, class_name: str) -> None:
+    """Ensure a class does not exist in the model and raise an error else"""
+    if class_name in model.classes:
+        raise ModelAssumptionError(f"Unexcpected class {class_name} found in model.")
+
+
 def check_relation_exists(*, model: SchemaPack, class_name: str, relation: str) -> None:
     """Check if a relation exists in a class and raise an error if not"""
     if relation not in model.classes[class_name].relations:

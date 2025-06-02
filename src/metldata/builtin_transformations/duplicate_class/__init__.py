@@ -12,13 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-"""Built-in transformations"""
+"""A transformation to delete relations."""
 
-from metldata.builtin_transformations.delete_class import (
-    DELETE_CLASS_TRANSFORMATION,  # noqa: F401
-)
-from metldata.builtin_transformations.duplicate_class import (
-    DUPLICATE_CLASS_TRANSFORMATION,  # noqa: F401
+# shortcuts:
+from metldata.builtin_transformations.duplicate_class.main import (  # noqa: F401
+    DUPLICATE_CLASS_TRANSFORMATION,
 )
