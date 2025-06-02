@@ -35,7 +35,11 @@ from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR
 
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
-WORKFLOW_BY_NAME: list[str] = ["duplicate_and_delete", "simple_workflow"]
+WORKFLOW_BY_NAME: list[str] = [
+    "duplicate_one_delete_multiple",
+    "duplicate_multiple_delete_one",
+    "simple_workflow",
+]
 TRANSFORMATION_REGISTRY = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
     "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
