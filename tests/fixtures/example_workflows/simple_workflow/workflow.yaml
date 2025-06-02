@@ -1,10 +1,20 @@
 operations:
+  - name: infer_relation
+    description: "Infer {{ item.relation_name }} for each Dataset"
+    args:
+      class_name: Dataset
+      relation_name: "{{ item.relation_name }}"
+      path: "{{ item.path }}"
+    loop:
+      - relation_name: samples_via_files
+        path: "Dataset(files)>File<(files)Sample"
+
   # Delete classes - this will automatically delete the obsolete relations
   - name: delete_class
     description: "Delete class {{ item }}"
     args:
       class_name: "{{ item }}"
     loop:
-      - Dataset
       - Sample
       - Experiment
+      - File

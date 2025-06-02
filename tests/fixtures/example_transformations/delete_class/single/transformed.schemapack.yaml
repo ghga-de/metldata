@@ -1,23 +1,23 @@
 # a more advanced schemapack:
 schemapack: 0.3.0
 classes:
-  File:
+  Dataset:
     id:
       propertyName: alias
-    content: ../../../example_content_schemas/File.schema.json
-  Sample:
-    id:
-      propertyName: alias
-    content: ../../../example_content_schemas/Sample.schema.json
+    content: ../../../example_content_schemas/Dataset.schema.json
     relations:
-      files:
-        targetClass: File
+      samples:
+        targetClass: Sample
         multiple:
-          origin: false
+          origin: true
           target: true
         mandatory:
           origin: false
           target: true
+  Sample:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Sample.schema.json
   Experiment:
     id:
       propertyName: alias

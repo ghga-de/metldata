@@ -1,7 +1,16 @@
 # a more advanced schemapack:
 schemapack: 0.3.0
 classes:
-  File:
+  Dataset:
     id:
       propertyName: alias
-    content: ../../example_content_schemas/File.schema.json
+    content: ../example_content_schemas/Dataset.schema.json
+    relations:
+      samples_via_files:
+        targetClass: Sample
+        multiple:
+          origin: true
+          target: false
+        mandatory:
+          origin: false
+          target: false
