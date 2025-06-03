@@ -27,15 +27,15 @@ from metldata.transform.exceptions import EvitableTransformationError
 def duplicate_data_class(
     *, data: DataPack, transformation_config: DuplicateClassConfig
 ) -> DataPack:
-    """Copy the provided class content to the target class.
+    """Copy the contents of a class in the given DataPack under a new class name.
 
     Args:
         data:
-            The data based on DataPack to copy class content into.
+            The DataPack instance containing the source class to duplicate.
         transformation_config:
-            Config class specifying the source and target class for the copy operation.
+            Configuration specifying the source and target class for the copy operation.
     Returns:
-        A DataPack with the source class content copied to the target class.
+        A new DataPack with the source class content duplicated under the target class name.
     """
     modified_data = data_to_dict(data)
 
