@@ -42,19 +42,18 @@ class WorkflowStepBase(BaseModel):
         + " in the transformation registry.",
     )
     description: str = Field(description="A description explaining the workflow step.")
+    args: object = Field(
+        default=...,
+        description="The arguments or parameters required by the transformation."
+        + " These are passed to the transformation definition and vary depending"
+        + " on the transformation type.",
+    )
 
 
 class WorkflowStepPrecursor(WorkflowStepBase):
     """Represents a precursor model with loop specification by extending
     'WorkflowStepBase' with a loop attribute.
     """
-
-    args: Mapping[str, object] = Field(
-        default=...,
-        description="The arguments or parameters required by the transformation."
-        + " These are passed to the transformation definition and vary depending"
-        + " on the transformation type.",
-    )
 
     loop: Sequence[object] = Field(
         default_factory=list,

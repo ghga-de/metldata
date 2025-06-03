@@ -61,7 +61,8 @@ class WorkflowBuilder:
             if precursor.loop:
                 expanded_steps.extend(self.expand_loop(precursor))
             else:
-                expanded_steps.append(self.evaluate_non_loop(precursor))
+                step = self.convert_precursor_without_loop(precursor)
+                expanded_steps.append(step)
         return expanded_steps
 
     def expand_loop(self, precursor: WorkflowStepPrecursor) -> list[WorkflowStep]:
@@ -76,8 +77,8 @@ class WorkflowBuilder:
             workflow_steps.append(WorkflowStep.model_validate_json(rendered_context))
         return workflow_steps
 
-    def evaluate_non_loop(self, precursor: WorkflowStepPrecursor) -> WorkflowStep:
-        """Evaluate args for non-loop workflow steps."""
-        return WorkflowStep.model_validate_json(
-            apply_template(precursor.model_dump_json(), **precursor.args)
-        )
+    def convert_precursor_without_loop(
+        self, precursor: WorkflowStepPrecursor
+    ) -> WorkflowStep:
+        """Convert a step precursor without a loop into a proper WorkflowStep"""
+        return WorkflowStep.model_validate_json(precursor.model_dump_json())

@@ -78,5 +78,5 @@ DUPLICATE_CLASS_TRANSFORMATION = TransformationDefinition[DuplicateClassConfig](
     config_cls=DuplicateClassConfig,
     check_model_assumptions=check_model_assumptions_wrapper,
     transform_model=transform_model,
-    data_transformer_factory=DuplicateClassDataTransformer,
+    data_transformer_factory=DuplicateClassTransformer,
 )

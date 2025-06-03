@@ -31,7 +31,9 @@ def check_model_assumptions(
     transformation_config: DuplicateClassConfig,
 ) -> None:
     """Check model assumptions for the duplicate class transformation."""
-    check_class_exists(model=schema, class_name=transformation_config.source_class_name)
+    # ensure the source class exists
+    check_class_exists(model=model, class_name=transformation_config.source_class_name)
+    # ensure the target class does not exist yet
     check_class_does_not_exist(
-        model=schema, class_name=transformation_config.target_class_name
+        model=model, class_name=transformation_config.target_class_name
     )
