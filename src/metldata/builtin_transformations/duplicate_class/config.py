@@ -20,7 +20,7 @@ from pydantic_settings import BaseSettings
 
 
 class DuplicateClassConfig(BaseSettings):
-    """A model describing an instruction for duplicating a class."""
+    """A model describing a configuration for duplicating a class."""
 
     source_class_name: str = Field(
         default=..., description="The name of the class to duplicate."
