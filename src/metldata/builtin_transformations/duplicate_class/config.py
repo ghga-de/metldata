@@ -27,5 +27,5 @@ class DuplicateClassConfig(BaseSettings):
     )
     target_class_name: str = Field(
         default=...,
-        description="The name of the duplicated class. Cannot already exist in the model.",
+        description="Name for the new duplicated class. Must not already exist in the model.",
     )
