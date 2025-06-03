@@ -23,7 +23,7 @@ class DuplicateClassConfig(BaseSettings):
     """A model describing a configuration for duplicating a class."""
 
     source_class_name: str = Field(
-        default=..., description="The name of the class to duplicate."
+        default=..., description="Name of the existing class to be duplicated."
     )
     target_class_name: str = Field(
         default=...,
