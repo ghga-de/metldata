@@ -36,7 +36,7 @@ from metldata.transform.base import (
 )
 
 
-class DuplicateClassDataTransformer(DataTransformer[DuplicateClassConfig]):
+class DuplicateClassTransformer(DataTransformer[DuplicateClassConfig]):
     """A transformer that copies content between a source and target class."""
 
     def transform(self, data: DataPack) -> DataPack:
