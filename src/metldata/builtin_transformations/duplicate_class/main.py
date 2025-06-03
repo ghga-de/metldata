@@ -61,7 +61,7 @@ def check_model_assumptions_wrapper(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    check_model_assumptions(schema=model, transformation_config=config)
+    check_model_assumptions(model=model, transformation_config=config)
 
 
 def transform_model(model: SchemaPack, config: DuplicateClassConfig) -> SchemaPack:
