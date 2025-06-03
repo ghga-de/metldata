@@ -71,18 +71,9 @@ class WorkflowBuilder:
 
         workflow_steps: list[WorkflowStep] = []
         for args in precursor.loop:
-            if isinstance(args, Mapping):
-                workflow_steps.append(
-                    WorkflowStep.model_validate_json(
-                        apply_template(json.dumps(precursor_json), **args)
-                    )
-                )
-            else:
-                workflow_steps.append(
-                    WorkflowStep.model_validate_json(
-                        apply_template(json.dumps(precursor_json), item=args)
-                    )
-                )
+            context = args if isinstance(args, Mapping) else {"item": args}
+            rendered_context = apply_template(json.dumps(precursor_json), **context)
+            workflow_steps.append(WorkflowStep.model_validate_json(rendered_context))
         return workflow_steps
 
     def evaluate_non_loop(self, precursor: WorkflowStepPrecursor) -> WorkflowStep:
