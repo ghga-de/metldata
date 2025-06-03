@@ -27,7 +27,7 @@ from metldata.builtin_transformations.duplicate_class.config import (
 
 
 def check_model_assumptions(
-    schema: SchemaPack,
+    model: SchemaPack,
     transformation_config: DuplicateClassConfig,
 ) -> None:
     """Check model assumptions for the duplicate class transformation."""
