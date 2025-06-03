@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""A transformation to duplicate classes."""
+"""A transformation to duplicate a class."""
 
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
