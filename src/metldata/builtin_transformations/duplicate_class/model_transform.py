@@ -29,7 +29,7 @@ def duplicate_model_class(
     model: SchemaPack,
     transformation_config: DuplicateClassConfig,
 ) -> SchemaPack:
-    """Duplicate a source class in the model using a given target class name."""
+    """Duplicate a source class definition in the model under a given target class name."""
     mutable_model = model_to_dict(model)
 
     source_class_name = transformation_config.source_class_name
