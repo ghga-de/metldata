@@ -43,7 +43,6 @@ def duplicate_data_class(
     target_class_name = transformation_config.target_class_name
     try:
         source_class_resources = modified_data["resources"][source_class_name]
-        # directly converted to a DataPack afterwards, no deep copy needed
         modified_data["resources"][target_class_name] = source_class_resources
     except KeyError as exc:
         raise EvitableTransformationError() from exc

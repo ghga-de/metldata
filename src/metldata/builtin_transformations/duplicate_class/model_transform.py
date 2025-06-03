@@ -36,7 +36,6 @@ def duplicate_model_class(
     target_class_name = transformation_config.target_class_name
     try:
         source_class_definition = mutable_model["classes"][source_class_name]
-        # directly converted to a SchemaPack afterwards, no deep copy needed
         mutable_model["classes"][target_class_name] = source_class_definition
     except KeyError as exc:
         raise EvitableTransformationError() from exc
