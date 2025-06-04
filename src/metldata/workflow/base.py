@@ -15,6 +15,7 @@
 
 """Models to describe workflow."""
 
+from collections.abc import Mapping, Sequence
 from typing import TypeVar
 
 from pydantic import BaseModel, Field
@@ -26,7 +27,7 @@ TransformationConfig = TypeVar("TransformationConfig", bound=BaseSettings)
 class WorkflowTemplate(BaseModel):
     """Base class for workflow templates."""
 
-    operations: list[dict] = Field(
+    operations: Sequence[Mapping[str, object]] = Field(
         default=...,
         description="List of operations to apply during the workflow in the given order.",
     )
@@ -54,7 +55,7 @@ class WorkflowStepPrecursor(WorkflowStepBase):
     'WorkflowStepBase' with a loop attribute.
     """
 
-    loop: list[object] = Field(
+    loop: Sequence[object] = Field(
         default_factory=list,
         description="Optional list specifying loop parameters for the workflow step.",
     )
@@ -71,7 +72,7 @@ class WorkflowStep[TransformationConfig](WorkflowStepBase):
 class Workflow(BaseModel):
     """Represents a workflow consisting of a sequence of transformation steps."""
 
-    operations: list[WorkflowStep] = Field(
+    operations: Sequence[WorkflowStep] = Field(
         default=...,
         description="The ordered list of workflow steps to be applied to the input model.",
     )

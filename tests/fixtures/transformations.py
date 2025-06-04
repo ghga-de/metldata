@@ -23,8 +23,9 @@ from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.delete_class import (
+from metldata.builtin_transformations import (
     DELETE_CLASS_TRANSFORMATION,
+    DUPLICATE_CLASS_TRANSFORMATION,
 )
 from metldata.transform.base import TransformationDefinition
 from tests.fixtures.data import ADVANCED_DATA
@@ -35,6 +36,7 @@ EXAMPLE_TRANSFORMATION_DIR = BASE_DIR / "example_transformations"
 
 TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
+    "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
 }
 
 
