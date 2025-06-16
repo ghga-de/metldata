@@ -27,6 +27,9 @@ from metldata.builtin_transformations import (
     DELETE_CLASS_TRANSFORMATION,
     DUPLICATE_CLASS_TRANSFORMATION,
 )
+from metldata.builtin_transformations.transform_content.main import (
+    TRANSFORM_CONTENT_TRANSFORMATION,
+)
 from metldata.transform.base import TransformationDefinition
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
@@ -37,6 +40,7 @@ EXAMPLE_TRANSFORMATION_DIR = BASE_DIR / "example_transformations"
 TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
     "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
+    "transform_content": TRANSFORM_CONTENT_TRANSFORMATION,
 }
 
 

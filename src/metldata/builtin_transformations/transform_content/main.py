@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""A transformation to delete references."""
+"""A transformation to modify the content schema and data of a given class."""
 
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
@@ -25,10 +25,10 @@ from metldata.builtin_transformations.transform_content.config import (
     TransformContentConfig,
 )
 from metldata.builtin_transformations.transform_content.data_transform import (
-    delete_data_class,
+    transform_data_class,
 )
 from metldata.builtin_transformations.transform_content.model_transform import (
-    delete_model_class,
+    transform_model_class,
 )
 from metldata.transform.base import (
     DataTransformer,
@@ -37,7 +37,7 @@ from metldata.transform.base import (
 
 
 class TransformContentTransformer(DataTransformer[TransformContentConfig]):
-    """A transformer that deletes relation from data."""
+    """A transformer that modifies the content schema and data."""
 
     def transform(self, data: DataPack) -> DataPack:
         """Transforms data.
@@ -49,7 +49,9 @@ class TransformContentTransformer(DataTransformer[TransformContentConfig]):
             DataTransformationError:
                 if the transformation fails.
         """
-        return delete_data_class(data=data, transformation_config=self._config)
+        return transform_data_class(
+            data=data, schemapack=self._input_model, transformation_config=self._config
+        )
 
 
 def check_model_assumptions_wrapper(
@@ -71,7 +73,7 @@ def transform_model(model: SchemaPack, config: TransformContentConfig) -> Schema
         DataModelTransformationError:
             if the transformation fails.
     """
-    return delete_model_class(model=model, transformation_config=config)
+    return transform_model_class(model=model, transformation_config=config)
 
 
 TRANSFORM_CONTENT_TRANSFORMATION = TransformationDefinition[TransformContentConfig](

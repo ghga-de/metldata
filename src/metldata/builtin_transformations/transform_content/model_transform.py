@@ -13,8 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Model transformation logic for the 'delete class' transformation"""
+"""Model transformation logic for the `transform content` transformation"""
 
+from schemapack import isolate_class
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.common.utils import model_to_dict
@@ -24,12 +25,19 @@ from metldata.builtin_transformations.transform_content.config import (
 from metldata.transform.exceptions import EvitableTransformationError
 
 
-def delete_model_class(
+def transform_model_class(
     *,
     model: SchemaPack,
     transformation_config: TransformContentConfig,
 ) -> SchemaPack:
-    """Delete class from the model."""
-    mutable_model = model_to_dict(model)
+    """Replace the content schema with the schema given in the config."""
+    class_name = transformation_config.class_name
+    rooted_model = isolate_class(class_name=class_name, schemapack=model)
+    mutable_model = model_to_dict(rooted_model)
+
+    try:
+        mutable_model["classes"][class_name] = transformation_config.content_schema
+    except KeyError as exc:
+        raise EvitableTransformationError() from exc
 
     return SchemaPack.model_validate(mutable_model)

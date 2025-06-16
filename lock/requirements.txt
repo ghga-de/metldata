@@ -17,6 +17,12 @@ attrs==25.3.0 \
     #   -c lock/requirements-dev.txt
     #   jsonschema
     #   referencing
+click==8.2.1 \
+    --hash=sha256:27c491cc05d968d271d5a1db13e3b5a184636d9d930f148c50b038f0d0646202 \
+    --hash=sha256:61a3265b914e850b85317d0b3109c7f8cd35a670f963866005d6ef1d5175a12b
+    # via
+    #   -c lock/requirements-dev.txt
+    #   typer
 immutabledict==4.2.1 \
     --hash=sha256:c56a26ced38c236f79e74af3ccce53772827cef5c3bce7cab33ff2060f756373 \
     --hash=sha256:d91017248981c72eb66c8ff9834e99c2f53562346f23e7f51e7a5ebcf66a3bcc
@@ -29,9 +35,9 @@ jinja2==3.1.6 \
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
-jsonschema==4.23.0 \
-    --hash=sha256:d71497fef26351a33265337fa77ffeb82423f3ea21283cd9467bb03999266bc4 \
-    --hash=sha256:fbadb6f8b144a8f8cf9f0b89ba94501d143e50411a1278633f56a7acf7fd5566
+jsonschema==4.24.0 \
+    --hash=sha256:0b4e8069eb12aedfa881333004bccaec24ecef5a8a6a4b6df142b2cc9599d196 \
+    --hash=sha256:a462455f19f5faf404a7902952b6f0e3ce868f3ee09a359b05eca6673bd8412d
     # via
     #   -c lock/requirements-dev.txt
     #   schemapack
@@ -118,9 +124,9 @@ mdurl==0.1.2 \
     # via
     #   -c lock/requirements-dev.txt
     #   markdown-it-py
-pydantic==2.11.5 \
-    --hash=sha256:7f853db3d0ce78ce8bbb148c401c2cdd6431b3473c0cdff2755c7690952a7b7a \
-    --hash=sha256:f9c26ba06f9747749ca1e5c94d6a85cb84254577553c8785576fd38fa64dc0f7
+pydantic==2.11.6 \
+    --hash=sha256:12b45cfb4af17e555d3c6283d0b55271865fb0b43cc16dd0d52749dc7abf70e7 \
+    --hash=sha256:a24478d2be1b91b6d3bc9597439f69ed5e87f68ebd285d86f7c7932a084b72e7
     # via
     #   -c lock/requirements-dev.txt
     #   pydantic-settings
@@ -259,6 +265,7 @@ rich==13.9.4 \
     # via
     #   -c lock/requirements-dev.txt
     #   schemapack
+    #   typer
 rpds-py==0.25.1 \
     --hash=sha256:0317177b1e8691ab5879f4f33f4b6dc55ad3b344399e23df2e499de7b10a548d \
     --hash=sha256:036ded36bedb727beeabc16dc1dad7cb154b3fa444e936a03b67a86dc6a5066e \
@@ -381,9 +388,9 @@ rpds-py==0.25.1 \
     #   -c lock/requirements-dev.txt
     #   jsonschema
     #   referencing
-ruamel-yaml==0.18.11 \
-    --hash=sha256:b586a3416676566ed45bf679a0909719f7ea7b58c03a9b6e03f905a1e2cd5076 \
-    --hash=sha256:eca06c9fce6ee3220845c4c54e58376586e041a6127e4d1958e12a3142084897
+ruamel-yaml==0.18.14 \
+    --hash=sha256:710ff198bb53da66718c7db27eec4fbcc9aa6ca7204e4c1df2f282b6fe5eb6b2 \
+    --hash=sha256:7227b76aaec364df15936730efbf7d72b30c0b79b1d578bbb8e3dcb2d81f52b7
     # via
     #   -c lock/requirements-dev.txt
     #   schemapack
@@ -437,20 +444,33 @@ ruamel-yaml-clib==0.2.12 \
     # via
     #   -c lock/requirements-dev.txt
     #   ruamel-yaml
-schemapack==2.0.0 \
-    --hash=sha256:1169d8b9fc96710b3ccd21784cee808425fe08ae0055910540eb7003db6a3736 \
-    --hash=sha256:5a40fb22597392cd4212cf69cce08fcc5d0b42adae728e4908bc362b8f0704f3
+schemapack==3.0.0 \
+    --hash=sha256:0ddab39a65f42aabb8736ee6f063d29bb4212416b865bfd0c65e7e36d6d08bca \
+    --hash=sha256:9dc05b9bbe185b8e99bfed074bded21326aa2f4f1552937d97b499c3477b6068
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
-typing-extensions==4.13.2 \
-    --hash=sha256:a439e7c04b49fec3e5d3e2beaa21755cadbbdc391694e28ccdd36ca4a1408f8c \
-    --hash=sha256:e6c81219bd689f51865d9e372991c540bda33a0379d5573cddb9a3a23f7caaef
+shellingham==1.5.4 \
+    --hash=sha256:7ecfff8f2fd72616f7481040475a65b2bf8af90a56c89140852d1120324e8686 \
+    --hash=sha256:8dbca0739d487e5bd35ab3ca4b36e11c4078f3a234bfce294b0a0291363404de
+    # via
+    #   -c lock/requirements-dev.txt
+    #   typer
+typer==0.16.0 \
+    --hash=sha256:1f79bed11d4d02d4310e3c1b7ba594183bcedb0ac73b27a9e5f28f6fb5b98855 \
+    --hash=sha256:af377ffaee1dbe37ae9440cb4e8f11686ea5ce4e9bae01b84ae7c63b87f1dd3b
+    # via
+    #   -c lock/requirements-dev.txt
+    #   schemapack
+typing-extensions==4.14.0 \
+    --hash=sha256:8676b788e32f02ab42d9e7c61324048ae4c6d844a399eebace3d4979d75ceef4 \
+    --hash=sha256:a1514509136dd0b477638fc68d6a91497af5076466ad0fa6c338e44e359944af
     # via
     #   -c lock/requirements-dev.txt
     #   pydantic
     #   pydantic-core
     #   referencing
+    #   typer
     #   typing-inspection
 typing-inspection==0.4.1 \
     --hash=sha256:389055682238f53b04f7badcb49b989835495a96700ced5dab2d8feae4b26f51 \
