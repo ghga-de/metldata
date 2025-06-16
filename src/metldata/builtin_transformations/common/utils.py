@@ -18,7 +18,8 @@ into JSON-serializable dictionaries, as well as thawing frozen structures.
 """
 
 import json
-from typing import Any
+from collections.abc import Mapping
+from typing import Any, TypeAliasType
 
 from schemapack import dumps_datapack, dumps_schemapack
 from schemapack.spec.datapack import DataPack
@@ -31,6 +32,11 @@ from schemapack.spec.schemapack import (
 from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElement,
     RelationPathElementType,
+)
+
+EmbeddingProfile = TypeAliasType(  # type: ignore
+    "EmbeddingProfile",
+    Mapping[str, "bool | EmbeddingProfile"] | None,  # type: ignore
 )
 
 

@@ -13,26 +13,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Models for instructions used in the 'delete class' transformation."""
+"""Configuration for the `transform content` transformation."""
 
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
+from metldata.builtin_transformations.common.utils import EmbeddingProfile
+
 
 class TransformContentConfig(BaseSettings):
-    """A model describing an instruction for deleting a class ."""
+    """A config for arbitrary modifications of content schemas and data."""
 
     class_name: str = Field(
-        default=..., description="Name of the class that should be transformed."
+        default=...,
+        description="Name of the class containing the content to be transformed.",
     )
-    model: dict[str, object] = Field(
-        default_factory=dict,
-        description="Schema the transformed data needs to adhere to.",
+    content_schema: dict[str, object] = Field(
+        default=...,
+        description="Content schema the transformed data needs to adhere to.",
     )
-    embedding_profile: dict[str, object] = Field(
-        default_factory=dict,
-        description="(Optional?) Embedding profile for denormalization.",
+    embedding_profile: EmbeddingProfile = Field(
+        default=...,
+        description="Embedding profile for denormalization.",
     )
     data_template: str = Field(
-        default=..., description="Jinja template used to transform existing content."
+        default=...,
+        description="Jinja template used to transform existing content data.",
     )
+    resource_id: str = Field(default=..., description="")

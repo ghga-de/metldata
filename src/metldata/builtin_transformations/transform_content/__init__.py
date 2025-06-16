@@ -13,9 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""A transformation to delete relations."""
+"""A transformation to modify the content schema and data of a given class."""
 
-# shortcuts:
 from metldata.builtin_transformations.transform_content.main import (  # noqa: F401
     TRANSFORM_CONTENT_TRANSFORMATION,
 )

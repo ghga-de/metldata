@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"Assumptions for delete reference transformation"
+"Assumptions for the `transform content` transformation"
 
 from schemapack.spec.schemapack import SchemaPack
 
@@ -23,12 +23,11 @@ from metldata.builtin_transformations.common.assumptions.path_assumptions import
 from metldata.builtin_transformations.transform_content.config import (
     TransformContentConfig,
 )
-from metldata.transform.exceptions import ModelAssumptionError
 
 
 def check_model_assumptions(
     model: SchemaPack,
     transformation_config: TransformContentConfig,
 ) -> None:
-    """Check model assumptions for the delete class transformation."""
+    """Check model assumptions for the `transform content` transformation."""
     check_class_exists(model=model, class_name=transformation_config.class_name)
