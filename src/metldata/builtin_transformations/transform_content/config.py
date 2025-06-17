@@ -30,14 +30,17 @@ class TransformContentConfig(BaseSettings):
     )
     content_schema: dict[str, object] = Field(
         default=...,
-        description="Content schema the transformed data needs to adhere to.",
+        description="Schemapack compatible JSON Schema the transformed content needs to adhere to.",
     )
     embedding_profile: EmbeddingProfile = Field(
         default=...,
-        description="Embedding profile for denormalization.",
+        description="Embedding profile for denormalization. All relations are embedded by default and nested relations need to be specified explicitly for exclusion.",
     )
     data_template: str = Field(
         default=...,
         description="Jinja template used to transform existing content data.",
     )
-    resource_id: str = Field(default=..., description="")
+    resource_id: str = Field(
+        default=...,
+        description="A resource id for the given class name used for rooting the datapack.",
+    )

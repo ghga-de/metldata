@@ -69,13 +69,19 @@ def transform_data_class(
     denormalized_content = _format_denormalized(denormalized_content)
     rooted_data = data_to_dict(rooted_datapack)
 
-    transformed_data = env.from_string(transformation_config.data_template).render(
-        original=denormalized_content[transformation_config.resource_id]
+    transformed_content = env.from_string(transformation_config.data_template).render(
+        original=denormalized_content[transformation_config.resource_id]["content"]  # type: ignore
     )
 
+    denormalized_content[transformation_config.resource_id]["content"] = yaml.safe_load(  # type: ignore
+        transformed_content
+    )
+
+    rooted_data["resources"][class_name] = denormalized_content
+
     try:
-        rooted_data["resources"][class_name][resource_id] = yaml.safe_load(
-            transformed_data
+        rooted_data["resources"][class_name][resource_id]["content"] = yaml.safe_load(
+            transformed_content
         )
     except KeyError as exc:
         raise EvitableTransformationError() from exc
