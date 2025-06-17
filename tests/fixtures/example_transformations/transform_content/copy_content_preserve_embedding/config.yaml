@@ -23,5 +23,7 @@ content_schema: {
   }
 embedding_profile: {"samples": {"files": false}, "files": false}
 data_template: |
-  content: {{ original.content }}
+  dac_contact: {{ original.dac_contact }}
+  files: {{ original.files }}
+  samples: {{ original.samples }}
 resource_id: dataset_1
