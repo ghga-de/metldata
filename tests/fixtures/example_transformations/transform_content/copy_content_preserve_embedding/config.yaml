@@ -9,10 +9,16 @@ content_schema: {
         "type": "string"
       },
       "files": {
-        "type": "array"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "samples": {
-        "type": "array"
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
       }
     },
     "type": "object"

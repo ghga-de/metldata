@@ -17,8 +17,12 @@ classes:
           type: string
         files:
           type: array
+          items:
+            type: string
         samples:
           type: array
+          items:
+            type: object
       type: object
   Sample:
     id:
