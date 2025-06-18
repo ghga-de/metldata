@@ -8,18 +8,24 @@ classes:
   Dataset:
     id:
       propertyName: alias
-    content:
-      $schema: "http://json-schema.org/draft-07/schema#"
-      additionalProperties: false
-      description: "A dataset that is a collection of files."
-      properties:
-        dac_contact:
-          type: string
-        files:
-          type: array
-        samples:
-          type: array
-      type: object
+    content: ../../../example_content_schemas/Dataset.schema.json
+    relations:
+      files:
+        targetClass: File
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
+      samples:
+        targetClass: Sample
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
   Sample:
     id:
       propertyName: alias

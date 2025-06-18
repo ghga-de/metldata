@@ -26,4 +26,3 @@ data_template: |
   dac_contact: {{ original.dac_contact }}
   files: {{ original.files }}
   samples: {{ original.samples }}
-resource_id: dataset_1

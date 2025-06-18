@@ -25,23 +25,8 @@ from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.transform_content.config import (
     TransformContentConfig,
 )
-from metldata.transform.exceptions import EvitableTransformationError
 
 env = ImmutableSandboxedEnvironment()
-
-
-def _format_denormalized(denormalized_content: dict[str, object]) -> dict[str, object]:
-    """TODO"""
-    top_resource_id = denormalized_content.pop("alias")
-    content = {top_resource_id: {"content": dict()}}  # type: ignore
-    for key, value in denormalized_content.items():
-        if isinstance(value, list) and isinstance(value[0], dict):
-            content[top_resource_id]["content"][key] = [
-                _format_denormalized(resource_content) for resource_content in value
-            ]
-        else:
-            content[top_resource_id]["content"][key] = value
-    return content  # type: ignore
 
 
 def transform_data_class(
@@ -53,37 +38,28 @@ def transform_data_class(
     """Denormalize data using the configured class as root and perform content data transformation."""
     class_name = transformation_config.class_name
     embedding_profile = transformation_config.embedding_profile
-    resource_id = transformation_config.resource_id
 
-    rooted_datapack = isolate_resource(
-        datapack=data,
-        class_name=class_name,
-        resource_id=resource_id,
-        schemapack=schemapack,
-    )
-    denormalized_content = denormalize(
-        datapack=rooted_datapack,
-        schemapack=schemapack,
-        embedding_profile=embedding_profile,
-    )
-    denormalized_content = _format_denormalized(denormalized_content)
-    rooted_data = data_to_dict(rooted_datapack)
+    mutable_data = data_to_dict(data)
 
-    transformed_content = env.from_string(transformation_config.data_template).render(
-        original=denormalized_content[transformation_config.resource_id]["content"]  # type: ignore
-    )
+    for resource_id in data.resources[class_name]:
+        rooted_datapack = isolate_resource(
+            datapack=data,
+            class_name=class_name,
+            resource_id=resource_id,
+            schemapack=schemapack,
+        )
+        denormalized_content = denormalize(
+            datapack=rooted_datapack,
+            schemapack=schemapack,
+            embedding_profile=embedding_profile,
+        )
 
-    denormalized_content[transformation_config.resource_id]["content"] = yaml.safe_load(  # type: ignore
-        transformed_content
-    )
+        transformed_content = env.from_string(
+            transformation_config.data_template
+        ).render(original=denormalized_content)
 
-    rooted_data["resources"][class_name] = denormalized_content
-
-    try:
-        rooted_data["resources"][class_name][resource_id]["content"] = yaml.safe_load(
+        mutable_data["resources"][class_name][resource_id]["content"] = yaml.safe_load(
             transformed_content
         )
-    except KeyError as exc:
-        raise EvitableTransformationError() from exc
 
-    return DataPack.model_validate(rooted_data)
+    return DataPack.model_validate(mutable_data)

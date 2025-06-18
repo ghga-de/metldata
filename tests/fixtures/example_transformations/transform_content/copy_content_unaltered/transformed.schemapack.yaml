@@ -33,4 +33,16 @@ classes:
         mandatory:
           origin: false
           target: true
-rootClass: Dataset
+  Experiment:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Experiment.schema.json
+    relations:
+      samples:
+        targetClass: Sample
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: true
+          target: true
