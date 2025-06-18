@@ -15,7 +15,6 @@
 
 """Model transformation logic for the `transform content` transformation"""
 
-from schemapack import isolate_class
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.common.utils import model_to_dict
@@ -32,8 +31,7 @@ def transform_model_class(
 ) -> SchemaPack:
     """Replace the content schema with the schema given in the config."""
     class_name = transformation_config.class_name
-    rooted_model = isolate_class(class_name=class_name, schemapack=model)
-    mutable_model = model_to_dict(rooted_model)
+    mutable_model = model_to_dict(model)
 
     try:
         mutable_model["classes"][class_name] = transformation_config.content_schema

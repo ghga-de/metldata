@@ -8,9 +8,6 @@ content_schema: {
       "dac_contact": {
         "type": "string"
       },
-      "files": {
-        "type": "array"
-      },
       "samples": {
         "type": "array"
       }
@@ -24,3 +21,10 @@ content_schema: {
 embedding_profile: {"samples": {"files": false}, "files": false}
 data_template: |
   dac_contact: {{ original.dac_contact }}
+  samples:
+    {% for sample in original.samples %}
+      - {{ sample.alias }}:
+          content:
+            files: {{ sample.files }}
+            file_count: {{ sample.files | length }}
+    {% endfor %}

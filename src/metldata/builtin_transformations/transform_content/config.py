@@ -40,7 +40,3 @@ class TransformContentConfig(BaseSettings):
         default=...,
         description="Jinja template used to transform existing content data.",
     )
-    resource_id: str = Field(
-        default=...,
-        description="A resource id for the given class name used for rooting the datapack.",
-    )

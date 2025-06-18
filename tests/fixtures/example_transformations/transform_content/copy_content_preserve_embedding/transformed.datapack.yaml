@@ -28,16 +28,44 @@ resources:
           - file_b
           - file_c
         samples:
-          - sample_x:
-              content:
-                description: Some sample.
-                files:
-                  - file_a
-                  - file_b
-          - sample_y:
-              content:
-                files:
-                  - file_c
+          - alias: sample_x
+            description: Some sample.
+            files:
+              - file_a
+              - file_b
+          - alias: sample_y
+            files:
+              - file_c
+      relations:
+        files:
+          targetClass: File
+          targetResources:
+            - file_a
+            - file_b
+            - file_c
+        samples:
+          targetClass: Sample
+          targetResources:
+            - sample_x
+            - sample_y
+    dataset_2:
+      content:
+        dac_contact: dac@example.org
+        files:
+          - file_b
+        samples:
+          - alias: sample_y
+            files:
+              - file_c
+      relations:
+        files:
+          targetClass: File
+          targetResources:
+            - file_b
+        samples:
+          targetClass: Sample
+          targetResources:
+            - sample_y
   Sample:
     sample_x:
       content:
@@ -55,6 +83,12 @@ resources:
           targetClass: File
           targetResources:
             - file_c
-
-rootResource: dataset_1
-rootClass: Dataset
+  Experiment:
+    experiment_i:
+      content: {}
+      relations:
+        samples:
+          targetClass: Sample
+          targetResources:
+            - sample_x
+            - sample_y

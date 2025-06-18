@@ -15,8 +15,6 @@ classes:
       properties:
         dac_contact:
           type: string
-        files:
-          type: array
         samples:
           type: array
       type: object
