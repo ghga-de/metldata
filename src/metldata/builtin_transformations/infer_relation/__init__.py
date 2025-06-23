@@ -13,19 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Models for configuration used in the 'duplicate class' transformation."""
-
-from pydantic import Field
-from pydantic_settings import BaseSettings
-
-
-class DuplicateClassConfig(BaseSettings):
-    """A model describing a configuration for duplicating a class."""
-
-    source_class_name: str = Field(
-        default=..., description="Name of the existing class to be duplicated."
-    )
-    target_class_name: str = Field(
-        default=...,
-        description="Name for the new duplicated class. Must not already exist in the model.",
-    )
+"Subpackage containing functionality to infer a relation."

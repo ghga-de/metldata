@@ -13,19 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Models for configuration used in the 'duplicate class' transformation."""
+"Models for configuration used in the 'infer relation' transformation."
 
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
+from metldata.builtin_transformations.common.path.path import RelationPath
 
-class DuplicateClassConfig(BaseSettings):
-    """A model describing a configuration for duplicating a class."""
 
-    source_class_name: str = Field(
-        default=..., description="Name of the existing class to be duplicated."
+class InferRelationConfig(BaseSettings):
+    """Configuration for the 'infer relation' transformation."""
+
+    class_name: str = Field(
+        default=..., description="Name of the class for which to infer a relation."
     )
-    target_class_name: str = Field(
+    relation_name: str = Field(
         default=...,
-        description="Name for the new duplicated class. Must not already exist in the model.",
+        description="Name of the new relation referencing the inferred relations.",
+    )
+    relation_path: RelationPath = Field(
+        default=..., description="Path to the relation."
     )
