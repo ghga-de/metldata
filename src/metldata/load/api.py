@@ -122,6 +122,7 @@ async def rest_api_factory(  # noqa: PLR0913
             await load_artifact_resources_using_dao(
                 artifact_resources=artifact_resources,
                 artifact_info_dict=artifact_info_dict,
+                publishable_artifacts=config.publishable_artifacts,
                 event_publisher=event_publisher,
                 dao_collection=dao_collection,
             )

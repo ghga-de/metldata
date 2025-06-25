@@ -80,16 +80,24 @@ async def load_whole_artifacts_using_dao(
 async def load_artifact_resources_using_dao(
     artifact_resources: ArtifactResourceDict,
     artifact_info_dict: dict[str, ArtifactInfo],
+    publishable_artifacts: list[str],
     event_publisher: EventPublisherPort,
     dao_collection: ArtifactDaoCollection,
 ) -> None:
     """Load artifact resources from multiple submissions using the given dao collection."""
+    # Do not process resources for artifacts that are slated to be published whole
+    usable_artifact_resources = {
+        key: value
+        for key, value in artifact_resources.items()
+        if key not in publishable_artifacts
+    }
+
     (
         removed_resource_tags,
         new_resources,
         changed_resources,
     ) = await _get_changed_resources(
-        artifact_resources=artifact_resources,
+        artifact_resources=usable_artifact_resources,
         artifact_info_dict=artifact_info_dict,
         dao_collection=dao_collection,
     )
