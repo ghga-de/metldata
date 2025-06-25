@@ -7,11 +7,8 @@ content_schema: {
       "dac_contact": {
         "type": "string"
       },
-      "files": {
-        "type": "array"
-      },
-      "samples": {
-        "type": "array"
+      "new_prop": {
+        "type": "object"
       }
     },
     "type": "object"
@@ -19,3 +16,6 @@ content_schema: {
 embedding_profile: {"samples": {"files": false}, "files": false}
 data_template: |
   dac_contact: {{ original.dac_contact }}
+  new_prop:
+    nested:
+      reverse_dac_contact: {{ original.dac_contact | reverse }}

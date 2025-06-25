@@ -15,6 +15,8 @@
 
 """Data transformation logic for the `transform content` transformation"""
 
+from collections.abc import Mapping
+
 import yaml
 from jinja2.sandbox import ImmutableSandboxedEnvironment
 from schemapack import denormalize, isolate_resource
@@ -27,6 +29,47 @@ from metldata.builtin_transformations.transform_content.config import (
 )
 
 env = ImmutableSandboxedEnvironment()
+
+
+def _format_denormalized(denormalized_content: dict[str, object]) -> dict[str, object]:
+    """Reformat denormalized content for attachment into datapack."""
+    content = dict()
+
+    for key, value in denormalized_content.items():
+        if key == "alias":
+            continue
+        if isinstance(value, list) and isinstance(value[0], dict):
+            content[key] = [
+                _format_recursive(resource_content) for resource_content in value
+            ]
+        elif isinstance(value, Mapping):
+            content[key] = _format_recursive(value)  # type: ignore
+        else:
+            content[key] = value  # type: ignore
+    return content  # type: ignore
+
+
+def _format_recursive(denormalized_content: dict[str, object]):
+    """Recursive part of formatting."""
+    content = dict()
+    # property_name = ""
+
+    # if "alias" in denormalized_content:
+    #    property_name = denormalized_content.pop("alias")  # type: ignore
+
+    for key, value in denormalized_content.items():
+        if value and isinstance(value, list) and isinstance(value[0], Mapping):
+            content[key] = [
+                _format_recursive(resource_content) for resource_content in value
+            ]
+        elif isinstance(value, Mapping):
+            content[key] = _format_recursive(value)  # type: ignore
+        else:
+            content[key] = value  # type: ignore
+
+    # if property_name:
+    #    return {property_name: {"content": content}}
+    return content
 
 
 def transform_data_class(
@@ -53,6 +96,7 @@ def transform_data_class(
             schemapack=schemapack,
             embedding_profile=embedding_profile,
         )
+        denormalized_content = _format_denormalized(denormalized_content)
 
         transformed_content = env.from_string(
             transformation_config.data_template

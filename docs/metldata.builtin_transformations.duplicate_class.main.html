@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module metldata.builtin_transformations.duplicate_class.main</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="metldata.html" class="white">metldata</a>.<a href="metldata.builtin_transformations.html" class="white">builtin_transformations</a>.<a href="metldata.builtin_transformations.duplicate_class.html" class="white">duplicate_class</a>.main</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/workspace/src/metldata/builtin_transformations/duplicate_class/main.py">/workspace/src/metldata/builtin_transformations/duplicate_class/main.py</a></td></tr></table>
+    <p><span class="code">A&nbsp;transformation&nbsp;to&nbsp;duplicate&nbsp;a&nbsp;class.</span></p>
+<p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="metldata.transform.base.html#DataTransformer">metldata.transform.base.DataTransformer</a>(<a href="abc.html#ABC">abc.ABC</a>, <a href="typing.html#Generic">typing.Generic</a>)
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="metldata.builtin_transformations.duplicate_class.main.html#DuplicateClassTransformer">DuplicateClassTransformer</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="DuplicateClassTransformer">class <strong>DuplicateClassTransformer</strong></a>(<a href="metldata.transform.base.html#DataTransformer">metldata.transform.base.DataTransformer</a>)</td></tr>
+
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#DuplicateClassTransformer">DuplicateClassTransformer</a>(*,&nbsp;config:&nbsp;~Config,&nbsp;input_model:&nbsp;schemapack._internals.spec.schemapack.SchemaPack,&nbsp;transformed_model:&nbsp;schemapack._internals.spec.schemapack.SchemaPack)<br>
+&nbsp;<br>
+A&nbsp;transformer&nbsp;that&nbsp;copies&nbsp;content&nbsp;between&nbsp;a&nbsp;source&nbsp;and&nbsp;target&nbsp;class.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="metldata.builtin_transformations.duplicate_class.main.html#DuplicateClassTransformer">DuplicateClassTransformer</a></dd>
+<dd><a href="metldata.transform.base.html#DataTransformer">metldata.transform.base.DataTransformer</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="typing.html#Generic">typing.Generic</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="DuplicateClassTransformer-transform"><strong>transform</strong></a>(self, data: schemapack._internals.spec.datapack.DataPack) -&gt; schemapack._internals.spec.datapack.DataPack</dt><dd><span class="code">Transforms&nbsp;data.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;The&nbsp;data&nbsp;as&nbsp;DataPack&nbsp;to&nbsp;be&nbsp;transformed.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DataTransformationError:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;the&nbsp;transformation&nbsp;fails.</span></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<dl><dt><strong>__orig_bases__</strong> = (metldata.transform.base.DataTransformer[metldata...ions.duplicate_class.config.DuplicateClassConfig],)</dl>
+
+<dl><dt><strong>__parameters__</strong> = ()</dl>
+
+<hr>
+Methods inherited from <a href="metldata.transform.base.html#DataTransformer">metldata.transform.base.DataTransformer</a>:<br>
+<dl><dt><a name="DuplicateClassTransformer-__init__"><strong>__init__</strong></a>(self, *, config: ~Config, input_model: schemapack._internals.spec.schemapack.SchemaPack, transformed_model: schemapack._internals.spec.schemapack.SchemaPack)</dt><dd><span class="code">Initialize&nbsp;the&nbsp;transformer&nbsp;with&nbsp;config&nbsp;params,&nbsp;the&nbsp;input&nbsp;model,&nbsp;and&nbsp;the<br>
+transformed&nbsp;model.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="metldata.transform.base.html#DataTransformer">metldata.transform.base.DataTransformer</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+<hr>
+Class methods inherited from <a href="typing.html#Generic">typing.Generic</a>:<br>
+<dl><dt><a name="DuplicateClassTransformer-__class_getitem__"><strong>__class_getitem__</strong></a>(...)</dt><dd><span class="code">Parameterizes&nbsp;a&nbsp;generic&nbsp;class.<br>
+&nbsp;<br>
+At&nbsp;least,&nbsp;parameterizing&nbsp;a&nbsp;generic&nbsp;class&nbsp;is&nbsp;the&nbsp;*main*&nbsp;thing&nbsp;this<br>
+method&nbsp;does.&nbsp;For&nbsp;example,&nbsp;for&nbsp;some&nbsp;generic&nbsp;class&nbsp;`Foo`,&nbsp;this&nbsp;is&nbsp;called<br>
+when&nbsp;we&nbsp;do&nbsp;`Foo[int]`&nbsp;-&nbsp;there,&nbsp;with&nbsp;`cls=Foo`&nbsp;and&nbsp;`params=int`.<br>
+&nbsp;<br>
+However,&nbsp;note&nbsp;that&nbsp;this&nbsp;method&nbsp;is&nbsp;also&nbsp;called&nbsp;when&nbsp;defining&nbsp;generic<br>
+classes&nbsp;in&nbsp;the&nbsp;first&nbsp;place&nbsp;with&nbsp;`class&nbsp;Foo[T]:&nbsp;...`.</span></dd></dl>
+
+<dl><dt><a name="DuplicateClassTransformer-__init_subclass__"><strong>__init_subclass__</strong></a>(...)</dt><dd><span class="code">Function&nbsp;to&nbsp;initialize&nbsp;subclasses.</span></dd></dl>
+
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-check_model_assumptions_wrapper"><strong>check_model_assumptions_wrapper</strong></a>(model: schemapack._internals.spec.schemapack.SchemaPack, config: metldata.builtin_transformations.duplicate_class.config.DuplicateClassConfig) -&gt; None</dt><dd><span class="code">Check&nbsp;the&nbsp;assumptions&nbsp;of&nbsp;the&nbsp;model.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ModelAssumptionError:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;the&nbsp;model&nbsp;does&nbsp;not&nbsp;fulfill&nbsp;the&nbsp;assumptions.</span></dd></dl>
+ <dl><dt><a name="-transform_model"><strong>transform_model</strong></a>(model: schemapack._internals.spec.schemapack.SchemaPack, config: metldata.builtin_transformations.duplicate_class.config.DuplicateClassConfig) -&gt; schemapack._internals.spec.schemapack.SchemaPack</dt><dd><span class="code">Transform&nbsp;the&nbsp;data&nbsp;model.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DataModelTransformationError:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;the&nbsp;transformation&nbsp;fails.</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>DUPLICATE_CLASS_TRANSFORMATION</strong> = TransformationDefinition[DuplicateClassConfig](c...duplicate_class.main.DuplicateClassTransformer'&gt;)</td></tr></table>
+</body></html>

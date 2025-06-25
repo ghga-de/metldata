@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module metldata.builtin_transformations.common.assumptions.path_assumptions</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="metldata.html" class="white">metldata</a>.<a href="metldata.builtin_transformations.html" class="white">builtin_transformations</a>.<a href="metldata.builtin_transformations.common.html" class="white">common</a>.<a href="metldata.builtin_transformations.common.assumptions.html" class="white">assumptions</a>.path_assumptions</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/workspace/src/metldata/builtin_transformations/common/assumptions/path_assumptions.py">/workspace/src/metldata/builtin_transformations/common/assumptions/path_assumptions.py</a></td></tr></table>
+    <p><span class="code">Combines&nbsp;functions&nbsp;controlling&nbsp;Path&nbsp;dependent&nbsp;common&nbsp;assumptions.</span></p>
+<p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-assert_no_relation_target_multiplicity"><strong>assert_no_relation_target_multiplicity</strong></a>(*, model: schemapack._internals.spec.schemapack.SchemaPack, path: metldata.builtin_transformations.common.path.path.RelationPath) -&gt; None</dt><dd><span class="code">Make&nbsp;sure&nbsp;relation&nbsp;targets&nbsp;contribute&nbsp;no&nbsp;more&nbsp;than&nbsp;one&nbsp;instance&nbsp;to&nbsp;the&nbsp;relation.</span></dd></dl>
+ <dl><dt><a name="-assert_path_classes_and_relations_exist"><strong>assert_path_classes_and_relations_exist</strong></a>(*, model: schemapack._internals.spec.schemapack.SchemaPack, path: metldata.builtin_transformations.common.path.path.RelationPath) -&gt; None</dt><dd><span class="code">Make&nbsp;sure&nbsp;that&nbsp;all&nbsp;classes&nbsp;and&nbsp;relations&nbsp;defined&nbsp;in&nbsp;the&nbsp;provided&nbsp;path&nbsp;exist&nbsp;in<br>
+the&nbsp;provided&nbsp;model.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ModelAssumptionError:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;the&nbsp;model&nbsp;does&nbsp;not&nbsp;fulfill&nbsp;the&nbsp;assumptions.</span></dd></dl>
+ <dl><dt><a name="-assert_relation_target_multiplicity"><strong>assert_relation_target_multiplicity</strong></a>(*, model: schemapack._internals.spec.schemapack.SchemaPack, path: metldata.builtin_transformations.common.path.path.RelationPath) -&gt; None</dt><dd><span class="code">Make&nbsp;sure&nbsp;the&nbsp;target&nbsp;of&nbsp;the&nbsp;relation&nbsp;contributes&nbsp;multiple&nbsp;instances&nbsp;to&nbsp;the&nbsp;relation.</span></dd></dl>
+ <dl><dt><a name="-check_class_does_not_exist"><strong>check_class_does_not_exist</strong></a>(*, model: schemapack._internals.spec.schemapack.SchemaPack, class_name: str) -&gt; None</dt><dd><span class="code">Ensure&nbsp;a&nbsp;class&nbsp;does&nbsp;not&nbsp;exist&nbsp;in&nbsp;the&nbsp;model&nbsp;and&nbsp;raise&nbsp;an&nbsp;error&nbsp;else</span></dd></dl>
+ <dl><dt><a name="-check_class_exists"><strong>check_class_exists</strong></a>(*, model: schemapack._internals.spec.schemapack.SchemaPack, class_name: str) -&gt; None</dt><dd><span class="code">Check&nbsp;if&nbsp;a&nbsp;class&nbsp;exists&nbsp;in&nbsp;the&nbsp;model&nbsp;and&nbsp;raise&nbsp;an&nbsp;error&nbsp;if&nbsp;not</span></dd></dl>
+ <dl><dt><a name="-check_relation_exists"><strong>check_relation_exists</strong></a>(*, model: schemapack._internals.spec.schemapack.SchemaPack, class_name: str, relation: str) -&gt; None</dt><dd><span class="code">Check&nbsp;if&nbsp;a&nbsp;relation&nbsp;exists&nbsp;in&nbsp;a&nbsp;class&nbsp;and&nbsp;raise&nbsp;an&nbsp;error&nbsp;if&nbsp;not</span></dd></dl>
+</td></tr></table>
+</body></html>

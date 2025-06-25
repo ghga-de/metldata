@@ -1,0 +1,63 @@
+# a more advanced schemapack:
+schemapack: 0.3.0
+classes:
+  File:
+    id:
+      propertyName: alias
+    content: ../../example_content_schemas/File.schema.json
+  Dataset:
+    id:
+      propertyName: alias
+    content: ../../example_content_schemas/Dataset.schema.json
+    relations:
+      files:
+        targetClass: File
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
+  MyDataset:
+    id:
+      propertyName: alias
+    content: ../../example_content_schemas/Dataset.schema.json
+    relations:
+      files:
+        targetClass: File
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
+  Sample:
+    id:
+      propertyName: alias
+    content: ../../example_content_schemas/Sample.schema.json
+    relations:
+      files:
+        targetClass: File
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: false
+          target: true
+  MySample:
+    id:
+      propertyName: alias
+    content: {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "additionalProperties": false,
+          "description": "A sample used to generate files in the context of an experiment.",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "files": {
+              "type": "array"
+            }
+          },
+          "type": "object"
+        }

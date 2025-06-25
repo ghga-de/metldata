@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module metldata.builtin_transformations.common.resolve_path.resolve_path_element_relations</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title"><a href="metldata.html" class="white">metldata</a>.<a href="metldata.builtin_transformations.html" class="white">builtin_transformations</a>.<a href="metldata.builtin_transformations.common.html" class="white">common</a>.<a href="metldata.builtin_transformations.common.resolve_path.html" class="white">resolve_path</a>.resolve_path_element_relations</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/workspace/src/metldata/builtin_transformations/common/resolve_path/resolve_path_element_relations.py">/workspace/src/metldata/builtin_transformations/common/resolve_path/resolve_path_element_relations.py</a></td></tr></table>
+    <p><span class="code">Resolve&nbsp;relation&nbsp;paths&nbsp;(active,&nbsp;passive&nbsp;and&nbsp;complex)&nbsp;and&nbsp;infer&nbsp;target&nbsp;resources&nbsp;of&nbsp;the&nbsp;overall&nbsp;path.</span></p>
+<p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-resolve_active_path_element"><strong>resolve_active_path_element</strong></a>(*, data: schemapack._internals.spec.datapack.DataPack, source_resource_id: Annotated[str, FieldInfo(annotation=NoneType, required=True, metadata=[MinLen(min_length=1)])], path_element: metldata.builtin_transformations.common.path.path_elements.RelationPathElement) -&gt; frozenset[typing.Annotated[str, FieldInfo(annotation=NoneType, required=True, metadata=[MinLen(min_length=1)])]]</dt><dd><span class="code">Resolve&nbsp;the&nbsp;given&nbsp;relation&nbsp;inference&nbsp;path&nbsp;element&nbsp;of&nbsp;active&nbsp;type&nbsp;for&nbsp;the&nbsp;given<br>
+source&nbsp;resource.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;pack&nbsp;to&nbsp;look&nbsp;up&nbsp;resources&nbsp;in.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;source_resource_id:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;id&nbsp;of&nbsp;the&nbsp;resource&nbsp;to&nbsp;which&nbsp;the&nbsp;path&nbsp;element&nbsp;is&nbsp;applied.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;path_element:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;relation&nbsp;inference&nbsp;path&nbsp;element&nbsp;to&nbsp;resolve.&nbsp;It&nbsp;is&nbsp;assumed&nbsp;to&nbsp;be&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;active&nbsp;type.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;set&nbsp;of&nbsp;resource&nbsp;IDs&nbsp;that&nbsp;are&nbsp;targeted&nbsp;by&nbsp;the&nbsp;path&nbsp;element&nbsp;in&nbsp;context&nbsp;of&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;given&nbsp;source&nbsp;resource.</span></dd></dl>
+ <dl><dt><a name="-resolve_passive_path_element"><strong>resolve_passive_path_element</strong></a>(*, data: schemapack._internals.spec.datapack.DataPack, source_resource_id: Annotated[str, FieldInfo(annotation=NoneType, required=True, metadata=[MinLen(min_length=1)])], path_element: metldata.builtin_transformations.common.path.path_elements.RelationPathElement) -&gt; frozenset[typing.Annotated[str, FieldInfo(annotation=NoneType, required=True, metadata=[MinLen(min_length=1)])]]</dt><dd><span class="code">Resolve&nbsp;the&nbsp;given&nbsp;relation&nbsp;inference&nbsp;path&nbsp;element&nbsp;of&nbsp;passive&nbsp;type&nbsp;for&nbsp;the&nbsp;given<br>
+source&nbsp;resource.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;data&nbsp;pack&nbsp;to&nbsp;look&nbsp;up&nbsp;resources&nbsp;in.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;source_resource_id:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;id&nbsp;of&nbsp;the&nbsp;resource&nbsp;to&nbsp;which&nbsp;the&nbsp;path&nbsp;element&nbsp;is&nbsp;applied.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;path_element:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;relation&nbsp;inference&nbsp;path&nbsp;element&nbsp;to&nbsp;resolve.&nbsp;It&nbsp;is&nbsp;assumed&nbsp;to&nbsp;be&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;passive&nbsp;type.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;set&nbsp;of&nbsp;resource&nbsp;IDs&nbsp;that&nbsp;are&nbsp;targeted&nbsp;by&nbsp;the&nbsp;path&nbsp;element&nbsp;in&nbsp;context&nbsp;of&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;given&nbsp;source&nbsp;resource.</span></dd></dl>
+ <dl><dt><a name="-resolve_path"><strong>resolve_path</strong></a>(*, data: schemapack._internals.spec.datapack.DataPack, source_resource_id: Annotated[str, FieldInfo(annotation=NoneType, required=True, metadata=[MinLen(min_length=1)])], path: metldata.builtin_transformations.common.path.path.RelationPath) -&gt; frozenset[typing.Annotated[str, FieldInfo(annotation=NoneType, required=True, metadata=[MinLen(min_length=1)])]]</dt><dd><span class="code">Resolve&nbsp;the&nbsp;given&nbsp;relation&nbsp;inference&nbsp;path&nbsp;for&nbsp;the&nbsp;given&nbsp;source&nbsp;resource.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;The&nbsp;data&nbsp;pack&nbsp;to&nbsp;look&nbsp;up&nbsp;resources&nbsp;in.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;source_resource_id:&nbsp;The&nbsp;id&nbsp;of&nbsp;the&nbsp;resource&nbsp;to&nbsp;which&nbsp;the&nbsp;path&nbsp;is&nbsp;applied.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;path:&nbsp;The&nbsp;relation&nbsp;inference&nbsp;path&nbsp;to&nbsp;resolve.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;set&nbsp;of&nbsp;resource&nbsp;IDs&nbsp;that&nbsp;are&nbsp;targeted&nbsp;by&nbsp;the&nbsp;path&nbsp;in&nbsp;context&nbsp;of&nbsp;the&nbsp;given<br>
+&nbsp;&nbsp;&nbsp;&nbsp;source&nbsp;resource.</span></dd></dl>
+ <dl><dt><a name="-resolve_path_element"><strong>resolve_path_element</strong></a>(*, data: schemapack._internals.spec.datapack.DataPack, source_resource_id: Annotated[str, FieldInfo(annotation=NoneType, required=True, metadata=[MinLen(min_length=1)])], path_element: metldata.builtin_transformations.common.path.path_elements.RelationPathElement) -&gt; frozenset[typing.Annotated[str, FieldInfo(annotation=NoneType, required=True, metadata=[MinLen(min_length=1)])]]</dt><dd><span class="code">Resolve&nbsp;the&nbsp;given&nbsp;relation&nbsp;inference&nbsp;path&nbsp;element&nbsp;for&nbsp;the&nbsp;given&nbsp;source&nbsp;resource.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;The&nbsp;data&nbsp;pack&nbsp;to&nbsp;look&nbsp;up&nbsp;resources&nbsp;in.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;source_resource_id:&nbsp;The&nbsp;id&nbsp;of&nbsp;the&nbsp;resource&nbsp;to&nbsp;which&nbsp;the&nbsp;path&nbsp;element&nbsp;is&nbsp;applied.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;path_element:&nbsp;The&nbsp;relation&nbsp;inference&nbsp;path&nbsp;element&nbsp;to&nbsp;resolve.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;set&nbsp;of&nbsp;resource&nbsp;IDs&nbsp;that&nbsp;are&nbsp;targeted&nbsp;by&nbsp;the&nbsp;path&nbsp;element&nbsp;in&nbsp;context&nbsp;of&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;given&nbsp;source&nbsp;resource.</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>ResourceId</strong> = typing.Annotated[str, FieldInfo(annotation=NoneT... required=True, metadata=[MinLen(min_length=1)])]</td></tr></table>
+</body></html>

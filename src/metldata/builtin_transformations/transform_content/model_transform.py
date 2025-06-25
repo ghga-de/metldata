@@ -34,7 +34,13 @@ def transform_model_class(
     mutable_model = model_to_dict(model)
 
     try:
-        mutable_model["classes"][class_name] = transformation_config.content_schema
+        mutable_model["classes"][class_name]["content"] = (
+            transformation_config.content_schema
+        )
+        # need to explicitly delete relations, if there are any
+        # else this will error due to duplicate keys in relations and content
+        if "relations" in mutable_model["classes"][class_name]:
+            del mutable_model["classes"][class_name]["relations"]
     except KeyError as exc:
         raise EvitableTransformationError() from exc
 

@@ -1,5 +1,6 @@
 class_name: Dataset
 content_schema: {
+  "content": {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "description": "A dataset that is a collection of files.",
@@ -7,15 +8,17 @@ content_schema: {
       "dac_contact": {
         "type": "string"
       },
-      "files": {
-        "type": "array"
-      },
-      "samples": {
-        "type": "array"
+      "new_prop": {
+        "type": "object"
       }
     },
     "type": "object"
+    },
+    "id": {
+      "propertyName": "alias"
+    }
   }
 embedding_profile: {"samples": {"files": false}, "files": false}
 data_template: |
   dac_contact: {{ original.dac_contact }}
+  new_prop.nested.reverse_dac_contact: {{ original.dac_contact | reverse }}

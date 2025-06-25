@@ -1,0 +1,40 @@
+operations:
+  # Duplicate one of the classes prior to deletion
+  - name: duplicate_class
+    description: "Create a duplicate of class {{ source_class_name }} named {{ target_class_name }}"
+    args:
+      source_class_name: "{{ source_class_name }}"
+      target_class_name: "{{ target_class_name }}"
+    loop:
+      - source_class_name: Dataset
+        target_class_name: MyDataset
+      - source_class_name: Sample
+        target_class_name: MySample
+  - name: transform_content
+    description: "Fully embed sample files."
+    args:
+      class_name: MySample
+      content_schema: {
+        "content":{
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "additionalProperties": false,
+          "description": "A sample used to generate files in the context of an experiment.",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "files": {
+              "type": "array"
+            }
+          },
+          "type": "object"
+        }
+      }
+      embedding_profile: {}
+      data_template: |
+        files: {{ original.files }}
+  # Delete classes - this will automatically delete the obsolete relations
+  - name: delete_class
+    description: "Delete class Experiment"
+    args:
+      class_name: Experiment

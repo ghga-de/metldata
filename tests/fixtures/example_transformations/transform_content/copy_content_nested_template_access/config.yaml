@@ -1,6 +1,5 @@
 class_name: Dataset
 content_schema: {
-  "content": {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "description": "A dataset that is a collection of files.",
@@ -13,10 +12,6 @@ content_schema: {
       }
     },
     "type": "object"
-    },
-    "id": {
-      "propertyName": "alias"
-    }
   }
 embedding_profile: {"samples": {"files": false}, "files": false}
 data_template: |
