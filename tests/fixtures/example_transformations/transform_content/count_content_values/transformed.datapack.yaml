@@ -9,20 +9,12 @@ resources:
             description:
               tissue: 2 # <-
               blood: 1 # <-
-      relations:
-        files:
-          targetClass: File
-          targetResources: file_a
     dataset_2:
       content:
         dac_contact: dac@example.org
         samples_summary:
           stats:
             description: {} # <-
-      relations:
-        files:
-          targetClass: File
-          targetResources: file_b
   File:
     file_a:
       content:

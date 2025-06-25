@@ -36,18 +36,6 @@ resources:
           - alias: sample_y
             files:
               - file_c
-      relations:
-        files:
-          targetClass: File
-          targetResources:
-            - file_a
-            - file_b
-            - file_c
-        samples:
-          targetClass: Sample
-          targetResources:
-            - sample_x
-            - sample_y
     dataset_2:
       content:
         dac_contact: dac@example.org
@@ -57,15 +45,6 @@ resources:
           - alias: sample_y
             files:
               - file_c
-      relations:
-        files:
-          targetClass: File
-          targetResources:
-            - file_b
-        samples:
-          targetClass: Sample
-          targetResources:
-            - sample_y
   Sample:
     sample_x:
       content:

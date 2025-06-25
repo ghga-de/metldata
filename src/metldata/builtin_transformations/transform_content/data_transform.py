@@ -36,40 +36,15 @@ def _format_denormalized(denormalized_content: dict[str, object]) -> dict[str, o
     content = dict()
 
     for key, value in denormalized_content.items():
-        if key == "alias":
-            continue
-        if isinstance(value, list) and isinstance(value[0], dict):
+        if value and isinstance(value, list) and isinstance(value[0], dict):
             content[key] = [
-                _format_recursive(resource_content) for resource_content in value
+                _format_denormalized(resource_content) for resource_content in value
             ]
         elif isinstance(value, Mapping):
-            content[key] = _format_recursive(value)  # type: ignore
+            content[key] = _format_denormalized(value)  # type: ignore
         else:
             content[key] = value  # type: ignore
     return content  # type: ignore
-
-
-def _format_recursive(denormalized_content: dict[str, object]):
-    """Recursive part of formatting."""
-    content = dict()
-    # property_name = ""
-
-    # if "alias" in denormalized_content:
-    #    property_name = denormalized_content.pop("alias")  # type: ignore
-
-    for key, value in denormalized_content.items():
-        if value and isinstance(value, list) and isinstance(value[0], Mapping):
-            content[key] = [
-                _format_recursive(resource_content) for resource_content in value
-            ]
-        elif isinstance(value, Mapping):
-            content[key] = _format_recursive(value)  # type: ignore
-        else:
-            content[key] = value  # type: ignore
-
-    # if property_name:
-    #    return {property_name: {"content": content}}
-    return content
 
 
 def transform_data_class(
@@ -96,14 +71,19 @@ def transform_data_class(
             schemapack=schemapack,
             embedding_profile=embedding_profile,
         )
+        del denormalized_content["alias"]
         denormalized_content = _format_denormalized(denormalized_content)
 
         transformed_content = env.from_string(
             transformation_config.data_template
         ).render(original=denormalized_content)
 
+        # raise ValueError(json.dumps(transformed_content))
+
         mutable_data["resources"][class_name][resource_id]["content"] = yaml.safe_load(
             transformed_content
         )
+        if "relations" in mutable_data["resources"][class_name][resource_id]:
+            del mutable_data["resources"][class_name][resource_id]["relations"]
 
     return DataPack.model_validate(mutable_data)
