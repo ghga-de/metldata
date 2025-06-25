@@ -1,24 +1,36 @@
 class_name: Dataset
 content_schema: {
-  "content": {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "description": "A dataset that is a collection of files.",
-    "properties": {
-      "dac_contact": {
-        "type": "string"
+    "properties":
+      {
+        "dac_contact": { "type": "string" },
+        "file_summary":
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties":
+              {
+                "stats":
+                  {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "properties":
+                      {
+                        "size": { "type": "number" },
+                      },
+                  },
+              },
+            "required": ["stats"],
+          },
       },
-      "new_prop": {
-        "type": "object"
-      }
-    },
-    "type": "object"
-    },
-    "id": {
-      "propertyName": "alias"
-    }
+    "required": ["file_summary"],
+    "type": "object",
   }
-embedding_profile: {"samples": {"files": false}, "files": false}
+embedding_profile: {}
 data_template: |
   dac_contact: {{ original.dac_contact }}
-  new_prop.nested.reverse_dac_contact: {{ original.dac_contact | reverse }}
+  file_summary:
+    stats:
+      size: {{ original.files | sum("size") }}

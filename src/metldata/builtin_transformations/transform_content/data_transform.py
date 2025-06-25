@@ -78,8 +78,6 @@ def transform_data_class(
             transformation_config.data_template
         ).render(original=denormalized_content)
 
-        # raise ValueError(json.dumps(transformed_content))
-
         mutable_data["resources"][class_name][resource_id]["content"] = yaml.safe_load(
             transformed_content
         )
