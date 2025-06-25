@@ -29,7 +29,7 @@ from ghga_event_schemas.pydantic_ import (
 from hexkit.protocols.eventpub import EventPublisherProtocol
 from pydantic import Field
 
-from metldata.artifacts_rest.models import Artifact
+from metldata.artifacts_rest.models import Artifact, ArtifactTag
 
 
 class EventPubTranslatorConfig(DatasetEventsConfig, ResourceEventsConfig):
@@ -123,7 +123,7 @@ class EventPubTranslator(EventPublisherPort):
         await self._provider.publish(
             payload=payload,
             type_=self._config.dataset_deletion_type,
-            key=dataset_id.accession,
+            key=f"dataset_embedded_{dataset_id.accession}",
             topic=self._config.dataset_change_topic,
         )
 
@@ -140,7 +140,7 @@ class EventPubTranslator(EventPublisherPort):
         await self._provider.publish(
             payload=payload,
             type_=self._config.resource_deletion_type,
-            key=resource_info.accession,
+            key=f"dataset_embedded_{resource_info.accession}",
             topic=self._config.resource_change_topic,
         )
 
@@ -151,8 +151,11 @@ class EventPubTranslator(EventPublisherPort):
         submission_id: str,
     ):
         """Communicate the deletion of an entire artifact"""
+        artifact_tag = ArtifactTag(
+            artifact_name=artifact_name, submission_id=submission_id
+        )
         await self._provider.publish(
-            payload={},
+            payload=artifact_tag.model_dump(),
             type_="deleted",
             key=f"{artifact_name}_{submission_id}",
             topic=self._config.artifact_topic,
@@ -169,7 +172,7 @@ class EventPubTranslator(EventPublisherPort):
         await self._provider.publish(
             payload=payload,
             type_=self._config.dataset_upsertion_type,
-            key=dataset_overview.accession,
+            key=f"dataset_embedded_{dataset_overview.accession}",
             topic=self._config.dataset_change_topic,
         )
 
@@ -182,7 +185,7 @@ class EventPubTranslator(EventPublisherPort):
         await self._provider.publish(
             payload=payload,
             type_=self._config.resource_upsertion_type,
-            key=resource.accession,
+            key=f"dataset_embedded_{resource.accession}",
             topic=self._config.resource_change_topic,
         )
 
