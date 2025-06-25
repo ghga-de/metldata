@@ -16,15 +16,19 @@
 
 """Logic for loading artifact resources."""
 
+from collections import defaultdict
+
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.load_resources import (
     extract_all_resources_from_artifact,
+    process_new_or_changed_artifacts,
     process_new_or_changed_resources,
+    process_removed_artifacts,
     process_removed_resources,
 )
 from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResource
 from metldata.load.event_publisher import EventPublisherPort
-from metldata.load.models import ArtifactResourceDict
+from metldata.load.models import ArtifactResourceDict, ArtifactTypedDict
 
 
 class ArtifactResourcesInvalid(RuntimeError):
@@ -44,7 +48,36 @@ def check_artifact_resources(
             raise ArtifactResourcesInvalid(f"Artifact '{artifact_name}' is unknown.")
 
 
-async def load_artifacts_using_dao(
+async def load_whole_artifacts_using_dao(
+    publishable_artifacts: list[str],
+    artifact_resources: ArtifactResourceDict,
+    event_publisher: EventPublisherPort,
+    dao_collection: ArtifactDaoCollection,
+) -> None:
+    """Load whole artifacts from multiple submissions using the given dao collection."""
+    (
+        deleted_artifacts,
+        upserted_artifacts,
+    ) = await _get_changed_artifacts(
+        publishable_artifacts=publishable_artifacts,
+        artifact_resources=artifact_resources,
+        dao_collection=dao_collection,
+    )
+
+    await process_removed_artifacts(
+        event_publisher=event_publisher,
+        artifact_tags=deleted_artifacts,
+        dao_collection=dao_collection,
+    )
+
+    await process_new_or_changed_artifacts(
+        artifacts=upserted_artifacts,
+        event_publisher=event_publisher,
+        dao_collection=dao_collection,
+    )
+
+
+async def load_artifact_resources_using_dao(
     artifact_resources: ArtifactResourceDict,
     artifact_info_dict: dict[str, ArtifactInfo],
     event_publisher: EventPublisherPort,
@@ -82,6 +115,69 @@ async def load_artifacts_using_dao(
     )
 
 
+async def _get_changed_artifacts(
+    publishable_artifacts: list[str],
+    artifact_resources: ArtifactResourceDict,
+    dao_collection: ArtifactDaoCollection,
+) -> tuple[
+    set[tuple[str, str]],
+    dict[str, list[ArtifactTypedDict]],
+]:
+    """Extract the changeset of publishable whole artifacts by comparing the database
+    contents with the currently submitted artifacts. Only the configured artifact types
+    are stored whole.
+
+    Returns the following data in this order:
+     - A set of tuples (artifact_type, submission_id) for deleted artifacts
+     - A dict of upserted artifacts, where the keys are artifact names and
+        the values are lists of individual artifact instances as ArtifactTypedDicts
+    """
+    deleted_artifacts: set[tuple[str, str]] = set()
+    upserted_artifacts: dict[str, list[ArtifactTypedDict]] = defaultdict(list)
+
+    # First get all existing artifacts from the database by their "tags"
+    # Using/defining "tag" here as a tuple of (artifact_name, submission_id) to avoid
+    # confusing it for the the submission ID
+    existing_artifact_tag: set[
+        tuple[str, str]
+    ] = await dao_collection.get_all_whole_artifact_tags()
+    submitted_artifact_tags: set[tuple[str, str]] = set(
+        (artifact_name, artifact["submission_id"])
+        for artifact_name, artifacts in artifact_resources.items()
+        for artifact in artifacts
+    )
+
+    # Get all deleted artifacts by checking which existing IDs are not present in
+    # the loaded artifacts
+    deleted_artifacts = existing_artifact_tag - submitted_artifact_tags
+
+    # Also delete any stored artifacts that are no longer configured to be publishable
+    for artifact_name, artifact_id in existing_artifact_tag:
+        if artifact_name not in publishable_artifacts:
+            deleted_artifacts.add((artifact_name, artifact_id))
+
+    # Iterate through the PROVIDED artifact resources and...:
+    # - if the ID is in existing_artifact_ids, check if it has changed by loading
+    #   the existing artifact and comparing it to the provided one
+    for artifact_name, artifacts in artifact_resources.items():
+        if artifact_name not in publishable_artifacts:
+            continue
+        for artifact_dict in artifacts:
+            artifact_tag = (artifact_name, artifact_dict["submission_id"])
+            if artifact_tag in existing_artifact_tag:
+                dao = await dao_collection.get_dao(
+                    artifact_name=artifact_name, class_name=""
+                )
+                existing_artifact = await dao.get_by_id(artifact_dict["submission_id"])
+
+                if existing_artifact != artifact_dict:
+                    upserted_artifacts[artifact_name].append(artifact_dict)
+            else:
+                upserted_artifacts[artifact_name].append(artifact_dict)
+
+    return deleted_artifacts, upserted_artifacts
+
+
 async def _get_changed_resources(
     artifact_resources: ArtifactResourceDict,
     artifact_info_dict: dict[str, ArtifactInfo],
@@ -107,10 +203,10 @@ async def _get_changed_resources(
 
     existing_resource_tags = await dao_collection.get_all_resource_tags()
 
-    for artifact_name, artifact_contents in artifact_resources.items():
-        for artifact_content in artifact_contents:
+    for artifact_name, artifact_instances in artifact_resources.items():
+        for artifact_instance in artifact_instances:
             resources = extract_all_resources_from_artifact(
-                artifact_content=artifact_content,
+                artifact_content=artifact_instance["content"],
                 artifact_info=artifact_info_dict[artifact_name],
             )
 

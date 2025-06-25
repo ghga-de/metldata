@@ -407,6 +407,16 @@ The service requires the following configuration parameters:
   ```
 
 
+- <a id="properties/artifact_topic"></a>**`artifact_topic`** *(string, required)*: The topic to publish artifact content events to.
+
+
+  Examples:
+
+  ```json
+  "artifact_content"
+  ```
+
+
 - <a id="properties/primary_artifact_name"></a>**`primary_artifact_name`** *(string, required)*: Name of the artifact from which the information for outgoing change events is derived.
 
 
@@ -526,6 +536,25 @@ The service requires the following configuration parameters:
 - <a id="properties/loader_token_hashes"></a>**`loader_token_hashes`** *(array, required)*: Hashes of tokens used to authenticate for loading artifact.
 
   - <a id="properties/loader_token_hashes/items"></a>**Items** *(string)*
+
+- <a id="properties/publishable_artifacts"></a>**`publishable_artifacts`** *(array)*: List of artifacts to be published in their entirety when loadedinto the Loader API.
+
+  - <a id="properties/publishable_artifacts/items"></a>**Items** *(string)*
+
+
+  Examples:
+
+  ```json
+  []
+  ```
+
+
+  ```json
+  [
+      "added_accessions"
+  ]
+  ```
+
 
 ## Definitions
 

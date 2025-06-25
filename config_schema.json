@@ -379,6 +379,14 @@
       "title": "Dataset Upsertion Type",
       "type": "string"
     },
+    "artifact_topic": {
+      "description": "The topic to publish artifact content events to.",
+      "examples": [
+        "artifact_content"
+      ],
+      "title": "Artifact Topic",
+      "type": "string"
+    },
     "primary_artifact_name": {
       "description": "Name of the artifact from which the information for outgoing change events is derived.",
       "examples": [
@@ -533,6 +541,20 @@
       },
       "title": "Loader Token Hashes",
       "type": "array"
+    },
+    "publishable_artifacts": {
+      "description": "List of artifacts to be published in their entirety when loadedinto the Loader API.",
+      "examples": [
+        [],
+        [
+          "added_accessions"
+        ]
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Publishable Artifacts",
+      "type": "array"
     }
   },
   "required": [
@@ -546,6 +568,7 @@
     "dataset_change_topic",
     "dataset_deletion_type",
     "dataset_upsertion_type",
+    "artifact_topic",
     "primary_artifact_name",
     "primary_dataset_name",
     "artifact_infos",

@@ -58,10 +58,11 @@ async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # no
             assert response.status_code == 204
 
     # check that the recorded events match what we expect from the resources:
-    datasets = resources["embedded_public"][0]["embedded_dataset"]
-    assert len(resource_recorder.recorded_events) == len(datasets)
+    datasets = resources["embedded_public"][0]["content"]["embedded_dataset"]
     for event in resource_recorder.recorded_events:
+        print(event.payload["class_name"])
         assert event.type_ == joint_fixture.config.resource_upsertion_type
+    assert len(resource_recorder.recorded_events) == len(datasets)
     assert len(dataset_recorder.recorded_events) == len(datasets)
     for event, dataset in zip(dataset_recorder.recorded_events, datasets, strict=True):
         assert event.type_ == joint_fixture.config.dataset_upsertion_type
@@ -143,13 +144,15 @@ async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # no
     # replace tested resource with slightly changed one
     changed_accession = "CHANGED_EMBEDDED_DATASET"
     new_artifact_resources = deepcopy(joint_fixture.artifact_resources)
-    del new_artifact_resources[expected_artifact_name][0]["embedded_dataset"][0]
-    new_artifact_resources[expected_artifact_name][0]["embedded_dataset"][0][
+    del new_artifact_resources[expected_artifact_name][0]["content"][
+        "embedded_dataset"
+    ][0]
+    new_artifact_resources[expected_artifact_name][0]["content"]["embedded_dataset"][0][
         "accession"
     ] = "CHANGED_EMBEDDED_DATASET"
     expected_resource_content = new_artifact_resources[expected_artifact_name][0][
-        "embedded_dataset"
-    ][0]
+        "content"
+    ]["embedded_dataset"][0]
 
     # submit changed request
     async with joint_fixture.kafka.record_events(
@@ -167,7 +170,7 @@ async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # no
 
     assert len(resource_recorder.recorded_events) == 3
     for event in resource_recorder.recorded_events:
-        if event.key == f"dataset_embedded_{changed_accession}":
+        if event.key == changed_accession:
             assert event.type_ == joint_fixture.config.resource_upsertion_type
         else:
             assert event.type_ == joint_fixture.config.resource_deletion_type
@@ -175,7 +178,7 @@ async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # no
     assert len(dataset_recorder.recorded_events) == 3
 
     for event in dataset_recorder.recorded_events:
-        if event.key == f"dataset_embedded_{changed_accession}":
+        if event.key == changed_accession:
             assert event.type_ == joint_fixture.config.dataset_upsertion_type
         else:
             assert event.type_ == joint_fixture.config.dataset_deletion_type

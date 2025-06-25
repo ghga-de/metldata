@@ -25,7 +25,7 @@ from metldata.event_handling.artifact_events import (
     get_artifact_topic,
 )
 from metldata.event_handling.event_handling import FileSystemEventCollector
-from metldata.load.models import ArtifactResourceDict
+from metldata.load.models import ArtifactResourceDict, ArtifactTypedDict
 
 
 class ArtifactCollectorConfig(ArtifactEventConfig):
@@ -66,6 +66,12 @@ def collect_artifacts(
             content = event.payload.get("content")
             if not content:
                 raise RuntimeError("Artifact does not contain 'content' field.")
-            artifact_resources[artifact_type].append(content)  # type: ignore
+            artifact_resources[artifact_type].append(
+                ArtifactTypedDict(
+                    artifact_name=artifact_type,
+                    submission_id=str(event.payload["submission_id"]),
+                    content=content,  # type: ignore
+                )
+            )
 
     return artifact_resources
