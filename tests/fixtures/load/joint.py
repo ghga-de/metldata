@@ -72,11 +72,11 @@ async def joint_fixture(kafka: KafkaFixture, mongodb: MongoDbFixture) -> JointFi
             description=ARTIFACT_NAME,
             model=MetadataModel.init_from_path(EMBEDDED_ARTIFACT_MODEL_PATH),
         ),
-        # load_artifact_info(
-        #     name="added_accessions",
-        #     description="added_accessions",
-        #     model=MetadataModel.init_from_path(ADDED_ACCESSIONS_MODEL_PATH),
-        # ),
+        load_artifact_info(
+            name="added_accessions",
+            description="added_accessions",
+            model=MetadataModel.init_from_path(ADDED_ACCESSIONS_MODEL_PATH),
+        ),
     ]
 
     with open(EMBEDDED_ARTIFACT_PATH, encoding="utf-8") as file:
@@ -91,14 +91,15 @@ async def joint_fixture(kafka: KafkaFixture, mongodb: MongoDbFixture) -> JointFi
             ]
         }
 
-    # with open(ADDED_ACCESSIONS_PATH, encoding="utf-8") as file:
-    #     added_accessions_artifact = json.load(file)
-    #     artifacts[added_accessions_artifact["type_"]] = [
-    #         ArtifactTypedDict(
-    #             submission_id=added_accessions_artifact["payload"]["submission_id"],
-    #             content=added_accessions_artifact["payload"]["content"],
-    #         )
-    #     ]
+    with open(ADDED_ACCESSIONS_PATH, encoding="utf-8") as file:
+        added_accessions_artifact = json.load(file)
+        artifacts[added_accessions_artifact["type_"]] = [
+            ArtifactTypedDict(
+                artifact_name=added_accessions_artifact["type_"],
+                submission_id=added_accessions_artifact["payload"]["submission_id"],
+                content=added_accessions_artifact["payload"]["content"],
+            )
+        ]
 
     token, token_hash = generate_token_and_hash()
 

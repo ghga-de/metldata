@@ -44,23 +44,24 @@ pytestmark = pytest.mark.asyncio()
 async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # noqa: F811
     """Test the happy path of using the load artifacts endpoint."""
     resources = joint_fixture.artifact_resources
-    async with joint_fixture.kafka.record_events(
-        in_topic=joint_fixture.config.dataset_change_topic
-    ) as dataset_recorder:
-        async with joint_fixture.kafka.record_events(
+    async with (
+        joint_fixture.kafka.record_events(
+            in_topic=joint_fixture.config.dataset_change_topic
+        ) as dataset_recorder,
+        joint_fixture.kafka.record_events(
             in_topic=joint_fixture.config.resource_change_topic
-        ) as resource_recorder:
-            response = await joint_fixture.client.post(
-                "/rpc/load-artifacts",
-                json=resources,
-                headers={"Authorization": f"Bearer {joint_fixture.token}"},
-            )
-            assert response.status_code == 204
+        ) as resource_recorder,
+    ):
+        response = await joint_fixture.client.post(
+            "/rpc/load-artifacts",
+            json=resources,
+            headers={"Authorization": f"Bearer {joint_fixture.token}"},
+        )
+        assert response.status_code == 204
 
     # check that the recorded events match what we expect from the resources:
     datasets = resources["embedded_public"][0]["content"]["embedded_dataset"]
     for event in resource_recorder.recorded_events:
-        print(event.payload["class_name"])
         assert event.type_ == joint_fixture.config.resource_upsertion_type
     assert len(resource_recorder.recorded_events) == len(datasets)
     assert len(dataset_recorder.recorded_events) == len(datasets)
@@ -74,7 +75,6 @@ async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # no
 
     # check that the artifact resources were loaded based on an example:
     expected_artifact_name = "embedded_public"
-
     expected_file_resource_class = "StudyFile"
     expected_file_resource_id = joint_fixture.expected_file_resource_content[
         "accession"
@@ -155,22 +155,24 @@ async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # no
     ]["embedded_dataset"][0]
 
     # submit changed request
-    async with joint_fixture.kafka.record_events(
-        in_topic=joint_fixture.config.dataset_change_topic
-    ) as dataset_recorder:
-        async with joint_fixture.kafka.record_events(
+    async with (
+        joint_fixture.kafka.record_events(
+            in_topic=joint_fixture.config.dataset_change_topic
+        ) as dataset_recorder,
+        joint_fixture.kafka.record_events(
             in_topic=joint_fixture.config.resource_change_topic
-        ) as resource_recorder:
-            response = await joint_fixture.client.post(
-                "/rpc/load-artifacts",
-                json=new_artifact_resources,
-                headers={"Authorization": f"Bearer {joint_fixture.token}"},
-            )
-            assert response.status_code == 204
+        ) as resource_recorder,
+    ):
+        response = await joint_fixture.client.post(
+            "/rpc/load-artifacts",
+            json=new_artifact_resources,
+            headers={"Authorization": f"Bearer {joint_fixture.token}"},
+        )
+        assert response.status_code == 204
 
     assert len(resource_recorder.recorded_events) == 3
     for event in resource_recorder.recorded_events:
-        if event.key == changed_accession:
+        if event.key == f"dataset_embedded_{changed_accession}":
             assert event.type_ == joint_fixture.config.resource_upsertion_type
         else:
             assert event.type_ == joint_fixture.config.resource_deletion_type
@@ -178,7 +180,7 @@ async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # no
     assert len(dataset_recorder.recorded_events) == 3
 
     for event in dataset_recorder.recorded_events:
-        if event.key == changed_accession:
+        if event.key == f"dataset_embedded_{changed_accession}":
             assert event.type_ == joint_fixture.config.dataset_upsertion_type
         else:
             assert event.type_ == joint_fixture.config.dataset_deletion_type
@@ -187,18 +189,20 @@ async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # no
     assert observed_resource.content == expected_resource_content
 
     # submit an empty request:
-    async with joint_fixture.kafka.record_events(
-        in_topic=joint_fixture.config.dataset_change_topic
-    ) as dataset_recorder:
-        async with joint_fixture.kafka.record_events(
+    async with (
+        joint_fixture.kafka.record_events(
+            in_topic=joint_fixture.config.dataset_change_topic
+        ) as dataset_recorder,
+        joint_fixture.kafka.record_events(
             in_topic=joint_fixture.config.resource_change_topic
-        ) as resource_recorder:
-            response = await joint_fixture.client.post(
-                "/rpc/load-artifacts",
-                json={},
-                headers={"Authorization": f"Bearer {joint_fixture.token}"},
-            )
-            assert response.status_code == 204
+        ) as resource_recorder,
+    ):
+        response = await joint_fixture.client.post(
+            "/rpc/load-artifacts",
+            json={},
+            headers={"Authorization": f"Bearer {joint_fixture.token}"},
+        )
+        assert response.status_code == 204
 
     assert len(resource_recorder.recorded_events) == 9
     for event in resource_recorder.recorded_events:
@@ -211,6 +215,87 @@ async def test_load_artifacts_endpoint_happy(joint_fixture: JointFixture):  # no
     # confirm that example resource was deleted:
     with pytest.raises(ResourceNotFoundError):
         await dao.get_by_id(changed_accession)
+
+
+async def test_whole_artifact_loading(joint_fixture: JointFixture):  # noqa: F811
+    """Test the loading of whole artifacts. This covers initial load, modification,
+    re-submission without change, and deletion.
+    """
+    # 1. load the artifact
+    artifacts_to_load = deepcopy(joint_fixture.artifact_resources)
+    async with joint_fixture.kafka.record_events(
+        in_topic=joint_fixture.config.artifact_topic
+    ) as artifact_recorder:
+        response = await joint_fixture.client.post(
+            "/rpc/load-artifacts",
+            json=artifacts_to_load,
+            headers={"Authorization": f"Bearer {joint_fixture.token}"},
+        )
+        assert response.status_code == 204
+
+    # Make sure the added_accessions artifact was published as an event
+    assert len(artifact_recorder.recorded_events) == 1
+    artifact_event = artifact_recorder.recorded_events[0]
+    assert artifact_event.type_ == "upserted"
+    test_artifact_submission_id = artifacts_to_load["added_accessions"][0][
+        "submission_id"
+    ]
+    assert artifact_event.key == f"added_accessions_{test_artifact_submission_id}"
+    assert artifact_event.payload == artifacts_to_load["added_accessions"][0]
+
+    # 2. Load same data again without changes
+    async with joint_fixture.kafka.record_events(
+        in_topic=joint_fixture.config.artifact_topic
+    ) as artifact_recorder2:
+        response = await joint_fixture.client.post(
+            "/rpc/load-artifacts",
+            json=artifacts_to_load,
+            headers={"Authorization": f"Bearer {joint_fixture.token}"},
+        )
+        assert response.status_code == 204
+
+    # Make sure no event was published when the event was unchanged
+    assert not artifact_recorder2.recorded_events
+
+    # 3. Modify the artifact and load again
+    artifacts_to_load["added_accessions"][0]["content"]["samples"] = {}
+    async with joint_fixture.kafka.record_events(
+        in_topic=joint_fixture.config.artifact_topic
+    ) as artifact_recorder3:
+        response = await joint_fixture.client.post(
+            "/rpc/load-artifacts",
+            json=artifacts_to_load,
+            headers={"Authorization": f"Bearer {joint_fixture.token}"},
+        )
+        assert response.status_code == 204
+
+    # Make sure the updated artifact was published as an event
+    assert len(artifact_recorder3.recorded_events) == 1
+    artifact_event = artifact_recorder3.recorded_events[0]
+    assert artifact_event.type_ == "upserted"
+    assert artifact_event.key == f"added_accessions_{test_artifact_submission_id}"
+    assert artifact_event.payload == artifacts_to_load["added_accessions"][0]
+
+    # 4. Delete the artifact
+    async with joint_fixture.kafka.record_events(
+        in_topic=joint_fixture.config.artifact_topic
+    ) as artifact_recorder4:
+        response = await joint_fixture.client.post(
+            "/rpc/load-artifacts",
+            json={},
+            headers={"Authorization": f"Bearer {joint_fixture.token}"},
+        )
+        assert response.status_code == 204
+
+    # Make sure the artifact deletion was published as an event
+    assert len(artifact_recorder4.recorded_events) == 1
+    artifact_event = artifact_recorder4.recorded_events[0]
+    assert artifact_event.type_ == "deleted"
+    assert artifact_event.key == f"added_accessions_{test_artifact_submission_id}"
+    assert artifact_event.payload == {
+        "artifact_name": "added_accessions",
+        "submission_id": test_artifact_submission_id,
+    }
 
 
 async def test_load_artifacts_endpoint_invalid_resources(
