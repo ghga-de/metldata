@@ -67,7 +67,7 @@ class ArtifactDaoCollection:
         # Add a DAO for each entire artifact configured to be published
         whole_artifact_daos: dict[str, ArtifactDao] = {
             artifact_name: await dao_factory.get_dao(
-                name=artifact_name,
+                name=artifact_name,  # each artifact type gets its own collection and DAO
                 dto_model=Artifact,
                 id_field="submission_id",
             )
@@ -100,27 +100,20 @@ class ArtifactDaoCollection:
         return f"art_{artifact_name}_class_{class_name}"
 
     async def get_all_whole_artifact_tags(self) -> set[tuple[str, str]]:
-        """Retrieve all artifact IDs currently present in the db.
+        """Retrieve all artifact tags currently present in the db.
 
-        An artifact ID combines artifact_type and ID into a tuple,
-        i.e. it has the form '(artifact_type, submission_id)'.
+        An artifact tag combines artifact name and submission ID into a tuple,
+        i.e. (artifact name, submission_id)
         """
-        all_artifact_ids: set[tuple[str, str]] = set()
+        all_artifact_tags: set[tuple[str, str]] = set(
+            [
+                (artifact_name, artifact.submission_id)
+                for artifact_name, dao in self._whole_artifact_daos.items()
+                async for artifact in dao.find_all(mapping={})
+            ]
+        )
 
-        # The whole-artifact DAOs are stored under the empty-string key
-        daos = {
-            artifact_type: self._artifact_resource_daos[artifact_type][""]
-            for artifact_type, class_name in self._artifact_resource_daos.items()
-            if class_name == ""
-        }
-
-        # Get all IDs from the DAOs (each DAO corresponds to one artifact type)
-        for artifact_type, dao in daos.items():
-            resource_ids = [resource.id_ async for resource in dao.find_all(mapping={})]
-            all_artifact_ids.update(
-                (artifact_type, resource_id) for resource_id in resource_ids
-            )
-        return all_artifact_ids
+        return all_artifact_tags
 
     async def get_all_resource_tags(self) -> set[tuple[str, str, str]]:
         """Retrieve resource tags for all artifacts currently present in the db.

@@ -139,6 +139,7 @@ async def _get_changed_artifacts(
      - A set of tuples (artifact_type, submission_id) for deleted artifacts
      - A dict of upserted artifacts, where the keys are artifact names and
         the values are lists of individual artifact instances as ArtifactTypedDicts
+        - omits artifact instances that have not changed
     """
     deleted_artifacts: set[tuple[str, str]] = set()
     upserted_artifacts: dict[str, list[ArtifactTypedDict]] = defaultdict(list)
@@ -146,7 +147,7 @@ async def _get_changed_artifacts(
     # First get all existing artifacts from the database by their "tags"
     # Using/defining "tag" here as a tuple of (artifact_name, submission_id) to avoid
     # confusing it for the the submission ID
-    existing_artifact_tag: set[
+    existing_artifact_tags: set[
         tuple[str, str]
     ] = await dao_collection.get_all_whole_artifact_tags()
     submitted_artifact_tags: set[tuple[str, str]] = set(
@@ -157,10 +158,10 @@ async def _get_changed_artifacts(
 
     # Get all deleted artifacts by checking which existing IDs are not present in
     # the loaded artifacts
-    deleted_artifacts = existing_artifact_tag - submitted_artifact_tags
+    deleted_artifacts = existing_artifact_tags - submitted_artifact_tags
 
     # Also delete any stored artifacts that are no longer configured to be publishable
-    for artifact_name, artifact_id in existing_artifact_tag:
+    for artifact_name, artifact_id in existing_artifact_tags:
         if artifact_name not in publishable_artifacts:
             deleted_artifacts.add((artifact_name, artifact_id))
 
@@ -172,13 +173,13 @@ async def _get_changed_artifacts(
             continue
         for artifact_dict in artifacts:
             artifact_tag = (artifact_name, artifact_dict["submission_id"])
-            if artifact_tag in existing_artifact_tag:
-                dao = await dao_collection.get_dao(
-                    artifact_name=artifact_name, class_name=""
+            if artifact_tag in existing_artifact_tags:
+                dao = await dao_collection.get_whole_artifact_dao(
+                    artifact_name=artifact_name
                 )
                 existing_artifact = await dao.get_by_id(artifact_dict["submission_id"])
 
-                if existing_artifact != artifact_dict:
+                if existing_artifact.model_dump() != artifact_dict:
                     upserted_artifacts[artifact_name].append(artifact_dict)
             else:
                 upserted_artifacts[artifact_name].append(artifact_dict)
