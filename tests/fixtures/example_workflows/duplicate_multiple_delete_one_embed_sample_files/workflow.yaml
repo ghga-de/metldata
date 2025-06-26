@@ -15,7 +15,6 @@ operations:
     args:
       class_name: MySample
       content_schema: {
-        "content":{
           "$schema": "http://json-schema.org/draft-07/schema#",
           "additionalProperties": false,
           "description": "A sample used to generate files in the context of an experiment.",
@@ -28,7 +27,6 @@ operations:
             }
           },
           "type": "object"
-        }
       }
       embedding_profile: {}
       data_template: |
