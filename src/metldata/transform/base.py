@@ -18,7 +18,7 @@
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import TypeAlias, TypeVar
+from typing import TypeVar
 
 from pydantic import (
     BaseModel,
@@ -27,19 +27,16 @@ from pydantic import (
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-ArtifactName: TypeAlias = str
+Config = TypeVar("Config", bound=BaseModel)
 
 
-ConfigT = TypeVar("ConfigT", bound=BaseModel)
-
-
-class DataTransformer[ConfigT](ABC):
+class DataTransformer[Config](ABC):
     """A base class for a data transformer."""
 
     def __init__(
         self,
         *,
-        config: ConfigT,
+        config: Config,
         input_model: SchemaPack,
         transformed_model: SchemaPack,
     ):
@@ -64,20 +61,20 @@ class DataTransformer[ConfigT](ABC):
         ...
 
 
-class TransformationDefinition[ConfigT](BaseModel):
+class TransformationDefinition[Config](BaseModel):
     """A model for describing a transformation."""
 
-    config_cls: type[ConfigT] = Field(
+    config_cls: type[Config] = Field(
         default=..., description="The config model of the transformation."
     )
-    check_model_assumptions: Callable[[SchemaPack, ConfigT], None] = Field(
+    check_model_assumptions: Callable[[SchemaPack, Config], None] = Field(
         default=...,
         description=(
             "A function that checks the assumptions made about the input model."
             + " Raises a ModelAssumptionError if the assumptions are not met."
         ),
     )
-    transform_model: Callable[[SchemaPack, ConfigT], SchemaPack] = Field(
+    transform_model: Callable[[SchemaPack, Config], SchemaPack] = Field(
         default=...,
         description=(
             "A function to transform the model. Raises a"
