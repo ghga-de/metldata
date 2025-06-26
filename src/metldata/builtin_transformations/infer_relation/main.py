@@ -49,7 +49,9 @@ class InferRelationTransformer(DataTransformer[InferRelationConfig]):
             DataTransformationError:
                 if the transformation fails.
         """
-        return infer_data_relation(data=data, transformation_config=self._config)
+        return infer_data_relation(
+            data=data, model=self._transformed_model, transformation_config=self._config
+        )
 
 
 def check_model_assumptions_wrapper(

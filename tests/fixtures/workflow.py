@@ -28,6 +28,9 @@ from metldata.builtin_transformations import (
     DELETE_CLASS_TRANSFORMATION,
     DUPLICATE_CLASS_TRANSFORMATION,
 )
+from metldata.builtin_transformations.infer_relation.main import (
+    INFER_RELATION_TRANSFORMATION,
+)
 from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
 from tests.fixtures.data import ADVANCED_DATA
@@ -38,11 +41,13 @@ EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
 WORKFLOW_BY_NAME: list[str] = [
     "duplicate_one_delete_multiple",
     "duplicate_multiple_delete_one",
-    "simple_workflow",
+    "delete_multiple",
+    "infer_multiple",
 ]
 TRANSFORMATION_REGISTRY = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
     "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
+    "infer_relation": INFER_RELATION_TRANSFORMATION,
 }
 
 

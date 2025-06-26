@@ -69,7 +69,6 @@ class WorkflowBuilder:
         """Expand a loop in a workflow step precursor, producing multiple workflow steps."""
         precursor_json = precursor.model_dump()
         del precursor_json["loop"]
-
         workflow_steps: list[WorkflowStep] = []
         for args in precursor.loop:
             context = args if isinstance(args, Mapping) else {"item": args}
