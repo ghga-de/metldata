@@ -15,10 +15,20 @@
 
 """Configuration for the `transform content` transformation."""
 
-from pydantic import Field
+from typing import Annotated, Any
+
+import yaml
+from pydantic import BeforeValidator, Field
 from pydantic_settings import BaseSettings
 
 from metldata.builtin_transformations.common.utils import EmbeddingProfile
+
+
+def convert_dict_compatible(value: Any) -> Any:
+    """Convert json serialized representation to dict."""
+    if isinstance(value, str) and value.startswith("{"):
+        return yaml.safe_load(value)
+    return value
 
 
 class TransformContentConfig(BaseSettings):
@@ -28,11 +38,15 @@ class TransformContentConfig(BaseSettings):
         default=...,
         description="Name of the class containing the content to be transformed.",
     )
-    content_schema: dict[str, object] = Field(
+    content_schema: Annotated[
+        dict[str, object], BeforeValidator(convert_dict_compatible)
+    ] = Field(
         default=...,
         description="Schemapack compatible JSON Schema the transformed content needs to adhere to.",
     )
-    embedding_profile: EmbeddingProfile = Field(
+    embedding_profile: Annotated[
+        EmbeddingProfile, BeforeValidator(convert_dict_compatible)
+    ] = Field(
         default=...,
         description="Embedding profile for denormalization. All relations are embedded by default and nested relations need to be specified explicitly for exclusion.",
     )
