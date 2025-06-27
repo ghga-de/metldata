@@ -16,13 +16,11 @@
 
 """Config parameters and their defaults."""
 
-from typing import Annotated
-
 from ghga_service_commons.api import ApiConfigBase
 from hexkit.log import LoggingConfig
 from hexkit.providers.akafka import KafkaConfig
 from hexkit.providers.mongodb import MongoDbConfig
-from pydantic import Field
+from pydantic import Field, PositiveInt
 
 from metldata.artifacts_rest.config import ArtifactsRestConfig
 from metldata.event_handling.event_handling import FileSystemEventConfig
@@ -49,11 +47,4 @@ class ArtifactLoaderClientConfig(ArtifactCollectorConfig, FileSystemEventConfig)
     """Config settings for the loader client."""
 
     loader_api_root: str = Field(default=..., description="Root URL of the loader API.")
-    request_timeout: Annotated[
-        int,
-        Field(
-            default=60,
-            gt=0,
-            description="Timeout for the request to the loader API in seconds.",
-        ),
-    ]
+    request_timeout: PositiveInt = Field(default=60)
