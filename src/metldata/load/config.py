@@ -47,4 +47,6 @@ class ArtifactLoaderClientConfig(ArtifactCollectorConfig, FileSystemEventConfig)
     """Config settings for the loader client."""
 
     loader_api_root: str = Field(default=..., description="Root URL of the loader API.")
-    request_timeout: PositiveInt = Field(default=60)
+    request_timeout: PositiveInt = Field(
+        default=60, description="Timeout for the request to the loader API in seconds."
+    )
