@@ -331,6 +331,14 @@
       "title": "Kafka Retry Backoff",
       "type": "integer"
     },
+    "artifact_topic": {
+      "description": "Name of the event topic containing artifact events",
+      "examples": [
+        "artifacts"
+      ],
+      "title": "Artifact Topic",
+      "type": "string"
+    },
     "resource_change_topic": {
       "description": "Name of the topic used for events informing other services about resource changes, i.e. deletion or insertion.",
       "examples": [
@@ -377,14 +385,6 @@
         "dataset_upserted"
       ],
       "title": "Dataset Upsertion Type",
-      "type": "string"
-    },
-    "artifact_topic": {
-      "description": "The topic to publish artifact content events to.",
-      "examples": [
-        "artifact_content"
-      ],
-      "title": "Artifact Topic",
       "type": "string"
     },
     "primary_artifact_name": {
@@ -562,13 +562,13 @@
     "mongo_dsn",
     "db_name",
     "kafka_servers",
+    "artifact_topic",
     "resource_change_topic",
     "resource_deletion_type",
     "resource_upsertion_type",
     "dataset_change_topic",
     "dataset_deletion_type",
     "dataset_upsertion_type",
-    "artifact_topic",
     "primary_artifact_name",
     "primary_dataset_name",
     "artifact_infos",

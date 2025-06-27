@@ -69,7 +69,9 @@ def collect_artifacts(
             artifact_resources[artifact_type].append(
                 ArtifactTypedDict(
                     artifact_name=artifact_type,
-                    submission_id=str(event.payload["submission_id"]),
+                    study_accession=str(
+                        event.payload["content"]["studies"][0]["accession"]  # type: ignore
+                    ),
                     content=content,  # type: ignore
                 )
             )

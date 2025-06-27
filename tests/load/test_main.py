@@ -237,10 +237,10 @@ async def test_whole_artifact_loading(joint_fixture: JointFixture):  # noqa: F81
     assert len(artifact_recorder.recorded_events) == 1
     artifact_event = artifact_recorder.recorded_events[0]
     assert artifact_event.type_ == "upserted"
-    test_artifact_submission_id = artifacts_to_load["added_accessions"][0][
-        "submission_id"
+    test_artifact_study_accession = artifacts_to_load["added_accessions"][0][
+        "study_accession"
     ]
-    assert artifact_event.key == f"added_accessions_{test_artifact_submission_id}"
+    assert artifact_event.key == f"added_accessions_{test_artifact_study_accession}"
     assert artifact_event.payload == artifacts_to_load["added_accessions"][0]
 
     # 2. Load same data again without changes
@@ -273,7 +273,7 @@ async def test_whole_artifact_loading(joint_fixture: JointFixture):  # noqa: F81
     assert len(artifact_recorder3.recorded_events) == 1
     artifact_event = artifact_recorder3.recorded_events[0]
     assert artifact_event.type_ == "upserted"
-    assert artifact_event.key == f"added_accessions_{test_artifact_submission_id}"
+    assert artifact_event.key == f"added_accessions_{test_artifact_study_accession}"
     assert artifact_event.payload == artifacts_to_load["added_accessions"][0]
 
     # 4. Delete the artifact
@@ -291,10 +291,10 @@ async def test_whole_artifact_loading(joint_fixture: JointFixture):  # noqa: F81
     assert len(artifact_recorder4.recorded_events) == 1
     artifact_event = artifact_recorder4.recorded_events[0]
     assert artifact_event.type_ == "deleted"
-    assert artifact_event.key == f"added_accessions_{test_artifact_submission_id}"
+    assert artifact_event.key == f"added_accessions_{test_artifact_study_accession}"
     assert artifact_event.payload == {
         "artifact_name": "added_accessions",
-        "submission_id": test_artifact_submission_id,
+        "study_accession": test_artifact_study_accession,
     }
 
 

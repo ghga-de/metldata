@@ -18,10 +18,11 @@
 
 from typing import TypeAlias
 
+from ghga_event_schemas.pydantic_ import Artifact
 from hexkit.protocols.dao import Dao, DaoFactoryProtocol
 
 from metldata.artifacts_rest.artifact_info import get_artifact_info_dict
-from metldata.artifacts_rest.models import Artifact, ArtifactInfo, ArtifactResource
+from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResource
 
 ArtifactResourceDao: TypeAlias = Dao[ArtifactResource]
 ArtifactDao: TypeAlias = Dao[Artifact]
@@ -69,7 +70,7 @@ class ArtifactDaoCollection:
             artifact_name: await dao_factory.get_dao(
                 name=artifact_name,  # each artifact type gets its own collection and DAO
                 dto_model=Artifact,
-                id_field="submission_id",
+                id_field="study_accession",
             )
             for artifact_name in publishable_artifacts or []
         }
@@ -107,7 +108,7 @@ class ArtifactDaoCollection:
         """
         all_artifact_tags: set[tuple[str, str]] = set(
             [
-                (artifact_name, artifact.submission_id)
+                (artifact_name, artifact.study_accession)
                 for artifact_name, dao in self._whole_artifact_daos.items()
                 async for artifact in dao.find_all(mapping={})
             ]

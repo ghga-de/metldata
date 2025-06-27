@@ -19,6 +19,7 @@
 from typing import cast
 
 from ghga_event_schemas.pydantic_ import (
+    Artifact,
     MetadataDatasetFile,
     MetadataDatasetOverview,
     MetadataDatasetStage,
@@ -28,7 +29,6 @@ from ghga_service_commons.utils.files import get_file_extension
 
 from metldata.artifacts_rest.artifact_dao import ArtifactDaoCollection
 from metldata.artifacts_rest.models import (
-    Artifact,
     ArtifactInfo,
     ArtifactResource,
     ArtifactResourceClass,
@@ -157,7 +157,7 @@ async def process_removed_artifacts(
         await dao.delete(submission_id)
 
         await event_publisher.process_artifact_deletion(
-            artifact_name=artifact_name, submission_id=submission_id
+            artifact_name=artifact_name, study_accession=submission_id
         )
 
 

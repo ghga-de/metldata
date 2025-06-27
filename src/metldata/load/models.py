@@ -27,7 +27,7 @@ class ArtifactTypedDict(TypedDict):
     The content is a JSON object containing the resources of the artifact.
     """
 
-    submission_id: str
+    study_accession: str
     artifact_name: str
     content: Json
 

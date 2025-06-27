@@ -151,7 +151,7 @@ async def _get_changed_artifacts(
         tuple[str, str]
     ] = await dao_collection.get_all_whole_artifact_tags()
     submitted_artifact_tags: set[tuple[str, str]] = set(
-        (artifact_name, artifact["submission_id"])
+        (artifact_name, artifact["study_accession"])
         for artifact_name, artifacts in artifact_resources.items()
         for artifact in artifacts
     )
@@ -172,12 +172,14 @@ async def _get_changed_artifacts(
         if artifact_name not in publishable_artifacts:
             continue
         for artifact_dict in artifacts:
-            artifact_tag = (artifact_name, artifact_dict["submission_id"])
+            artifact_tag = (artifact_name, artifact_dict["study_accession"])
             if artifact_tag in existing_artifact_tags:
                 dao = await dao_collection.get_whole_artifact_dao(
                     artifact_name=artifact_name
                 )
-                existing_artifact = await dao.get_by_id(artifact_dict["submission_id"])
+                existing_artifact = await dao.get_by_id(
+                    artifact_dict["study_accession"]
+                )
 
                 if existing_artifact.model_dump() != artifact_dict:
                     upserted_artifacts[artifact_name].append(artifact_dict)

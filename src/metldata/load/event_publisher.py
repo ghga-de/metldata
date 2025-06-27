@@ -20,7 +20,10 @@ import json
 from abc import ABC, abstractmethod
 
 from ghga_event_schemas.configs import DatasetEventsConfig, ResourceEventsConfig
+from ghga_event_schemas.configs.stateful import ArtifactEventsConfig
 from ghga_event_schemas.pydantic_ import (
+    Artifact,
+    ArtifactTag,
     MetadataDatasetID,
     MetadataDatasetOverview,
     SearchableResource,
@@ -29,17 +32,12 @@ from ghga_event_schemas.pydantic_ import (
 from hexkit.protocols.eventpub import EventPublisherProtocol
 from pydantic import Field
 
-from metldata.artifacts_rest.models import Artifact, ArtifactTag
 
-
-class EventPubTranslatorConfig(DatasetEventsConfig, ResourceEventsConfig):
+class EventPubTranslatorConfig(
+    DatasetEventsConfig, ResourceEventsConfig, ArtifactEventsConfig
+):
     """Config for publishing population/deletion events to other services"""
 
-    artifact_topic: str = Field(
-        ...,
-        description="The topic to publish artifact content events to.",
-        examples=["artifact_content"],
-    )
     primary_artifact_name: str = Field(
         ...,
         description="Name of the artifact from which the information for outgoing"
@@ -69,7 +67,7 @@ class EventPublisherPort(ABC):
         self,
         *,
         artifact_name: str,
-        submission_id: str,
+        study_accession: str,
     ):
         """Communicate the deletion of an entire artifact"""
 
@@ -148,16 +146,16 @@ class EventPubTranslator(EventPublisherPort):
         self,
         *,
         artifact_name: str,
-        submission_id: str,
+        study_accession: str,
     ):
         """Communicate the deletion of an entire artifact"""
         artifact_tag = ArtifactTag(
-            artifact_name=artifact_name, submission_id=submission_id
+            artifact_name=artifact_name, study_accession=study_accession
         )
         await self._provider.publish(
             payload=artifact_tag.model_dump(),
             type_="deleted",
-            key=f"{artifact_name}_{submission_id}",
+            key=f"{artifact_name}_{study_accession}",
             topic=self._config.artifact_topic,
         )
 
@@ -199,7 +197,7 @@ class EventPubTranslator(EventPublisherPort):
         await self._provider.publish(
             payload=payload,
             type_="upserted",
-            key=f"{artifact.artifact_name}_{artifact.submission_id}",
+            key=f"{artifact.artifact_name}_{artifact.study_accession}",
             topic=self._config.artifact_topic,
         )
 

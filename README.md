@@ -347,6 +347,16 @@ The service requires the following configuration parameters:
   ```
 
 
+- <a id="properties/artifact_topic"></a>**`artifact_topic`** *(string, required)*: Name of the event topic containing artifact events.
+
+
+  Examples:
+
+  ```json
+  "artifacts"
+  ```
+
+
 - <a id="properties/resource_change_topic"></a>**`resource_change_topic`** *(string, required)*: Name of the topic used for events informing other services about resource changes, i.e. deletion or insertion.
 
 
@@ -404,16 +414,6 @@ The service requires the following configuration parameters:
 
   ```json
   "dataset_upserted"
-  ```
-
-
-- <a id="properties/artifact_topic"></a>**`artifact_topic`** *(string, required)*: The topic to publish artifact content events to.
-
-
-  Examples:
-
-  ```json
-  "artifact_content"
   ```
 
 

@@ -85,7 +85,9 @@ async def joint_fixture(kafka: KafkaFixture, mongodb: MongoDbFixture) -> JointFi
             raw_artifacts["type_"]: [
                 ArtifactTypedDict(
                     artifact_name=raw_artifacts["type_"],
-                    submission_id=raw_artifacts["payload"]["submission_id"],
+                    study_accession=raw_artifacts["payload"]["content"]["studies"][0][
+                        "accession"
+                    ],
                     content=raw_artifacts["payload"]["content"],
                 )
             ]
@@ -96,7 +98,9 @@ async def joint_fixture(kafka: KafkaFixture, mongodb: MongoDbFixture) -> JointFi
         artifacts[added_accessions_artifact["type_"]] = [
             ArtifactTypedDict(
                 artifact_name=added_accessions_artifact["type_"],
-                submission_id=added_accessions_artifact["payload"]["submission_id"],
+                study_accession=added_accessions_artifact["payload"]["content"][
+                    "studies"
+                ][0]["accession"],
                 content=added_accessions_artifact["payload"]["content"],
             )
         ]

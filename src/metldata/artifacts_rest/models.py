@@ -29,23 +29,6 @@ except ImportError:
     from typing import Literal
 
 
-class ArtifactTag(BaseModel):
-    """A model representing a tag for an artifact (artifact name and submission ID)."""
-
-    submission_id: str = Field(
-        ..., description="The ID of the submission this artifact belongs to."
-    )
-    artifact_name: str = Field(
-        ..., description="The name of the artifact, e.g. 'added_accessions'."
-    )
-
-
-class Artifact(ArtifactTag):
-    """A model representing an artifact."""
-
-    content: Json = Field(..., description="The metadata content of the artifact.")
-
-
 class ArtifactResource(BaseModel):
     """Information on a resource of an artifact."""
 
