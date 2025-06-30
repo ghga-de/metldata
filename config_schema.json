@@ -543,7 +543,7 @@
       "type": "array"
     },
     "publishable_artifacts": {
-      "description": "List of artifacts to be published in their entirety when loadedinto the Loader API.",
+      "description": "List of artifacts to be published in their entirety when loaded into the Loader API.",
       "examples": [
         [],
         [

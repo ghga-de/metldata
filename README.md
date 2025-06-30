@@ -537,7 +537,7 @@ The service requires the following configuration parameters:
 
   - <a id="properties/loader_token_hashes/items"></a>**Items** *(string)*
 
-- <a id="properties/publishable_artifacts"></a>**`publishable_artifacts`** *(array)*: List of artifacts to be published in their entirety when loadedinto the Loader API.
+- <a id="properties/publishable_artifacts"></a>**`publishable_artifacts`** *(array)*: List of artifacts to be published in their entirety when loaded into the Loader API.
 
   - <a id="properties/publishable_artifacts/items"></a>**Items** *(string)*
 
