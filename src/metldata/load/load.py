@@ -136,7 +136,7 @@ async def _get_changed_artifacts(
     are stored whole.
 
     Returns the following data in this order:
-     - A set of tuples (artifact_type, submission_id) for deleted artifacts
+     - A set of tuples (artifact_type, study_accession) for deleted artifacts
      - A dict of upserted artifacts, where the keys are artifact names and
         the values are lists of individual artifact instances as ArtifactTypedDicts
         - omits artifact instances that have not changed
@@ -145,28 +145,28 @@ async def _get_changed_artifacts(
     upserted_artifacts: dict[str, list[ArtifactTypedDict]] = defaultdict(list)
 
     # First get all existing artifacts from the database by their "tags"
-    # Using/defining "tag" here as a tuple of (artifact_name, submission_id) to avoid
-    # confusing it for the the submission ID
+    # Using/defining "tag" here as a tuple of (artifact_name, study_accession) to avoid
+    # confusing it for the study accession itself.
     existing_artifact_tags: set[
         tuple[str, str]
     ] = await dao_collection.get_all_whole_artifact_tags()
-    submitted_artifact_tags: set[tuple[str, str]] = set(
+    submitted_artifact_tags: set[tuple[str, str]] = {
         (artifact_name, artifact["study_accession"])
         for artifact_name, artifacts in artifact_resources.items()
         for artifact in artifacts
-    )
+    }
 
-    # Get all deleted artifacts by checking which existing IDs are not present in
+    # Get all deleted artifacts by checking which existing tags are not present in
     # the loaded artifacts
     deleted_artifacts = existing_artifact_tags - submitted_artifact_tags
 
     # Also delete any stored artifacts that are no longer configured to be publishable
-    for artifact_name, artifact_id in existing_artifact_tags:
+    for artifact_name, study_accession in existing_artifact_tags:
         if artifact_name not in publishable_artifacts:
-            deleted_artifacts.add((artifact_name, artifact_id))
+            deleted_artifacts.add((artifact_name, study_accession))
 
     # Iterate through the PROVIDED artifact resources and...:
-    # - if the ID is in existing_artifact_ids, check if it has changed by loading
+    # - if the ID is in existing_artifact_tags, check if it has changed by loading
     #   the existing artifact and comparing it to the provided one
     for artifact_name, artifacts in artifact_resources.items():
         if artifact_name not in publishable_artifacts:

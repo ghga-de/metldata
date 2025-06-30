@@ -106,13 +106,11 @@ class ArtifactDaoCollection:
         An artifact tag combines artifact name and submission ID into a tuple,
         i.e. (artifact name, submission_id)
         """
-        all_artifact_tags: set[tuple[str, str]] = set(
-            [
-                (artifact_name, artifact.study_accession)
-                for artifact_name, dao in self._whole_artifact_daos.items()
-                async for artifact in dao.find_all(mapping={})
-            ]
-        )
+        all_artifact_tags: set[tuple[str, str]] = {
+            (artifact_name, artifact.study_accession)
+            for artifact_name, dao in self._whole_artifact_daos.items()
+            async for artifact in dao.find_all(mapping={})
+        }
 
         return all_artifact_tags
 
@@ -126,8 +124,6 @@ class ArtifactDaoCollection:
         """
         all_resource_tags: list[tuple[str, str, str]] = []
         for artifact_type, class_name_dao in self._artifact_resource_daos.items():
-            if class_name_dao is None:
-                continue
             for class_name, resource_dao in class_name_dao.items():
                 # empty mapping should yield all resources
                 resource_ids = [

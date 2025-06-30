@@ -44,7 +44,7 @@ class ArtifactLoaderAPIConfig(
     publishable_artifacts: list[str] = Field(
         default_factory=list,
         description="List of artifacts to be published in their entirety when loaded"
-        "into the Loader API.",
+        " into the Loader API.",
         examples=[[], ["added_accessions"]],
     )
 

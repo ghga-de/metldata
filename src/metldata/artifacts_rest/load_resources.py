@@ -149,15 +149,14 @@ async def process_removed_artifacts(
     dao_collection: ArtifactDaoCollection,
 ) -> None:
     """Delete no longer needed artifacts from DB and send corresponding events"""
-    for artifact_tag in artifact_tags:
-        artifact_name, submission_id = artifact_tag
+    for artifact_name, study_accession in artifact_tags:
         # artifact tag was obtained from querying the db, so artifact with given ID
         # should be present
         dao = await dao_collection.get_whole_artifact_dao(artifact_name=artifact_name)
-        await dao.delete(submission_id)
+        await dao.delete(study_accession)
 
         await event_publisher.process_artifact_deletion(
-            artifact_name=artifact_name, study_accession=submission_id
+            artifact_name=artifact_name, study_accession=study_accession
         )
 
 

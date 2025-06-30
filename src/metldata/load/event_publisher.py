@@ -155,7 +155,7 @@ class EventPubTranslator(EventPublisherPort):
         await self._provider.publish(
             payload=artifact_tag.model_dump(),
             type_="deleted",
-            key=f"{artifact_name}_{study_accession}",
+            key=f"{artifact_name}:{study_accession}",
             topic=self._config.artifact_topic,
         )
 
@@ -197,7 +197,7 @@ class EventPubTranslator(EventPublisherPort):
         await self._provider.publish(
             payload=payload,
             type_="upserted",
-            key=f"{artifact.artifact_name}_{artifact.study_accession}",
+            key=f"{artifact.artifact_name}:{artifact.study_accession}",
             topic=self._config.artifact_topic,
         )
 
