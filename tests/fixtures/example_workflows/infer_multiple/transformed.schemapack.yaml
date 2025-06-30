@@ -1,0 +1,52 @@
+schemapack: 0.3.0
+classes:
+  Dataset:
+    id:
+      propertyName: alias
+    content: ../../example_content_schemas/Dataset.schema.json
+  Sample:
+    id:
+      propertyName: alias
+    content: ../../example_content_schemas/Sample.schema.json
+  Experiment:
+    id:
+      propertyName: alias
+    content: ../../example_content_schemas/Experiment.schema.json
+    relations:
+      samples:
+        targetClass: Sample
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: true
+          target: true
+  FileSummary:
+    id:
+      propertyName: alias
+    content: ../../example_content_schemas/File.schema.json
+    relations:
+      datasets:
+        targetClass: Dataset
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: true
+          target: false
+      sample:
+        targetClass: Sample
+        multiple:
+          origin: true
+          target: false
+        mandatory:
+          origin: true
+          target: false
+      experiment:
+        targetClass: Experiment
+        multiple:
+          origin: true
+          target: false
+        mandatory:
+          origin: true
+          target: false

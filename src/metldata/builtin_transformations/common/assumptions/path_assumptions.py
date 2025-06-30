@@ -74,6 +74,16 @@ def check_relation_exists(*, model: SchemaPack, class_name: str, relation: str) 
         )
 
 
+def assert_relation_does_not_exist(
+    *, model: SchemaPack, class_name: str, relation_name: str
+) -> None:
+    """Ensure a relation does not exist in a class and raise an error else."""
+    if relation_name in model.classes[class_name].relations:
+        raise ModelAssumptionError(
+            f"Unexpected relation property {relation_name} found in class {class_name}."
+        )
+
+
 def assert_relation_target_multiplicity(
     *, model: SchemaPack, path: RelationPath
 ) -> None:

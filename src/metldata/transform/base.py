@@ -18,7 +18,7 @@
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Generic, TypeAlias, TypeVar
+from typing import TypeVar
 
 from pydantic import (
     BaseModel,
@@ -27,13 +27,10 @@ from pydantic import (
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-ArtifactName: TypeAlias = str
-
-
 Config = TypeVar("Config", bound=BaseModel)
 
 
-class DataTransformer(ABC, Generic[Config]):
+class DataTransformer[Config](ABC):
     """A base class for a data transformer."""
 
     def __init__(
@@ -64,7 +61,7 @@ class DataTransformer(ABC, Generic[Config]):
         ...
 
 
-class TransformationDefinition(BaseModel, Generic[Config]):
+class TransformationDefinition[Config](BaseModel):
     """A model for describing a transformation."""
 
     config_cls: type[Config] = Field(

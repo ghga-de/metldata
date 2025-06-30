@@ -1,0 +1,28 @@
+operations:
+  # Duplicate one of the classes prior to infer relation
+  - name: duplicate_class
+    description: "Create a duplicate of class Dataset named MyDataset"
+    args:
+      source_class_name: File
+      target_class_name: FileSummary
+
+  # Infer relations for the new class
+  - name: infer_relation
+    description: "Infer {{ relation_name }} for each FileSummary"
+    args:
+      class_name: FileSummary
+      relation_name: "{{ relation_name }}"
+      relation_path: "{{ relation_path }}"
+    loop:
+      - relation_name: datasets
+        relation_path: FileSummary<(files)Dataset
+      - relation_name: sample
+        relation_path: FileSummary<(files)Sample
+      - relation_name: experiment
+        relation_path: FileSummary<(files)Sample<(samples)Experiment
+
+  # Delete classes
+  - name: delete_class
+    description: Delete class File
+    args:
+      class_name: File

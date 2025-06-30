@@ -13,12 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Common relation and object path related functionality."""
+"Models for configuration used in the 'infer relation' transformation."
 
-from metldata.builtin_transformations.common.resolve_path.resolve_path_element_relations import (
-    resolve_path,  # noqa: F401
-)
-from metldata.builtin_transformations.common.resolve_path.resolve_path_properties import (
-    resolve_data_object_path,  # noqa: F401
-    resolve_schema_object_path,  # noqa: F401
-)
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+from metldata.builtin_transformations.common.path.path import RelationPath
+
+
+class InferRelationConfig(BaseSettings):
+    """Configuration for the 'infer relation' transformation."""
+
+    class_name: str = Field(
+        default=..., description="Name of the class for which to infer a relation."
+    )
+    relation_name: str = Field(
+        default=...,
+        description="Name of the newly inferred relation.",
+    )
+    relation_path: RelationPath = Field(
+        default=..., description="Path to the relation."
+    )
