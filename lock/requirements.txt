@@ -465,9 +465,9 @@ fqdn==1.5.1 \
     # via
     #   -c lock/requirements-dev.txt
     #   jsonschema
-ghga-event-schemas==9.1.0 \
-    --hash=sha256:2935e8ad74126e372ccfcdc4a152c0cd3467b108dd2bd95a34331129b747231d \
-    --hash=sha256:fb1eeb3c88ac8babe8cac334a8aa66b392ac49684f11155f21fd7c316415ee88
+ghga-event-schemas==9.2.0 \
+    --hash=sha256:4e085b64e76b76ecf14ba123f11b58d79c1edb1e891c8e044090decc5519a476 \
+    --hash=sha256:e9e1b0258f4a97370dce48501a45b820a4ff34b094c3f56840368ed6850391cd
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
