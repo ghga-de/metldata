@@ -30,7 +30,7 @@ from metldata.custom_types import Json
 from metldata.load.auth import generate_token_and_hash
 from metldata.load.config import ArtifactLoaderAPIConfig
 from metldata.load.main import get_app
-from metldata.load.models import ArtifactDict, ArtifactResourceDict
+from metldata.load.models import ArtifactJson, ArtifactResourceDict
 from metldata.model_utils.essentials import MetadataModel
 from tests.fixtures.load.config import get_config
 from tests.fixtures.load.utils import BASE_DIR
@@ -83,7 +83,7 @@ async def joint_fixture(kafka: KafkaFixture, mongodb: MongoDbFixture) -> JointFi
         raw_artifacts = json.load(file)
         artifacts: ArtifactResourceDict = {
             raw_artifacts["type_"]: [
-                ArtifactDict(
+                ArtifactJson(
                     artifact_name=raw_artifacts["type_"],
                     study_accession=raw_artifacts["payload"]["content"]["studies"][0][
                         "accession"
@@ -96,7 +96,7 @@ async def joint_fixture(kafka: KafkaFixture, mongodb: MongoDbFixture) -> JointFi
     with open(ADDED_ACCESSIONS_PATH, encoding="utf-8") as file:
         added_accessions_artifact = json.load(file)
         artifacts[added_accessions_artifact["type_"]] = [
-            ArtifactDict(
+            ArtifactJson(
                 artifact_name=added_accessions_artifact["type_"],
                 study_accession=added_accessions_artifact["payload"]["content"][
                     "studies"

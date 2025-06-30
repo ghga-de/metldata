@@ -27,7 +27,7 @@ from metldata.event_handling.artifact_events import (
     get_artifact_topic,
 )
 from metldata.event_handling.event_handling import FileSystemEventCollector
-from metldata.load.models import ArtifactDict, ArtifactResourceDict
+from metldata.load.models import ArtifactJson, ArtifactResourceDict
 
 
 class ArtifactCollectorConfig(ArtifactEventConfig):
@@ -75,7 +75,7 @@ def collect_artifacts(
                     "Artifact content does not contain a study accession."
                 ) from err
             artifact_resources[artifact_type].append(
-                ArtifactDict(
+                ArtifactJson(
                     artifact_name=artifact_type,
                     study_accession=study_accession,
                     content=content,
