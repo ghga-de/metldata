@@ -27,12 +27,18 @@ from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.transform_content.config import (
     TransformContentConfig,
 )
+from metldata.transform.exceptions import EvitableTransformationError
 
 env = ImmutableSandboxedEnvironment()
 
 
 def _format_denormalized(denormalized_content: dict[str, object]) -> dict[str, object]:
-    """Reformat denormalized content for attachment into datapack."""
+    """Reformat denormalized content for attachment into datapack.
+
+    This does not convert the alias based representation back into a resource ID to
+    resource mapping, but only converts frozen dicts back into normal dictionaries
+    to work around a schemapack isssue for now.
+    """
     content = dict()
 
     for key, value in denormalized_content.items():
@@ -59,6 +65,9 @@ def transform_data_class(
 
     mutable_data = data_to_dict(data)
 
+    if class_name not in data.resources:
+        raise EvitableTransformationError()
+
     for resource_id in data.resources[class_name]:
         rooted_datapack = isolate_resource(
             datapack=data,
@@ -71,6 +80,8 @@ def transform_data_class(
             schemapack=schemapack,
             embedding_profile=embedding_profile,
         )
+
+        # remove the top level alias before embedding
         del denormalized_content["alias"]
         denormalized_content = _format_denormalized(denormalized_content)
 
@@ -81,6 +92,10 @@ def transform_data_class(
         mutable_data["resources"][class_name][resource_id]["content"] = yaml.safe_load(
             transformed_content
         )
+        # prune relations from data as these are also removed from the model and
+        # the set of relation and content property names inside a class has to be unique
+        # This could be improved and only selectively remove, based on what's
+        # actually embedded
         if "relations" in mutable_data["resources"][class_name][resource_id]:
             del mutable_data["resources"][class_name][resource_id]["relations"]
 
