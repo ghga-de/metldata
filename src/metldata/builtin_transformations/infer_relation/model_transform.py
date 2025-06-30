@@ -120,11 +120,7 @@ def infer_model_relation(
     # This is the class that is referred by the path
     target_class = transformation_config.relation_path.target
 
-    class_def = (
-        updated_class_def[source_class]
-        if source_class in updated_class_def
-        else model.classes.get(source_class)
-    )
+    class_def = model.classes.get(source_class)
 
     if class_def is None:
         raise EvitableTransformationError()

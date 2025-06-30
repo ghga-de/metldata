@@ -65,25 +65,29 @@ def infer_data_relation(
         relation_target_ids = resolve_path(
             data=data, source_resource_id=resource_id, path=path
         )
-        type_corrected_relation_target_ids = modify_relation_target_ids_type(
-            model, class_name, relation_name, relation_target_ids
+        target_ids = conditionally_unpack_target_ids(
+            model=model,
+            class_name=class_name,
+            relation_name=relation_name,
+            relation_target_ids=relation_target_ids,
         )
         # add a new relation to that resource
         resource.setdefault("relations", {})[relation_name] = {
             "targetClass": referenced_class,
-            "targetResources": type_corrected_relation_target_ids,
+            "targetResources": target_ids,
         }
     return DataPack.model_validate(modified_data)
 
 
-def modify_relation_target_ids_type(
+def conditionally_unpack_target_ids(
+    *,
     model: SchemaPack,
     class_name: str,
     relation_name: str,
     relation_target_ids: frozenset[ResourceId],
 ) -> frozenset[ResourceId] | ResourceId | None:
-    """Post transformation modification of the relation target IDs type based on
-    relation specification of the transformed model.
+    """Unpack resource ID from set if a string is expected by the model multiplicity
+    specification.
 
     This function does not handle the case where `relation_target_ids` is expected
     to contain a single item, but `resolve_path` returns multiple values. Such cases

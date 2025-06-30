@@ -29,7 +29,7 @@ class InferRelationConfig(BaseSettings):
     )
     relation_name: str = Field(
         default=...,
-        description="Name of the new relation referencing the inferred relations.",
+        description="Name of the newly inferred relation.",
     )
     relation_path: RelationPath = Field(
         default=..., description="Path to the relation."
