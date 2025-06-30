@@ -28,7 +28,7 @@ from metldata.artifacts_rest.load_resources import (
 )
 from metldata.artifacts_rest.models import ArtifactInfo, ArtifactResource
 from metldata.load.event_publisher import EventPublisherPort
-from metldata.load.models import ArtifactResourceDict, ArtifactTypedDict
+from metldata.load.models import ArtifactDict, ArtifactResourceDict
 
 
 class ArtifactResourcesInvalid(RuntimeError):
@@ -129,7 +129,7 @@ async def _get_changed_artifacts(
     dao_collection: ArtifactDaoCollection,
 ) -> tuple[
     set[tuple[str, str]],
-    dict[str, list[ArtifactTypedDict]],
+    dict[str, list[ArtifactDict]],
 ]:
     """Extract the changeset of publishable whole artifacts by comparing the database
     contents with the currently submitted artifacts. Only the configured artifact types
@@ -142,7 +142,7 @@ async def _get_changed_artifacts(
         - omits artifact instances that have not changed
     """
     deleted_artifacts: set[tuple[str, str]] = set()
-    upserted_artifacts: dict[str, list[ArtifactTypedDict]] = defaultdict(list)
+    upserted_artifacts: dict[str, list[ArtifactDict]] = defaultdict(list)
 
     # First get all existing artifacts from the database by their "tags"
     # Using/defining "tag" here as a tuple of (artifact_name, study_accession) to avoid
