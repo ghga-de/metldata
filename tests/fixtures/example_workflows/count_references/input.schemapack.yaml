@@ -51,7 +51,7 @@ classes:
   Sample:
     id:
       propertyName: alias
-    content: ../../../example_content_schemas/Sample.schema.json
+    content: ../../example_content_schemas/Sample.schema.json
     relations:
       files:
         targetClass: File

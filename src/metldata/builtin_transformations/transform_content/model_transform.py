@@ -40,8 +40,6 @@ def transform_model_class(
         # need to explicitly delete relations, if there are any
         # else this will error due to duplicate keys in relations and content, as the
         # set of relation and content property names inside a class has to be unique
-        # This could be improved and only selectively remove, based on what's
-        # actually embedded, but would probably need knowledge of the datapack in that case
         if "relations" in mutable_model["classes"][class_name]:
             del mutable_model["classes"][class_name]["relations"]
     except KeyError as exc:

@@ -42,12 +42,14 @@ def _format_denormalized(denormalized_content: dict[str, object]) -> dict[str, o
     content = dict()
 
     for key, value in denormalized_content.items():
-        if value and isinstance(value, list) and isinstance(value[0], dict):
+        if isinstance(value, list | tuple) and isinstance(value[0], Mapping):
             content[key] = [
                 _format_denormalized(resource_content) for resource_content in value
             ]
         elif isinstance(value, Mapping):
             content[key] = _format_denormalized(value)  # type: ignore
+        elif isinstance(value, tuple):
+            content[key] = [resource_content for resource_content in value]
         else:
             content[key] = value  # type: ignore
     return content  # type: ignore
@@ -94,8 +96,6 @@ def transform_data_class(
         )
         # prune relations from data as these are also removed from the model and
         # the set of relation and content property names inside a class has to be unique
-        # This could be improved and only selectively remove, based on what's
-        # actually embedded
         if "relations" in mutable_data["resources"][class_name][resource_id]:
             del mutable_data["resources"][class_name][resource_id]["relations"]
 

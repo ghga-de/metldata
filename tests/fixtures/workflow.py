@@ -43,12 +43,12 @@ from tests.fixtures.utils import BASE_DIR
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
 WORKFLOW_BY_NAME: list[str] = [
     "add_multiple_content_properties",
+    "count_references",
     "duplicate_one_delete_multiple",
     "duplicate_multiple_delete_one",
     "delete_multiple",
     "infer_multiple",
     "duplicate_multiple_delete_one_embed_sample_files",
-    "simple_workflow",
 ]
 TRANSFORMATION_REGISTRY = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,

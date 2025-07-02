@@ -13,9 +13,6 @@ operations:
       - class_name: File
         relation_name: datasets
         relation_path: File<(files)Dataset
-      - class_name: Experiment
-        relation_name: samples
-        relation_path: Experiment(samples)>Sample
   - name: transform_content
     description: "Count references for {{ class_name }}"
     args:
@@ -34,18 +31,27 @@ operations:
               "dac_contact": { "type": "string" },
               "sample_summary":
                 { "type": "object", "additionalProperties": true },
-              ""
+              "files":
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true,
+                  }
+                },
             },
           "required": ["sample_summary"],
           "type": "object",
         }
-        embedding_profile: {}
+        embedding_profile: { files: { datasets: false }, samples: false }
         data_template: |
           {% for key, value in original.items() %}
+          {% if key != "samples" %}
             {{ key }}: {{ value }}
+          {% endif %}
           {% endfor %}
             sample_summary:
-              count: {{}}
+              count: {{ original.samples | length }}
       - class_name: File
         content_schema: {
           "$schema": "http://json-schema.org/draft-07/schema#",
@@ -67,13 +73,15 @@ operations:
             ["filename", "format", "checksum", "size", "dataset_summary"],
           "type": "object",
         }
-        embedding_profile: {}
+        embedding_profile: { datasets: false }
         data_template: |
           {% for key, value in original.items() %}
+          {% if key != "datasets" %}
             {{ key }}: {{ value }}
+          {% endif %}
           {% endfor %}
             dataset_summary:
-              count: {{}}
+              count: {{ original.datasets | length }}
       - class_name: Experiment
         content_schema: {
           "$schema": "http://json-schema.org/draft-07/schema#",
@@ -92,10 +100,12 @@ operations:
           "required": ["sample_summary"],
           "type": "object",
         }
-        embedding_profile: {}
+        embedding_profile: { samples: false }
         data_template: |
           {% for key, value in original.items() %}
+          {% if key != "samples" %}
             {{ key }}: {{ value }}
+          {% endif %}
           {% endfor %}
             sample_summary:
-              count: {{}}
+              count: {{ original.samples | length }}

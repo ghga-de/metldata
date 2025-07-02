@@ -41,23 +41,22 @@ classes:
                 "type": "object",
                 "additionalProperties": true,
               },
+            "files":
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true,
+                }
+              },
           },
         "required": ["sample_summary"],
         "type": "object",
       }
-    relations:
-      files:
-        targetClass: File
-        multiple:
-          origin: true
-          target: true
-        mandatory:
-          origin: false
-          target: true
   Sample:
     id:
       propertyName: alias
-    content: ../../../example_content_schemas/Sample.schema.json
+    content: ../../example_content_schemas/Sample.schema.json
     relations:
       files:
         targetClass: File
