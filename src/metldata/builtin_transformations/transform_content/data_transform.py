@@ -42,7 +42,11 @@ def _format_denormalized(denormalized_content: dict[str, object]) -> dict[str, o
     content = dict()
 
     for key, value in denormalized_content.items():
-        if isinstance(value, list | tuple) and isinstance(value[0], Mapping):
+        if (
+            isinstance(value, list | tuple)
+            and len(value) > 0
+            and isinstance(value[0], Mapping)
+        ):
             content[key] = [
                 _format_denormalized(resource_content) for resource_content in value
             ]
