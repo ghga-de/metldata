@@ -18,6 +18,7 @@
 from collections.abc import Mapping
 
 import yaml
+from jinja2 import StrictUndefined
 from jinja2.sandbox import ImmutableSandboxedEnvironment
 from schemapack import denormalize, isolate_resource
 from schemapack.spec.datapack import DataPack
@@ -29,7 +30,7 @@ from metldata.builtin_transformations.transform_content.config import (
 )
 from metldata.transform.exceptions import EvitableTransformationError
 
-env = ImmutableSandboxedEnvironment()
+env = ImmutableSandboxedEnvironment(undefined=StrictUndefined)
 
 
 def _format_denormalized(denormalized_content: dict[str, object]) -> dict[str, object]:

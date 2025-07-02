@@ -86,7 +86,7 @@ operations:
       embedding_profile: {}
       data_template: |
         {% for key, value in original.items() %}
-          {% if key != additional_information %}
+          {% if key != "additional_information" %}
             {{ key }}: {{ value }}
           {% endif %}
         {% endfor %}
