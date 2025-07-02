@@ -30,17 +30,25 @@ from metldata.builtin_transformations.transform_content.config import (
 )
 from metldata.transform.exceptions import EvitableTransformationError
 
+# configure with StrictUndefined so invalid property/dict access produces errors
+# instead of silently inserting a none value
 env = ImmutableSandboxedEnvironment(undefined=StrictUndefined)
 
+# object is too broad for what _denormalization_workaround will accept, define
+# something that's closer to the intention of JsonObjectCompatible
+ResourceContent = list | str | tuple | Mapping
 
-def _format_denormalized(denormalized_content: dict[str, object]) -> dict[str, object]:
+
+def _denormalization_workaround(
+    denormalized_content: Mapping[str, ResourceContent],
+) -> dict[str, ResourceContent]:
     """Reformat denormalized content for attachment into datapack.
 
     This does not convert the alias based representation back into a resource ID to
     resource mapping, but only converts frozen dicts back into normal dictionaries
     to work around a schemapack isssue for now.
     """
-    content = dict()
+    content: dict[str, ResourceContent] = dict()
 
     for key, value in denormalized_content.items():
         if (
@@ -49,15 +57,16 @@ def _format_denormalized(denormalized_content: dict[str, object]) -> dict[str, o
             and isinstance(value[0], Mapping)
         ):
             content[key] = [
-                _format_denormalized(resource_content) for resource_content in value
+                _denormalization_workaround(resource_content)
+                for resource_content in value
             ]
         elif isinstance(value, Mapping):
-            content[key] = _format_denormalized(value)  # type: ignore
+            content[key] = _denormalization_workaround(value)
         elif isinstance(value, tuple):
             content[key] = [resource_content for resource_content in value]
         else:
-            content[key] = value  # type: ignore
-    return content  # type: ignore
+            content[key] = value
+    return content
 
 
 def transform_data_class(
@@ -76,6 +85,8 @@ def transform_data_class(
         raise EvitableTransformationError()
 
     for resource_id in data.resources[class_name]:
+        # while isolating and thus rooting the datapack here, the way this is applied
+        # to all resources will result in a datapack that IS NOT rooted
         rooted_datapack = isolate_resource(
             datapack=data,
             class_name=class_name,
@@ -90,12 +101,15 @@ def transform_data_class(
 
         # remove the top level alias before embedding
         del denormalized_content["alias"]
-        denormalized_content = _format_denormalized(denormalized_content)
+        # currently needs a workaround to convert FrozenDicts into normal dicts
+        denormalized_content = _denormalization_workaround(denormalized_content)  # type: ignore
 
+        # evaluate data template using jinja
         transformed_content = env.from_string(
             transformation_config.data_template
         ).render(original=denormalized_content)
 
+        # replace resource content with the transformed version
         mutable_data["resources"][class_name][resource_id]["content"] = yaml.safe_load(
             transformed_content
         )
