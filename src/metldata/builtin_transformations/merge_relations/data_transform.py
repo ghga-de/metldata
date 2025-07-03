@@ -15,7 +15,7 @@
 
 "Logic for transforming data."
 
-from typing import NamedTuple, cast
+from typing import NamedTuple
 
 from schemapack.spec.datapack import DataPack, Resource
 
@@ -23,6 +23,13 @@ from metldata.builtin_transformations.common.custom_types import ResourceId
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.merge_relations.config import MergeRelationsConfig
 from metldata.transform.exceptions import EvitableTransformationError
+
+
+class Target(NamedTuple):
+    """Model defining target elements."""
+
+    target_resources: list[set[ResourceId] | ResourceId]
+    target_class: str
 
 
 def merge_data_relations(
@@ -56,29 +63,19 @@ def merge_data_relations(
     return DataPack.model_validate(modified_data)
 
 
-class Target(NamedTuple):
-    """Model defining target elements."""
-
-    target_resources: list[set[ResourceId] | ResourceId]
-    target_class: str
-
-
 def get_all_targets(resource: Resource, source_relations: list[str]) -> Target:
     """Get target resources and the target class of the merged relations."""
     try:
-        all_targets = [
-            resource.relations[relation_name].targetResources
-            for relation_name in source_relations
-            if resource.relations[relation_name].targetResources is not None
-        ]
+        all_targets = []
+        for relation_name in source_relations:
+            target_resources = resource.relations[relation_name].targetResources
+            if target_resources is not None:
+                all_targets.append(target_resources)
 
         # must be same across the merging relations
         relation_target_class = resource.relations[source_relations[0]].targetClass
 
     except KeyError as exc:
         raise EvitableTransformationError() from exc
-
-    # type casting in order to pass type checking for union()
-    all_targets = cast(list[set[ResourceId] | ResourceId], all_targets)
 
     return Target(target_resources=all_targets, target_class=relation_target_class)

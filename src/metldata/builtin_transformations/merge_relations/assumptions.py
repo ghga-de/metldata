@@ -68,12 +68,12 @@ def assert_same_target_class_across_relations(
 ):
     """Ensure that all source relations have the same target class."""
     class_relations = model.classes[transformation_config.class_name].relations
-    target_classes = [
+    target_classes = {
         class_relations[relation_name].targetClass
         for relation_name in transformation_config.source_relations
-    ]
-    if len(set(target_classes)) > 1:
+    }
+    if len(target_classes) > 1:
         raise ModelAssumptionError(
             "All source relations must have the same target class, "
-            f"but found: {set(target_classes)}"
+            f"but found: {target_classes}"
         )

@@ -61,7 +61,7 @@ def merge_model_relations(
 def _get_target_class(
     *, model: SchemaPack, class_name: str, source_relations: list[str]
 ) -> str:
-    """Retrieve the target class name from the first relation in given in 'source relations'."""
+    """Retrieve the target class name from the first relation given in 'source relations'."""
     class_definition = model.classes.get(class_name)
 
     if class_definition is None:
