@@ -15,8 +15,11 @@
 
 """Test workflow execution using pre-defined test cases."""
 
+import json
+
 import pytest
 
+from metldata.builtin_transformations.common.utils import data_to_dict, model_to_dict
 from metldata.workflow.handling import WorkflowHandler
 from tests.fixtures.workflow import WORKFLOW_TEST_CASES, WorkflowTestCase
 
@@ -30,5 +33,27 @@ def test_workflow_outputs(test_case: WorkflowTestCase):
         input_model=test_case.input_model,
     )
     workflow_result = handler.run(data=test_case.input_data)
-    assert workflow_result.data == test_case.transformed_data
-    assert workflow_result.model == test_case.transformed_model
+    if workflow_result.data != test_case.transformed_data:
+        # If data doesn't match, the mutable version shouldn't match either
+        # This produces a line by line diff which is more informative for debugging
+        # You might need to run `pytest  -vvv -k test_data_transformations[<test_case_name>]`
+        # in the commandline to get the full output
+        assert json.dumps(
+            data_to_dict(workflow_result.data), indent=2, sort_keys=True
+        ) == json.dumps(
+            data_to_dict(test_case.transformed_data), indent=2, sort_keys=True
+        )
+        # Guard against an unexpected egde case, where the serialized data is equal
+        assert False
+    if workflow_result.model != test_case.transformed_model:
+        # If models don't match, the mutable version shouldn't match either
+        # This produces a line by line diff which is more informative for debugging
+        # You might need to run `pytest  -vvv -k test_model_transformations[<test_case_name>]`
+        # in the commandline to get the full output
+        assert json.dumps(
+            model_to_dict(workflow_result.model), indent=2, sort_keys=True
+        ) == json.dumps(
+            model_to_dict(test_case.transformed_model), indent=2, sort_keys=True
+        )
+        # Guard against an unexpected egde case, where the serialized model is equal
+        assert False
