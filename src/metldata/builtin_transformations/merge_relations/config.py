@@ -23,7 +23,11 @@ from schemapack.spec.schemapack import MandatoryRelationSpec, MultipleRelationSp
 
 
 class MergeRelationsConfig(BaseSettings):
-    """A model describing a configuration for merging relations."""
+    """A model describing a configuration for merging relations.
+
+    The `multiple` and the `mandatory` specifications are obtained from configuration.
+    They are not inferred by the transformation.
+    """
 
     class_name: str = Field(
         default=..., description="The name of the class to merge relations for."
