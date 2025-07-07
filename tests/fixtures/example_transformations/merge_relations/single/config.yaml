@@ -1,0 +1,10 @@
+class_name: Dataset
+source_relations:
+  [samples_via_research_data_files, samples_via_processed_data_files]
+target_relation: samples
+mandatory:
+  origin: false
+  target: false
+multiple:
+  origin: true
+  target: true
