@@ -37,11 +37,6 @@ def transform_model_class(
         mutable_model["classes"][class_name]["content"] = (
             transformation_config.content_schema
         )
-        # need to explicitly delete relations, if there are any else this will possibly
-        # error due to duplicate keys in relations and content, as the intersection of
-        # relation and content property names inside a class has to be empty
-        if "relations" in mutable_model["classes"][class_name]:
-            del mutable_model["classes"][class_name]["relations"]
     except KeyError as exc:
         raise EvitableTransformationError() from exc
 

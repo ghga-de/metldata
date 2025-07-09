@@ -61,7 +61,7 @@ resources:
   MySample:
     sample_x:
       content:
-        files:
+        embedded_files:
           - alias: file_a
             checksum: 1a5ac10ab42911dc0224172c118a326d9a4c03969112a2f3eb1ad971e96e92b8
             filename: file_a.fastq
@@ -72,11 +72,22 @@ resources:
             filename: file_b.fastq
             format: FASTQ
             size: 12314
+      relations:
+        files:
+          targetClass: File
+          targetResources:
+            - file_a
+            - file_b
     sample_y:
       content:
-        files:
+        embedded_files:
           - alias: file_c
             checksum: a9c24870071da03f78515e6197048f3a2172e90e597e9250cd01a0cb8f0986ed
             filename: file_c.fastq
             format: FASTQ
             size: 12123
+      relations:
+        files:
+          targetClass: File
+          targetResources:
+            - file_c

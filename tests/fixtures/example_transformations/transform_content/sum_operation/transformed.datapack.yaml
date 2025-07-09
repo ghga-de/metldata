@@ -7,6 +7,13 @@ resources:
         file_summary:
           stats:
             size: 36758 # <-
+      relations:
+        files:
+          targetClass: File
+          targetResources:
+            - file_a
+            - file_b
+            - file_c
   File:
     file_a:
       content:

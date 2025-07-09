@@ -38,6 +38,15 @@ classes:
         "required": ["samples_summary"],
         "type": "object",
       }
+    relations:
+      files:
+        targetClass: File
+        multiple:
+          origin: false
+          target: false
+        mandatory:
+          origin: true
+          target: true
   File:
     id:
       propertyName: alias

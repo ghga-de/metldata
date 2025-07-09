@@ -31,7 +31,7 @@ operations:
               "dac_contact": { "type": "string" },
               "sample_summary":
                 { "type": "object", "additionalProperties": true },
-              "files":
+              "embedded_files":
                 {
                   "type": "array",
                   "items": {
@@ -46,7 +46,9 @@ operations:
         embedding_profile: { files: { datasets: false }, samples: false }
         data_template: |
           {% for key, value in original.items() %}
-          {% if key != "samples" %}
+          {% if key == "files" %}
+            embedded_files: {{ value }}
+          {% elif key != "samples" %}
             {{ key }}: {{ value }}
           {% endif %}
           {% endfor %}

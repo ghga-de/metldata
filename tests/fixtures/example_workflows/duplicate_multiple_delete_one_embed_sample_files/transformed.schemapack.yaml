@@ -55,9 +55,18 @@ classes:
             "description": {
               "type": "string"
             },
-            "files": {
+            "embedded_files": {
               "type": "array"
             }
           },
           "type": "object"
         }
+    relations:
+      files:
+        targetClass: File
+        mandatory:
+          origin: false
+          target: true
+        multiple:
+          origin: false
+          target: true

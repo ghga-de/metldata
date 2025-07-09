@@ -18,6 +18,23 @@ classes:
         new_prop:
           type: object
       type: object
+    relations:
+      files:
+        targetClass: File
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
+      samples:
+        targetClass: Sample
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
   Sample:
     id:
       propertyName: alias

@@ -88,3 +88,12 @@ classes:
         "required": ["sample_summary"],
         "type": "object",
       }
+    relations:
+      samples:
+        targetClass: Sample
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: true
+          target: true

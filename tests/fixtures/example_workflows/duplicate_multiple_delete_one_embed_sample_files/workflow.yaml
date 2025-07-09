@@ -22,7 +22,7 @@ operations:
             "description": {
               "type": "string"
             },
-            "files": {
+            "embedded_files": {
               "type": "array"
             }
           },
@@ -30,7 +30,7 @@ operations:
       }
       embedding_profile: {}
       data_template: |
-        files: {{ original.files }}
+        embedded_files: {{ original.files }}
   # Delete classes - this will automatically delete the obsolete relations
   - name: delete_class
     description: "Delete class Experiment"

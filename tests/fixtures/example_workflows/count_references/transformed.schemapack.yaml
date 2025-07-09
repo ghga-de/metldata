@@ -25,6 +25,16 @@ classes:
           ["filename", "format", "checksum", "size", "dataset_summary"],
         "type": "object",
       }
+    relations:
+      datasets:
+        targetClass: Dataset
+        mandatory:
+          origin: true
+          target: false
+        multiple:
+          origin: true
+          target: true
+
   Dataset:
     id:
       propertyName: alias
@@ -41,7 +51,7 @@ classes:
                 "type": "object",
                 "additionalProperties": true,
               },
-            "files":
+            "embedded_files":
               {
                 "type": "array",
                 "items": {
@@ -53,6 +63,23 @@ classes:
         "required": ["sample_summary"],
         "type": "object",
       }
+    relations:
+      files:
+        targetClass: File
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
+      samples:
+        targetClass: Sample
+        mandatory:
+          origin: false
+          target: false
+        multiple:
+          origin: true
+          target: true
   Sample:
     id:
       propertyName: alias
@@ -87,3 +114,12 @@ classes:
         "required": ["sample_summary"],
         "type": "object",
       }
+    relations:
+      samples:
+        targetClass: Sample
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: true
+          target: true

@@ -113,9 +113,5 @@ def transform_data_class(
         mutable_data["resources"][class_name][resource_id]["content"] = yaml.safe_load(
             transformed_content
         )
-        # prune relations from data as these are also removed from the model and
-        # the set of relation and content property names inside a class has to be unique
-        if "relations" in mutable_data["resources"][class_name][resource_id]:
-            del mutable_data["resources"][class_name][resource_id]["relations"]
 
     return DataPack.model_validate(mutable_data)

@@ -9,6 +9,11 @@ resources:
         size: 12321
         dataset_summary:
           count: 1
+      relations:
+        datasets:
+          targetClass: Dataset
+          targetResources:
+            - dataset_1
     file_b:
       content:
         filename: file_b.fastq
@@ -17,6 +22,11 @@ resources:
         size: 12314
         dataset_summary:
           count: 1
+      relations:
+        datasets:
+          targetClass: Dataset
+          targetResources:
+            - dataset_1
     file_c:
       content:
         filename: file_c.fastq
@@ -25,11 +35,16 @@ resources:
         size: 12123
         dataset_summary:
           count: 1
+      relations:
+        datasets:
+          targetClass: Dataset
+          targetResources:
+            - dataset_1
   Dataset:
     dataset_1:
       content:
         dac_contact: dac@example.org
-        files:
+        embedded_files:
           - alias: file_a
             filename: file_a.fastq
             format: FASTQ
@@ -56,6 +71,18 @@ resources:
               - dataset_1
         sample_summary:
           count: 2
+      relations:
+        files:
+          targetClass: File
+          targetResources:
+            - file_a
+            - file_b
+            - file_c
+        samples:
+          targetClass: Sample
+          targetResources:
+            - sample_x
+            - sample_y
   Sample:
     sample_x:
       content:
@@ -79,3 +106,9 @@ resources:
         description: Some experiment.
         sample_summary: # <-
           count: 2
+      relations:
+        samples:
+          targetClass: Sample
+          targetResources:
+            - sample_x
+            - sample_y
