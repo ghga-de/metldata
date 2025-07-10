@@ -80,5 +80,5 @@ def test_data_transformations(
         ) == json.dumps(
             data_to_dict(test_case.transformed_data), indent=2, sort_keys=True
         )
-        # Guard against an unexpected egde case, where the serialized data is equal
+        # Guard against an unexpected edge case, where the serialized data is equal
         assert False
