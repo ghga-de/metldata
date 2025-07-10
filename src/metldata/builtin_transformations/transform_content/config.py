@@ -42,7 +42,7 @@ class TransformContentConfig(BaseSettings):
         dict[str, object], BeforeValidator(convert_dict_compatible)
     ] = Field(
         default=...,
-        description="Schemapack compatible JSON Schema the transformed content needs to adhere to.",
+        description="JSON Schema the transformed content needs to adhere to.",
     )
     embedding_profile: Annotated[
         EmbeddingProfile, BeforeValidator(convert_dict_compatible)
