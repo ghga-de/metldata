@@ -39,7 +39,7 @@ env = ImmutableSandboxedEnvironment(undefined=StrictUndefined)
 ResourceContent = list | str | tuple | Mapping
 
 
-def transform_data_class(
+def transform_data_content(
     *,
     data: DataPack,
     schemapack: SchemaPack,

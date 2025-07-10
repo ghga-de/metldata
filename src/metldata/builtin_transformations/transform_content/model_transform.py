@@ -24,7 +24,7 @@ from metldata.builtin_transformations.transform_content.config import (
 from metldata.transform.exceptions import EvitableTransformationError
 
 
-def transform_model_class(
+def transform_model_content(
     *,
     model: SchemaPack,
     transformation_config: TransformContentConfig,

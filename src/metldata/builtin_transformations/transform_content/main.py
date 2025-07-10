@@ -25,10 +25,10 @@ from metldata.builtin_transformations.transform_content.config import (
     TransformContentConfig,
 )
 from metldata.builtin_transformations.transform_content.data_transform import (
-    transform_data_class,
+    transform_data_content,
 )
 from metldata.builtin_transformations.transform_content.model_transform import (
-    transform_model_class,
+    transform_model_content,
 )
 from metldata.transform.base import (
     DataTransformer,
@@ -49,7 +49,7 @@ class TransformContentTransformer(DataTransformer[TransformContentConfig]):
             DataTransformationError:
                 if the transformation fails.
         """
-        return transform_data_class(
+        return transform_data_content(
             data=data, schemapack=self._input_model, transformation_config=self._config
         )
 
@@ -73,7 +73,7 @@ def transform_model(model: SchemaPack, config: TransformContentConfig) -> Schema
         DataModelTransformationError:
             if the transformation fails.
     """
-    return transform_model_class(model=model, transformation_config=config)
+    return transform_model_content(model=model, transformation_config=config)
 
 
 TRANSFORM_CONTENT_TRANSFORMATION = TransformationDefinition[TransformContentConfig](

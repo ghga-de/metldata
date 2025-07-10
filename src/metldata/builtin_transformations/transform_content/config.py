@@ -21,7 +21,7 @@ import yaml
 from pydantic import BeforeValidator, Field
 from pydantic_settings import BaseSettings
 
-from metldata.builtin_transformations.common.utils import EmbeddingProfile
+from metldata.builtin_transformations.common.custom_types import EmbeddingProfile
 
 
 def convert_dict_compatible(value: Any) -> Any:

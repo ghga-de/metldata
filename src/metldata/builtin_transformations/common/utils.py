@@ -18,7 +18,6 @@ into JSON-serializable dictionaries, as well as thawing frozen structures.
 """
 
 import json
-from collections.abc import Mapping
 from typing import Any
 
 from schemapack import dumps_datapack, dumps_schemapack
@@ -33,9 +32,6 @@ from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElement,
     RelationPathElementType,
 )
-
-# needs to be a TypeAliasType so Pydantic can deal with the recursive definition
-type EmbeddingProfile = Mapping[str, "bool | EmbeddingProfile"] | None
 
 
 def model_to_dict(model: SchemaPack) -> dict[str, Any]:
