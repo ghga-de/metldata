@@ -471,9 +471,9 @@ ruamel-yaml-clib==0.2.12 \
     # via
     #   -c lock/requirements-dev.txt
     #   ruamel-yaml
-schemapack==3.0.0 \
-    --hash=sha256:0ddab39a65f42aabb8736ee6f063d29bb4212416b865bfd0c65e7e36d6d08bca \
-    --hash=sha256:9dc05b9bbe185b8e99bfed074bded21326aa2f4f1552937d97b499c3477b6068
+schemapack==3.1.0 \
+    --hash=sha256:ac15d0b6bf73c618fe1a43ca9de5a7a38351e02a0c19ae0b0385a58a4eb06da2 \
+    --hash=sha256:ad830a48f335053f3d8919c98c14687cf8d93a03886ac57aa600866e74a88ab1
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
@@ -489,9 +489,9 @@ typer==0.16.0 \
     # via
     #   -c lock/requirements-dev.txt
     #   schemapack
-typing-extensions==4.14.0 \
-    --hash=sha256:8676b788e32f02ab42d9e7c61324048ae4c6d844a399eebace3d4979d75ceef4 \
-    --hash=sha256:a1514509136dd0b477638fc68d6a91497af5076466ad0fa6c338e44e359944af
+typing-extensions==4.14.1 \
+    --hash=sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36 \
+    --hash=sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76
     # via
     #   -c lock/requirements-dev.txt
     #   pydantic

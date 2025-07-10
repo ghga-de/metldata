@@ -39,36 +39,6 @@ env = ImmutableSandboxedEnvironment(undefined=StrictUndefined)
 ResourceContent = list | str | tuple | Mapping
 
 
-def _denormalization_workaround(
-    denormalized_content: Mapping[str, ResourceContent],
-) -> dict[str, ResourceContent]:
-    """Reformat denormalized content for attachment into datapack.
-
-    This does not convert the alias based representation back into a resource ID to
-    resource mapping, but only converts frozen dicts back into normal dictionaries
-    to work around a schemapack isssue for now.
-    """
-    content: dict[str, ResourceContent] = dict()
-
-    for key, value in denormalized_content.items():
-        if (
-            isinstance(value, list | tuple)
-            and len(value) > 0
-            and isinstance(value[0], Mapping)
-        ):
-            content[key] = [
-                _denormalization_workaround(resource_content)
-                for resource_content in value
-            ]
-        elif isinstance(value, Mapping):
-            content[key] = _denormalization_workaround(value)
-        elif isinstance(value, tuple):
-            content[key] = list(value)
-        else:
-            content[key] = value
-    return content
-
-
 def transform_data_class(
     *,
     data: DataPack,
@@ -101,8 +71,6 @@ def transform_data_class(
 
         # remove the top level alias before embedding
         del denormalized_content["alias"]
-        # currently needs a workaround to convert FrozenDicts into normal dicts
-        denormalized_content = _denormalization_workaround(denormalized_content)  # type: ignore
 
         # evaluate data template using jinja
         transformed_content = env.from_string(
