@@ -8,8 +8,17 @@ content_schema: {
         "type": "string"
       },
       "new_prop": {
+        "nested": {
+          "reverse_dac_contact": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "required": [
+          "nested"
+        ],
         "type": "object"
-      }
+      },
     },
     "type": "object"
   }

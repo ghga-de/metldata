@@ -4,8 +4,6 @@ resources:
     dataset_1:
       content:
         dac_contact: dac@example.org
-        file_summary:
-          stats: {}
       relations:
         files:
           targetClass: File

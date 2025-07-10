@@ -15,14 +15,9 @@ classes:
             "filename": { "type": "string" },
             "format": { "type": "string" },
             "size": { "type": "integer" },
-            "dataset_summary":
-              {
-                "type": "object",
-                "additionalProperties": true
-              },
           },
         "required":
-          ["filename", "format", "checksum", "size", "dataset_summary"],
+          ["filename", "format", "checksum", "size"],
         "type": "object",
       }
   Dataset:
@@ -36,13 +31,7 @@ classes:
         "properties":
           {
             "dac_contact": { "type": "string" },
-            "sample_summary":
-              {
-                "type": "object",
-                "additionalProperties": true,
-              },
           },
-        "required": ["sample_summary"],
         "type": "object",
       }
     relations:

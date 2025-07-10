@@ -16,7 +16,13 @@ classes:
         dac_contact:
           type: string
         new_prop:
+          nested:
+            reverse_dac_contact:
+              type: string
+            type: object
           type: object
+          required:
+            - nested
       type: object
     relations:
       files:

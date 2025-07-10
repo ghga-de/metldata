@@ -12,18 +12,7 @@ classes:
         "properties":
           {
             "dac_contact": { "type": "string" },
-            "samples_summary":
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "properties":
-                  {
-                    "stats": { "type": "object", "additionalProperties": true },
-                  },
-                "required": ["stats"],
-              },
           },
-        "required": ["samples_summary"],
         "type": "object",
       }
     relations:

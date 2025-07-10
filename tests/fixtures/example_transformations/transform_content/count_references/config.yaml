@@ -7,11 +7,11 @@ content_schema: {
       {
         "description": { "type": "string" },
         "sample_summary":
-          {
-            "type": "object",
-            "additionalProperties": true,
-            "properties": { "count": { "type": "integer" } },
-          },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": { "count": { "type": "integer" } },
+        },
       },
     "required": ["sample_summary"],
     "type": "object",

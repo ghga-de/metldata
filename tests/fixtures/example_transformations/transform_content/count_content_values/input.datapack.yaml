@@ -4,8 +4,6 @@ resources:
     dataset_1:
       content:
         dac_contact: dac@example.org
-        samples_summary:
-          stats: {}
       relations:
         files:
           targetClass: File
@@ -13,8 +11,6 @@ resources:
     dataset_2:
       content:
         dac_contact: dac@example.org
-        samples_summary:
-          stats: {}
       relations:
         files:
           targetClass: File
