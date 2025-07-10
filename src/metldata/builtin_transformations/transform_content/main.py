@@ -37,7 +37,7 @@ from metldata.transform.base import (
 
 
 class TransformContentTransformer(DataTransformer[TransformContentConfig]):
-    """A transformer that modifies the content schema and data."""
+    """A transformer that modifies the content schema and the data."""
 
     def transform(self, data: DataPack) -> DataPack:
         """Transforms data.
