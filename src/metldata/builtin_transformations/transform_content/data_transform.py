@@ -63,7 +63,7 @@ def _denormalization_workaround(
         elif isinstance(value, Mapping):
             content[key] = _denormalization_workaround(value)
         elif isinstance(value, tuple):
-            content[key] = [resource_content for resource_content in value]
+            content[key] = list(value)
         else:
             content[key] = value
     return content
