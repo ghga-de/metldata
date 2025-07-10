@@ -48,7 +48,7 @@ WORKFLOW_BY_NAME: list[str] = [
     "duplicate_multiple_delete_one",
     "delete_multiple",
     "infer_multiple",
-    "duplicate_multiple_delete_one_embed_sample_files",
+    "duplicate_multiple_delete_one_embed_relation",
 ]
 TRANSFORMATION_REGISTRY = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
