@@ -79,7 +79,7 @@ class WorkflowBuilder:
                 if isinstance(value, str) and "%" in value:
                     invalid_json_args[key] = value
 
-            # remove afftected data from context, so they are not subject to json validation
+            # remove affected data from context, so they are not subject to json validation
             # these are not populated here, but later in the transform_content transformation
             for key in invalid_json_args:
                 del context[key]
