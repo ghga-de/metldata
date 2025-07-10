@@ -29,7 +29,6 @@ content_schema: |
     "required": ["file_summary"],
     "type": "object",
   }
-embedding_profile: "{}"
 data_template: |
   dac_contact: {{ original.dac_contact }}
   file_summary:

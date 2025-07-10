@@ -47,7 +47,7 @@ class TransformContentConfig(BaseSettings):
     embedding_profile: Annotated[
         EmbeddingProfile, BeforeValidator(convert_dict_compatible)
     ] = Field(
-        default=...,
+        default_factory=dict,  # type: ignore[arg-type]
         description="Embedding profile for denormalization. All relations are embedded by default and nested relations need to be specified explicitly for exclusion.",
     )
     data_template: str = Field(
