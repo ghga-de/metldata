@@ -54,7 +54,7 @@ def test_model_transformations(
         ) == json.dumps(
             model_to_dict(test_case.transformed_model), indent=2, sort_keys=True
         )
-        # Guard against an unexpected egde case, where the serialized model is equal
+        # Guard against an unexpected edge case, where the serialized model is equal
         assert False
 
 
