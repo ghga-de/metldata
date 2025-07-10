@@ -16,6 +16,7 @@
 """Utility functions for testing."""
 
 import json
+from difflib import unified_diff
 
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
@@ -27,27 +28,39 @@ def compare_model(transformed_model: SchemaPack, test_case_model: SchemaPack):
     """If models don't match, compare the serialized versions.
 
     This produces a line by line diff which is more informative for debugging
-    You might need to run `pytest  -vv -k test_model_transformations[<test_case_name>]`
-    in the commandline to get the full output
     """
     if transformed_model != test_case_model:
-        assert json.dumps(
-            model_to_dict(transformed_model), indent=2, sort_keys=True
-        ) == json.dumps(model_to_dict(test_case_model), indent=2, sort_keys=True)
-        # Guard against an unexpected egde case, where the serialized model is equal
-        assert False
+        model_diff = unified_diff(
+            json.dumps(
+                model_to_dict(transformed_model), indent=2, sort_keys=True
+            ).splitlines(),
+            json.dumps(
+                model_to_dict(test_case_model), indent=2, sort_keys=True
+            ).splitlines(),
+            fromfile="transformed_model",
+            tofile="test_case_model",
+            n=5,
+        )
+        output = f"\n{'\n'.join(model_diff)}"
+        raise AssertionError(output)
 
 
 def compare_data(transformed_data: DataPack, test_case_data: DataPack):
     """If data packs don't match, compare the serialized versions.
 
     This produces a line by line diff which is more informative for debugging
-    You might need to run `pytest  -vvv -k test_data_transformations[<test_case_name>]`
-    in the commandline to get the full output
     """
     if transformed_data != test_case_data:
-        assert json.dumps(
-            data_to_dict(transformed_data), indent=2, sort_keys=True
-        ) == json.dumps(data_to_dict(test_case_data), indent=2, sort_keys=True)
-        # Guard against an unexpected egde case, where the serialized data is equal
-        assert False
+        data_diff = unified_diff(
+            json.dumps(
+                data_to_dict(transformed_data), indent=2, sort_keys=True
+            ).splitlines(),
+            json.dumps(
+                data_to_dict(test_case_data), indent=2, sort_keys=True
+            ).splitlines(),
+            fromfile="transformed_data",
+            tofile="test_case_data",
+            n=5,
+        )
+        output = f"\n{'\n'.join(data_diff)}"
+        raise AssertionError(output)
