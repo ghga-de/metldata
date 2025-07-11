@@ -2,10 +2,10 @@ operations:
 - name: transform_content
   description: "Add a new propery to the content of {{ class_name }}"
   args:
-    class_name: "{{ class_name }}"
-    content_schema: "{{ content_schema }}"
-    embedding_profile: "{{ embedding_profile }}"
-    data_template: "{{ data_template }}"
+    class_name: "{{{ item.class_name }}}"
+    content_schema: "{{{ item.content_schema }}}"
+    embedding_profile: "{{{ item.embedding_profile }}}"
+    data_template: "{{{ item.data_template }}}"
   loop:
     - class_name: File
       content_schema: {
