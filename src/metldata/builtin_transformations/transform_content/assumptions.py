@@ -20,14 +20,8 @@ from schemapack.spec.schemapack import SchemaPack
 from metldata.builtin_transformations.common.assumptions.path_assumptions import (
     check_class_exists,
 )
-from metldata.builtin_transformations.transform_content.config import (
-    TransformContentConfig,
-)
 
 
-def check_model_assumptions(
-    model: SchemaPack,
-    transformation_config: TransformContentConfig,
-) -> None:
+def check_model_assumptions(model: SchemaPack, class_name: str) -> None:
     """Check model assumptions for the `transform content` transformation."""
-    check_class_exists(model=model, class_name=transformation_config.class_name)
+    check_class_exists(model=model, class_name=class_name)

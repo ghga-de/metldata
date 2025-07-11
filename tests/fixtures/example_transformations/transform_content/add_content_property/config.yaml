@@ -23,7 +23,7 @@ content_schema: {
     "type": "object"
   }
 embedding_profile: {"samples": {"files": false}, "files": false}
-data_template: |
+content_template_yaml: |
   dac_contact: {{ original.dac_contact }}
   new_prop:
     nested:

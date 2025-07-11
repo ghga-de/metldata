@@ -28,7 +28,7 @@ content_schema: {
     "required": ["file_summary"],
     "type": "object",
   }
-data_template: |
+content_template_yaml: |
   dac_contact: {{ original.dac_contact }}
   file_summary:
     stats:

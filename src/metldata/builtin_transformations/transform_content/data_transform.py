@@ -24,10 +24,8 @@ from schemapack import denormalize, isolate_resource
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
+from metldata.builtin_transformations.common.custom_types import EmbeddingProfile
 from metldata.builtin_transformations.common.utils import data_to_dict
-from metldata.builtin_transformations.transform_content.config import (
-    TransformContentConfig,
-)
 from metldata.transform.exceptions import EvitableTransformationError
 
 # configure with StrictUndefined so invalid property/dict access produces errors
@@ -43,12 +41,11 @@ def transform_data_content(
     *,
     data: DataPack,
     schemapack: SchemaPack,
-    transformation_config: TransformContentConfig,
+    class_name: str,
+    content_template_yaml: str,
+    embedding_profile: EmbeddingProfile,
 ) -> DataPack:
     """Denormalize data using the configured class as root and perform content data transformation."""
-    class_name = transformation_config.class_name
-    embedding_profile = transformation_config.embedding_profile
-
     mutable_data = data_to_dict(data)
 
     if class_name not in data.resources:
@@ -69,13 +66,10 @@ def transform_data_content(
             embedding_profile=embedding_profile,
         )
 
-        # remove the top level alias before embedding
-        del denormalized_content["alias"]
-
         # evaluate data template using jinja
-        transformed_content = env.from_string(
-            transformation_config.data_template
-        ).render(original=denormalized_content)
+        transformed_content = env.from_string(content_template_yaml).render(
+            original=denormalized_content
+        )
 
         # replace resource content with the transformed version
         mutable_data["resources"][class_name][resource_id]["content"] = yaml.safe_load(

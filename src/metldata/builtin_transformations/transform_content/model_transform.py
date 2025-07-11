@@ -18,25 +18,20 @@
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.common.utils import model_to_dict
-from metldata.builtin_transformations.transform_content.config import (
-    TransformContentConfig,
-)
 from metldata.transform.exceptions import EvitableTransformationError
 
 
 def transform_model_content(
     *,
     model: SchemaPack,
-    transformation_config: TransformContentConfig,
+    class_name: str,
+    content_schema: dict[str, object],
 ) -> SchemaPack:
     """Replace the content schema with the schema given in the config."""
-    class_name = transformation_config.class_name
     mutable_model = model_to_dict(model)
 
     try:
-        mutable_model["classes"][class_name]["content"] = (
-            transformation_config.content_schema
-        )
+        mutable_model["classes"][class_name]["content"] = content_schema
     except KeyError as exc:
         raise EvitableTransformationError() from exc
 

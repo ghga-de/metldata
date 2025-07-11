@@ -50,7 +50,7 @@ class TransformContentConfig(BaseSettings):
         default_factory=dict,
         description="Embedding profile for denormalization. All relations are embedded by default and nested relations need to be specified explicitly for exclusion.",
     )
-    data_template: str = Field(
+    content_template_yaml: str = Field(
         default=...,
         description="Jinja template used to transform existing content data.",
     )

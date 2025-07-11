@@ -5,7 +5,7 @@ operations:
     class_name: "{{{ item.class_name }}}"
     content_schema: "{{{ item.content_schema }}}"
     embedding_profile: "{{{ item.embedding_profile }}}"
-    data_template: "{{{ item.data_template }}}"
+    content_template_yaml: "{{{ item.content_template_yaml }}}"
   loop:
     - class_name: File
       content_schema: {
@@ -39,7 +39,7 @@ operations:
         "type": "object"
       }
       embedding_profile: {}
-      data_template: |
+      content_template_yaml: |
         {% for key, value in original.items() %}
           {{ key }}: {{ value }}
         {% endfor %}
@@ -84,7 +84,7 @@ operations:
         "type": "object"
       }
       embedding_profile: {}
-      data_template: |
+      content_template_yaml: |
         {% for key, value in original.items() %}
           {% if key != "additional_information" %}
             {{ key }}: {{ value }}
@@ -136,7 +136,7 @@ operations:
         "type": "object"
       }
       embedding_profile: {}
-      data_template: |
+      content_template_yaml: |
         {% for key, value in original.items() %}
           {{ key }}: {{ value }}
         {% endfor %}

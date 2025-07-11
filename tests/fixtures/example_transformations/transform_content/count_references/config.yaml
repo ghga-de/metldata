@@ -16,7 +16,7 @@ content_schema: {
     "required": ["sample_summary"],
     "type": "object",
   }
-data_template: |
+content_template_yaml: |
   description: {{ original.description }}
   sample_summary:
     count: {{ original.samples | length}}

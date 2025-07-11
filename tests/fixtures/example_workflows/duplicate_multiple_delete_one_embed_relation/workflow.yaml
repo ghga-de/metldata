@@ -29,7 +29,7 @@ operations:
           "type": "object"
       }
       embedding_profile: {}
-      data_template: |
+      content_template_yaml: |
         embedded_files: {{ original.files }}
   # Delete classes - this will automatically delete the obsolete relations
   - name: delete_class

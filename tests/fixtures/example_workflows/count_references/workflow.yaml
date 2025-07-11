@@ -19,7 +19,7 @@ operations:
       class_name: "{{{ item.class_name }}}"
       content_schema: "{{{ item.content_schema }}}"
       embedding_profile: "{{{ item.embedding_profile }}}"
-      data_template: "{{{ item.data_template }}}"
+      content_template_yaml: "{{{ item.content_template_yaml }}}"
     loop:
       - class_name: Dataset
         content_schema: {
@@ -44,7 +44,7 @@ operations:
           "type": "object",
         }
         embedding_profile: { files: { datasets: false }, samples: false }
-        data_template: |
+        content_template_yaml: |
           {% for key, value in original.items() %}
           {% if key == "files" %}
             embedded_files: {{ value }}
@@ -76,7 +76,7 @@ operations:
           "type": "object",
         }
         embedding_profile: { datasets: false }
-        data_template: |
+        content_template_yaml: |
           {% for key, value in original.items() %}
           {% if key != "datasets" %}
             {{ key }}: {{ value }}
@@ -103,7 +103,7 @@ operations:
           "type": "object",
         }
         embedding_profile: { samples: false }
-        data_template: |
+        content_template_yaml: |
           {% for key, value in original.items() %}
           {% if key != "samples" %}
             {{ key }}: {{ value }}

@@ -50,7 +50,11 @@ class TransformContentTransformer(DataTransformer[TransformContentConfig]):
                 if the transformation fails.
         """
         return transform_data_content(
-            data=data, schemapack=self._input_model, transformation_config=self._config
+            data=data,
+            schemapack=self._input_model,
+            class_name=self._config.class_name,
+            content_template_yaml=self._config.content_template_yaml,
+            embedding_profile=self._config.embedding_profile,
         )
 
 
@@ -63,7 +67,7 @@ def check_model_assumptions_wrapper(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    check_model_assumptions(model=model, transformation_config=config)
+    check_model_assumptions(model=model, class_name=config.class_name)
 
 
 def transform_model(model: SchemaPack, config: TransformContentConfig) -> SchemaPack:
@@ -73,7 +77,9 @@ def transform_model(model: SchemaPack, config: TransformContentConfig) -> Schema
         DataModelTransformationError:
             if the transformation fails.
     """
-    return transform_model_content(model=model, transformation_config=config)
+    return transform_model_content(
+        model=model, class_name=config.class_name, content_schema=config.content_schema
+    )
 
 
 TRANSFORM_CONTENT_TRANSFORMATION = TransformationDefinition[TransformContentConfig](

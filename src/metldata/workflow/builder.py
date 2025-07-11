@@ -23,8 +23,6 @@ from metldata.workflow.base import (
 )
 from metldata.workflow.template_utils import apply_loop
 
-PROBLEMATIC_PROPERTY = "data_template"
-
 
 class WorkflowBuilder:
     """A builder class for constructing Workflow objects from WorkflowTemplate instances.
