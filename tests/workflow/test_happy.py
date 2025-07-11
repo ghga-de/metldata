@@ -19,6 +19,7 @@ import pytest
 
 from metldata.workflow.handling import WorkflowHandler
 from tests.fixtures.workflow import WORKFLOW_TEST_CASES, WorkflowTestCase
+from tests.utils import compare_data, compare_model
 
 
 @pytest.mark.parametrize("test_case", WORKFLOW_TEST_CASES, ids=str)
@@ -30,5 +31,5 @@ def test_workflow_outputs(test_case: WorkflowTestCase):
         input_model=test_case.input_model,
     )
     workflow_result = handler.run(data=test_case.input_data)
-    assert workflow_result.data == test_case.transformed_data
-    assert workflow_result.model == test_case.transformed_model
+    compare_data(workflow_result.data, test_case.transformed_data)
+    compare_model(workflow_result.model, test_case.transformed_model)

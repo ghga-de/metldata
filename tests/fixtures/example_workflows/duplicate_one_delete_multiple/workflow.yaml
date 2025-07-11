@@ -7,9 +7,9 @@ operations:
       target_class_name: MyDataset
   # Delete classes - this will automatically delete the obsolete relations
   - name: delete_class
-    description: "Delete class {{ item }}"
+    description: "Delete class {{{ item }}}"
     args:
-      class_name: "{{ item }}"
+      class_name: "{{{ item }}}"
     loop:
       - Dataset
       - Sample

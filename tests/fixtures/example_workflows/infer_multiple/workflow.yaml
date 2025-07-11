@@ -11,8 +11,8 @@ operations:
     description: "Infer {{ relation_name }} for each FileSummary"
     args:
       class_name: FileSummary
-      relation_name: "{{ relation_name }}"
-      relation_path: "{{ relation_path }}"
+      relation_name: "{{{ item.relation_name }}}"
+      relation_path: "{{{ item.relation_path }}}"
     loop:
       - relation_name: datasets
         relation_path: FileSummary<(files)Dataset

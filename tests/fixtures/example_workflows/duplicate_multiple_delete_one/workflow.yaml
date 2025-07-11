@@ -3,8 +3,8 @@ operations:
   - name: duplicate_class
     description: "Create a duplicate of class {{ source_class_name }} named {{ target_class_name }}"
     args:
-      source_class_name: "{{ source_class_name }}"
-      target_class_name: "{{ target_class_name }}"
+      source_class_name: "{{{ item.source_class_name }}}"
+      target_class_name: "{{{ item.target_class_name }}}"
     loop:
       - source_class_name: Dataset
         target_class_name: MyDataset

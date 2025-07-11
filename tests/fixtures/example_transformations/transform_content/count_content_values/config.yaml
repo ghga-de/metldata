@@ -1,0 +1,38 @@
+class_name: Dataset
+content_schema: {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "description": "A dataset that is a collection of files.",
+    "properties": {
+      "dac_contact": { "type": "string" },
+      "samples_summary": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "stats": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "description": {
+                "type": "object",
+                "additionalProperties": true,
+              }
+            }
+          }
+        },
+        "required": ["stats"],
+      }
+    },
+    "required": ["samples_summary"],
+    "type": "object"
+  }
+content_template_yaml: |
+  dac_contact: {{ original.dac_contact }}
+  samples_summary:
+    stats:
+      description:
+        {% for key, values in original.files.samples |  groupby("biomaterial.description") %}
+          {{ key }}: {{ values | length }}
+        {% else %}
+          {}
+        {% endfor %}

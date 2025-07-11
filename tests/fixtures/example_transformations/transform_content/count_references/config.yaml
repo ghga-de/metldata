@@ -1,0 +1,22 @@
+class_name: Experiment
+content_schema: {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "description": "An experiment containing one or multiple samples.",
+    "properties":
+      {
+        "description": { "type": "string" },
+        "sample_summary":
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": { "count": { "type": "integer" } },
+        },
+      },
+    "required": ["sample_summary"],
+    "type": "object",
+  }
+content_template_yaml: |
+  description: {{ original.description }}
+  sample_summary:
+    count: {{ original.samples | length}}

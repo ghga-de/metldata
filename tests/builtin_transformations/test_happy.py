@@ -23,6 +23,7 @@ from tests.fixtures.transformations import (
     TRANSFORMATION_TEST_CASES,
     TransformationTestCase,
 )
+from tests.utils import compare_data, compare_model
 
 
 @pytest.mark.parametrize(
@@ -39,9 +40,7 @@ def test_model_transformations(
         transformation_config=test_case.config,
         input_model=test_case.input_model,
     )
-    transformed_model = handler.transformed_model
-
-    assert transformed_model == test_case.transformed_model
+    compare_model(handler.transformed_model, test_case.transformed_model)
 
 
 @pytest.mark.parametrize("test_case", TRANSFORMATION_TEST_CASES, ids=str)
@@ -55,5 +54,4 @@ def test_data_transformations(
         input_model=test_case.input_model,
     )
     transformed_data = handler.transform_data(test_case.input_data)
-
-    assert transformed_data == test_case.transformed_data
+    compare_data(transformed_data, test_case.transformed_data)
