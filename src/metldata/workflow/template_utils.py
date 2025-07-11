@@ -23,12 +23,12 @@ from jinja2.sandbox import ImmutableSandboxedEnvironment
 # Random string, effectively disabling Jinja2 blocks and comments
 RANDOM_START_END_STRING = "Wk4CPM:"
 env = ImmutableSandboxedEnvironment(
-    block_start_string=RANDOM_START_END_STRING,
-    block_end_string=RANDOM_START_END_STRING,
+    block_start_string=RANDOM_START_END_STRING + "A",
+    block_end_string=RANDOM_START_END_STRING + "B",
     variable_start_string="{{{",
     variable_end_string="}}}",
-    comment_start_string=RANDOM_START_END_STRING,
-    comment_end_string=RANDOM_START_END_STRING,
+    comment_start_string=RANDOM_START_END_STRING + "C",
+    comment_end_string=RANDOM_START_END_STRING + "D",
 )
 
 
