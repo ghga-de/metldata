@@ -3,7 +3,7 @@ operations:
   - name: delete_class
     description: "Delete class {{ item }}"
     args:
-      class_name: "{{ item }}"
+      class_name: "{{{ item }}}"
     loop:
       - Dataset
       - Sample

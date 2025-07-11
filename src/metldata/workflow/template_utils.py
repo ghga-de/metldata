@@ -15,11 +15,43 @@
 
 """Utility functions for handling Jinja2 templates in workflows."""
 
+from collections.abc import Mapping
+from typing import Any
+
 from jinja2.sandbox import ImmutableSandboxedEnvironment
 
-env = ImmutableSandboxedEnvironment()
+env = ImmutableSandboxedEnvironment(
+    block_start_string="Wk4CPM:1",  # Random, effectively disabling Jinja2 blocks
+    block_end_string=":Wk4CPM:1",  # Random, effectively disabling Jinja2 blocks
+    variable_start_string="{{{",
+    variable_end_string="}}}",
+    comment_start_string="Wk4CPM",  # Random, effectively disabling Jinja2 comments
+    comment_end_string=":Wk4CPM",  # Random, effectively disabling Jinja2 comments
+)
 
 
-def apply_template(step_template: str, **variables: object) -> str:
-    """Renders a Jinja2 template with the provided variable."""
-    return env.from_string(step_template).render(**variables)
+def render_single_item(data: Any, item: Any) -> Any:
+    """Recursively renders a variable named 'item' in a Json-compatible data structure."""
+    if isinstance(data, str):
+        return env.from_string(data).render(item=item)
+    elif isinstance(data, Mapping):
+        return {key: render_single_item(value, item) for key, value in data.items()}
+    elif isinstance(data, list | tuple):
+        return [render_single_item(value, item) for value in data]
+    else:
+        return data
+
+
+def render_items(data: dict[str, Any], items: list[Any]) -> list[dict[str, Any]]:
+    """Applies a loop to the data by rendering the template for each item."""
+    return [render_single_item(data, item) for item in items]
+
+
+def apply_loop(data: dict[str, Any]) -> list[dict[str, Any]]:
+    """Applies a loop to the data by rendering the template for each item in the 'loop'
+    key if present.
+    """
+    if not data.get("loop", False):
+        return [data]
+    items = data.pop("loop")
+    return render_items(data, items)

@@ -3,9 +3,9 @@ operations:
   - name: infer_relation
     description: "Infer {{ relation_name }} for each Dataset"
     args:
-      class_name: "{{ class_name }}"
-      relation_name: "{{ relation_name }}"
-      relation_path: "{{ relation_path }}"
+      class_name: "{{{ item.class_name }}}"
+      relation_name: "{{{ item.relation_name }}}"
+      relation_path: "{{{ item.relation_path }}}"
     loop:
       - class_name: Dataset
         relation_name: samples
@@ -16,10 +16,10 @@ operations:
   - name: transform_content
     description: "Count references for {{ class_name }}"
     args:
-      class_name: "{{ class_name }}"
-      content_schema: "{{ content_schema }}"
-      embedding_profile: "{{ embedding_profile }}"
-      data_template: "{{ data_template }}"
+      class_name: "{{{ item.class_name }}}"
+      content_schema: "{{{ item.content_schema }}}"
+      embedding_profile: "{{{ item.embedding_profile }}}"
+      data_template: "{{{ item.data_template }}}"
     loop:
       - class_name: Dataset
         content_schema: {
