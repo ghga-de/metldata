@@ -66,6 +66,10 @@ def transform_data_content(
             embedding_profile=embedding_profile,
         )
 
+        # remove the top level alias before embedding, as this is redunant with the actual
+        # resource id
+        del denormalized_content["alias"]
+
         # evaluate data template using jinja
         transformed_content = env.from_string(content_template_yaml).render(
             original=denormalized_content
