@@ -20,13 +20,15 @@ from typing import Any
 
 from jinja2.sandbox import ImmutableSandboxedEnvironment
 
+# Random string, effectively disabling Jinja2 blocks and comments
+RANDOM_START_END_STRING = "Wk4CPM:"
 env = ImmutableSandboxedEnvironment(
-    block_start_string="Wk4CPM:1",  # Random, effectively disabling Jinja2 blocks
-    block_end_string=":Wk4CPM:1",  # Random, effectively disabling Jinja2 blocks
+    block_start_string=RANDOM_START_END_STRING,
+    block_end_string=RANDOM_START_END_STRING,
     variable_start_string="{{{",
     variable_end_string="}}}",
-    comment_start_string="Wk4CPM",  # Random, effectively disabling Jinja2 comments
-    comment_end_string=":Wk4CPM",  # Random, effectively disabling Jinja2 comments
+    comment_start_string=RANDOM_START_END_STRING,
+    comment_end_string=RANDOM_START_END_STRING,
 )
 
 
