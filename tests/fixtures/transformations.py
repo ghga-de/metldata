@@ -30,6 +30,9 @@ from metldata.builtin_transformations import (
 from metldata.builtin_transformations.infer_relation.main import (
     INFER_RELATION_TRANSFORMATION,
 )
+from metldata.builtin_transformations.merge_relations.main import (
+    MERGE_RELATIONS_TRANSFORMATION,
+)
 from metldata.builtin_transformations.transform_content.main import (
     TRANSFORM_CONTENT_TRANSFORMATION,
 )
@@ -44,6 +47,7 @@ TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
     "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
     "infer_relation": INFER_RELATION_TRANSFORMATION,
+    "merge_relations": MERGE_RELATIONS_TRANSFORMATION,
     "transform_content": TRANSFORM_CONTENT_TRANSFORMATION,
 }
 

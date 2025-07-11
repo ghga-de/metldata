@@ -29,5 +29,6 @@ MutableResourceContent: TypeAlias = dict[str, Any]
 ResolveRelations: TypeAlias = Callable[
     [ResourceId, RelationPath], frozenset[ResourceId]
 ]
+MutableClassRelations: TypeAlias = dict[str, dict]
 # needs to be a TypeAliasType so Pydantic can deal with the recursive definition
 type EmbeddingProfile = Mapping[str, "bool | EmbeddingProfile"] | None

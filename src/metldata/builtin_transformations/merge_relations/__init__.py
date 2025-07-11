@@ -13,13 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Models for instructions used in the 'delete class' transformation."""
-
-from pydantic import Field
-from pydantic_settings import BaseSettings
-
-
-class DeleteClassConfig(BaseSettings):
-    """A model describing a configuration for deleting a class."""
-
-    class_name: str = Field(default=..., description="The name of the class to delete.")
+"Subpackage containing functionality to merge relations."
