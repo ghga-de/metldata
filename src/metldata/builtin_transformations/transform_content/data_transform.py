@@ -66,13 +66,18 @@ def transform_data_content(
             embedding_profile=embedding_profile,
         )
 
-        # remove the top level alias before embedding, as this is redunant with the actual
-        # resource id
-        del denormalized_content["alias"]
+        id_property_name = schemapack.classes[class_name].id.propertyName
+        content_property_names = list(
+            schemapack.classes[class_name].content["properties"].keys()
+        )
+        relation_property_names = list(schemapack.classes[class_name].relations.keys())
 
         # evaluate data template using jinja
         transformed_content = env.from_string(content_template_yaml).render(
-            original=denormalized_content
+            original=denormalized_content,
+            id_property_name=id_property_name,
+            content_property_names=content_property_names,
+            relation_property_names=relation_property_names,
         )
 
         # replace resource content with the transformed version

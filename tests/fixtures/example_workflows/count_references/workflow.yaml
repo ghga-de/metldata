@@ -45,13 +45,10 @@ operations:
         }
         embedding_profile: { files: { datasets: false }, samples: false }
         content_template_yaml: |
-          {% for key, value in original.items() %}
-          {% if key == "files" %}
-            embedded_files: {{ value }}
-          {% elif key != "samples" %}
-            {{ key }}: {{ value }}
-          {% endif %}
+          {% for key in content_property_names %}
+            {{ key }}: {{ original[key] }}
           {% endfor %}
+            embedded_files: {{ original.files }}
             sample_summary:
               count: {{ original.samples | length }}
       - class_name: File
@@ -77,10 +74,8 @@ operations:
         }
         embedding_profile: { datasets: false }
         content_template_yaml: |
-          {% for key, value in original.items() %}
-          {% if key != "datasets" %}
-            {{ key }}: {{ value }}
-          {% endif %}
+          {% for key in content_property_names %}
+            {{ key }}: {{ original[key] }}
           {% endfor %}
             dataset_summary:
               count: {{ original.datasets | length }}
@@ -104,10 +99,8 @@ operations:
         }
         embedding_profile: { samples: false }
         content_template_yaml: |
-          {% for key, value in original.items() %}
-          {% if key != "samples" %}
-            {{ key }}: {{ value }}
-          {% endif %}
+          {% for key in content_property_names %}
+            {{ key }}: {{ original[key] }}
           {% endfor %}
             sample_summary:
               count: {{ original.samples | length }}
