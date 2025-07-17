@@ -62,9 +62,3 @@ class WorkflowBuilder:
             for step in apply_loop(precursor_dict)
         ]
         return [WorkflowStep.model_validate(step_dict) for step_dict in step_dicts]
-
-    def convert_precursor_without_loop(
-        self, precursor: WorkflowStepPrecursor
-    ) -> WorkflowStep:
-        """Convert a step precursor without a loop into a proper WorkflowStep"""
-        return WorkflowStep.model_validate_json(precursor.model_dump_json())
