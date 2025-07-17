@@ -7,11 +7,11 @@ operations:
       target_class_name: DatasetSummary
 
   - name: infer_relation
-    description: "Infer {{ relation_name }} for each DatasetSummary"
+    description: "Infer {{{ item.relation_name }}} for each DatasetSummary"
     args:
       class_name: DatasetSummary
-      relation_name: "{{ relation_name }}"
-      relation_path: "{{ relation_path }}"
+      relation_name: "{{{ item.relation_name }}}"
+      relation_path: "{{{ item.relation_path }}}"
     loop:
       - relation_name: samples_via_research_data_files
         relation_path: "DatasetSummary(research_data_files)>ResearchDataFile<(research_data_files)Sample"
@@ -23,12 +23,12 @@ operations:
         relation_path: "DatasetSummary(processed_data_files)>ProcessedDataFile<(processed_data_files)Sample<(samples)Experiment"
 
   - name: merge_relations
-    description: "Create {{ target_relation }} relation for each DatasetSummary"
+    description: "Create {{{ item.target_relation }}} relation for each DatasetSummary"
     args:
       class_name: DatasetSummary
-      source_relations: "{{ source_relations }}"
-      target_relation: "{{ target_relation }}"
-      description: "The {{ target_relation }} related to the dataset."
+      source_relations: "{{{ item.source_relations }}}"
+      target_relation: "{{{ item.target_relation }}}"
+      description: "The {{{ item.target_relation }}} related to the dataset."
       mandatory:
         origin: false
         target: false
@@ -46,9 +46,9 @@ operations:
           ]
         target_relation: experiments
   - name: delete_class
-    description: "Delete class {{ item }}"
+    description: "Delete class {{{ item }}}"
     args:
-      class_name: "{{ item }}"
+      class_name: "{{{ item }}}"
     loop: # Delete all classes except DatasetSummary and Study (for embedding)
       - Dataset
       - ResearchDataFile

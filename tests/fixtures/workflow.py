@@ -34,6 +34,9 @@ from metldata.builtin_transformations.infer_relation.main import (
 from metldata.builtin_transformations.merge_relations.main import (
     MERGE_RELATIONS_TRANSFORMATION,
 )
+from metldata.builtin_transformations.transform_content.main import (
+    TRANSFORM_CONTENT_TRANSFORMATION,
+)
 from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
 from tests.fixtures.data import ADVANCED_DATA
@@ -42,10 +45,13 @@ from tests.fixtures.utils import BASE_DIR
 
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
 WORKFLOW_BY_NAME: list[str] = [
+    "add_multiple_content_properties",
+    "count_references",
     "duplicate_one_delete_multiple",
     "duplicate_multiple_delete_one",
     "delete_multiple",
     "infer_multiple",
+    "duplicate_multiple_delete_one_embed_relation",
     "duplicate_infer_delete_merge",
 ]
 TRANSFORMATION_REGISTRY = {
@@ -53,6 +59,7 @@ TRANSFORMATION_REGISTRY = {
     "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
     "infer_relation": INFER_RELATION_TRANSFORMATION,
     "merge_relations": MERGE_RELATIONS_TRANSFORMATION,
+    "transform_content": TRANSFORM_CONTENT_TRANSFORMATION,
 }
 
 

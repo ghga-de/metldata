@@ -15,16 +15,13 @@
 
 """Logic to build a workflow from a template."""
 
-import json
-from collections.abc import Mapping
-
 from metldata.workflow.base import (
     Workflow,
     WorkflowStep,
     WorkflowStepPrecursor,
     WorkflowTemplate,
 )
-from metldata.workflow.template_utils import apply_template
+from metldata.workflow.template_utils import apply_loop
 
 
 class WorkflowBuilder:
@@ -56,28 +53,12 @@ class WorkflowBuilder:
         self, precursors: list[WorkflowStepPrecursor]
     ) -> list[WorkflowStep]:
         """Expand all loops in a list of workflow step precursors."""
-        expanded_steps = []
-        for precursor in precursors:
-            if precursor.loop:
-                expanded_steps.extend(self.expand_loop(precursor))
-            else:
-                step = self.convert_precursor_without_loop(precursor)
-                expanded_steps.append(step)
-        return expanded_steps
-
-    def expand_loop(self, precursor: WorkflowStepPrecursor) -> list[WorkflowStep]:
-        """Expand a loop in a workflow step precursor, producing multiple workflow steps."""
-        precursor_json = precursor.model_dump()
-        del precursor_json["loop"]
-        workflow_steps: list[WorkflowStep] = []
-        for args in precursor.loop:
-            context = args if isinstance(args, Mapping) else {"item": args}
-            rendered_context = apply_template(json.dumps(precursor_json), **context)
-            workflow_steps.append(WorkflowStep.model_validate_json(rendered_context))
-        return workflow_steps
-
-    def convert_precursor_without_loop(
-        self, precursor: WorkflowStepPrecursor
-    ) -> WorkflowStep:
-        """Convert a step precursor without a loop into a proper WorkflowStep"""
-        return WorkflowStep.model_validate_json(precursor.model_dump_json())
+        precursor_dicts = [
+            precursor.model_dump(mode="json") for precursor in precursors
+        ]
+        step_dicts = [
+            step
+            for precursor_dict in precursor_dicts
+            for step in apply_loop(precursor_dict)
+        ]
+        return [WorkflowStep.model_validate(step_dict) for step_dict in step_dicts]

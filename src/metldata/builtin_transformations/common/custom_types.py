@@ -16,7 +16,7 @@
 
 """A collection of custom types used for builtin transformations."""
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from typing import Any, TypeAlias
 
 from metldata.builtin_transformations.common.path.path import RelationPath
@@ -30,3 +30,5 @@ ResolveRelations: TypeAlias = Callable[
     [ResourceId, RelationPath], frozenset[ResourceId]
 ]
 MutableClassRelations: TypeAlias = dict[str, dict]
+# needs to be a TypeAliasType so Pydantic can deal with the recursive definition
+type EmbeddingProfile = Mapping[str, "bool | EmbeddingProfile"] | None

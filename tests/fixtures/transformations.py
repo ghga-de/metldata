@@ -33,6 +33,9 @@ from metldata.builtin_transformations.infer_relation.main import (
 from metldata.builtin_transformations.merge_relations.main import (
     MERGE_RELATIONS_TRANSFORMATION,
 )
+from metldata.builtin_transformations.transform_content.main import (
+    TRANSFORM_CONTENT_TRANSFORMATION,
+)
 from metldata.transform.base import TransformationDefinition
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
@@ -45,6 +48,7 @@ TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
     "infer_relation": INFER_RELATION_TRANSFORMATION,
     "merge_relations": MERGE_RELATIONS_TRANSFORMATION,
+    "transform_content": TRANSFORM_CONTENT_TRANSFORMATION,
 }
 
 
