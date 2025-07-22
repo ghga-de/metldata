@@ -32,14 +32,17 @@ from metldata.builtin_transformations.merge_relations.model_transform import (
 )
 from metldata.transform.base import (
     DataTransformer,
+    SubmissionAnnotation,
     TransformationDefinition,
 )
 
 
-class MergeRelationsTransformer(DataTransformer[MergeRelationsConfig]):
+class MergeRelationsTransformer(
+    DataTransformer[MergeRelationsConfig, SubmissionAnnotation]
+):
     """A transformer that merges relations within data."""
 
-    def transform(self, data: DataPack) -> DataPack:
+    def transform(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
         """Transforms data.
 
         Args:

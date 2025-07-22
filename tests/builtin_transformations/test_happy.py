@@ -35,7 +35,7 @@ def test_model_transformations(
     test_case: TransformationTestCase,
 ):
     """Test the happy path of transforming a model."""
-    handler = TransformationHandler(
+    handler: TransformationHandler = TransformationHandler(
         transformation_definition=test_case.transformation_definition,
         transformation_config=test_case.config,
         input_model=test_case.input_model,
@@ -48,10 +48,12 @@ def test_data_transformations(
     test_case: TransformationTestCase,
 ):
     """Test the happy path of transforming data for a model."""
-    handler = TransformationHandler(
+    handler: TransformationHandler = TransformationHandler(
         transformation_definition=test_case.transformation_definition,
         transformation_config=test_case.config,
         input_model=test_case.input_model,
     )
-    transformed_data = handler.transform_data(test_case.input_data)
+    transformed_data = handler.transform_data(
+        test_case.input_data, test_case.annotation
+    )
     compare_data(transformed_data, test_case.transformed_data)

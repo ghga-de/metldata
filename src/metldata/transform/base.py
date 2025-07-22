@@ -28,17 +28,14 @@ from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
 Config = TypeVar("Config", bound=BaseModel)
+SubmissionAnnotation = TypeVar("SubmissionAnnotation", bound=BaseModel)
 
 
-class DataTransformer[Config](ABC):
+class DataTransformer[Config, SubmissionAnnotation](ABC):
     """A base class for a data transformer."""
 
     def __init__(
-        self,
-        *,
-        config: Config,
-        input_model: SchemaPack,
-        transformed_model: SchemaPack,
+        self, *, config: Config, input_model: SchemaPack, transformed_model: SchemaPack
     ):
         """Initialize the transformer with config params, the input model, and the
         transformed model.
@@ -48,7 +45,7 @@ class DataTransformer[Config](ABC):
         self._transformed_model = transformed_model
 
     @abstractmethod
-    def transform(self, data: DataPack) -> DataPack:
+    def transform(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
         """Transforms data.
 
         Args:

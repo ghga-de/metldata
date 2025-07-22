@@ -32,14 +32,15 @@ from metldata.builtin_transformations.delete_class.model_transform import (
 )
 from metldata.transform.base import (
     DataTransformer,
+    SubmissionAnnotation,
     TransformationDefinition,
 )
 
 
-class DeleteClassTransformer(DataTransformer[DeleteClassConfig]):
+class DeleteClassTransformer(DataTransformer[DeleteClassConfig, SubmissionAnnotation]):
     """A transformer that deletes relation from data."""
 
-    def transform(self, data: DataPack) -> DataPack:
+    def transform(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
         """Transforms data.
 
         Args:

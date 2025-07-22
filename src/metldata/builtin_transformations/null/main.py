@@ -22,6 +22,7 @@ from schemapack.spec.schemapack import SchemaPack
 from metldata.builtin_transformations.null.config import NullConfig
 from metldata.transform.base import (
     DataTransformer,
+    SubmissionAnnotation,
     TransformationDefinition,
 )
 
@@ -36,12 +37,12 @@ def null_transform_model(model: SchemaPack, config: NullConfig) -> SchemaPack:
     return model
 
 
-class NullTransformer(DataTransformer[NullConfig]):
+class NullTransformer(DataTransformer[NullConfig, SubmissionAnnotation]):
     """A Null transformer that returns the input model and data unchanged. Useful e.g.
     for testing.
     """
 
-    def transform(self, data: DataPack) -> DataPack:
+    def transform(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
         """Transforms data.
 
         Args:

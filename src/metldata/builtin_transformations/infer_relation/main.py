@@ -32,14 +32,17 @@ from metldata.builtin_transformations.infer_relation.model_transform import (
 )
 from metldata.transform.base import (
     DataTransformer,
+    SubmissionAnnotation,
     TransformationDefinition,
 )
 
 
-class InferRelationTransformer(DataTransformer[InferRelationConfig]):
+class InferRelationTransformer(
+    DataTransformer[InferRelationConfig, SubmissionAnnotation]
+):
     """A transformer that infers relations based on a path and adds them to the data."""
 
-    def transform(self, data: DataPack) -> DataPack:
+    def transform(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
         """Transforms data.
 
         Args:
