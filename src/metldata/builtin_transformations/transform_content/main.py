@@ -32,14 +32,17 @@ from metldata.builtin_transformations.transform_content.model_transform import (
 )
 from metldata.transform.base import (
     DataTransformer,
+    SubmissionAnnotation,
     TransformationDefinition,
 )
 
 
-class TransformContentTransformer(DataTransformer[TransformContentConfig]):
+class TransformContentTransformer(
+    DataTransformer[TransformContentConfig, SubmissionAnnotation]
+):
     """A transformer that modifies the content schema and the data."""
 
-    def transform(self, data: DataPack) -> DataPack:
+    def transform(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
         """Transforms data.
 
         Args:
