@@ -20,7 +20,6 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from pydantic import BaseModel
 from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
@@ -40,7 +39,6 @@ from metldata.builtin_transformations.transform_content.main import (
 )
 from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
-from tests.fixtures.annotation import EMPTY_SUBMISSION_ANNOTATION
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR
@@ -75,7 +73,6 @@ class WorkflowTestCase:
     input_data: DataPack
     transformed_model: SchemaPack
     transformed_data: DataPack
-    annotation: BaseModel = field(default_factory=lambda: EMPTY_SUBMISSION_ANNOTATION)
     transformation_registry: dict[str, Any] = field(
         default_factory=lambda: TRANSFORMATION_REGISTRY
     )
