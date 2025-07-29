@@ -30,6 +30,8 @@ def test_workflow_outputs(test_case: WorkflowTestCase):
         transformation_registry=test_case.transformation_registry,
         input_model=test_case.input_model,
     )
-    workflow_result = handler.run(data=test_case.input_data)
+    workflow_result = handler.run(
+        data=test_case.input_data, annotation=test_case.annotation
+    )
     compare_data(workflow_result.data, test_case.transformed_data)
     compare_model(workflow_result.model, test_case.transformed_model)

@@ -16,7 +16,7 @@
 
 """Transformation test cases."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from pydantic import BaseModel
 from schemapack import load_datapack, load_schemapack
@@ -37,6 +37,7 @@ from metldata.builtin_transformations.transform_content.main import (
     TRANSFORM_CONTENT_TRANSFORMATION,
 )
 from metldata.transform.base import TransformationDefinition
+from tests.fixtures.annotation import EMPTY_SUBMISSION_ANNOTATION
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR, read_yaml
@@ -64,6 +65,7 @@ class TransformationTestCase:
     input_data: DataPack
     transformed_model: SchemaPack
     transformed_data: DataPack
+    annotation: BaseModel = field(default_factory=lambda: EMPTY_SUBMISSION_ANNOTATION)
 
     def __str__(self) -> str:  # noqa: D105
         return f"{self.transformation_name}-{self.case_name}"

@@ -91,7 +91,7 @@ class TransformationHandler[SubmissionAnnotation]:
         )
 
     def transform_data(
-        self, data: DataPack, annotation: SubmissionAnnotation | None = None
+        self, data: DataPack, annotation: SubmissionAnnotation
     ) -> DataPack:
         """Transforms data using the transformation definition. Validates the
         input data against the input model and the transformed data

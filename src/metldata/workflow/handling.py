@@ -94,9 +94,7 @@ class WorkflowHandler[SubmissionAnnotation]:
         self.transformation_registry = transformation_registry
         self.input_model = input_model
 
-    def run(
-        self, data: DataPack, annotation: SubmissionAnnotation | None = None
-    ) -> WorkflowResult:
+    def run(self, data: DataPack, annotation: SubmissionAnnotation) -> WorkflowResult:
         """Executes the workflow, applying each transformation in sequence to the model
         and data, and returns the final model and data as a WorkflowResult.
         """
