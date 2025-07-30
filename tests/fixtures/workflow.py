@@ -40,7 +40,7 @@ from metldata.builtin_transformations.transform_content.main import (
 )
 from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
-from tests.fixtures.annotation import EMPTY_SUBMISSION_ANNOTATION
+from tests.fixtures.annotation import EmptySubmissionAnnotation
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR
@@ -78,7 +78,7 @@ class WorkflowTestCase:
     transformation_registry: dict[str, Any] = field(
         default_factory=lambda: TRANSFORMATION_REGISTRY
     )
-    annotation: BaseModel = field(default_factory=lambda: EMPTY_SUBMISSION_ANNOTATION)
+    annotation: BaseModel = field(default_factory=EmptySubmissionAnnotation)
 
     def __str__(self) -> str:  # noqa: D105
         return f"{self.case_name}"
