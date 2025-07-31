@@ -38,15 +38,18 @@ from metldata.builtin_transformations.merge_relations.main import (
 from metldata.builtin_transformations.rename_id_property.main import (
     RENAME_ID_PROPERTY_TRANSFORMATION,
 )
+from metldata.builtin_transformations.replace_resource_ids.main import (
+    REPLACE_RESOURCE_IDS_TRANSFORMATION,
+)
 from metldata.builtin_transformations.transform_content.main import (
     TRANSFORM_CONTENT_TRANSFORMATION,
 )
 from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
-from tests.fixtures.annotation import EmptySubmissionAnnotation
+from tests.fixtures.annotation import AccessionAnnotation, EmptySubmissionAnnotation
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
-from tests.fixtures.utils import BASE_DIR
+from tests.fixtures.utils import BASE_DIR, read_yaml
 
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
 WORKFLOW_BY_NAME: list[str] = [
@@ -59,6 +62,7 @@ WORKFLOW_BY_NAME: list[str] = [
     "duplicate_multiple_delete_one_embed_relation",
     "duplicate_infer_delete_merge",
     "rename_id_property_multiple",
+    "rename_id_property_transform_content_update_resource_ids",
 ]
 TRANSFORMATION_REGISTRY = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
@@ -67,6 +71,7 @@ TRANSFORMATION_REGISTRY = {
     "merge_relations": MERGE_RELATIONS_TRANSFORMATION,
     "transform_content": TRANSFORM_CONTENT_TRANSFORMATION,
     "rename_id_property": RENAME_ID_PROPERTY_TRANSFORMATION,
+    "replace_resource_ids": REPLACE_RESOURCE_IDS_TRANSFORMATION,
 }
 
 
@@ -80,10 +85,10 @@ class WorkflowTestCase:
     input_data: DataPack
     transformed_model: SchemaPack
     transformed_data: DataPack
+    annotation: BaseModel
     transformation_registry: dict[str, Any] = field(
         default_factory=lambda: TRANSFORMATION_REGISTRY
     )
-    annotation: BaseModel = field(default_factory=EmptySubmissionAnnotation)
 
     def __str__(self) -> str:  # noqa: D105
         return f"{self.case_name}"
@@ -108,6 +113,7 @@ def _read_test_case(
     input_data_path = case_dir / "input.datapack.yaml"
     transformed_model_path = case_dir / "transformed.schemapack.yaml"
     transformed_data_path = case_dir / "transformed.datapack.yaml"
+    annotation_path = case_dir / "annotation.yaml"
 
     input_model = (
         load_schemapack(input_model_path)
@@ -120,6 +126,11 @@ def _read_test_case(
     transformed_model = load_schemapack(transformed_model_path)
     transformed_data = load_datapack(transformed_data_path)
     workflow = _get_workflow(workflow_path)
+    annotation = (
+        AccessionAnnotation(**read_yaml(annotation_path))
+        if annotation_path.exists()
+        else EmptySubmissionAnnotation()
+    )
 
     return WorkflowTestCase(
         case_name=case_name,
@@ -128,6 +139,7 @@ def _read_test_case(
         input_data=input_data,
         transformed_model=transformed_model,
         transformed_data=transformed_data,
+        annotation=annotation,
     )
 
 

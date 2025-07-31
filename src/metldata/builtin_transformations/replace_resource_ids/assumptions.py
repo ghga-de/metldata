@@ -12,29 +12,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-"An empty submission annotation model for testing purposes"
+"Assumptions for the `replace resource ids` transformation"
 
-from typing import TypeAlias
+from schemapack.spec.schemapack import SchemaPack
 
-from pydantic import BaseModel
-
-ClassName: TypeAlias = str
-OldAccession: TypeAlias = str
-NewAccession: TypeAlias = str
+from metldata.builtin_transformations.common.assumptions.path_assumptions import (
+    check_class_exists,
+)
 
 
-class EmptySubmissionAnnotation(BaseModel):
-    """An empty submission annotation model for testing purposes."""
-
-
-EMPTY_SUBMISSION_ANNOTATION = EmptySubmissionAnnotation()
-
-
-class AccessionAnnotation(BaseModel):
-    """A submission annotation model with an accession field.
-    Example: {`accession_map`:{`File`:{`file_a`: `TESTS0000000001`}}}
-    """
-
-    accession_map: dict[ClassName, dict[OldAccession, NewAccession]]
+def check_model_assumptions(model: SchemaPack, class_name: str) -> None:
+    """Check model assumptions for the `replace resource ids` transformation."""
+    check_class_exists(model=model, class_name=class_name)

@@ -12,29 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-"An empty submission annotation model for testing purposes"
+"""A transformation to replace the resource ids of a class in the data using annotations."""
 
-from typing import TypeAlias
-
-from pydantic import BaseModel
-
-ClassName: TypeAlias = str
-OldAccession: TypeAlias = str
-NewAccession: TypeAlias = str
-
-
-class EmptySubmissionAnnotation(BaseModel):
-    """An empty submission annotation model for testing purposes."""
-
-
-EMPTY_SUBMISSION_ANNOTATION = EmptySubmissionAnnotation()
-
-
-class AccessionAnnotation(BaseModel):
-    """A submission annotation model with an accession field.
-    Example: {`accession_map`:{`File`:{`file_a`: `TESTS0000000001`}}}
-    """
-
-    accession_map: dict[ClassName, dict[OldAccession, NewAccession]]
+from metldata.builtin_transformations.replace_resource_ids.main import (  # noqa: F401
+    REPLACE_RESOURCE_IDS_TRANSFORMATION,
+)

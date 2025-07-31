@@ -1,0 +1,46 @@
+# a more advanced schemapack:
+schemapack: 0.3.0
+classes:
+  File:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/File.schema.json
+  Dataset:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Dataset.schema.json
+    relations:
+      files:
+        targetClass: File
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: true
+  Sample:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Sample.schema.json
+    relations:
+      files:
+        targetClass: File
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: false
+          target: true
+  Experiment:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Experiment.schema.json
+    relations:
+      samples:
+        targetClass: Sample
+        multiple:
+          origin: false
+          target: true
+        mandatory:
+          origin: true
+          target: true

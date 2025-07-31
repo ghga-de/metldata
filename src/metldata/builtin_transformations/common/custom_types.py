@@ -17,11 +17,14 @@
 """A collection of custom types used for builtin transformations."""
 
 from collections.abc import Callable, Mapping
-from typing import Any, TypeAlias
+from typing import Annotated, Any, TypeAlias
+
+from pydantic import Field as _Field
 
 from metldata.builtin_transformations.common.path.path import RelationPath
 
-ResourceId: TypeAlias = str
+_NonEmptyStr: TypeAlias = Annotated[str, _Field(..., min_length=1)]
+ResourceId: TypeAlias = _NonEmptyStr
 MutableDatapack: TypeAlias = dict[str, Any]
 MutableResource: TypeAlias = dict[str, dict]
 MutableClassResources: TypeAlias = dict[ResourceId, MutableResource]
@@ -32,3 +35,6 @@ ResolveRelations: TypeAlias = Callable[
 MutableClassRelations: TypeAlias = dict[str, dict]
 # needs to be a TypeAliasType so Pydantic can deal with the recursive definition
 type EmbeddingProfile = Mapping[str, "bool | EmbeddingProfile"] | None
+IdProperty: TypeAlias = _NonEmptyStr
+NewIdProperty: TypeAlias = _NonEmptyStr
+AccessionMap: TypeAlias = dict[IdProperty, NewIdProperty]

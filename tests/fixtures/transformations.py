@@ -16,7 +16,7 @@
 
 """Transformation test cases."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from pydantic import BaseModel
 from schemapack import load_datapack, load_schemapack
@@ -36,11 +36,14 @@ from metldata.builtin_transformations.merge_relations.main import (
 from metldata.builtin_transformations.rename_id_property.main import (
     RENAME_ID_PROPERTY_TRANSFORMATION,
 )
+from metldata.builtin_transformations.replace_resource_ids.main import (
+    REPLACE_RESOURCE_IDS_TRANSFORMATION,
+)
 from metldata.builtin_transformations.transform_content.main import (
     TRANSFORM_CONTENT_TRANSFORMATION,
 )
 from metldata.transform.base import TransformationDefinition
-from tests.fixtures.annotation import EmptySubmissionAnnotation
+from tests.fixtures.annotation import AccessionAnnotation, EmptySubmissionAnnotation
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR, read_yaml
@@ -54,6 +57,7 @@ TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "merge_relations": MERGE_RELATIONS_TRANSFORMATION,
     "transform_content": TRANSFORM_CONTENT_TRANSFORMATION,
     "rename_id_property": RENAME_ID_PROPERTY_TRANSFORMATION,
+    "replace_resource_ids": REPLACE_RESOURCE_IDS_TRANSFORMATION,
 }
 
 
@@ -69,7 +73,7 @@ class TransformationTestCase:
     input_data: DataPack
     transformed_model: SchemaPack
     transformed_data: DataPack
-    annotation: BaseModel = field(default_factory=EmptySubmissionAnnotation)
+    annotation: BaseModel
 
     def __str__(self) -> str:  # noqa: D105
         return f"{self.transformation_name}-{self.case_name}"
@@ -86,6 +90,7 @@ def _read_test_case(
     input_data_path = case_dir / "input.datapack.yaml"
     transformed_model_path = case_dir / "transformed.schemapack.yaml"
     transformed_data_path = case_dir / "transformed.datapack.yaml"
+    annotation_path = case_dir / "annotation.yaml"
 
     input_model = (
         load_schemapack(input_model_path)
@@ -98,6 +103,11 @@ def _read_test_case(
     transformed_model = load_schemapack(transformed_model_path)
     transformed_data = load_datapack(transformed_data_path)
     config = transformation_definition.config_cls(**read_yaml(config_path))
+    annotation = (
+        AccessionAnnotation(**read_yaml(annotation_path))
+        if annotation_path.exists()
+        else EmptySubmissionAnnotation()
+    )
 
     return TransformationTestCase(
         transformation_name=transformation_name,
@@ -108,6 +118,7 @@ def _read_test_case(
         input_data=input_data,
         transformed_model=transformed_model,
         transformed_data=transformed_data,
+        annotation=annotation,
     )
 
 
