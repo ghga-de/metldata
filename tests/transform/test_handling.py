@@ -26,6 +26,7 @@ from metldata.builtin_transformations.null import NULL_TRANSFORMATION
 from metldata.builtin_transformations.null.config import NullConfig
 from metldata.transform.base import (
     DataTransformer,
+    SubmissionAnnotation,
     TransformationDefinition,
 )
 from metldata.transform.exceptions import ModelAssumptionError, ModelTransformationError
@@ -34,13 +35,14 @@ from metldata.transform.handling import (
     PreTransformValidationError,
     TransformationHandler,
 )
+from tests.fixtures.annotation import EMPTY_SUBMISSION_ANNOTATION
 from tests.fixtures.data import INVALID_MINIMAL_DATA, MINIMAL_DATA
 from tests.fixtures.models import MINIMAL_MODEL
 
 
 def test_transformation_handler_happy():
     """Test the happy path of using a TransformationHandler."""
-    transformation_handler = TransformationHandler(
+    transformation_handler: TransformationHandler = TransformationHandler(
         transformation_definition=NULL_TRANSFORMATION,
         transformation_config=NullConfig(),
         input_model=MINIMAL_MODEL,
@@ -49,7 +51,9 @@ def test_transformation_handler_happy():
     # Since the null transformation was used, compare with the input:
     assert transformation_handler.transformed_model == MINIMAL_MODEL
 
-    transformed_data = transformation_handler.transform_data(MINIMAL_DATA)
+    transformed_data = transformation_handler.transform_data(
+        MINIMAL_DATA, EMPTY_SUBMISSION_ANNOTATION
+    )
 
     # Since the null transformation was used, compare with the input:
     assert transformed_data == MINIMAL_DATA
@@ -104,14 +108,16 @@ def test_transformation_handler_input_data_invalid():
     """Test the TransformationHandler when used with input data that is not valid
     against the model.
     """
-    transformation_handler = TransformationHandler(
+    transformation_handler: TransformationHandler = TransformationHandler(
         transformation_definition=NULL_TRANSFORMATION,
         transformation_config=NullConfig(),
         input_model=MINIMAL_MODEL,
     )
 
     with pytest.raises(PreTransformValidationError):
-        _ = transformation_handler.transform_data(INVALID_MINIMAL_DATA)
+        _ = transformation_handler.transform_data(
+            INVALID_MINIMAL_DATA, EMPTY_SUBMISSION_ANNOTATION
+        )
 
 
 def test_transformation_handler_transformed_data_invalid():
@@ -119,10 +125,12 @@ def test_transformation_handler_transformed_data_invalid():
     against the transformed model.
     """
 
-    class AlwaysInvalidTransformer(DataTransformer[NullConfig]):
+    class AlwaysInvalidTransformer(DataTransformer[NullConfig, SubmissionAnnotation]):
         """A transformer that always returns the same invalid data."""
 
-        def transform(self, data: DataPack) -> DataPack:
+        def transform(
+            self, data: DataPack, annotation: SubmissionAnnotation
+        ) -> DataPack:
             """Transforms data.
 
             Args:
@@ -141,11 +149,13 @@ def test_transformation_handler_transformed_data_invalid():
         data_transformer_factory=AlwaysInvalidTransformer,
     )
 
-    transformation_handler = TransformationHandler(
+    transformation_handler: TransformationHandler = TransformationHandler(
         transformation_definition=transformation,
         transformation_config=NullConfig(),
         input_model=MINIMAL_MODEL,
     )
 
     with pytest.raises(PostTransformValidationError):
-        _ = transformation_handler.transform_data(MINIMAL_DATA)
+        _ = transformation_handler.transform_data(
+            MINIMAL_DATA, EMPTY_SUBMISSION_ANNOTATION
+        )

@@ -71,7 +71,7 @@ class WorkflowStepHandler:
         )
 
 
-class WorkflowHandler:
+class WorkflowHandler[SubmissionAnnotation]:
     """Handles the execution of a workflow, applying a sequence of transformations
     to a datapack and associated schemapack.
 
@@ -94,7 +94,7 @@ class WorkflowHandler:
         self.transformation_registry = transformation_registry
         self.input_model = input_model
 
-    def run(self, data: DataPack) -> WorkflowResult:
+    def run(self, data: DataPack, annotation: SubmissionAnnotation) -> WorkflowResult:
         """Executes the workflow, applying each transformation in sequence to the model
         and data, and returns the final model and data as a WorkflowResult.
         """
@@ -105,6 +105,6 @@ class WorkflowHandler:
                 workflow_step=step, input_model=model
             ).execute(self.transformation_registry)
             model = transformation_handler.transformed_model
-            data = transformation_handler.transform_data(data)
+            data = transformation_handler.transform_data(data, annotation)
 
         return WorkflowResult(model=model, data=data)

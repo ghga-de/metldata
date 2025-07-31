@@ -32,14 +32,17 @@ from metldata.builtin_transformations.duplicate_class.model_transform import (
 )
 from metldata.transform.base import (
     DataTransformer,
+    SubmissionAnnotation,
     TransformationDefinition,
 )
 
 
-class DuplicateClassTransformer(DataTransformer[DuplicateClassConfig]):
+class DuplicateClassTransformer(
+    DataTransformer[DuplicateClassConfig, SubmissionAnnotation]
+):
     """A transformer that copies content between a source and target class."""
 
-    def transform(self, data: DataPack) -> DataPack:
+    def transform(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
         """Transforms data.
 
         Args:

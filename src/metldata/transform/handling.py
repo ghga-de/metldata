@@ -21,7 +21,10 @@ from schemapack import SchemaPackValidator
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.transform.base import Config, TransformationDefinition
+from metldata.transform.base import (
+    Config,
+    TransformationDefinition,
+)
 
 
 class PreTransformValidationError(RuntimeError):
@@ -50,7 +53,7 @@ class PostTransformValidationError(RuntimeError):
         )
 
 
-class TransformationHandler:
+class TransformationHandler[SubmissionAnnotation]:
     """Used for executing transformations described in a TransformationDefinition."""
 
     def __init__(
@@ -87,7 +90,9 @@ class TransformationHandler:
             schemapack=self.transformed_model
         )
 
-    def transform_data(self, data: DataPack) -> DataPack:
+    def transform_data(
+        self, data: DataPack, annotation: SubmissionAnnotation
+    ) -> DataPack:
         """Transforms data using the transformation definition. Validates the
         input data against the input model and the transformed data
         against the transformed model.
@@ -108,7 +113,9 @@ class TransformationHandler:
         except schemapack.exceptions.ValidationError as error:
             raise PreTransformValidationError(validation_error=error) from error
 
-        transformed_data = self._data_transformer.transform(data=data)
+        transformed_data = self._data_transformer.transform(
+            data=data, annotation=annotation
+        )
 
         try:
             self._transformed_data_validator.validate(datapack=transformed_data)
