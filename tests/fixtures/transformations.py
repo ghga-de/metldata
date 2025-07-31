@@ -33,6 +33,9 @@ from metldata.builtin_transformations.infer_relation.main import (
 from metldata.builtin_transformations.merge_relations.main import (
     MERGE_RELATIONS_TRANSFORMATION,
 )
+from metldata.builtin_transformations.rename_id_property.main import (
+    RENAME_ID_PROPERTY_TRANSFORMATION,
+)
 from metldata.builtin_transformations.transform_content.main import (
     TRANSFORM_CONTENT_TRANSFORMATION,
 )
@@ -50,6 +53,7 @@ TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
     "infer_relation": INFER_RELATION_TRANSFORMATION,
     "merge_relations": MERGE_RELATIONS_TRANSFORMATION,
     "transform_content": TRANSFORM_CONTENT_TRANSFORMATION,
+    "rename_id_property": RENAME_ID_PROPERTY_TRANSFORMATION,
 }
 
 

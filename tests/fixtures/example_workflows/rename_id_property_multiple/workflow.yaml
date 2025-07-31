@@ -1,0 +1,17 @@
+operations:
+  # Rename id property with accession
+  - name: rename_id_property
+    description: "Rename id property for each {{ class_name }}"
+    args:
+      class_name: "{{{ item.class_name }}}"
+      id_property_name: "{{{ item.id_property_name }}}"
+      description: Id property name is now accession.
+    loop:
+      - class_name: File
+        id_property_name: accession
+      - class_name: Dataset
+        id_property_name: accession
+      - class_name: Sample
+        id_property_name: accession
+      - class_name: Experiment
+        id_property_name: accession

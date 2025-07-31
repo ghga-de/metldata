@@ -35,6 +35,9 @@ from metldata.builtin_transformations.infer_relation.main import (
 from metldata.builtin_transformations.merge_relations.main import (
     MERGE_RELATIONS_TRANSFORMATION,
 )
+from metldata.builtin_transformations.rename_id_property.main import (
+    RENAME_ID_PROPERTY_TRANSFORMATION,
+)
 from metldata.builtin_transformations.transform_content.main import (
     TRANSFORM_CONTENT_TRANSFORMATION,
 )
@@ -55,6 +58,7 @@ WORKFLOW_BY_NAME: list[str] = [
     "infer_multiple",
     "duplicate_multiple_delete_one_embed_relation",
     "duplicate_infer_delete_merge",
+    "rename_id_property_multiple",
 ]
 TRANSFORMATION_REGISTRY = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
@@ -62,6 +66,7 @@ TRANSFORMATION_REGISTRY = {
     "infer_relation": INFER_RELATION_TRANSFORMATION,
     "merge_relations": MERGE_RELATIONS_TRANSFORMATION,
     "transform_content": TRANSFORM_CONTENT_TRANSFORMATION,
+    "rename_id_property": RENAME_ID_PROPERTY_TRANSFORMATION,
 }
 
 
