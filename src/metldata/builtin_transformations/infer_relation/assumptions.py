@@ -21,19 +21,21 @@ from metldata.builtin_transformations.common.assumptions.path_assumptions import
     assert_path_classes_and_relations_exist,
     assert_relation_does_not_exist,
 )
-from metldata.builtin_transformations.infer_relation.config import InferRelationConfig
+from metldata.builtin_transformations.common.path.path import RelationPath
 
 
 def check_model_assumptions(
-    *, model: SchemaPack, transformation_config: InferRelationConfig
+    *,
+    model: SchemaPack,
+    class_name: str,
+    relation_name: str,
+    relation_path: RelationPath,
 ) -> None:
     """Check model assumptions for the infer relation transformation."""
-    assert_path_classes_and_relations_exist(
-        model=model, path=transformation_config.relation_path
-    )
+    assert_path_classes_and_relations_exist(model=model, path=relation_path)
     # check if newly inferred relation already exists and if so, raise an error
     assert_relation_does_not_exist(
         model=model,
-        class_name=transformation_config.class_name,
-        relation_name=transformation_config.relation_name,
+        class_name=class_name,
+        relation_name=relation_name,
     )

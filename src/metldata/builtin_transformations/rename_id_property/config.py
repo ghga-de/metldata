@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Models for instructions used in the 'rename id property' transformation."""
+"""Models for configuration used in the 'rename id property' transformation."""
 
 from pydantic import Field
 from pydantic_settings import BaseSettings

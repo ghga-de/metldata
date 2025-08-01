@@ -21,19 +21,13 @@ from metldata.builtin_transformations.common.assumptions.path_assumptions import
     check_class_does_not_exist,
     check_class_exists,
 )
-from metldata.builtin_transformations.duplicate_class.config import (
-    DuplicateClassConfig,
-)
 
 
 def check_model_assumptions(
-    model: SchemaPack,
-    transformation_config: DuplicateClassConfig,
+    model: SchemaPack, source_class_name: str, target_class_name: str
 ) -> None:
     """Check model assumptions for the duplicate class transformation."""
     # ensure the source class exists
-    check_class_exists(model=model, class_name=transformation_config.source_class_name)
+    check_class_exists(model=model, class_name=source_class_name)
     # ensure the target class does not exist yet
-    check_class_does_not_exist(
-        model=model, class_name=transformation_config.target_class_name
-    )
+    check_class_does_not_exist(model=model, class_name=target_class_name)

@@ -52,7 +52,11 @@ class DuplicateClassTransformer(
             DataTransformationError:
                 if the transformation fails.
         """
-        return duplicate_data_class(data=data, transformation_config=self._config)
+        return duplicate_data_class(
+            data=data,
+            source_class_name=self._config.source_class_name,
+            target_class_name=self._config.target_class_name,
+        )
 
 
 def check_model_assumptions_wrapper(
@@ -64,7 +68,11 @@ def check_model_assumptions_wrapper(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    check_model_assumptions(model=model, transformation_config=config)
+    check_model_assumptions(
+        model=model,
+        source_class_name=config.source_class_name,
+        target_class_name=config.target_class_name,
+    )
 
 
 def transform_model(model: SchemaPack, config: DuplicateClassConfig) -> SchemaPack:
@@ -74,7 +82,11 @@ def transform_model(model: SchemaPack, config: DuplicateClassConfig) -> SchemaPa
         DataModelTransformationError:
             if the transformation fails.
     """
-    return duplicate_model_class(model=model, transformation_config=config)
+    return duplicate_model_class(
+        model=model,
+        source_class_name=config.source_class_name,
+        target_class_name=config.target_class_name,
+    )
 
 
 DUPLICATE_CLASS_TRANSFORMATION = TransformationDefinition[DuplicateClassConfig](

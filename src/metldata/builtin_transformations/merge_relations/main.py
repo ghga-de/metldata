@@ -28,6 +28,7 @@ from metldata.builtin_transformations.merge_relations.data_transform import (
     merge_data_relations,
 )
 from metldata.builtin_transformations.merge_relations.model_transform import (
+    RelationSpecificationParams,
     merge_model_relations,
 )
 from metldata.transform.base import (
@@ -52,7 +53,12 @@ class MergeRelationsTransformer(
             DataTransformationError:
                 if the transformation fails.
         """
-        return merge_data_relations(data=data, transformation_config=self._config)
+        return merge_data_relations(
+            data=data,
+            target_class=self._config.class_name,
+            target_relation=self._config.target_relation,
+            source_relations=self._config.source_relations,
+        )
 
 
 def check_model_assumptions_wrapper(
@@ -64,7 +70,12 @@ def check_model_assumptions_wrapper(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    check_model_assumptions(model=model, transformation_config=config)
+    check_model_assumptions(
+        model=model,
+        class_name=config.class_name,
+        target_relation=config.target_relation,
+        source_relations=config.source_relations,
+    )
 
 
 def transform_model(model: SchemaPack, config: MergeRelationsConfig) -> SchemaPack:
@@ -74,7 +85,17 @@ def transform_model(model: SchemaPack, config: MergeRelationsConfig) -> SchemaPa
         DataModelTransformationError:
             if the transformation fails.
     """
-    return merge_model_relations(model=model, transformation_config=config)
+    return merge_model_relations(
+        model=model,
+        class_name=config.class_name,
+        target_relation=config.target_relation,
+        source_relations=config.source_relations,
+        relation_spec=RelationSpecificationParams(
+            mandatory=config.mandatory,
+            multiple=config.multiple,
+            description=config.description,
+        ),
+    )
 
 
 MERGE_RELATIONS_TRANSFORMATION = TransformationDefinition[MergeRelationsConfig](

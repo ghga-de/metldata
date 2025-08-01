@@ -28,7 +28,6 @@ from metldata.builtin_transformations.common.path.path_elements import (
     RelationPathElementType,
 )
 from metldata.builtin_transformations.common.utils import get_relation, model_to_dict
-from metldata.builtin_transformations.infer_relation.config import InferRelationConfig
 from metldata.transform.exceptions import EvitableTransformationError
 
 
@@ -99,34 +98,36 @@ def infer_mandatory_from_path(
 
 
 def infer_model_relation(
-    *, model: SchemaPack, transformation_config: InferRelationConfig
+    *,
+    model: SchemaPack,
+    relation_name: str,
+    relation_path: RelationPath,
 ) -> SchemaPack:
     """Add inferred relations to a model.
 
     Args:
         model: The model based on SchemaPack to add the inferred relations to.
-        transformation_config: The config for inferring relations.
+        relation_name: The name of the new inferred relation.
+        relation_path: The path to the relation to infer.
 
     Returns:
         The model with the inferred relation added.
     """
     updated_class_def: dict[str, ClassDefinition] = {}
 
-    path = transformation_config.relation_path
-
     # This is the class that is being modified
-    source_class = transformation_config.relation_path.source
+    source_class = relation_path.source
 
     # This is the class that is referred by the path
-    target_class = transformation_config.relation_path.target
+    target_class = relation_path.target
 
     class_def = model.classes.get(source_class)
 
     if class_def is None:
         raise EvitableTransformationError()
 
-    mandatory = infer_mandatory_from_path(path, model)
-    multiple = infer_multiplicity_from_path(path, model)
+    mandatory = infer_mandatory_from_path(relation_path, model)
+    multiple = infer_multiplicity_from_path(relation_path, model)
     new_relation = ClassRelation.model_validate(
         {
             "targetClass": target_class,
@@ -140,7 +141,7 @@ def infer_model_relation(
             "content": class_def.content,
             "relations": {
                 **class_def.relations,
-                transformation_config.relation_name: new_relation,
+                relation_name: new_relation,
             },
         }
     )
