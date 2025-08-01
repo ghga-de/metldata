@@ -1,7 +1,7 @@
 operations:
   # Rename id property with accession
   - name: rename_id_property
-    description: "Rename id property for each {{ class_name }}"
+    description: "Rename id property for {{ class_name }}"
     args:
       class_name: "{{{ item.class_name }}}"
       id_property_name: "{{{ item.id_property_name }}}"
