@@ -18,27 +18,22 @@
 from schemapack.spec.datapack import DataPack
 
 from metldata.builtin_transformations.common.utils import data_to_dict
-from metldata.builtin_transformations.delete_class.config import (
-    DeleteClassConfig,
-)
 from metldata.transform.exceptions import EvitableTransformationError
 
 
-def delete_data_class(
-    *, data: DataPack, transformation_config: DeleteClassConfig
-) -> DataPack:
+def delete_data_class(*, data: DataPack, class_name: str) -> DataPack:
     """Delete class from the provided data."""
     modified_data = data_to_dict(data)
 
     try:
-        del modified_data["resources"][transformation_config.class_name]
+        del modified_data["resources"][class_name]
     except KeyError as exc:
         raise EvitableTransformationError() from exc
 
     _remove_relations_from_data(
         modified_data=modified_data,
         original_data=data,
-        target_class=transformation_config.class_name,
+        target_class=class_name,
     )
     return DataPack.model_validate(modified_data)
 
