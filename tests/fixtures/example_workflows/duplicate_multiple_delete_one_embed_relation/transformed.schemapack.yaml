@@ -1,5 +1,5 @@
 # a more advanced schemapack:
-schemapack: 0.3.0
+schemapack: 4.0.0
 classes:
   File:
     id:
@@ -47,20 +47,18 @@ classes:
   MySample:
     id:
       propertyName: alias
-    content: {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "additionalProperties": false,
-          "description": "A sample used to generate files in the context of an experiment.",
-          "properties": {
-            "description": {
-              "type": "string"
-            },
-            "embedded_files": {
-              "type": "array"
-            }
+    content:
+      {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "description": "A sample used to generate files in the context of an experiment.",
+        "properties":
+          {
+            "description": { "type": "string" },
+            "embedded_files": { "type": "array" },
           },
-          "type": "object"
-        }
+        "type": "object",
+      }
     relations:
       files:
         targetClass: File

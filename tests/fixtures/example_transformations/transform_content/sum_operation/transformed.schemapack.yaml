@@ -1,5 +1,5 @@
 # a simple schemapack:
-schemapack: 0.3.0
+schemapack: 4.0.0
 classes:
   Dataset:
     id:
@@ -22,10 +22,7 @@ classes:
                       {
                         "type": "object",
                         "additionalProperties": true,
-                        "properties":
-                          {
-                            "size": { "type": "number" },
-                          },
+                        "properties": { "size": { "type": "number" } },
                       },
                   },
                 "required": ["stats"],

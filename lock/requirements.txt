@@ -471,9 +471,9 @@ ruamel-yaml-clib==0.2.12 \
     # via
     #   -c lock/requirements-dev.txt
     #   ruamel-yaml
-schemapack==3.1.0 \
-    --hash=sha256:ac15d0b6bf73c618fe1a43ca9de5a7a38351e02a0c19ae0b0385a58a4eb06da2 \
-    --hash=sha256:ad830a48f335053f3d8919c98c14687cf8d93a03886ac57aa600866e74a88ab1
+schemapack==4.0.0 \
+    --hash=sha256:8af478f93864c5735560f3a38e8abc2e3ba94b8933a883236be5a4a96e609b5c \
+    --hash=sha256:db0633a8548def2a4115fa8b92a4642b7791600cac611420faa9852ac78453e1
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
