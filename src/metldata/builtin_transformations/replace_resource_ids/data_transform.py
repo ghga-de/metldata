@@ -62,7 +62,7 @@ def replace_data_resource_ids(
     return DataPack.model_validate(modified_data)
 
 
-def _get_resource_accessions(*, annotation: BaseModel, class_name: str) -> AccessionMap:
+def _get_resource_accessions(*, class_name: str, annotation: BaseModel) -> AccessionMap:
     """Extract resource ids from annotations."""
     try:
         accession_map = annotation.model_dump()["accession_map"]

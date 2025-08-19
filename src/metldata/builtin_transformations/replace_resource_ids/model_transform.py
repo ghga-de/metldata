@@ -18,6 +18,6 @@
 from schemapack.spec.schemapack import SchemaPack
 
 
-def replace_model_resource_ids(*, model: SchemaPack) -> SchemaPack:
+def replace_model_resource_ids(model: SchemaPack) -> SchemaPack:
     """Return the model as it is, since the resource ids are not a part of the model."""
     return model
