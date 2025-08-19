@@ -126,8 +126,6 @@ def _replace_ids_in_relations(
                     continue
 
                 target_resources = relation_spec.targetResources
-                if not target_resources:
-                    continue
 
                 if isinstance(target_resources, str):
                     new_target_ids = resource_accessions[target_resources]

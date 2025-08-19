@@ -20,7 +20,7 @@ from pydantic_settings import BaseSettings
 
 
 class ReplaceResourceIdsConfig(BaseSettings):
-    """A model describing a configuration for renaming model's id property."""
+    """A model describing a configuration for renaming an id property of a class."""
 
     class_name: str = Field(
         default=...,
