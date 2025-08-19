@@ -56,7 +56,7 @@ def replace_data_resource_ids(
     _replace_ids_in_relations(
         modified_data=modified_data,
         original_data=data,
-        target_class=class_name,
+        target_class_name=class_name,
         resource_accessions=resource_accessions,
     )
     return DataPack.model_validate(modified_data)
@@ -104,8 +104,8 @@ def _replace_ids_in_relations(
     *,
     modified_data: MutableDatapack,
     original_data: DataPack,
-    target_class: str,
     resource_accessions: AccessionMap,
+    target_class_name: str,
 ) -> None:
     """Replace resource IDs in relations of the modified data.
 
@@ -122,7 +122,7 @@ def _replace_ids_in_relations(
 
             for relation_name, relation_spec in resource.relations.items():
                 new_target_ids: str | set
-                if relation_spec.targetClass != target_class:
+                if relation_spec.targetClass != target_class_name:
                     continue
 
                 target_resources = relation_spec.targetResources
@@ -140,6 +140,6 @@ def _replace_ids_in_relations(
                 modified_data["resources"][class_name][resource_id]["relations"][
                     relation_name
                 ] = {
-                    "targetClass": target_class,
+                    "targetClass": target_class_name,
                     "targetResources": new_target_ids,
                 }
