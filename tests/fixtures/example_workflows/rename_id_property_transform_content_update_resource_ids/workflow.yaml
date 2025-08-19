@@ -16,8 +16,8 @@ operations:
       - class_name: Experiment
         id_property_name: accession
 
-  # Transform content schema and the content to add current resource ids as alias for
-  # not loosing that information after replace resource ids step
+  # Transform content schema and content to add current resource ids as alias so
+  # the information isn't lost after the replace resource ids step
   - name: transform_content
     description: "Add alias to the content of {{ class_name }}"
     args:
