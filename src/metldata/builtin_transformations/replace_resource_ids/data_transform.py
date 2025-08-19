@@ -127,15 +127,16 @@ def _replace_ids_in_relations(
 
                 target_resources = relation_spec.targetResources
 
+                if not target_resources:
+                    continue
+
                 if isinstance(target_resources, str):
                     new_target_ids = resource_accessions[target_resources]
                 elif isinstance(target_resources, frozenset):
                     new_target_ids = {
-                        resource_accessions.get(target_resource)
+                        resource_accessions[target_resource]
                         for target_resource in target_resources
                     }
-                else:
-                    continue
 
                 modified_data["resources"][class_name][resource_id]["relations"][
                     relation_name
