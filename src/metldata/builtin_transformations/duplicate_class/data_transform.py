@@ -18,14 +18,11 @@
 from schemapack.spec.datapack import DataPack
 
 from metldata.builtin_transformations.common.utils import data_to_dict
-from metldata.builtin_transformations.duplicate_class.config import (
-    DuplicateClassConfig,
-)
 from metldata.transform.exceptions import EvitableTransformationError
 
 
 def duplicate_data_class(
-    *, data: DataPack, transformation_config: DuplicateClassConfig
+    *, data: DataPack, source_class_name: str, target_class_name: str
 ) -> DataPack:
     """Copy the contents of a class in the given DataPack under a new class name.
 
@@ -39,8 +36,6 @@ def duplicate_data_class(
     """
     modified_data = data_to_dict(data)
 
-    source_class_name = transformation_config.source_class_name
-    target_class_name = transformation_config.target_class_name
     try:
         source_class_resources = modified_data["resources"][source_class_name]
         modified_data["resources"][target_class_name] = source_class_resources

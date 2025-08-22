@@ -1,5 +1,5 @@
 # a simple schemapack:
-schemapack: 0.3.0
+schemapack: 4.0.0
 classes:
   File:
     id:
@@ -16,8 +16,7 @@ classes:
             "format": { "type": "string" },
             "size": { "type": "integer" },
           },
-        "required":
-          ["filename", "format", "checksum", "size"],
+        "required": ["filename", "format", "checksum", "size"],
         "type": "object",
       }
   Dataset:
@@ -28,10 +27,7 @@ classes:
         "$schema": "http://json-schema.org/draft-07/schema#",
         "additionalProperties": false,
         "description": "A dataset that is a collection of files.",
-        "properties":
-          {
-            "dac_contact": { "type": "string" },
-          },
+        "properties": { "dac_contact": { "type": "string" } },
         "type": "object",
       }
     relations:
@@ -64,10 +60,7 @@ classes:
         "$schema": "http://json-schema.org/draft-07/schema#",
         "additionalProperties": false,
         "description": "An experiment containing one or multiple samples.",
-        "properties":
-          {
-            "description": { "type": "string" },
-          },
+        "properties": { "description": { "type": "string" } },
         "type": "object",
       }
     relations:

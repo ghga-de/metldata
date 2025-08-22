@@ -21,7 +21,6 @@ from schemapack.spec.datapack import DataPack, Resource
 
 from metldata.builtin_transformations.common.custom_types import ResourceId
 from metldata.builtin_transformations.common.utils import data_to_dict
-from metldata.builtin_transformations.merge_relations.config import MergeRelationsConfig
 from metldata.transform.exceptions import EvitableTransformationError
 
 
@@ -33,14 +32,20 @@ class Target(NamedTuple):
 
 
 def merge_data_relations(
-    *, data: DataPack, transformation_config: MergeRelationsConfig
+    *,
+    data: DataPack,
+    target_class: str,
+    target_relation: str,
+    source_relations: list[str],
 ) -> DataPack:
-    """Merge relations in the data according to the transformation configuration."""
+    """Merge relations in the data according to the transformation configuration.
+    Args:
+        data: The data to be transformed.
+        target_class: The name of the class to merge relations for.
+        target_relation: The name of the relation to merge into.
+        source_relations: List of relation names to be merged.
+    """
     modified_data = data_to_dict(data)
-
-    target_class = transformation_config.class_name
-    target_relation = transformation_config.target_relation
-    source_relations = transformation_config.source_relations
 
     target_class_resources = data.resources.get(target_class)
     if target_class_resources is None:

@@ -1,5 +1,5 @@
 # a simple schemapack:
-schemapack: 0.3.0
+schemapack: 4.0.0
 classes:
   File:
     id:
@@ -16,10 +16,7 @@ classes:
             "format": { "type": "string" },
             "size": { "type": "integer" },
             "dataset_summary":
-              {
-                "type": "object",
-                "additionalProperties": true
-              },
+              { "type": "object", "additionalProperties": true },
           },
         "required":
           ["filename", "format", "checksum", "size", "dataset_summary"],
@@ -47,17 +44,11 @@ classes:
           {
             "dac_contact": { "type": "string" },
             "sample_summary":
-              {
-                "type": "object",
-                "additionalProperties": true,
-              },
+              { "type": "object", "additionalProperties": true },
             "embedded_files":
               {
                 "type": "array",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": true,
-                }
+                "items": { "type": "object", "additionalProperties": true },
               },
           },
         "required": ["sample_summary"],

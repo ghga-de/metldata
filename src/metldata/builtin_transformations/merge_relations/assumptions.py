@@ -22,30 +22,38 @@ from metldata.builtin_transformations.common.assumptions.path_assumptions import
     check_class_exists,
     check_relation_exists,
 )
-from metldata.builtin_transformations.merge_relations.config import MergeRelationsConfig
 from metldata.transform.exceptions import ModelAssumptionError
 
 
 def check_model_assumptions(
-    model: SchemaPack, transformation_config: MergeRelationsConfig
+    model: SchemaPack,
+    class_name: str,
+    target_relation: str,
+    source_relations: list[str],
 ) -> None:
-    """Check model assumptions for the merge relations transformation."""
+    """Check model assumptions for the merge relations transformation.
+    Args:
+        model: The model to be checked for assumptions.
+        class_name: The name of the class to merge relations for.
+        target_relation: The name of the relation to merge into.
+        source_relations: List of relation names to be merged.
+    """
     assert_class_and_relations_exists(
-        model=model, transformation_config=transformation_config
+        model=model, class_name=class_name, source_relations=source_relations
     )
     # check if new relation already exists
     assert_relation_does_not_exist(
         model=model,
-        class_name=transformation_config.class_name,
-        relation_name=transformation_config.target_relation,
+        class_name=class_name,
+        relation_name=target_relation,
     )
     assert_same_target_class_across_relations(
-        model=model, transformation_config=transformation_config
+        model=model, class_name=class_name, source_relations=source_relations
     )
 
 
 def assert_class_and_relations_exists(
-    *, model: SchemaPack, transformation_config: MergeRelationsConfig
+    *, model: SchemaPack, class_name: str, source_relations: list[str]
 ) -> None:
     """Make sure that the class and relations defined in the configuration exist in the
     provided model.
@@ -54,23 +62,25 @@ def assert_class_and_relations_exists(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    check_class_exists(model=model, class_name=transformation_config.class_name)
-    for relation_name in transformation_config.source_relations:
+    check_class_exists(model=model, class_name=class_name)
+    for relation_name in source_relations:
         check_relation_exists(
             model=model,
-            class_name=transformation_config.class_name,
+            class_name=class_name,
             relation=relation_name,
         )
 
 
 def assert_same_target_class_across_relations(
-    *, model: SchemaPack, transformation_config: MergeRelationsConfig
+    *,
+    model: SchemaPack,
+    class_name: str,
+    source_relations: list[str],
 ):
     """Ensure that all source relations have the same target class."""
-    class_relations = model.classes[transformation_config.class_name].relations
+    class_relations = model.classes[class_name].relations
     target_classes = {
-        class_relations[relation_name].targetClass
-        for relation_name in transformation_config.source_relations
+        class_relations[relation_name].targetClass for relation_name in source_relations
     }
     if len(target_classes) > 1:
         raise ModelAssumptionError(

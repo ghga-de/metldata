@@ -50,7 +50,7 @@ class DeleteClassTransformer(DataTransformer[DeleteClassConfig, SubmissionAnnota
             DataTransformationError:
                 if the transformation fails.
         """
-        return delete_data_class(data=data, transformation_config=self._config)
+        return delete_data_class(data=data, class_name=self._config.class_name)
 
 
 def check_model_assumptions_wrapper(
@@ -62,7 +62,7 @@ def check_model_assumptions_wrapper(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    check_model_assumptions(model=model, transformation_config=config)
+    check_model_assumptions(model=model, class_name=config.class_name)
 
 
 def transform_model(model: SchemaPack, config: DeleteClassConfig) -> SchemaPack:
@@ -72,7 +72,7 @@ def transform_model(model: SchemaPack, config: DeleteClassConfig) -> SchemaPack:
         DataModelTransformationError:
             if the transformation fails.
     """
-    return delete_model_class(model=model, transformation_config=config)
+    return delete_model_class(model=model, class_name=config.class_name)
 
 
 DELETE_CLASS_TRANSFORMATION = TransformationDefinition[DeleteClassConfig](

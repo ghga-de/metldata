@@ -24,7 +24,7 @@ name = "metldata"
 version = "1.0.0"
 description = "metldata - A framework for handling metadata based on ETL, CQRS, and event sourcing."
 dependencies = [
-    "schemapack == 3.1.0",
+    "schemapack == 4.0.0",
     "jinja2 >=3,<4",
 ]
 

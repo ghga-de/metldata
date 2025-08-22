@@ -18,22 +18,15 @@
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.common.utils import model_to_dict
-from metldata.builtin_transformations.duplicate_class.config import (
-    DuplicateClassConfig,
-)
 from metldata.transform.exceptions import EvitableTransformationError
 
 
 def duplicate_model_class(
-    *,
-    model: SchemaPack,
-    transformation_config: DuplicateClassConfig,
+    *, model: SchemaPack, source_class_name: str, target_class_name: str
 ) -> SchemaPack:
     """Duplicate a source class definition in the model under a given target class name."""
     mutable_model = model_to_dict(model)
 
-    source_class_name = transformation_config.source_class_name
-    target_class_name = transformation_config.target_class_name
     try:
         source_class_definition = mutable_model["classes"][source_class_name]
         mutable_model["classes"][target_class_name] = source_class_definition

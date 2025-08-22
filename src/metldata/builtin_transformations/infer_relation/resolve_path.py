@@ -18,7 +18,7 @@
 from schemapack.spec.custom_types import ResourceId
 from schemapack.spec.datapack import DataPack
 
-from metldata.builtin_transformations.common.path.path import (
+from metldata.builtin_transformations.common.path import (
     RelationPath,
 )
 from metldata.builtin_transformations.common.path.path_elements import (

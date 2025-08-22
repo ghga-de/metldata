@@ -23,47 +23,41 @@ from metldata.builtin_transformations.common.custom_types import (
     MutableDatapack,
     ResourceId,
 )
+from metldata.builtin_transformations.common.path import RelationPath
 from metldata.builtin_transformations.common.utils import data_to_dict
-from metldata.builtin_transformations.infer_relation.config import (
-    InferRelationConfig,
-)
 from metldata.builtin_transformations.infer_relation.resolve_path import (
     resolve_path,
 )
 from metldata.transform.exceptions import EvitableTransformationError
 
 
-def get_class_resources(
-    *, data: MutableDatapack, class_name: str
-) -> MutableClassResources:
-    """Extract the resources of a given class from the dictionary."""
-    resources = data["resources"].get(class_name)
-    if not resources:
-        raise EvitableTransformationError()
-    return resources
-
-
 def infer_data_relation(
-    *, data: DataPack, model: SchemaPack, transformation_config: InferRelationConfig
+    *,
+    data: DataPack,
+    model: SchemaPack,
+    class_name: str,
+    relation_name: str,
+    relation_path: RelationPath,
 ) -> DataPack:
-    """Adds inferred relations to the data as given in the configuration."""
+    """Adds inferred relations to the data as given in the configuration.
+
+    Args:
+        data: The data to be transformed.
+        model: The model of the data.
+        class_name: The name of the class to which the relation will be added.
+        relation_name: The name of the relation to be added.
+        relation_path: The path indicating the route by which the two classes are related to each other.
+    """
     modified_data = data_to_dict(data)
 
-    # name of the class to which the relation will be added
-    class_name = transformation_config.class_name
-
-    # name of the relation to be added
-    relation_name = transformation_config.relation_name
-
-    path = transformation_config.relation_path
-    referenced_class = path.target
+    referenced_class = relation_path.target
 
     # the target prefix refers to resources that will be modified by the transformation
     target_resources = get_class_resources(data=modified_data, class_name=class_name)
 
     for resource_id, resource in target_resources.items():
         relation_target_ids = resolve_path(
-            data=data, source_resource_id=resource_id, path=path
+            data=data, source_resource_id=resource_id, path=relation_path
         )
         target_ids = conditionally_unpack_target_ids(
             model=model,
@@ -77,6 +71,16 @@ def infer_data_relation(
             "targetResources": target_ids,
         }
     return DataPack.model_validate(modified_data)
+
+
+def get_class_resources(
+    *, data: MutableDatapack, class_name: str
+) -> MutableClassResources:
+    """Extract the resources of a given class from the dictionary."""
+    resources = data["resources"].get(class_name)
+    if not resources:
+        raise EvitableTransformationError()
+    return resources
 
 
 def conditionally_unpack_target_ids(

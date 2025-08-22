@@ -20,21 +20,15 @@ from schemapack.spec.schemapack import SchemaPack
 from metldata.builtin_transformations.common.assumptions.path_assumptions import (
     check_class_exists,
 )
-from metldata.builtin_transformations.delete_class.config import (
-    DeleteClassConfig,
-)
 from metldata.transform.exceptions import ModelAssumptionError
 
 
-def check_model_assumptions(
-    model: SchemaPack,
-    transformation_config: DeleteClassConfig,
-) -> None:
+def check_model_assumptions(model: SchemaPack, class_name: str) -> None:
     """Check model assumptions for the delete class transformation."""
-    check_class_exists(model=model, class_name=transformation_config.class_name)
+    check_class_exists(model=model, class_name=class_name)
     check_class_is_not_root(
         model=model,
-        class_name=transformation_config.class_name,
+        class_name=class_name,
     )
 
 

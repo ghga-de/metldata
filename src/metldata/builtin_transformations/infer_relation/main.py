@@ -53,7 +53,11 @@ class InferRelationTransformer(
                 if the transformation fails.
         """
         return infer_data_relation(
-            data=data, model=self._transformed_model, transformation_config=self._config
+            data=data,
+            model=self._transformed_model,
+            class_name=self._config.class_name,
+            relation_name=self._config.relation_name,
+            relation_path=self._config.relation_path,
         )
 
 
@@ -66,7 +70,12 @@ def check_model_assumptions_wrapper(
         ModelAssumptionError:
             if the model does not fulfill the assumptions.
     """
-    check_model_assumptions(model=model, transformation_config=config)
+    check_model_assumptions(
+        model=model,
+        class_name=config.class_name,
+        relation_name=config.relation_name,
+        relation_path=config.relation_path,
+    )
 
 
 def transform_model(model: SchemaPack, config: InferRelationConfig) -> SchemaPack:
@@ -76,7 +85,11 @@ def transform_model(model: SchemaPack, config: InferRelationConfig) -> SchemaPac
         DataModelTransformationError:
             if the transformation fails.
     """
-    return infer_model_relation(model=model, transformation_config=config)
+    return infer_model_relation(
+        model=model,
+        relation_name=config.relation_name,
+        relation_path=config.relation_path,
+    )
 
 
 INFER_RELATION_TRANSFORMATION = TransformationDefinition[InferRelationConfig](

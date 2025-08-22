@@ -18,29 +18,22 @@
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.common.utils import model_to_dict
-from metldata.builtin_transformations.delete_class.config import (
-    DeleteClassConfig,
-)
 from metldata.transform.exceptions import EvitableTransformationError
 
 
-def delete_model_class(
-    *,
-    model: SchemaPack,
-    transformation_config: DeleteClassConfig,
-) -> SchemaPack:
+def delete_model_class(*, model: SchemaPack, class_name: str) -> SchemaPack:
     """Delete class from the model."""
     mutable_model = model_to_dict(model)
 
     try:
-        del mutable_model["classes"][transformation_config.class_name]
+        del mutable_model["classes"][class_name]
     except KeyError as exc:
         raise EvitableTransformationError() from exc
 
     _remove_relations_from_model(
         mutable_model=mutable_model,
         original_model=model,
-        target_class=transformation_config.class_name,
+        target_class=class_name,
     )
 
     return SchemaPack.model_validate(mutable_model)

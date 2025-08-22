@@ -15,23 +15,49 @@
 
 "Model transformation logic for the 'merge relations' transformation"
 
-from schemapack.spec.schemapack import SchemaPack
+from pydantic import BaseModel, Field
+from schemapack.spec.schemapack import (
+    MandatoryRelationSpec,
+    MultipleRelationSpec,
+    SchemaPack,
+)
 
 from metldata.builtin_transformations.common.custom_types import MutableClassRelations
 from metldata.builtin_transformations.common.utils import model_to_dict
-from metldata.builtin_transformations.merge_relations.config import MergeRelationsConfig
 from metldata.transform.exceptions import EvitableTransformationError
 
 
-def merge_model_relations(
-    *, model: SchemaPack, transformation_config: MergeRelationsConfig
-) -> SchemaPack:
-    """Model transformation logic for the 'merge relations' transformation"""
-    mutable_model = model_to_dict(model)
+class RelationSpecificationParams(BaseModel):
+    """Parameters for relation specifications in the merge relations transformation."""
 
-    class_name = transformation_config.class_name
-    target_relation_name = transformation_config.target_relation
-    source_relations = transformation_config.source_relations
+    mandatory: MandatoryRelationSpec = Field(
+        ..., description="The modality of the relation."
+    )
+    multiple: MultipleRelationSpec = Field(
+        ..., description="The cardinality of the relation."
+    )
+    description: str | None = Field(
+        default=None, description="Description of the relation."
+    )
+
+
+def merge_model_relations(
+    *,
+    model: SchemaPack,
+    class_name: str,
+    target_relation: str,
+    source_relations: list[str],
+    relation_spec: RelationSpecificationParams,
+) -> SchemaPack:
+    """Model transformation logic for the 'merge relations' transformation.
+    Args:
+        model: The model to be transformed.
+        class_name: The name of the class to merge relations for.
+        target_relation: The name of the relation to merge into.
+        source_relations: List of relation names to be merged.
+        relation_spec: Parameters for the relation specification.
+    """
+    mutable_model = model_to_dict(model)
 
     target_class = _get_target_class(
         model=model, class_name=class_name, source_relations=source_relations
@@ -43,11 +69,11 @@ def merge_model_relations(
         raise EvitableTransformationError from exc
 
     # add the new relation
-    mutable_class_relations[target_relation_name] = {
+    mutable_class_relations[target_relation] = {
         "targetClass": target_class,
-        "mandatory": transformation_config.mandatory,
-        "multiple": transformation_config.multiple,
-        "description": transformation_config.description,
+        "mandatory": relation_spec.mandatory,
+        "multiple": relation_spec.multiple,
+        "description": relation_spec.description,
     }
 
     # delete relations that are merged
