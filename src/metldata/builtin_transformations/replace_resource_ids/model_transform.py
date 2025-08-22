@@ -12,29 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-"An empty submission annotation model for testing purposes"
+"""Model transformation logic for the 'replace resource ids' transformation"""
 
-from typing import TypeAlias
-
-from pydantic import BaseModel
-
-ClassName: TypeAlias = str
-OldAccession: TypeAlias = str
-NewAccession: TypeAlias = str
+from schemapack.spec.schemapack import SchemaPack
 
 
-class EmptySubmissionAnnotation(BaseModel):
-    """An empty submission annotation model for testing purposes."""
-
-
-EMPTY_SUBMISSION_ANNOTATION = EmptySubmissionAnnotation()
-
-
-class AccessionAnnotation(BaseModel):
-    """A submission annotation model with an accession field.
-    Example: {`accession_map`:{`File`:{`file_a`: `TESTS0000000001`}}}
-    """
-
-    accession_map: dict[ClassName, dict[OldAccession, NewAccession]]
+def replace_model_resource_ids(model: SchemaPack) -> SchemaPack:
+    """Return the model as it is, since the resource ids are not a part of the model."""
+    return model

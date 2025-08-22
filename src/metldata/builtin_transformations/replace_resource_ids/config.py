@@ -12,29 +12,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-"An empty submission annotation model for testing purposes"
+"""Models for the configuration used in the 'replace resource ids' transformation."""
 
-from typing import TypeAlias
-
-from pydantic import BaseModel
-
-ClassName: TypeAlias = str
-OldAccession: TypeAlias = str
-NewAccession: TypeAlias = str
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
-class EmptySubmissionAnnotation(BaseModel):
-    """An empty submission annotation model for testing purposes."""
+class ReplaceResourceIdsConfig(BaseSettings):
+    """A model describing a configuration for renaming an id property of a class."""
 
-
-EMPTY_SUBMISSION_ANNOTATION = EmptySubmissionAnnotation()
-
-
-class AccessionAnnotation(BaseModel):
-    """A submission annotation model with an accession field.
-    Example: {`accession_map`:{`File`:{`file_a`: `TESTS0000000001`}}}
-    """
-
-    accession_map: dict[ClassName, dict[OldAccession, NewAccession]]
+    class_name: str = Field(
+        default=...,
+        description="The name of the class whose resource ids will be replaced.",
+    )
