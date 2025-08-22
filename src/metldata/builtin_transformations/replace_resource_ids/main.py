@@ -46,6 +46,16 @@ class ReplaceResourceIdsTransformer(
 
     def transform(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
         """Transforms data.
+        The expected format of the 'annotation' parameter is:
+        {
+            'accession_map': {
+                <class_name>: {
+                    <old_id>: <new_id>,
+                    ...
+                },
+                ...
+            }
+        }
 
         Args:
             data: The data as DataPack to be transformed.

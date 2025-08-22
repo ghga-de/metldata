@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""A transformation to replace the resource ids of a class in the data using annotations."""
+"""A transformation to replace the resource ids in the data with the ones coming from an annotation."""
 
 from metldata.builtin_transformations.replace_resource_ids.main import (  # noqa: F401
     REPLACE_RESOURCE_IDS_TRANSFORMATION,

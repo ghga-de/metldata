@@ -56,13 +56,13 @@ def replace_data_resource_ids(
     _replace_ids_in_relations(
         modified_data=modified_data,
         original_data=data,
-        target_class=class_name,
+        target_class_name=class_name,
         resource_accessions=resource_accessions,
     )
     return DataPack.model_validate(modified_data)
 
 
-def _get_resource_accessions(*, annotation: BaseModel, class_name: str) -> AccessionMap:
+def _get_resource_accessions(*, class_name: str, annotation: BaseModel) -> AccessionMap:
     """Extract resource ids from annotations."""
     try:
         accession_map = annotation.model_dump()["accession_map"]
@@ -91,7 +91,7 @@ def _update_resources(
         for old_id, new_id in resource_accessions.items()
         if old_id in original_resources
     }
-
+    # Set operation uses the keys
     missing_ids = set(original_resources) - set(resource_accessions)
     if missing_ids:
         raise ValueError(
@@ -104,8 +104,8 @@ def _replace_ids_in_relations(
     *,
     modified_data: MutableDatapack,
     original_data: DataPack,
-    target_class: str,
     resource_accessions: AccessionMap,
+    target_class_name: str,
 ) -> None:
     """Replace resource IDs in relations of the modified data.
 
@@ -122,10 +122,11 @@ def _replace_ids_in_relations(
 
             for relation_name, relation_spec in resource.relations.items():
                 new_target_ids: str | set
-                if relation_spec.targetClass != target_class:
+                if relation_spec.targetClass != target_class_name:
                     continue
 
                 target_resources = relation_spec.targetResources
+
                 if not target_resources:
                     continue
 
@@ -133,15 +134,13 @@ def _replace_ids_in_relations(
                     new_target_ids = resource_accessions[target_resources]
                 elif isinstance(target_resources, frozenset):
                     new_target_ids = {
-                        resource_accessions.get(target_resource)
+                        resource_accessions[target_resource]
                         for target_resource in target_resources
                     }
-                else:
-                    continue
 
                 modified_data["resources"][class_name][resource_id]["relations"][
                     relation_name
                 ] = {
-                    "targetClass": target_class,
+                    "targetClass": target_class_name,
                     "targetResources": new_target_ids,
                 }
