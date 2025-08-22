@@ -91,7 +91,7 @@ def _update_resources(
         for old_id, new_id in resource_accessions.items()
         if old_id in original_resources
     }
-
+    # Set operation uses the keys
     missing_ids = set(original_resources) - set(resource_accessions)
     if missing_ids:
         raise ValueError(
