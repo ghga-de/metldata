@@ -23,7 +23,7 @@ from metldata.builtin_transformations.common.custom_types import (
     MutableDatapack,
     ResourceId,
 )
-from metldata.builtin_transformations.common.path.path import RelationPath
+from metldata.builtin_transformations.common.path import RelationPath
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.infer_relation.resolve_path import (
     resolve_path,

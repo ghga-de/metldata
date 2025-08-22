@@ -18,7 +18,7 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
-from metldata.builtin_transformations.common.path.path import RelationPath
+from metldata.builtin_transformations.common.path import RelationPath
 
 
 class InferRelationConfig(BaseSettings):

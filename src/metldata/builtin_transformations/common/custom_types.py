@@ -21,7 +21,7 @@ from typing import Annotated, Any, TypeAlias
 
 from pydantic import Field
 
-from metldata.builtin_transformations.common.path.path import RelationPath
+from metldata.builtin_transformations.common.path import RelationPath
 
 _NonEmptyStr: TypeAlias = Annotated[str, Field(..., min_length=1)]
 ResourceId: TypeAlias = _NonEmptyStr

@@ -21,7 +21,7 @@ from metldata.builtin_transformations.common.assumptions.path_assumptions import
     assert_path_classes_and_relations_exist,
     assert_relation_does_not_exist,
 )
-from metldata.builtin_transformations.common.path.path import RelationPath
+from metldata.builtin_transformations.common.path import RelationPath
 
 
 def check_model_assumptions(

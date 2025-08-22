@@ -15,3 +15,5 @@
 #
 
 """Utils for dealing with references between classes of the metadata model."""
+
+from metldata.builtin_transformations.common.path.path import RelationPath  # noqa: F401
