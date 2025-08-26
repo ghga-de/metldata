@@ -1,0 +1,179 @@
+operations:
+  # Duplicate Dataset as DatasetStats
+  - name: duplicate_class
+    description: "Create a duplicate of class Dataset named DatasetStats"
+    args:
+      source_class_name: Dataset
+      target_class_name: DatasetStats
+  # Infer samples relations for DatasetStats
+  - name: infer_relation
+    description: "Infer relations for class DatasetStats"
+    args:
+      class_name: DatasetStats
+      relation_name: "{{{ item.relation_name }}}"
+      relation_path: "{{{ item.relation_path }}}"
+    loop:
+      - relation_name: data_access_committee
+        relation_path: DatasetStats(data_access_policy)>DataAccessPolicy(data_access_committee)>DataAccessCommittee
+      - relation_name: samples_from_individual_supporting_files
+        relation_path: DatasetStats<(dataset)IndividualSupportingFile(individual)>Individual<(individual)Sample
+      - relation_name: samples_from_research_data_files
+        relation_path: DatasetStats<(dataset)ResearchDataFile(experiments)>Experiment(sample)>Sample
+      - relation_name: samples_from_experiment_supporting_files
+        relation_path: DatasetStats<(dataset)ExperimentMethodSupportingFile(experiment_method)>ExperimentMethod<(experiment_method)Experiment(sample)>Sample
+      - relation_name: samples_from_process_data_files
+        relation_path: DatasetStats<(dataset)ProcessDataFile(analysis)>Analysis(research_data_files)>ResearchDataFile(experiments)>Experiment(sample)>Sample
+      - relation_name: samples_from_analysis_method_supporting_files
+        relation_path: DatasetStats<(dataset)AnalysisMethodSupportingFile(analysis_method)>AnalysisMethod<(analysis_method)Analysis(research_data_files)>ResearchDataFile(experiments)>Experiment(sample)>Sample
+  # Merge relations to get all the samples involved in datasets
+  - name: merge_relations
+    description: "Create {{{ item.target_relation }}} relation for each DatasetStats"
+    args:
+      class_name: DatasetStats
+      source_relations:
+        [
+          samples_from_individual_supporting_files,
+          samples_from_research_data_files,
+          samples_from_experiment_supporting_files,
+          samples_from_process_data_files,
+          samples_from_analysis_method_supporting_files,
+        ]
+      target_relation: samples
+      description: "samples related to the dataset."
+      mandatory:
+        origin: false
+        target: false
+      multiple:
+        origin: true
+        target: true
+
+  # Using the samples, infer dataset-individual relations
+  - name: infer_relation
+    description: "Infer relations for each DatasetStats"
+    args:
+      class_name: DatasetStats
+      relation_name: individuals
+      relation_path: DatasetStats(samples)>Sample(individual)>Individual
+
+  # Transform content
+  - name: transform_content
+    description: "Dataset stats"
+    args:
+      class_name: DatasetStats
+      content_schema:
+        {
+          "$schema": "https://json-schema.org/draft/2019-09/schema",
+          "additionalProperties": false,
+          "description": "A Dataset is a collection of Files that is prepared for distribution and is tied to a Data Access Policy.",
+          "properties":
+            {
+              "description":
+                {
+                  "type": "string",
+                  "description": "A description summarizing this Dataset.",
+                },
+              "types":
+                {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "The type of this Dataset.",
+                },
+              "title":
+                {
+                  "type": "string",
+                  "description": "A title for this Dataset.",
+                },
+              "dac_email":
+                {
+                  "type": "string",
+                  "description": "The email of the Data Access Committee (e.g.,
+                    DAC[at]email.com). This property must not include any personally
+                    identifiable data.",
+                },
+              "samples_summary":
+                {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties":
+                    {
+                      "count": { "type": "integer" },
+                      "stats":
+                        {
+                          "type": "object",
+                          "additionalProperties": true,
+                          "properties":
+                            {
+                              "tissues":
+                                {
+                                  "type": "object",
+                                  "items":
+                                    {
+                                      "type": "object",
+                                      "additionalProperties":
+                                        { "type": "integer" },
+                                    },
+                                },
+                              "sex":
+                                {
+                                  "type": "object",
+                                  "items":
+                                    {
+                                      "type": "object",
+                                      "additionalProperties":
+                                        { "type": "integer" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                  "required": ["count", "stats"],
+                },
+            },
+          "required":
+            ["title", "description", "types", "dac_email", "samples_summary"],
+          "type": "object",
+        }
+      embedding_profile: { "study": False, "samples": { "individual": False } }
+      content_template_yaml: |
+        description: {{ original.description }}
+        types: {{ original.types }}
+        title: {{ original.title }}
+        dac_email: {{ original.data_access_committee.email }}
+        samples_summary:
+          count: {{ original.samples | length }}
+          stats:
+            tissues:
+              {% for key, values in original.samples |  groupby("biospecimen_tissue_term") %}
+                {{ key }}: {{ values | length }}
+              {% else %}
+                {}
+              {% endfor %}
+            sex:
+              {% for key, values in original.individuals |  groupby("sex") %}
+                {{ key }}: {{ values | length }}
+              {% else %}
+                {}
+              {% endfor %}
+
+  # Delete classes
+  - name: delete_class
+    description: "Delete class {{ item }}"
+    args:
+      class_name: "{{{ item }}}"
+    loop:
+      - Analysis
+      - AnalysisMethod
+      - AnalysisMethodSupportingFile
+      - DataAccessCommittee
+      - DataAccessPolicy
+      - Dataset
+      - Experiment
+      - ExperimentMethod
+      - ExperimentMethodSupportingFile
+      - Individual
+      - IndividualSupportingFile
+      - ProcessDataFile
+      - Publication
+      - ResearchDataFile
+      - Sample
+      - Study

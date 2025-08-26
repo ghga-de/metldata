@@ -1,0 +1,60 @@
+schemapack: 4.0.0
+description: Metadata schema for the German Human Genome-Phenome Archive (GHGA)
+classes:
+  DatasetStats:
+    id:
+      propertyName: alias
+    content:
+      additionalProperties: false
+      description: A Dataset is a collection of Files that is prepared for
+        distribution and is tied to a Data Access Policy.
+      properties:
+        description:
+          description: A description summarizing this Dataset.
+          type: string
+        title:
+          description: A title for this Dataset.
+          type: string
+        types:
+          description: The type of this Dataset.
+          items:
+            type: string
+          type: array
+        dac_email:
+          description:
+            The email of the Data Access Committee (e.g., DAC[at]email.com).
+            This property must not include any personally identifiable data.
+          type: string
+        samples_summary:
+          type: object
+          additionalProperties: true
+          properties:
+            count:
+              type: integer
+            stats:
+              type: object
+              additionalProperties: true
+              properties:
+                tissues:
+                  type: object
+                  items:
+                    type: object
+                    additionalProperties:
+                      type: integer
+                sex:
+                  type: object
+                  items:
+                    type: object
+                    additionalProperties:
+                      type: integer
+          required:
+            - count
+            - stats
+      required:
+        - title
+        - description
+        - types
+        - dac_email
+        - samples_summary
+      type: object
+      $schema: https://json-schema.org/draft/2019-09/schema

@@ -1,0 +1,35 @@
+datapack: 4.0.0
+resources:
+  DatasetStats:
+    DS_A:
+      content:
+        title: The complete-A dataset
+        description: An interesting dataset A of complete example set
+        types:
+          - A Type
+          - Another Type
+        dac_email: dac_institute_a@dac.dac
+        samples_summary:
+          count: 2
+          stats:
+            tissues:
+              blood: 1
+              subcutaneous adipose tissue: 1
+            sex:
+              MALE: 1
+
+    DS_B:
+      content:
+        title: The complete-B dataset
+        description: An interesting dataset B of complete example set
+        types:
+          - And another Type
+        dac_email: dac_institute_a@dac.dac
+        samples_summary:
+          count: 2
+          stats:
+            tissues:
+              blood: 1
+              subcutaneous adipose tissue: 1
+            sex:
+              MALE: 1

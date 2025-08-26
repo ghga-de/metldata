@@ -1,0 +1,508 @@
+datapack: 4.0.0
+resources:
+  Analysis:
+    ANALYSIS_1:
+      content:
+        title: Analysis 1
+        description: Analysis 1 is done like this.
+        type: Sequence Variation
+        ega_accession: EGAANALYSIS12345
+      relations:
+        analysis_method:
+          targetClass: AnalysisMethod
+          targetResources: ANALYSIS_METHOD_1
+        research_data_files:
+          targetClass: ResearchDataFile
+          targetResources:
+            - RESEARCH_DATA_FILE_1
+            - RESEARCH_DATA_FILE_2
+    ANALYSIS_2:
+      content:
+        title: Analysis 2
+        description: Analysis 2 is done like this.
+        type: Sequence Variation
+        ega_accession: EGAANALYSIS12346
+      relations:
+        analysis_method:
+          targetClass: AnalysisMethod
+          targetResources: ANALYSIS_METHOD_1
+        research_data_files:
+          targetClass: ResearchDataFile
+          targetResources:
+            - RESEARCH_DATA_FILE_3
+  AnalysisMethod:
+    ANALYSIS_METHOD_1:
+      content:
+        name: Analysis 1
+        description: Analysis 1 is done like this.
+        type: Sequence Variation
+        workflow_name: workflow 1
+        workflow_version: 1.0.0
+        workflow_repository: https://github.com/WF1/tree/1.0.0
+        workflow_doi: 10.1234/fake.doi.2024.56789
+        workflow_tasks: Variant Calling
+        parameters:
+          - key: output-format
+            value: VCF
+          - key: threads
+            value: "8"
+        software_versions:
+          - key: GATK
+            value: 4.5.0
+  AnalysisMethodSupportingFile:
+    ANALYSIS_METHOD_SF_1:
+      content:
+        format: TXT
+        name: analysis_method_1_parameters.txt
+        ega_accession: EGAANALYSISMETHOD123456
+        included_in_submission: true
+      relations:
+        analysis_method:
+          targetClass: AnalysisMethod
+          targetResources: ANALYSIS_METHOD_1
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_B
+  Study:
+    STUDY_A:
+      content:
+        title: The A Study
+        description: A study that is the A study
+        types:
+          - SYNTHETIC_GENOMICS
+          - WHOLE_GENOME_SEQUENCING
+        ega_accession: EGASTUDY12345
+        affiliations:
+          - Some Institute
+          - Some other Institute
+        attributes:
+          - key: budget
+            value: 3.5M
+          - key: funding
+            value: EU
+    STUDY_B:
+      content:
+        title: The B Study
+        description: A study that is the B study
+        types:
+          - WHOLE_GENOME_SEQUENCING
+        ega_accession: EGASTUDY12346
+        affiliations:
+          - Some Institute
+  Individual:
+    INDV_1:
+      content:
+        phenotypic_features_terms:
+          - Leukemia
+        phenotypic_features_ids:
+          - HP:0001909
+        diagnosis_ids:
+          - ICD-10:C92
+        diagnosis_terms:
+          - Myeloid leukaemia
+        sex: MALE
+        geographical_region_term: Italy
+        geographical_region_id: NCIT:C16761
+        ancestry_terms:
+          - European
+        ancestry_ids:
+          - HANCESTRO:0005
+  IndividualSupportingFile:
+    INDV_SF_1:
+      content:
+        format: JSON
+        name: indv_1_phenopackage.json
+        included_in_submission: true
+      relations:
+        individual:
+          targetClass: Individual
+          targetResources: INDV_1
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_A
+  Sample:
+    SAMPLE_1:
+      content:
+        name: GHGAS_blood_sample1
+        type: CF_DNA
+        biological_replicate: 1
+        description: Arterial blood sample 1
+        storage: FREEZER
+        disease_or_healthy: DISEASE
+        case_control_status: CASE
+        ega_accession: EGASAMPLE12345
+        biospecimen_name: Biospecmen material
+        biospecimen_type: Blood
+        biospecimen_description: Blood biospecimen
+        biospecimen_age_at_sampling: 66_TO_70
+        biospecimen_vital_status_at_sampling: ALIVE
+        biospecimen_tissue_term: blood
+        biospecimen_tissue_id: BTO:0000089
+        biospecimen_isolation: BLOOD_DRAW
+        biospecimen_storage: REFRIGERATOR
+      relations:
+        individual:
+          targetClass: Individual
+          targetResources: INDV_1
+    SAMPLE_2:
+      content:
+        name: GHGAS_tissue_sample1
+        type: CF_DNA
+        biological_replicate: 1
+        description: white adipose tissue sample 1
+        storage: ULTRA_LOW_FREEZER
+        disease_or_healthy: HEALTHY
+        case_control_status: CONTROL
+        ega_accession: EGASAMPLE12346
+        biospecimen_name: Another biospecimen material
+        biospecimen_type: Subcutaneous fat
+        biospecimen_description: Subcutaneous fat biospecimen
+        biospecimen_age_at_sampling: 66_TO_70
+        biospecimen_vital_status_at_sampling: ALIVE
+        biospecimen_tissue_term: subcutaneous adipose tissue
+        biospecimen_tissue_id: BTO:0004042
+        biospecimen_isolation: SURGICAL_REMOVAL
+        biospecimen_storage: REFRIGERATOR
+      relations:
+        individual:
+          targetClass: Individual
+          targetResources: INDV_1
+  ExperimentMethod:
+    EXP_METHOD_1:
+      content:
+        name: Experiment Method 1
+        description: Experiment method 1 is conducted like this.
+        type: DNA-seq
+        library_type: WGS
+        library_selection_methods:
+          - UNSPECIFIED
+        library_preparation: PCR-amplification
+        library_preparation_kit_retail_name: 10X_GENOMICS_CHROMIUM_SINGLE_CELL_3_V2
+        library_preparation_kit_manufacturer: Illumina
+        primer: GENE_SPECIFIC
+        end_bias: FULL_LENGTH
+        target_regions:
+          - chr6:123456-12345678
+        instrument_model: 454_GS
+        sequencing_center: Center A
+        sequencing_read_length: long
+        sequencing_layout: SE
+        target_coverage: x50
+        flow_cell_id: ID_Cell 1_Lane_1
+        flow_cell_type: ILLUMINA_NOVA_SEQ_S4
+        sample_barcode_read: INDEX1
+        ega_accession: EGAEXPERIMENTMETHOD12345
+  ExperimentMethodSupportingFile:
+    EXP_METHOD_SF_1:
+      content:
+        format: TXT
+        name: exp_method_1_protocol.txt
+        ega_accession: EGAEXPERIMENTMETHOD123456
+        included_in_submission: true
+      relations:
+        experiment_method:
+          targetClass: ExperimentMethod
+          targetResources: EXP_METHOD_1
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_A
+  Experiment:
+    EXP_1:
+      content:
+        title: Experiment 1
+        description: Experiment 1 is done like this.
+        type: DNA-seq
+        ega_accession: EGAEXP12345
+      relations:
+        sample:
+          targetClass: Sample
+          targetResources: SAMPLE_1
+        experiment_method:
+          targetClass: ExperimentMethod
+          targetResources: EXP_METHOD_1
+    EXP_2:
+      content:
+        title: Experiment 2
+        description: Experiment 2 is done like this.
+        type: DNA-seq
+        ega_accession: EGAEXP12346
+      relations:
+        sample:
+          targetClass: Sample
+          targetResources: SAMPLE_2
+        experiment_method:
+          targetClass: ExperimentMethod
+          targetResources: EXP_METHOD_1
+  ResearchDataFile:
+    RESEARCH_DATA_FILE_1:
+      content:
+        format: FASTQ
+        technical_replicate: 1
+        sequencing_lane_id: LANE_123
+        name: SAMPLE_1_SPECIMEN_1_FILE_1.fastq.gz
+        ega_accession: EGAFILE12346
+        included_in_submission: true
+      relations:
+        experiments:
+          targetClass: Experiment
+          targetResources:
+            - EXP_1
+            - EXP_2
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_A
+    RESEARCH_DATA_FILE_2:
+      content:
+        format: FASTQ
+        technical_replicate: 2
+        sequencing_lane_id: LANE_124
+        name: SAMPLE_1_SPECIMEN_1_FILE_2.fastq.gz
+        ega_accession: EGAFILE12347
+        included_in_submission: true
+      relations:
+        experiments:
+          targetClass: Experiment
+          targetResources:
+            - EXP_1
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_A
+    RESEARCH_DATA_FILE_3:
+      content:
+        format: FASTQ
+        technical_replicate: 3
+        sequencing_lane_id: LANE_125
+        name: SAMPLE_1_SPECIMEN_1_FILE_3.fastq.gz
+        ega_accession: EGAFILE12348
+        included_in_submission: true
+      relations:
+        experiments:
+          targetClass: Experiment
+          targetResources:
+            - EXP_1
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_A
+    RESEARCH_DATA_FILE_4:
+      content:
+        format: FASTQ
+        technical_replicate: 1
+        sequencing_lane_id: LANE_126
+        name: SAMPLE_2_SPECIMEN_1_FILE_4.fastq.gz
+        ega_accession: EGAFILE12349
+        included_in_submission: true
+      relations:
+        experiments:
+          targetClass: Experiment
+          targetResources:
+            - EXP_2
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_B
+    RESEARCH_DATA_FILE_5:
+      content:
+        format: FASTQ
+        technical_replicate: 2
+        sequencing_lane_id: LANE_127
+        name: SAMPLE_2_SPECIMEN_1_FILE_5.fastq.gz
+        ega_accession: EGAFILE12350
+        included_in_submission: true
+      relations:
+        experiments:
+          targetClass: Experiment
+          targetResources:
+            - EXP_2
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_B
+    RESEARCH_DATA_FILE_6:
+      content:
+        format: FASTQ
+        technical_replicate: 3
+        sequencing_lane_id: LANE_128
+        name: SAMPLE_2_SPECIMEN_1_FILE_6.fastq.gz
+        ega_accession: EGAFILE12351
+        included_in_submission: true
+      relations:
+        experiments:
+          targetClass: Experiment
+          targetResources:
+            - EXP_2
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_B
+    RESEARCH_DATA_FILE_7:
+      content:
+        format: FASTQ
+        technical_replicate: 4
+        sequencing_lane_id: LANE_129
+        name: SAMPLE_2_SPECIMEN_1_FILE_7.fastq.gz
+        ega_accession: EGAFILE12352
+        included_in_submission: true
+      relations:
+        experiments:
+          targetClass: Experiment
+          targetResources:
+            - EXP_2
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_B
+    RESEARCH_DATA_FILE_8:
+      content:
+        format: FASTQ
+        technical_replicate: 5
+        sequencing_lane_id: LANE_130
+        name: SAMPLE_2_SPECIMEN_1_FILE_8.fastq.gz
+        ega_accession: EGAFILE12353
+        included_in_submission: true
+      relations:
+        experiments:
+          targetClass: Experiment
+          targetResources:
+            - EXP_2
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_B
+    RESEARCH_DATA_FILE_9:
+      content:
+        format: FASTQ
+        technical_replicate: 6
+        sequencing_lane_id: LANE_131
+        name: SAMPLE_2_SPECIMEN_1_FILE_9.fastq.gz
+        ega_accession: EGAFILE12354
+        included_in_submission: true
+      relations:
+        experiments:
+          targetClass: Experiment
+          targetResources:
+            - EXP_2
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_B
+  ProcessDataFile:
+    PROCESSED_DATA_FILE_1:
+      content:
+        format: VCF
+        name: SAMPLE_1_SPECIMEN_FILE_1_2.vcf.gz
+        ega_accession: EGAPROCESSED12345
+        included_in_submission: true
+      relations:
+        analysis:
+          targetClass: Analysis
+          targetResources: ANALYSIS_1
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_A
+    PROCESSED_DATA_FILE_2:
+      content:
+        format: VCF
+        name: SAMPLE_1_SPECIMEN_1_FILE_3.vcf.gz
+        ega_accession: EGAPROCESSED12346
+        included_in_submission: true
+      relations:
+        analysis:
+          targetClass: Analysis
+          targetResources: ANALYSIS_2
+        dataset:
+          targetClass: Dataset
+          targetResources: DS_A
+  Dataset:
+    DS_A:
+      content:
+        title: The complete-A dataset
+        description: An interesting dataset A of complete example set
+        types:
+          - A Type
+          - Another Type
+        ega_accession: EGADATASET12345
+      relations:
+        study:
+          targetClass: Study
+          targetResources: STUDY_A
+        data_access_policy:
+          targetClass: DataAccessPolicy
+          targetResources: DAP_1
+    DS_B:
+      content:
+        title: The complete-B dataset
+        description: An interesting dataset B of complete example set
+        types:
+          - And another Type
+        ega_accession: EGADATASET12346
+      relations:
+        study:
+          targetClass: Study
+          targetResources: STUDY_B
+        data_access_policy:
+          targetClass: DataAccessPolicy
+          targetResources: DAP_2
+  DataAccessPolicy:
+    DAP_1:
+      content:
+        name: DAP 1
+        description: A Data Access Policy 1
+        policy_text: This is a very permissible DAP
+        policy_url: http://some/policy
+        data_use_permission_term: DISEASE_SPECIFIC_RESEARCH
+        data_use_permission_id: DUO:0000007
+        data_use_modifier_terms:
+          - CLINICAL_CARE_USE
+        data_use_modifier_ids:
+          - DUO:0000043
+        ega_accession: EGADAP12345
+      relations:
+        data_access_committee:
+          targetClass: DataAccessCommittee
+          targetResources: DAC_1
+    DAP_2:
+      content:
+        name: DAP 2
+        description: A Data Access Policy 2
+        policy_text: This is a very strict DAP
+        policy_url: http://some/other/policy
+        data_use_permission_term: NO_RESTRICTION
+        data_use_permission_id: DUO:0000004
+        data_use_modifier_terms:
+          - USER_SPECIFIC_RESTRICTION
+        data_use_modifier_ids:
+          - DUO:0000026
+        ega_accession: EGADAP12346
+      relations:
+        data_access_committee:
+          targetClass: DataAccessCommittee
+          targetResources: DAC_1
+  DataAccessCommittee:
+    DAC_1:
+      content:
+        email: dac_institute_a@dac.dac
+        institute: institute_a
+        ega_accession: EGADAC12345
+  Publication:
+    PUB_1:
+      content:
+        title: A paper of a study
+        abstract: This study aims finding findings.
+        author: John Doe
+        year: 1965
+        journal: Journal of Studies
+        doi: 10.1234/abcd.5678
+        xref:
+          - abcd_pubmed_link.pubmed
+      relations:
+        study:
+          targetClass: Study
+          targetResources: STUDY_A
+    PUB_2:
+      content:
+        title: Another paper of the same study
+        abstract: This study aims finding more findings.
+        author: John Doe
+        year: 1967
+        journal: Journal of Studies
+        doi: 10.9876/efgh.5432
+        xref:
+          - efgh_pubmed_link.pubmed
+      relations:
+        study:
+          targetClass: Study
+          targetResources: STUDY_A
