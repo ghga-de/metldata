@@ -53,16 +53,16 @@ from tests.fixtures.utils import BASE_DIR, read_yaml
 
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
 WORKFLOW_BY_NAME: list[str] = [
-    # "add_multiple_content_properties",
-    # "count_references",
-    # "duplicate_one_delete_multiple",
-    # "duplicate_multiple_delete_one",
-    # "delete_multiple",
-    # "infer_multiple",
-    # "duplicate_multiple_delete_one_embed_relation",
-    # "duplicate_infer_delete_merge",
-    # "rename_id_property_multiple",
-    # "rename_id_property_transform_content_update_resource_ids",
+    "add_multiple_content_properties",
+    "count_references",
+    "duplicate_one_delete_multiple",
+    "duplicate_multiple_delete_one",
+    "delete_multiple",
+    "infer_multiple",
+    "duplicate_multiple_delete_one_embed_relation",
+    "duplicate_infer_delete_merge",
+    "rename_id_property_multiple",
+    "rename_id_property_transform_content_update_resource_ids",
     "ghga_aggregation_workflow",
 ]
 TRANSFORMATION_REGISTRY = {
