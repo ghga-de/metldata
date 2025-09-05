@@ -433,6 +433,16 @@ operations:
         samples_summary:
           count: {{ original.samples | length }}
           stats:
+            phenotypic_features:
+              {% set term_counts = {} %}
+              {% for individual in original.individuals %}
+                  {% for term in individual.phenotypic_features_terms %}
+                      {% set _ = term_counts.update({term: term_counts.get(term, 0) + 1}) %}
+                  {% endfor %}
+              {% endfor %}
+              {% for term, count in term_counts.items() %}
+              {{ term }} : {{ count }}
+              {% endfor %}
             tissues:
               {% for key, values in original.samples |  groupby("biospecimen_tissue_term") %}
                 {{ key }}: {{ values | length }}

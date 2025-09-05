@@ -13,6 +13,8 @@ resources:
         samples_summary:
           count: 2
           stats:
+            phenotypic_features:
+              Leukemia: 1
             tissues:
               blood: 1
               subcutaneous adipose tissue: 1
@@ -48,6 +50,8 @@ resources:
         samples_summary:
           count: 2
           stats:
+            phenotypic_features:
+              Leukemia: 1
             tissues:
               blood: 1
               subcutaneous adipose tissue: 1
