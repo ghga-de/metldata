@@ -1,0 +1,46 @@
+datapack: 4.0.0
+resources:
+  Dataset:
+    dataset_1:
+      content:
+        dac_contact: dac@example.org
+        individual_summary:
+          phenotypes:
+            Leukemia: 1 # <-
+            Melanoma: 1 # <-
+            Cancer: 2 # <-
+            Healthy: 1 # <-
+      relations:
+        individuals:
+          targetClass: Individual
+          targetResources:
+            - individual_a
+            - individual_b
+            - individual_c
+    dataset_2:
+      content:
+        dac_contact: dac@example.org
+        individual_summary:
+          phenotypes:
+            Leukemia: 1 # <-
+            Cancer: 1 # <-
+      relations:
+        individuals:
+          targetClass: Individual
+          targetResources:
+            - individual_a
+  Individual:
+    individual_a:
+      content:
+        phenotypes:
+          - Leukemia
+          - Cancer
+    individual_b:
+      content:
+        phenotypes:
+          - Melanoma
+          - Cancer
+    individual_c:
+      content:
+        phenotypes:
+          - Healthy

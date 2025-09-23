@@ -1,0 +1,503 @@
+operations:
+  # Infer dataset sample relations for Dataset
+  - name: infer_relation
+    description: "Infer relations for class Dataset"
+    args:
+      class_name: Dataset
+      relation_name: "{{{ item.relation_name }}}"
+      relation_path: "{{{ item.relation_path }}}"
+    loop:
+      - relation_name: samples_from_individual_supporting_files
+        relation_path: Dataset<(dataset)IndividualSupportingFile(individual)>Individual<(individual)Sample
+      - relation_name: samples_from_research_data_files
+        relation_path: Dataset<(dataset)ResearchDataFile(experiments)>Experiment(sample)>Sample
+      - relation_name: samples_from_experiment_supporting_files
+        relation_path: Dataset<(dataset)ExperimentMethodSupportingFile(experiment_method)>ExperimentMethod<(experiment_method)Experiment(sample)>Sample
+      - relation_name: samples_from_process_data_files
+        relation_path: Dataset<(dataset)ProcessDataFile(analysis)>Analysis(research_data_files)>ResearchDataFile(experiments)>Experiment(sample)>Sample
+      - relation_name: samples_from_analysis_method_supporting_files
+        relation_path: Dataset<(dataset)AnalysisMethodSupportingFile(analysis_method)>AnalysisMethod<(analysis_method)Analysis(research_data_files)>ResearchDataFile(experiments)>Experiment(sample)>Sample
+
+  # Merge relations to get all the samples involved in datasets
+  - name: merge_relations
+    description: "Create {{{ item.target_relation }}} relation for each Dataset"
+    args:
+      class_name: Dataset
+      source_relations:
+        [
+          samples_from_individual_supporting_files,
+          samples_from_research_data_files,
+          samples_from_experiment_supporting_files,
+          samples_from_process_data_files,
+          samples_from_analysis_method_supporting_files,
+        ]
+      target_relation: samples
+      description: "samples related to the dataset."
+      mandatory:
+        origin: false
+        target: false
+      multiple:
+        origin: true
+        target: true
+
+  # Using the samples, infer dataset-individual relations
+  - name: infer_relation
+    description: "Infer Individual relations for each Dataset"
+    args:
+      class_name: Dataset
+      relation_name: individuals
+      relation_path: Dataset(samples)>Sample(individual)>Individual
+
+  # Infer experiment relations for Dataset
+  - name: infer_relation
+    description: "Infer Experiment relations for class Dataset"
+    args:
+      class_name: Dataset
+      relation_name: "{{{ item.relation_name }}}"
+      relation_path: "{{{ item.relation_path }}}"
+    loop:
+      - relation_name: experiments_from_research_data_files
+        relation_path: Dataset<(dataset)ResearchDataFile(experiments)>Experiment
+      - relation_name: experiments_from_individual_supporting_files
+        relation_path: Dataset<(dataset)IndividualSupportingFile(individual)>Individual<(individual)Sample<(sample)Experiment
+      - relation_name: experiments_from_experiment_method_supporting_files
+        relation_path: Dataset<(dataset)ExperimentMethodSupportingFile(experiment_method)>ExperimentMethod<(experiment_method)Experiment
+      - relation_name: experiments_from_process_data_files
+        relation_path: Dataset<(dataset)ProcessDataFile(analysis)>Analysis(research_data_files)>ResearchDataFile(experiments)>Experiment
+      - relation_name: experiments_from_analysis_method_supporting_files
+        relation_path: Dataset<(dataset)AnalysisMethodSupportingFile(analysis_method)>AnalysisMethod<(analysis_method)Analysis(research_data_files)>ResearchDataFile(experiments)>Experiment
+
+  # Merge relations to get all the experiments involved in datasets
+  - name: merge_relations
+    description: "Create {{{ item.target_relation }}} relation for each Dataset"
+    args:
+      class_name: Dataset
+      source_relations:
+        [
+          experiments_from_research_data_files,
+          experiments_from_individual_supporting_files,
+          experiments_from_experiment_method_supporting_files,
+          experiments_from_process_data_files,
+          experiments_from_analysis_method_supporting_files,
+        ]
+      target_relation: experiments
+      description: "experiments related to the dataset."
+      mandatory:
+        origin: false
+        target: false
+      multiple:
+        origin: true
+        target: true
+
+  # Add instrument_model from ExperimentMethod to Experiment content
+  - name: transform_content
+    description: "Add experiment_method.instrument_model field to the Experiment"
+    args:
+      class_name: Experiment
+      content_schema:
+        {
+          "additionalProperties": false,
+          "description": "An Experiment is an investigation that consists of a coordinated set of actions and observations designed to generate data with the goal of verifying, falsifying, or establishing the validity of a hypothesis.",
+          "properties":
+            {
+              "attributes":
+                {
+                  "description": "Key/value pairs corresponding to an entity.",
+                  "items": { "$ref": "src/content_schemas/Attribute" },
+                  "type": ["array", "null"],
+                },
+              "description":
+                {
+                  "description": "A detailed description of this Experiment.",
+                  "type": ["string", "null"],
+                },
+              "ega_accession":
+                {
+                  "description": "The EGA accession of the 'Run' entity (EGAR).",
+                  "type": ["string", "null"],
+                },
+              "title":
+                {
+                  "description": "The title for this Experiment (e.g., GHGAE_PBMC_RNAseq).",
+                  "type": "string",
+                },
+              "type":
+                {
+                  "description": "The type of this Experiment.",
+                  "type": ["string", "null"],
+                },
+              "instrument_model":
+                {
+                  "description": "Permitted values for the instrument model.",
+                  "type": "string",
+                },
+            },
+          "required": ["title"],
+          "title": "Experiment",
+          "type": "object",
+          "$id": "src/content_schemas/Experiment",
+          "$schema": "https://json-schema.org/draft/2019-09/schema",
+        }
+      embedding_profile: { "sample": False }
+      content_template_yaml: |
+        {% for key in content_property_names %}
+        {% set value = original.get(key) %}
+        {% if value is not none %}
+        {{ key }}: {{ value | tojson }}
+        {% endif %}
+        {% endfor %}
+        instrument_model: {{ original.experiment_method["instrument_model"] }}
+
+  # Add file relations to Dataset
+  - name: infer_relation
+    description: "Infer file relations for class Dataset"
+    args:
+      class_name: Dataset
+      relation_name: "{{{ item.relation_name }}}"
+      relation_path: "{{{ item.relation_path }}}"
+    loop:
+      - relation_name: research_data_files
+        relation_path: Dataset<(dataset)ResearchDataFile
+      - relation_name: process_data_files
+        relation_path: Dataset<(dataset)ProcessDataFile
+      - relation_name: individual_supporting_files
+        relation_path: Dataset<(dataset)IndividualSupportingFile
+      - relation_name: experiment_method_supporting_files
+        relation_path: Dataset<(dataset)ExperimentMethodSupportingFile
+      - relation_name: analysis_method_supporting_files
+        relation_path: Dataset<(dataset)AnalysisMethodSupportingFile
+
+  # Rename id property - old name is alias and new name is accession.
+  # Only applied to Dataset and Study classes, since the accession from other classes
+  # are not necessary for the dataset stats.
+  - name: rename_id_property
+    description: "Rename id property for each {{ class_name }}"
+    args:
+      class_name: "{{{ item.class_name }}}"
+      id_property_name: "{{{ item.id_property_name }}}"
+    loop:
+      - class_name: Study
+        id_property_name: accession
+      - class_name: Dataset
+        id_property_name: accession
+
+  # Transform content schema and content to add current resource ids as alias so
+  # the information isn't lost after the replace resource ids step.
+  # Only applied to Dataset, since the alias from other classes are not used in the dataset stats.
+  - name: transform_content
+    description: "Add alias to the content of Dataset"
+    args:
+      class_name: Dataset
+      content_schema:
+        {
+          "additionalProperties": false,
+          "description": "A Dataset is a collection of Files that is prepared for distribution and is tied to a Data Access Policy.",
+          "properties":
+            {
+              "description":
+                {
+                  "description": "A description summarizing this Dataset.",
+                  "type": "string",
+                },
+              "ega_accession":
+                {
+                  "description": "The EGA accession ID of an entity.",
+                  "type": ["string", "null"],
+                },
+              "title":
+                {
+                  "description": "A title for this Dataset.",
+                  "type": "string",
+                },
+              "types":
+                {
+                  "description": "The type of this Dataset.",
+                  "items": { "type": "string" },
+                  "type": "array",
+                },
+              "alias": { "type": "string" },
+            },
+          "required": ["title", "description", "types", "alias"],
+          "title": "Dataset",
+          "type": "object",
+          "$id": "src/content_schemas/Dataset",
+          "$schema": "https://json-schema.org/draft/2019-09/schema",
+        }
+      embedding_profile:
+        {
+          "data_access_policy": False,
+          "study": False,
+          "samples": { "individual": False },
+          "experiments": { "sample": False, "experiment_method": False },
+          "research_data_files": { "dataset": False, "experiments": False },
+          "process_data_files": { "dataset": False, "analysis": False },
+          "individual_supporting_files":
+            { "dataset": False, "individual": False },
+          "experiment_method_supporting_files":
+            { "dataset": False, "experiment_method": False },
+          "analysis_method_supporting_files":
+            { "dataset": False, "analysis_method": False },
+        }
+      content_template_yaml: |
+        {% for key in content_property_names %}
+        {% set value = original.get(key) %}
+        {% if value is not none %}
+        {{ key }}: {{ value | tojson }}
+        {% endif %}
+        {% endfor %}
+        alias: {{ original[id_property_name] }}
+
+  # Replace resource ids with the values given in the annotation
+  # Only applied to Dataset and Study classes, since the accession from other classes
+  # are not necessary for the dataset stats.
+  - name: replace_resource_ids
+    description: "Replace resource ids of {{ class_name }}"
+    args:
+      class_name: "{{{ item.class_name }}}"
+    loop:
+      - class_name: Study
+      - class_name: Dataset
+
+  # Duplicate Dataset as DatasetStats
+  - name: duplicate_class
+    description: "Create a duplicate of class Dataset named DatasetStats"
+    args:
+      source_class_name: Dataset
+      target_class_name: DatasetStats
+
+  # Transform content
+  - name: transform_content
+    description: "Dataset stats"
+    args:
+      class_name: DatasetStats
+      content_schema:
+        {
+          "$schema": "https://json-schema.org/draft/2019-09/schema",
+          "additionalProperties": false,
+          "description": "A Dataset is a collection of Files that is prepared for distribution and is tied to a Data Access Policy.",
+          "properties":
+            {
+              "alias": { "type": "string" },
+              "description": { "type": "string" },
+              "types": { "type": "array", "items": { "type": "string" } },
+              "title": { "type": "string" },
+              "dac_email": { "type": "string" },
+              "samples_summary":
+                {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties":
+                    {
+                      "count": { "type": "integer" },
+                      "stats":
+                        {
+                          "type": "object",
+                          "additionalProperties": true,
+                          "properties":
+                            {
+                              "tissues":
+                                {
+                                  "type": "object",
+                                  "items":
+                                    {
+                                      "type": "object",
+                                      "additionalProperties":
+                                        { "type": "integer" },
+                                    },
+                                },
+                              "sex":
+                                {
+                                  "type": "object",
+                                  "items":
+                                    {
+                                      "type": "object",
+                                      "additionalProperties":
+                                        { "type": "integer" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                  "required": ["count", "stats"],
+                },
+              "studies_summary":
+                {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties":
+                    {
+                      "count": { "type": "integer" },
+                      "stats":
+                        {
+                          "type": "object",
+                          "additionalProperties": true,
+                          "properties":
+                            {
+                              "title": { "type": "string" },
+                              "accession": { "type": "string" },
+                            },
+                        },
+                    },
+                  "required": ["count", "stats"],
+                },
+              "experiments_summary":
+                {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties":
+                    {
+                      "count": { "type": "integer" },
+                      "stats":
+                        {
+                          "type": "object",
+                          "additionalProperties": true,
+                          "properties":
+                            {
+                              "experiment_methods":
+                                {
+                                  "type": "object",
+                                  "items":
+                                    {
+                                      "type": "object",
+                                      "additionalProperties":
+                                        { "type": "integer" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                  "required": ["count", "stats"],
+                },
+              "files_summary":
+                {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties":
+                    {
+                      "count": { "type": "integer" },
+                      "stats":
+                        {
+                          "type": "object",
+                          "additionalProperties": true,
+                          "properties":
+                            {
+                              "format":
+                                {
+                                  "type": "object",
+                                  "items":
+                                    {
+                                      "type": "object",
+                                      "additionalProperties":
+                                        { "type": "integer" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                  "required": ["count", "stats"],
+                },
+            },
+          "required":
+            [
+              "title",
+              "alias",
+              "description",
+              "types",
+              "dac_email",
+              "samples_summary",
+              "studies_summary",
+              "experiments_summary",
+              "files_summary",
+            ],
+          "type": "object",
+        }
+      embedding_profile:
+        {
+          "samples": { "individual": False },
+          "experiments": { "sample": False, "experiment_method": False },
+          "research_data_files": { "dataset": False, "experiments": False },
+          "process_data_files": { "dataset": False, "analysis": False },
+          "individual_supporting_files":
+            { "dataset": False, "individual": False },
+          "experiment_method_supporting_files":
+            { "dataset": False, "experiment_method": False },
+          "analysis_method_supporting_files":
+            { "dataset": False, "analysis_method": False },
+        }
+      content_template_yaml: |
+        description: {{ original.description }}
+        alias: {{ original.alias }}
+        types: {{ original.types }}
+        title: {{ original.title }}
+        dac_email: {{ original.data_access_policy.data_access_committee.email }}
+        samples_summary:
+          count: {{ original.samples | length }}
+          stats:
+            phenotypic_features:
+              {% set term_counts = {} %}
+              {% for individual in original.individuals %}
+                  {% for term in individual.phenotypic_features_terms %}
+                      {% set _ = term_counts.update({term: term_counts.get(term, 0) + 1}) %}
+                  {% endfor %}
+              {% endfor %}
+              {% for term, count in term_counts.items() %}
+              {{ term }} : {{ count }}
+              {% endfor %}
+            tissues:
+              {% for key, values in original.samples |  groupby("biospecimen_tissue_term") %}
+                {{ key }}: {{ values | length }}
+              {% else %}
+                {}
+              {% endfor %}
+            sex:
+              {% for key, values in original.individuals |  groupby("sex") %}
+                {{ key }}: {{ values | length }}
+              {% else %}
+                {}
+              {% endfor %}
+        studies_summary:
+          count: {{ [original.study.accession] | length }}
+          stats:
+            title: {{  original.study.title}}
+            accession: {{ original.study.accession }}
+        experiments_summary:
+          count: {{ original.experiments | length }}
+          stats:
+            experiment_methods:
+              {% for key, values in original.experiments |  groupby("instrument_model") %}
+                {{ key }}: {{ values | length }}
+              {% else %}
+                {}
+              {% endfor %}
+        files_summary:
+          {% set all_files = original.research_data_files + original.process_data_files + original.individual_supporting_files + original.experiment_method_supporting_files + original.analysis_method_supporting_files %}
+          count: {{ all_files | length }}
+          stats:
+            formats:
+              {% for key, values in all_files | groupby("format") %}
+                {{ key }}: {{ values | length }}
+              {% else %}
+                {}
+              {% endfor %}
+  # Delete classes
+  - name: delete_class
+    description: "Delete class {{ item }}"
+    args:
+      class_name: "{{{ item }}}"
+    loop:
+      - Analysis
+      - AnalysisMethod
+      - AnalysisMethodSupportingFile
+      - DataAccessCommittee
+      - DataAccessPolicy
+      - Dataset
+      - Experiment
+      - ExperimentMethod
+      - ExperimentMethodSupportingFile
+      - Individual
+      - IndividualSupportingFile
+      - ProcessDataFile
+      - Publication
+      - ResearchDataFile
+      - Sample
+      - Study

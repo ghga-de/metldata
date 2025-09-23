@@ -1,0 +1,75 @@
+datapack: 4.0.0
+resources:
+  DatasetStats:
+    GHGAD74245202504286:
+      content:
+        alias: DS_A
+        title: The complete-A dataset
+        description: An interesting dataset A of complete example set
+        types:
+          - A Type
+          - Another Type
+        dac_email: dac_institute_a@dac.dac
+        samples_summary:
+          count: 2
+          stats:
+            phenotypic_features:
+              Leukemia: 1
+            tissues:
+              blood: 1
+              subcutaneous adipose tissue: 1
+            sex:
+              MALE: 1
+        studies_summary:
+          count: 1
+          stats:
+            title: "The A Study"
+            accession: GHGAS90595893121388
+        experiments_summary:
+          count: 2
+          stats:
+            experiment_methods:
+              454_GS: 2
+        files_summary:
+          count: 7
+          stats:
+            formats:
+              FASTQ: 3
+              JSON: 1
+              TXT: 1
+              VCF: 2
+
+    GHGAD84882883098593:
+      content:
+        alias: DS_B
+        title: The complete-B dataset
+        description: An interesting dataset B of complete example set
+        types:
+          - And another Type
+        dac_email: dac_institute_a@dac.dac
+        samples_summary:
+          count: 2
+          stats:
+            phenotypic_features:
+              Leukemia: 1
+            tissues:
+              blood: 1
+              subcutaneous adipose tissue: 1
+            sex:
+              MALE: 1
+        studies_summary:
+          count: 1
+          stats:
+            title: "The B Study"
+            accession: GHGAS83708013118412
+        experiments_summary:
+          count: 2
+          stats:
+            experiment_methods:
+              454_GS: 2
+        files_summary:
+          count: 7
+          stats:
+            formats:
+              FASTQ: 6
+              TXT: 1

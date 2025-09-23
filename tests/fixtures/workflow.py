@@ -63,6 +63,7 @@ WORKFLOW_BY_NAME: list[str] = [
     "duplicate_infer_delete_merge",
     "rename_id_property_multiple",
     "rename_id_property_transform_content_update_resource_ids",
+    "ghga_aggregation_workflow",
 ]
 TRANSFORMATION_REGISTRY = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,

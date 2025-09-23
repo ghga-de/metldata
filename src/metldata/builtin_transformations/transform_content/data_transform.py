@@ -19,7 +19,7 @@ from collections.abc import Mapping
 
 import yaml
 from jinja2 import StrictUndefined
-from jinja2.sandbox import ImmutableSandboxedEnvironment
+from jinja2.sandbox import SandboxedEnvironment
 from schemapack import denormalize, isolate_resource
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
@@ -30,7 +30,7 @@ from metldata.transform.exceptions import EvitableTransformationError
 
 # configure with StrictUndefined so invalid property/dict access produces errors
 # instead of silently inserting a none value
-env = ImmutableSandboxedEnvironment(undefined=StrictUndefined)
+env = SandboxedEnvironment(undefined=StrictUndefined)
 
 # object is too broad for what _denormalization_workaround will accept, define
 # something that's closer to the intention of JsonObjectCompatible
