@@ -1870,6 +1870,7 @@ typing-extensions==4.15.0 \
     --hash=sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
     # via
     #   aiokafka
+    #   anyio
     #   curies
     #   fastapi
     #   jwcrypto
@@ -1877,7 +1878,10 @@ typing-extensions==4.15.0 \
     #   opentelemetry-api
     #   pydantic
     #   pydantic-core
+    #   pytest-asyncio
+    #   referencing
     #   sqlalchemy
+    #   starlette
     #   testcontainers
     #   typer
     #   typing-inspection

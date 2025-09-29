@@ -1706,13 +1706,16 @@ typing-extensions==4.15.0 \
     # via
     #   -c lock/requirements-dev.txt
     #   aiokafka
+    #   anyio
     #   curies
     #   fastapi
     #   jwcrypto
     #   opentelemetry-api
     #   pydantic
     #   pydantic-core
+    #   referencing
     #   sqlalchemy
+    #   starlette
     #   typer
     #   typing-inspection
 typing-inspection==0.4.1 \
