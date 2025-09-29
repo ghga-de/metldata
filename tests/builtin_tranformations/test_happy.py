@@ -41,7 +41,7 @@ def test_model_transformations(
     )
     transformed_model = handler.transformed_model
 
-    assert transformed_model.as_json() == test_case.transformed_model.as_json()
+    assert transformed_model == test_case.transformed_model
 
 
 @pytest.mark.parametrize("test_case", TRANSFORMATION_TEST_CASES, ids=str)

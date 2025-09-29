@@ -17,6 +17,7 @@
 """Joint fixture with setup for event content"""
 
 import json
+from collections.abc import AsyncGenerator
 from dataclasses import dataclass
 from typing import Any
 
@@ -66,7 +67,9 @@ class JointFixture:
 
 
 @fixture
-async def joint_fixture(kafka: KafkaFixture, mongodb: MongoDbFixture) -> JointFixture:
+async def joint_fixture(
+    kafka: KafkaFixture, mongodb: MongoDbFixture
+) -> AsyncGenerator[JointFixture]:
     """Get a tuple of a configured test client together with a corresponding token."""
     artifact_infos = [
         load_artifact_info(
@@ -142,7 +145,7 @@ async def joint_fixture(kafka: KafkaFixture, mongodb: MongoDbFixture) -> JointFi
 
     async with get_app(config=config) as app:
         client = AsyncTestClient(app)
-        return JointFixture(
+        yield JointFixture(
             artifact_infos=artifact_infos,
             artifact_resources=artifacts,
             client=client,
