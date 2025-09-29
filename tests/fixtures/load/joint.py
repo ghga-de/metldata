@@ -140,16 +140,16 @@ async def joint_fixture(kafka: KafkaFixture, mongodb: MongoDbFixture) -> JointFi
         "content"
     ]["embedded_dataset"][1]
 
-    app = await get_app(config=config)
-    client = AsyncTestClient(app)
-    return JointFixture(
-        artifact_infos=artifact_infos,
-        artifact_resources=artifacts,
-        client=client,
-        config=config,
-        expected_file_resource_content=expected_file_resource_content,
-        expected_embedded_dataset_resource_content=expected_embedded_dataset_resource_content,
-        kafka=kafka,
-        mongodb=mongodb,
-        token=token,
-    )
+    async with get_app(config=config) as app:
+        client = AsyncTestClient(app)
+        return JointFixture(
+            artifact_infos=artifact_infos,
+            artifact_resources=artifacts,
+            client=client,
+            config=config,
+            expected_file_resource_content=expected_file_resource_content,
+            expected_embedded_dataset_resource_content=expected_embedded_dataset_resource_content,
+            kafka=kafka,
+            mongodb=mongodb,
+            token=token,
+        )

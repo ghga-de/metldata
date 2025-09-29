@@ -64,6 +64,7 @@ class ArtifactDaoCollection:
                     dto_model=ArtifactResource,
                     id_field="id_",
                 )
+                artifact_resource_daos[artifact_name][class_name]
 
         # Add a DAO for each entire artifact configured to be published
         whole_artifact_daos: dict[str, ArtifactDao] = {
