@@ -9,12 +9,12 @@ readme = "README.md"
 authors = [
     { name = "German Human Genome Phenome Archive (GHGA)", email = "contact@ghga.de" },
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: Apache Software License",
     "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
     "Topic :: Software Development :: Libraries",
@@ -28,8 +28,8 @@ dependencies = [
     "ghga-service-commons[api,auth] >=5.1.0, <6",
     "ghga-event-schemas >=9.2.0, <10",
     "typer >= 0.19",
-    "linkml == 1.6.1",
-    "linkml-runtime == 1.6.0",
+    "linkml == 1.9.4",
+    "linkml-runtime == 1.9.5",
     "linkml-validator == 0.4.5",
     "cryptography >= 45.0.3",
 ]
@@ -63,7 +63,7 @@ src = [
     "examples",
     "scripts",
 ]
-target-version = "py312"
+target-version = "py313"
 
 [tool.ruff.lint]
 fixable = [

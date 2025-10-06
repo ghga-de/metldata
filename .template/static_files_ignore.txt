@@ -5,15 +5,7 @@ scripts/update_openapi_docs.py
 
 .devcontainer/Dockerfile
 
-.github/workflows/check_config_docs.yaml
 .github/workflows/check_openapi_spec.yaml
-.github/workflows/check_readme.yaml
-.github/workflows/check_pyproject.yaml
-.github/workflows/check_template_files.yaml
-.github/workflows/static_code_analysis.yaml
-.github/workflows/tests.yaml
-
-.pyproject_generation/pyproject_template.toml
 
 .pre-commit-config.yaml
 .ruff.toml

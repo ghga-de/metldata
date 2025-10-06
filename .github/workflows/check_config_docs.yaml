@@ -17,7 +17,7 @@ jobs:
         id: common
         uses: ghga-de/gh-action-common@v6
         with:
-          python-version: '3.12'
+          python-version: '3.13'
 
       - name: Check config docs
         id: check-config-docs

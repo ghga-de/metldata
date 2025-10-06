@@ -17,7 +17,7 @@ jobs:
         id: common
         uses: ghga-de/gh-action-common@v6
         with:
-          python-version: '3.12'
+          python-version: '3.13'
 
       - name: Run tests
         id: pytest
@@ -25,6 +25,7 @@ jobs:
           export ${{ steps.common.outputs.CONFIG_YAML_ENV_VAR_NAME }}="${{ steps.common.outputs.CONFIG_YAML }}"
 
           pytest \
+            -vvv \
             --cov="${{ steps.common.outputs.PACKAGE_NAME }}" \
             --cov-report=xml \
             tests
