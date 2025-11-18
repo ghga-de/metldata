@@ -18,6 +18,8 @@
 with builtin transformations are tested here.
 """
 
+from contextlib import nullcontext
+
 import pytest
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
@@ -39,13 +41,17 @@ from tests.fixtures.annotation import EMPTY_SUBMISSION_ANNOTATION
 from tests.fixtures.data import INVALID_MINIMAL_DATA, MINIMAL_DATA
 from tests.fixtures.models import MINIMAL_MODEL
 
+pytestmark = pytest.mark.parametrize("validate", [True, False])
 
-def test_transformation_handler_happy():
+
+def test_transformation_handler_happy(validate: bool):
     """Test the happy path of using a TransformationHandler."""
     transformation_handler: TransformationHandler = TransformationHandler(
         transformation_definition=NULL_TRANSFORMATION,
         transformation_config=NullConfig(),
         input_model=MINIMAL_MODEL,
+        validate_input=validate,
+        validate_output=validate,
     )
 
     # Since the null transformation was used, compare with the input:
@@ -59,7 +65,7 @@ def test_transformation_handler_happy():
     assert transformed_data == MINIMAL_DATA
 
 
-def test_transformation_handler_assumption_error():
+def test_transformation_handler_assumption_error(validate: bool):
     """Test using the TransformationHandling when model assumptions are not met."""
 
     # make transformation definition always raise an MetadataModelAssumptionError:
@@ -79,10 +85,12 @@ def test_transformation_handler_assumption_error():
             transformation_definition=transformation,
             transformation_config=NullConfig(),
             input_model=MINIMAL_MODEL,
+            validate_input=validate,
+            validate_output=validate,
         )
 
 
-def test_transformation_handler_model_transformation_error():
+def test_transformation_handler_model_transformation_error(validate: bool):
     """Test using the TransformationHandling when model transformation fails."""
 
     # make transformation definition always raise an ModelAssumptionError:
@@ -101,10 +109,12 @@ def test_transformation_handler_model_transformation_error():
             transformation_definition=transformation,
             transformation_config=NullConfig(),
             input_model=MINIMAL_MODEL,
+            validate_input=validate,
+            validate_output=validate,
         )
 
 
-def test_transformation_handler_input_data_invalid():
+def test_transformation_handler_input_data_invalid(validate: bool):
     """Test the TransformationHandler when used with input data that is not valid
     against the model.
     """
@@ -112,15 +122,17 @@ def test_transformation_handler_input_data_invalid():
         transformation_definition=NULL_TRANSFORMATION,
         transformation_config=NullConfig(),
         input_model=MINIMAL_MODEL,
+        validate_input=validate,
+        validate_output=validate,
     )
 
-    with pytest.raises(PreTransformValidationError):
+    with pytest.raises(PreTransformValidationError) if validate else nullcontext():
         _ = transformation_handler.transform_data(
             INVALID_MINIMAL_DATA, EMPTY_SUBMISSION_ANNOTATION
         )
 
 
-def test_transformation_handler_transformed_data_invalid():
+def test_transformation_handler_transformed_data_invalid(validate: bool):
     """Test the TransformationHandler when the transformed data fails validation
     against the transformed model.
     """
@@ -153,9 +165,11 @@ def test_transformation_handler_transformed_data_invalid():
         transformation_definition=transformation,
         transformation_config=NullConfig(),
         input_model=MINIMAL_MODEL,
+        validate_input=validate,
+        validate_output=validate,
     )
 
-    with pytest.raises(PostTransformValidationError):
+    with pytest.raises(PostTransformValidationError) if validate else nullcontext():
         _ = transformation_handler.transform_data(
             MINIMAL_DATA, EMPTY_SUBMISSION_ANNOTATION
         )

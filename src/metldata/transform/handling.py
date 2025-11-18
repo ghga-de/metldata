@@ -16,8 +16,15 @@
 
 """Logic for handling Transformation."""
 
+from typing import override
+
 import schemapack.exceptions
 from schemapack import SchemaPackValidator
+from schemapack._internals.validation.base import (
+    ClassValidationPlugin,
+    GlobalValidationPlugin,
+    ResourceValidationPlugin,
+)
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
@@ -25,6 +32,26 @@ from metldata.transform.base import (
     Config,
     TransformationDefinition,
 )
+
+
+class NoOpValidator(SchemaPackValidator):
+    """Custom no-op variant of the SchemaPackValidator used for skipping validation."""
+
+    @override
+    def __init__(
+        self,
+        *,
+        schemapack: SchemaPack,
+        add_global_plugins: list[type[GlobalValidationPlugin]] | None = None,
+        add_class_plugins: list[type[ClassValidationPlugin]] | None = None,
+        add_resource_plugins: list[type[ResourceValidationPlugin]] | None = None,
+    ):
+        """Do nothing with the input, just skip plugin creation."""
+
+    @override
+    def validate(self, *, datapack: DataPack):
+        """Do nothing and return."""
+        return
 
 
 class PreTransformValidationError(RuntimeError):
@@ -61,6 +88,8 @@ class TransformationHandler[SubmissionAnnotation]:
         transformation_definition: TransformationDefinition[Config],
         transformation_config: Config,
         input_model: SchemaPack,
+        validate_input: bool = False,
+        validate_output: bool = False,
     ):
         """Initialize the TransformationHandler by checking the assumptions made on the
         input model and transforming the model as described in the transformation
@@ -84,10 +113,15 @@ class TransformationHandler[SubmissionAnnotation]:
             input_model=self._input_model,
             transformed_model=self.transformed_model,
         )
-
-        self._input_data_validator = SchemaPackValidator(schemapack=self._input_model)
-        self._transformed_data_validator = SchemaPackValidator(
-            schemapack=self.transformed_model
+        self._input_data_validator = (
+            SchemaPackValidator(schemapack=self._input_model)
+            if validate_input
+            else NoOpValidator(schemapack=self._input_model)
+        )
+        self._transformed_data_validator = (
+            SchemaPackValidator(schemapack=self.transformed_model)
+            if validate_output
+            else NoOpValidator(schemapack=self.transformed_model)
         )
 
     def transform_data(
