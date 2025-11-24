@@ -52,7 +52,8 @@ from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR, read_yaml
 
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
-WORKFLOW_BY_NAME: list[str] = [
+WORKFLOW_VALIDATION_DIR = BASE_DIR / "workflow_validation"
+WORKFLOW_BY_NAME = [
     "add_multiple_content_properties",
     "count_references",
     "duplicate_one_delete_multiple",
@@ -65,6 +66,7 @@ WORKFLOW_BY_NAME: list[str] = [
     "rename_id_property_transform_content_update_resource_ids",
     "ghga_aggregation_workflow",
 ]
+VALIDATION_WORKFLOWS = ["invalid_input_model", "invalid_output_model"]
 TRANSFORMATION_REGISTRY = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
     "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
@@ -105,10 +107,11 @@ def _get_workflow(workflow_path: Path) -> Workflow:
 
 def _read_test_case(
     *,
+    workflow_dir: Path,
     case_name: str,
 ) -> WorkflowTestCase:
     """Read a test case for a workflow."""
-    case_dir = EXAMPLE_WORKFLOW_DIR / case_name
+    case_dir = workflow_dir / case_name
     workflow_path = case_dir / "workflow.yaml"
     input_model_path = case_dir / "input.schemapack.yaml"
     input_data_path = case_dir / "input.datapack.yaml"
@@ -144,9 +147,21 @@ def _read_test_case(
     )
 
 
+def _read_validation_test_cases() -> list[WorkflowTestCase]:
+    """Read validation test cases."""
+    return [
+        _read_test_case(workflow_dir=WORKFLOW_VALIDATION_DIR, case_name=case_name)
+        for case_name in VALIDATION_WORKFLOWS
+    ]
+
+
 def _read_all_test_cases() -> list[WorkflowTestCase]:
     """Read all test cases for a workflow execution."""
-    return [_read_test_case(case_name=case_name) for case_name in WORKFLOW_BY_NAME]
+    return [
+        _read_test_case(workflow_dir=EXAMPLE_WORKFLOW_DIR, case_name=case_name)
+        for case_name in WORKFLOW_BY_NAME
+    ]
 
 
 WORKFLOW_TEST_CASES = _read_all_test_cases()
+VALIDATION_TEST_CASES = _read_validation_test_cases()

@@ -32,6 +32,10 @@ from metldata.transform.base import (
     Config,
     TransformationDefinition,
 )
+from metldata.transform.exceptions import (
+    PostTransformValidationError,
+    PreTransformValidationError,
+)
 
 
 class NoOpValidator(SchemaPackValidator):
@@ -52,32 +56,6 @@ class NoOpValidator(SchemaPackValidator):
     def validate(self, *, datapack: DataPack):
         """Do nothing and return."""
         return
-
-
-class PreTransformValidationError(RuntimeError):
-    """Raised when the validation of input data fails against the input model at the
-    beginning of a data transformation.
-    """
-
-    def __init__(self, *, validation_error: schemapack.exceptions.ValidationError):
-        """Initialize with the schemapack ValidationError."""
-        super().__init__(
-            "Validation of input data failed against the input model:"
-            + f"\n{validation_error}"
-        )
-
-
-class PostTransformValidationError(RuntimeError):
-    """Raised when the validation of transformed data fails against the transformed
-    model at the end of a data transformation step.
-    """
-
-    def __init__(self, *, validation_error: schemapack.exceptions.ValidationError):
-        """Initialize with the schemapack ValidationError."""
-        super().__init__(
-            "Validation of transformed data failed against the transformed model:"
-            + f"\n{validation_error}"
-        )
 
 
 class TransformationHandler[SubmissionAnnotation]:

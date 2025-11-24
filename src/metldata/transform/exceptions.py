@@ -15,6 +15,8 @@
 
 """Defining exceptions."""
 
+import schemapack.exceptions
+
 
 class ModelAssumptionError(RuntimeError):
     """Raised when assumptions made by transformation step about a model are not met."""
@@ -58,4 +60,30 @@ class EvitableTransformationError(RuntimeError):
             + " validation against the assumption-checked model). Please make sure that"
             + " the model assumption checks guarantee the workability of the"
             + " corresponding transformation wrt the provided model (and/or data)."
+        )
+
+
+class PreTransformValidationError(RuntimeError):
+    """Raised when the validation of input data fails against the input model at the
+    beginning of a data transformation.
+    """
+
+    def __init__(self, *, validation_error: schemapack.exceptions.ValidationError):
+        """Initialize with the schemapack ValidationError."""
+        super().__init__(
+            "Validation of input data failed against the input model:"
+            + f"\n{validation_error}"
+        )
+
+
+class PostTransformValidationError(RuntimeError):
+    """Raised when the validation of transformed data fails against the transformed
+    model at the end of a data transformation step.
+    """
+
+    def __init__(self, *, validation_error: schemapack.exceptions.ValidationError):
+        """Initialize with the schemapack ValidationError."""
+        super().__init__(
+            "Validation of transformed data failed against the transformed model:"
+            + f"\n{validation_error}"
         )
