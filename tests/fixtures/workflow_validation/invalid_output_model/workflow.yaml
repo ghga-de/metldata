@@ -1,21 +1,4 @@
 operations:
-  # Rename id property with accession
-  - name: rename_id_property
-    description: "Rename id property for each {{ class_name }}"
-    args:
-      class_name: "{{{ item.class_name }}}"
-      id_property_name: "{{{ item.id_property_name }}}"
-      description: Id property name is now accession.
-    loop:
-      - class_name: File
-        id_property_name: accession
-      - class_name: Dataset
-        id_property_name: accession
-      - class_name: Sample
-        id_property_name: accession
-      - class_name: Experiment
-        id_property_name: accession
-
   # Transform content schema and content to add current resource ids as alias so
   # the information isn't lost after the replace resource ids step
   - name: transform_content
@@ -50,7 +33,7 @@ operations:
           {{ key }}: {{ value | tojson }}
             {% endif %}
           {% endfor %}
-          alias: {{ original[id_property_name] }}
+          not_alias: {{ original[id_property_name] }}
       - class_name: Dataset
         content_schema:
           {
@@ -60,9 +43,9 @@ operations:
             "properties":
               {
                 "dac_contact": { "type": "string" },
-                "alias": { "type": "string" },
+                "not_alias": { "type": "string" },
               },
-            "required": ["alias"],
+            "required": ["not_alias"],
             "type": "object",
           }
         embedding_profile: { "files": False }
@@ -73,7 +56,7 @@ operations:
           {{ key }}: {{ value | tojson }}
             {% endif %}
           {% endfor %}
-          alias: {{ original[id_property_name] }}
+          not_alias: {{ original[id_property_name] }}
 
       - class_name: Sample
         content_schema:
@@ -84,7 +67,7 @@ operations:
             "properties":
               {
                 "description": { "type": "string" },
-                "alias": { "type": "string" },
+                "not_alias": { "type": "string" },
               },
             "required": ["alias"],
             "type": "object",
@@ -97,38 +80,4 @@ operations:
           {{ key }}: {{ value | tojson }}
             {% endif %}
           {% endfor %}
-          alias: {{ original[id_property_name] }}
-      - class_name: Experiment
-        content_schema:
-          {
-            "$schema": "http://json-schema.org/draft-07/schema#",
-            "additionalProperties": false,
-            "description": "An experiment containing one or multiple samples.",
-            "properties":
-              {
-                "description": { "type": "string" },
-                "alias": { "type": "string" },
-              },
-            "required": ["alias"],
-            "type": "object",
-          }
-        embedding_profile: { "samples": False }
-        content_template_yaml: |
-          {% for key in content_property_names %}
-            {% set value = original.get(key) %}
-            {% if value is not none %}
-          {{ key }}: {{ value | tojson }}
-            {% endif %}
-          {% endfor %}
-          alias: {{ original[id_property_name] }}
-
-  # Replace resource ids with the values given in the annotation
-  - name: replace_resource_ids
-    description: "Replace resource ids of {{ class_name }}"
-    args:
-      class_name: "{{{ item.class_name }}}"
-    loop:
-      - class_name: File
-      - class_name: Dataset
-      - class_name: Sample
-      - class_name: Experiment
+          not_alias: {{ original[id_property_name] }}

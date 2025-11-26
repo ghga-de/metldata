@@ -86,8 +86,8 @@ class WorkflowTestCase:
     workflow: Workflow
     input_model: SchemaPack
     input_data: DataPack
-    transformed_model: SchemaPack
-    transformed_data: DataPack
+    transformed_model: SchemaPack | None
+    transformed_data: DataPack | None
     annotation: BaseModel
     transformation_registry: dict[str, Any] = field(
         default_factory=lambda: TRANSFORMATION_REGISTRY
@@ -106,9 +106,7 @@ def _get_workflow(workflow_path: Path) -> Workflow:
 
 
 def _read_test_case(
-    *,
-    workflow_dir: Path,
-    case_name: str,
+    *, workflow_dir: Path, case_name: str, load_transformed: bool = True
 ) -> WorkflowTestCase:
     """Read a test case for a workflow."""
     case_dir = workflow_dir / case_name
@@ -127,8 +125,13 @@ def _read_test_case(
     input_data = (
         load_datapack(input_data_path) if input_data_path.exists() else ADVANCED_DATA
     )
-    transformed_model = load_schemapack(transformed_model_path)
-    transformed_data = load_datapack(transformed_data_path)
+
+    transformed_model = (
+        load_schemapack(transformed_model_path) if load_transformed else None
+    )
+    transformed_data = (
+        load_datapack(transformed_data_path) if load_transformed else None
+    )
     workflow = _get_workflow(workflow_path)
     annotation = (
         AccessionAnnotation(**read_yaml(annotation_path))
@@ -150,7 +153,11 @@ def _read_test_case(
 def _read_validation_test_cases() -> list[WorkflowTestCase]:
     """Read validation test cases."""
     return [
-        _read_test_case(workflow_dir=WORKFLOW_VALIDATION_DIR, case_name=case_name)
+        _read_test_case(
+            workflow_dir=WORKFLOW_VALIDATION_DIR,
+            case_name=case_name,
+            load_transformed=False,
+        )
         for case_name in VALIDATION_WORKFLOWS
     ]
 
