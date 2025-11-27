@@ -66,7 +66,12 @@ WORKFLOW_BY_NAME = [
     "rename_id_property_transform_content_update_resource_ids",
     "ghga_aggregation_workflow",
 ]
-VALIDATION_WORKFLOWS = ["invalid_input_model", "invalid_output_model"]
+VALIDATION_WORKFLOWS = [
+    "invalid_input_model",
+    "invalid_intermediate_model",
+    "invalid_single_step_model",
+    "invalid_output_model",
+]
 TRANSFORMATION_REGISTRY = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
     "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,

@@ -15,19 +15,37 @@
 
 """Test workflow execution using pre-defined test cases."""
 
-import pytest
+from unittest.mock import patch
 
+import pytest
+from schemapack.spec.schemapack import SchemaPack
+
+from metldata.transform.base import Config, TransformationDefinition
 from metldata.transform.exceptions import (
     PostTransformValidationError,
     PreTransformValidationError,
 )
+from metldata.transform.handling import NoOpValidator, TransformationHandler
 from metldata.workflow.handling import WorkflowHandler
 from tests.fixtures.workflow import VALIDATION_TEST_CASES, WorkflowTestCase
 
 
+def constructor_intercept(
+    self,
+    transformation_definition: TransformationDefinition[Config],
+    transformation_config: Config,
+    input_model: SchemaPack,
+    validate_input: bool = False,
+    validate_output: bool = False,
+):
+    pass
+
+
 @pytest.mark.parametrize("test_case", VALIDATION_TEST_CASES, ids=str)
 def test_workflow_invalid_models(test_case: WorkflowTestCase):
-    """Test the happy path of running a workflow."""
+    """Test validation using an invalid input, intermediate or output model."""
+    # patch("metldata.transform.handling.TransformationHandler.__init__", constructor_intercept)
+
     handler: WorkflowHandler = WorkflowHandler(
         workflow=test_case.workflow,
         transformation_registry=test_case.transformation_registry,

@@ -111,19 +111,18 @@ class WorkflowHandler[SubmissionAnnotation]:
         last_step = len(self.workflow.operations) - 1
         for idx, step in enumerate(self.workflow.operations):
             step_handler = WorkflowStepHandler(workflow_step=step, input_model=model)
+
+            # Collect and pass as kwargs.
+            # More concise and works correctly if there's only one step in the workflow
+            validation_args = {}
             if idx == 0:
-                transformation_handler = step_handler.execute(
-                    self.transformation_registry, validate_input=True
-                )
-            elif idx == last_step:
-                transformation_handler = step_handler.execute(
-                    self.transformation_registry,
-                    validate_output=True,
-                )
-            else:
-                transformation_handler = step_handler.execute(
-                    self.transformation_registry
-                )
+                validation_args["validate_input"] = True
+            if idx == last_step:
+                validation_args["validate_output"] = True
+
+            transformation_handler = step_handler.execute(
+                self.transformation_registry, **validation_args
+            )
 
             model = transformation_handler.transformed_model
             data = transformation_handler.transform_data(data, annotation)
