@@ -63,11 +63,11 @@ def capture_constructor_args():
         self._real_init(*args, **kwargs)
 
     TransformationHandler._real_init = TransformationHandler.__init__  # type: ignore
-    TransformationHandler.__init__ = capture
+    TransformationHandler.__init__ = capture  # type: ignore
 
     yield call_args
 
-    TransformationHandler.__init__ = TransformationHandler._real_init
+    TransformationHandler.__init__ = TransformationHandler._real_init  # type: ignore
     del TransformationHandler._real_init  # type: ignore
 
 
