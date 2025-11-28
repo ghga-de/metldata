@@ -48,7 +48,13 @@ class WorkflowStepHandler:
         self.workflow_step = workflow_step
         self.input_model = input_model
 
-    def execute(self, transformation_registry: dict[str, Any]) -> TransformationHandler:
+    def execute(
+        self,
+        transformation_registry: dict[str, Any],
+        *,
+        validate_input: bool = False,
+        validate_output: bool = False,
+    ) -> TransformationHandler:
         """Executes the workflow step by retrieving the corresponding transformation
         from the registry and initializing a TransformationHandler.
 
@@ -68,6 +74,8 @@ class WorkflowStepHandler:
             transformation_definition=transformation_definition,
             transformation_config=transformation_definition.config_cls(**step_args),
             input_model=self.input_model,
+            validate_input=validate_input,
+            validate_output=validate_output,
         )
 
 
@@ -100,10 +108,22 @@ class WorkflowHandler[SubmissionAnnotation]:
         """
         model = self.input_model
 
-        for step in self.workflow.operations:
-            transformation_handler = WorkflowStepHandler(
-                workflow_step=step, input_model=model
-            ).execute(self.transformation_registry)
+        last_step = len(self.workflow.operations) - 1
+        for idx, step in enumerate(self.workflow.operations):
+            step_handler = WorkflowStepHandler(workflow_step=step, input_model=model)
+
+            # Collect and pass as kwargs.
+            # More concise and works correctly if there's only one step in the workflow
+            validation_args = {}
+            if idx == 0:
+                validation_args["validate_input"] = True
+            if idx == last_step:
+                validation_args["validate_output"] = True
+
+            transformation_handler = step_handler.execute(
+                self.transformation_registry, **validation_args
+            )
+
             model = transformation_handler.transformed_model
             data = transformation_handler.transform_data(data, annotation)
 
