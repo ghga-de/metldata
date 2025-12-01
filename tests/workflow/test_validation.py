@@ -50,7 +50,10 @@ class CapturedContext:
 
 @pytest.fixture()
 def capture_constructor_args():
-    """Capture call args for TransformationHandler constructor."""
+    """Intercepts TransformationHandler constructor to capture call args.
+
+    Allows to check in which order and with which values the TransformationHandler was instantiated.
+    """
     context = CapturedContext()
 
     def capture(self, *args, **kwargs):
