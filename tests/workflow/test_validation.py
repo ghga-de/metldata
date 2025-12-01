@@ -41,7 +41,7 @@ EXPECTED_CALL_ARGS = {
 }
 
 
-class CallArgs:
+class CapturedContext:
     """Container to store results from capture_constructor_args"""
 
     def __init__(self):
@@ -51,10 +51,10 @@ class CallArgs:
 @pytest.fixture()
 def capture_constructor_args():
     """Capture call args for TransformationHandler constructor."""
-    call_args = CallArgs()
+    context = CapturedContext()
 
     def capture(self, *args, **kwargs):
-        call_args.call_args.append(
+        context.call_args.append(
             {
                 "validate_input": kwargs["validate_input"],
                 "validate_output": kwargs["validate_output"],
@@ -65,7 +65,7 @@ def capture_constructor_args():
     TransformationHandler._real_init = TransformationHandler.__init__  # type: ignore
     TransformationHandler.__init__ = capture  # type: ignore
 
-    yield call_args
+    yield context
 
     TransformationHandler.__init__ = TransformationHandler._real_init  # type: ignore
     del TransformationHandler._real_init  # type: ignore
@@ -85,6 +85,6 @@ def test_workflow_invalid_models(test_case: WorkflowTestCase, capture_constructo
         else PostTransformValidationError
     )
     with pytest.raises(exception_type):
-        _ = handler.run(data=test_case.input_data, annotation=test_case.annotation)
+        handler.run(data=test_case.input_data, annotation=test_case.annotation)
 
     assert capture_constructor_args.call_args == EXPECTED_CALL_ARGS[test_case.case_name]
