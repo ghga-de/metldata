@@ -52,7 +52,8 @@ from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR, read_yaml
 
 EXAMPLE_WORKFLOW_DIR = BASE_DIR / "example_workflows"
-WORKFLOW_BY_NAME: list[str] = [
+WORKFLOW_VALIDATION_DIR = BASE_DIR / "workflow_validation"
+WORKFLOW_BY_NAME = [
     "add_multiple_content_properties",
     "count_references",
     "duplicate_one_delete_multiple",
@@ -64,6 +65,12 @@ WORKFLOW_BY_NAME: list[str] = [
     "rename_id_property_multiple",
     "rename_id_property_transform_content_update_resource_ids",
     "ghga_aggregation_workflow",
+]
+VALIDATION_WORKFLOWS = [
+    "invalid_input_model",
+    "invalid_intermediate_model",
+    "invalid_single_step_model",
+    "invalid_output_model",
 ]
 TRANSFORMATION_REGISTRY = {
     "delete_class": DELETE_CLASS_TRANSFORMATION,
@@ -84,8 +91,8 @@ class WorkflowTestCase:
     workflow: Workflow
     input_model: SchemaPack
     input_data: DataPack
-    transformed_model: SchemaPack
-    transformed_data: DataPack
+    transformed_model: SchemaPack | None
+    transformed_data: DataPack | None
     annotation: BaseModel
     transformation_registry: dict[str, Any] = field(
         default_factory=lambda: TRANSFORMATION_REGISTRY
@@ -104,11 +111,10 @@ def _get_workflow(workflow_path: Path) -> Workflow:
 
 
 def _read_test_case(
-    *,
-    case_name: str,
+    *, workflow_dir: Path, case_name: str, load_transformed: bool = True
 ) -> WorkflowTestCase:
     """Read a test case for a workflow."""
-    case_dir = EXAMPLE_WORKFLOW_DIR / case_name
+    case_dir = workflow_dir / case_name
     workflow_path = case_dir / "workflow.yaml"
     input_model_path = case_dir / "input.schemapack.yaml"
     input_data_path = case_dir / "input.datapack.yaml"
@@ -124,8 +130,13 @@ def _read_test_case(
     input_data = (
         load_datapack(input_data_path) if input_data_path.exists() else ADVANCED_DATA
     )
-    transformed_model = load_schemapack(transformed_model_path)
-    transformed_data = load_datapack(transformed_data_path)
+
+    transformed_model = (
+        load_schemapack(transformed_model_path) if load_transformed else None
+    )
+    transformed_data = (
+        load_datapack(transformed_data_path) if load_transformed else None
+    )
     workflow = _get_workflow(workflow_path)
     annotation = (
         AccessionAnnotation(**read_yaml(annotation_path))
@@ -144,9 +155,25 @@ def _read_test_case(
     )
 
 
+def _read_validation_test_cases() -> list[WorkflowTestCase]:
+    """Read validation test cases."""
+    return [
+        _read_test_case(
+            workflow_dir=WORKFLOW_VALIDATION_DIR,
+            case_name=case_name,
+            load_transformed=False,
+        )
+        for case_name in VALIDATION_WORKFLOWS
+    ]
+
+
 def _read_all_test_cases() -> list[WorkflowTestCase]:
     """Read all test cases for a workflow execution."""
-    return [_read_test_case(case_name=case_name) for case_name in WORKFLOW_BY_NAME]
+    return [
+        _read_test_case(workflow_dir=EXAMPLE_WORKFLOW_DIR, case_name=case_name)
+        for case_name in WORKFLOW_BY_NAME
+    ]
 
 
 WORKFLOW_TEST_CASES = _read_all_test_cases()
+VALIDATION_TEST_CASES = _read_validation_test_cases()
