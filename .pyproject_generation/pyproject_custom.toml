@@ -1,10 +1,10 @@
 [project]
 name = "metldata"
-version = "4.0.5"
+version = "4.0.6"
 description = "metldata - A framework for handling metadata based on ETL, CQRS, and event sourcing."
 dependencies = [
-    "hexkit[akafka,mongodb] >=8.1, <9",
-    "ghga-service-commons[api,auth] >=7.0, <8",
+    "hexkit[akafka,mongodb] >= 8.1, < 9",
+    "ghga-service-commons[api,auth] >= 7.0, < 8",
     "ghga-event-schemas ~= 11.1.1",
     "typer >= 0.21",
     "linkml == 1.6.1",
