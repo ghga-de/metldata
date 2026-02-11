@@ -35,9 +35,9 @@ jinja2==3.1.6 \
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
-jsonschema==4.25.1 \
-    --hash=sha256:3fba0169e345c7175110351d456342c364814cfcf3b964ba4587f22915230a63 \
-    --hash=sha256:e4a9655ce0da0c0b67a085847e00a3a51449e1157f4f75e9fb5aa545e122eb85
+jsonschema==4.26.0 \
+    --hash=sha256:0c26707e2efad8aa1bfc5b7ce170f3fccc2e4918ff85989ba9ffa9facb2be326 \
+    --hash=sha256:d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce
     # via
     #   -c lock/requirements-dev.txt
     #   schemapack
@@ -519,9 +519,9 @@ shellingham==1.5.4 \
     # via
     #   -c lock/requirements-dev.txt
     #   typer
-typer==0.20.0 \
-    --hash=sha256:1aaf6494031793e4876fb0bacfa6a912b551cf43c1e63c800df8b1a866720c37 \
-    --hash=sha256:5b463df6793ec1dca6213a3cf4c0f03bc6e322ac5e16e13ddd622a889489784a
+typer==0.21.1 \
+    --hash=sha256:7985e89081c636b88d172c2ee0cfe33c253160994d47bdfdc302defd7d1f1d01 \
+    --hash=sha256:ea835607cd752343b6b2b7ce676893e5a0324082268b48f27aa058bdb7d2145d
     # via
     #   -c lock/requirements-dev.txt
     #   schemapack
@@ -532,6 +532,7 @@ typing-extensions==4.15.0 \
     #   -c lock/requirements-dev.txt
     #   pydantic
     #   pydantic-core
+    #   referencing
     #   typer
     #   typing-inspection
 typing-inspection==0.4.2 \
