@@ -1,3 +1,9 @@
+annotated-doc==0.0.4 \
+    --hash=sha256:571ac1dc6991c450b25a9c2d84a3705e2ae7a53467b5d111c24fa8baabbed320 \
+    --hash=sha256:fbcda96e87e9c92ad167c2e53839e57503ecfda18804ea28102353485033faa4
+    # via
+    #   -c lock/requirements-dev.txt
+    #   typer
 annotated-types==0.7.0 \
     --hash=sha256:1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53 \
     --hash=sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89
@@ -23,9 +29,9 @@ click==8.3.1 \
     # via
     #   -c lock/requirements-dev.txt
     #   typer
-immutabledict==4.2.2 \
-    --hash=sha256:97c31d098a2c850e93a958badeef765e4736ed7942ec73e439facd764a3a7217 \
-    --hash=sha256:cb6ed3090df593148f94cb407d218ca526fd2639694afdb553dc4f50ce6feeca
+immutabledict==4.3.0 \
+    --hash=sha256:998d43d1dbc3a0e733ce4135c1c948aa7866c256761d3fa63d8627366502ca00 \
+    --hash=sha256:9a6ea13c6baacebdcecb3aed3f1fb571bc3d600777d87518f1d176cc8b207e9c
     # via
     #   -c lock/requirements-dev.txt
     #   arcticfreeze
@@ -519,9 +525,9 @@ shellingham==1.5.4 \
     # via
     #   -c lock/requirements-dev.txt
     #   typer
-typer==0.21.1 \
-    --hash=sha256:7985e89081c636b88d172c2ee0cfe33c253160994d47bdfdc302defd7d1f1d01 \
-    --hash=sha256:ea835607cd752343b6b2b7ce676893e5a0324082268b48f27aa058bdb7d2145d
+typer==0.23.1 \
+    --hash=sha256:2070374e4d31c83e7b61362fd859aa683576432fd5b026b060ad6b4cd3b86134 \
+    --hash=sha256:3291ad0d3c701cbf522012faccfbb29352ff16ad262db2139e6b01f15781f14e
     # via
     #   -c lock/requirements-dev.txt
     #   schemapack
@@ -533,7 +539,6 @@ typing-extensions==4.15.0 \
     #   pydantic
     #   pydantic-core
     #   referencing
-    #   typer
     #   typing-inspection
 typing-inspection==0.4.2 \
     --hash=sha256:4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7 \
