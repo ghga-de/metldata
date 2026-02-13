@@ -74,5 +74,6 @@ class Workflow(BaseModel):
 
     operations: Sequence[WorkflowStep] = Field(
         default=...,
+        min_length=1,
         description="The ordered list of workflow steps to be applied to the input model.",
     )

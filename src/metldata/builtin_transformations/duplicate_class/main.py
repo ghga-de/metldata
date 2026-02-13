@@ -30,6 +30,7 @@ from metldata.builtin_transformations.duplicate_class.data_transform import (
 from metldata.builtin_transformations.duplicate_class.model_transform import (
     duplicate_model_class,
 )
+from metldata.builtin_transformations.registry import register_transformation
 from metldata.transform.base import (
     DataTransformer,
     SubmissionAnnotation,
@@ -95,3 +96,11 @@ DUPLICATE_CLASS_TRANSFORMATION = TransformationDefinition[DuplicateClassConfig](
     transform_model=transform_model,
     data_transformer_factory=DuplicateClassTransformer,
 )
+
+
+@register_transformation("duplicate_class")
+def get_duplicate_class_transformation() -> TransformationDefinition[
+    DuplicateClassConfig
+]:
+    """Get the duplicate class transformation."""
+    return DUPLICATE_CLASS_TRANSFORMATION

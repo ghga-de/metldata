@@ -23,3 +23,7 @@ class UnknownTransformationError(Exception):
 
 class ModelNotFoundError(FileNotFoundError):
     """Raised when a model file is not found in the model registry."""
+
+
+class WorkflowValidationError(Exception):
+    """Raised when a workflow contains operations that reference unknown or unregistered transformations."""

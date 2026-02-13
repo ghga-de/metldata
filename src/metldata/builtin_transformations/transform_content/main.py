@@ -18,6 +18,7 @@
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
+from metldata.builtin_transformations.registry import register_transformation
 from metldata.builtin_transformations.transform_content.assumptions import (
     check_model_assumptions,
 )
@@ -91,3 +92,11 @@ TRANSFORM_CONTENT_TRANSFORMATION = TransformationDefinition[TransformContentConf
     transform_model=transform_model,
     data_transformer_factory=TransformContentTransformer,
 )
+
+
+@register_transformation("transform_content")
+def get_transform_content_transformation() -> TransformationDefinition[
+    TransformContentConfig
+]:
+    """Get the transform content transformation."""
+    return TRANSFORM_CONTENT_TRANSFORMATION

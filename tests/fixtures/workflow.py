@@ -25,25 +25,7 @@ from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations import (
-    DELETE_CLASS_TRANSFORMATION,
-    DUPLICATE_CLASS_TRANSFORMATION,
-)
-from metldata.builtin_transformations.infer_relation.main import (
-    INFER_RELATION_TRANSFORMATION,
-)
-from metldata.builtin_transformations.merge_relations.main import (
-    MERGE_RELATIONS_TRANSFORMATION,
-)
-from metldata.builtin_transformations.rename_id_property.main import (
-    RENAME_ID_PROPERTY_TRANSFORMATION,
-)
-from metldata.builtin_transformations.replace_resource_ids.main import (
-    REPLACE_RESOURCE_IDS_TRANSFORMATION,
-)
-from metldata.builtin_transformations.transform_content.main import (
-    TRANSFORM_CONTENT_TRANSFORMATION,
-)
+from metldata import get_transformation_registry
 from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
 from tests.fixtures.annotation import AccessionAnnotation, EmptySubmissionAnnotation
@@ -72,15 +54,7 @@ VALIDATION_WORKFLOWS = [
     "invalid_single_step_model",
     "invalid_output_model",
 ]
-TRANSFORMATION_REGISTRY = {
-    "delete_class": DELETE_CLASS_TRANSFORMATION,
-    "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
-    "infer_relation": INFER_RELATION_TRANSFORMATION,
-    "merge_relations": MERGE_RELATIONS_TRANSFORMATION,
-    "transform_content": TRANSFORM_CONTENT_TRANSFORMATION,
-    "rename_id_property": RENAME_ID_PROPERTY_TRANSFORMATION,
-    "replace_resource_ids": REPLACE_RESOURCE_IDS_TRANSFORMATION,
-}
+TRANSFORMATION_REGISTRY = get_transformation_registry()
 
 
 @dataclass(frozen=False)

@@ -14,3 +14,8 @@
 # limitations under the License.
 
 "Subpackage containing functionality to infer a relation."
+
+# shortcuts:
+from metldata.builtin_transformations.infer_relation.main import (  # noqa: F401
+    INFER_RELATION_TRANSFORMATION,
+)

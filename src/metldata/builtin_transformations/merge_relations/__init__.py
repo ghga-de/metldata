@@ -14,3 +14,8 @@
 # limitations under the License.
 
 "Subpackage containing functionality to merge relations."
+
+# shortcuts:
+from metldata.builtin_transformations.merge_relations.main import (  # noqa: F401
+    MERGE_RELATIONS_TRANSFORMATION,
+)
