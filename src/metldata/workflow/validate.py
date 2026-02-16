@@ -15,6 +15,8 @@
 
 """Workflow validation logic."""
 
+from pydantic import ValidationError
+
 from metldata.transform.base import TransformationDefinition
 from metldata.workflow.base import Workflow
 from metldata.workflow.exceptions import WorkflowValidationError
