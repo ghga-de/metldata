@@ -16,6 +16,8 @@
 """Subpackage containing functionality to duplicate a class."""
 
 # shortcuts:
-from metldata.builtin_transformations.duplicate_class.main import (  # noqa: F401
+from metldata.builtin_transformations.duplicate_class.main import (
     DUPLICATE_CLASS_TRANSFORMATION,
 )
+
+__all__ = ["DUPLICATE_CLASS_TRANSFORMATION"]

@@ -16,6 +16,8 @@
 "Subpackage containing functionality to merge relations."
 
 # shortcuts:
-from metldata.builtin_transformations.merge_relations.main import (  # noqa: F401
+from metldata.builtin_transformations.merge_relations.main import (
     MERGE_RELATIONS_TRANSFORMATION,
 )
+
+__all__ = ["MERGE_RELATIONS_TRANSFORMATION"]

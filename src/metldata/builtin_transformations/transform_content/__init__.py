@@ -15,6 +15,8 @@
 
 """A transformation to modify the content schema and data of a given class."""
 
-from metldata.builtin_transformations.transform_content.main import (  # noqa: F401
+from metldata.builtin_transformations.transform_content.main import (
     TRANSFORM_CONTENT_TRANSFORMATION,
 )
+
+__all__ = ["TRANSFORM_CONTENT_TRANSFORMATION"]

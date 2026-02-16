@@ -18,6 +18,8 @@
 testing."""
 
 # shortcuts:
-from metldata.builtin_transformations.null.main import (  # noqa: F401
+from metldata.builtin_transformations.null.main import (
     NULL_TRANSFORMATION,
 )
+
+__all__ = ["NULL_TRANSFORMATION"]

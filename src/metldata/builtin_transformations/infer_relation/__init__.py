@@ -16,6 +16,8 @@
 "Subpackage containing functionality to infer a relation."
 
 # shortcuts:
-from metldata.builtin_transformations.infer_relation.main import (  # noqa: F401
+from metldata.builtin_transformations.infer_relation.main import (
     INFER_RELATION_TRANSFORMATION,
 )
+
+__all__ = ["INFER_RELATION_TRANSFORMATION"]

@@ -13,9 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""A transformation to delete relations."""
+"""A transformation to delete classes."""
 
 # shortcuts:
-from metldata.builtin_transformations.delete_class.main import (  # noqa: F401
+from metldata.builtin_transformations.delete_class.main import (
     DELETE_CLASS_TRANSFORMATION,
 )
+
+__all__ = ["DELETE_CLASS_TRANSFORMATION"]

@@ -15,6 +15,8 @@
 
 """A transformation to replace the resource ids in the data with the ones coming from an annotation."""
 
-from metldata.builtin_transformations.replace_resource_ids.main import (  # noqa: F401
+from metldata.builtin_transformations.replace_resource_ids.main import (
     REPLACE_RESOURCE_IDS_TRANSFORMATION,
 )
+
+__all__ = ["REPLACE_RESOURCE_IDS_TRANSFORMATION"]

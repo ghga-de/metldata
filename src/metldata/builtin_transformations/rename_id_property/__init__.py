@@ -15,6 +15,8 @@
 
 """A transformation to change the name of the id property in the model of a given class."""
 
-from metldata.builtin_transformations.rename_id_property.main import (  # noqa: F401
+from metldata.builtin_transformations.rename_id_property.main import (
     RENAME_ID_PROPERTY_TRANSFORMATION,
 )
+
+__all__ = ["RENAME_ID_PROPERTY_TRANSFORMATION"]
