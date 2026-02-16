@@ -17,26 +17,28 @@
 """Registry builder for built-in transformations."""
 
 from collections.abc import Callable
-from typing import Any
+from typing import Any, TypeVar
 
-Operation = Callable[..., Any]
+from metldata.transform.base import TransformationDefinition
 
-_TRANSFORMATION_REGISTRY: dict[str, Operation] = {}
+T = TypeVar("T", bound=TransformationDefinition[Any])
+
+_TRANSFORMATION_REGISTRY: dict[str, TransformationDefinition[Any]] = {}
 
 
-def register_transformation(name: str):
+def register_transformation(name: str) -> Callable[[Callable[[], T]], Callable[[], T]]:
     """Decorator to register a transformation under a given name."""
 
-    def decorator(func: Operation) -> Operation:
+    def decorator(factory: Callable[[], T]) -> Callable[[], T]:
         if name in _TRANSFORMATION_REGISTRY:
             raise ValueError(f"Transformation '{name}' already registered")
 
-        _TRANSFORMATION_REGISTRY[name] = func()
-        return func
+        _TRANSFORMATION_REGISTRY[name] = factory()
+        return factory
 
     return decorator
 
 
-def get_transformation_registry():
+def get_transformation_registry() -> dict[str, TransformationDefinition[Any]]:
     """Get the registry of built-in transformations."""
     return _TRANSFORMATION_REGISTRY.copy()
