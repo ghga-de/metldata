@@ -50,18 +50,18 @@ class ComplexConfig(BaseModel):
 
 
 # Mock functions for transformation definitions
-def mock_check_model_assumptions(model: SchemaPack, config: BaseModel) -> None:
+def dummy_check_model_assumptions(model: SchemaPack, config: BaseModel) -> None:
     """Mock function for checking model assumptions."""
     pass
 
 
-def mock_transform_model(model: SchemaPack, config: BaseModel) -> SchemaPack:
+def dummy_transform_model(model: SchemaPack, config: BaseModel) -> SchemaPack:
     """Mock function for transforming models."""
     return model
 
 
 # Mock classes for transformation definitions
-class MockDataTransformer(DataTransformer):
+class DummyDataTransformer(DataTransformer):
     """Mock data transformer for testing."""
 
     def transform(self, data: DataPack, annotation: BaseModel) -> DataPack:
@@ -75,9 +75,9 @@ def simple_transformation():
     """Create a simple transformation definition."""
     return TransformationDefinition(
         config_cls=SimpleConfig,
-        check_model_assumptions=mock_check_model_assumptions,
-        transform_model=mock_transform_model,
-        data_transformer_factory=MockDataTransformer,
+        check_model_assumptions=dummy_check_model_assumptions,
+        transform_model=dummy_transform_model,
+        data_transformer_factory=DummyDataTransformer,
     )
 
 
@@ -86,9 +86,9 @@ def another_transformation():
     """Create another transformation definition."""
     return TransformationDefinition(
         config_cls=AnotherConfig,
-        check_model_assumptions=mock_check_model_assumptions,
-        transform_model=mock_transform_model,
-        data_transformer_factory=MockDataTransformer,
+        check_model_assumptions=dummy_check_model_assumptions,
+        transform_model=dummy_transform_model,
+        data_transformer_factory=DummyDataTransformer,
     )
 
 
@@ -97,9 +97,9 @@ def complex_transformation():
     """Create a complex transformation definition."""
     return TransformationDefinition(
         config_cls=ComplexConfig,
-        check_model_assumptions=mock_check_model_assumptions,
-        transform_model=mock_transform_model,
-        data_transformer_factory=MockDataTransformer,
+        check_model_assumptions=dummy_check_model_assumptions,
+        transform_model=dummy_transform_model,
+        data_transformer_factory=DummyDataTransformer,
     )
 
 
