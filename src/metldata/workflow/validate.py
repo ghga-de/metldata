@@ -47,7 +47,7 @@ def validate_workflow_against_registry(
         raise WorkflowValidationError("Transformation registry cannot be empty.")
 
     for operation in workflow.operations:
-        if not operation.name in transformation_registry:
+        if operation.name not in transformation_registry:
             raise WorkflowValidationError(
                 f"Unknown transformation '{operation.name}' referenced in workflow."
             )
