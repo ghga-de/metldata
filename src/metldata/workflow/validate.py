@@ -59,8 +59,8 @@ def validate_workflow_against_registry(
         # Validate by trying to create a valid config instance
         if not isinstance(provided_operation_config, expected_config_class):
             try:
-                expected_config_class(**provided_operation_config)
-            except Exception as error:
+                expected_config_class.model_validate(provided_operation_config)
+            except ValidationError as error:
                 raise WorkflowValidationError(
                     f"Invalid configuration for transformation '{operation.name}'. "
                     f"Provided arguments {provided_operation_config} are not "
