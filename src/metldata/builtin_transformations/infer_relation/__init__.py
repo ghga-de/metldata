@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,3 +14,10 @@
 # limitations under the License.
 
 "Subpackage containing functionality to infer a relation."
+
+# shortcuts:
+from metldata.builtin_transformations.infer_relation.main import (
+    INFER_RELATION_TRANSFORMATION,
+)
+
+__all__ = ["INFER_RELATION_TRANSFORMATION"]

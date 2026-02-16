@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,8 @@
 
 """A transformation to modify the content schema and data of a given class."""
 
-from metldata.builtin_transformations.transform_content.main import (  # noqa: F401
+from metldata.builtin_transformations.transform_content.main import (
     TRANSFORM_CONTENT_TRANSFORMATION,
 )
+
+__all__ = ["TRANSFORM_CONTENT_TRANSFORMATION"]

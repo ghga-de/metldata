@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +30,7 @@ from metldata.builtin_transformations.delete_class.data_transform import (
 from metldata.builtin_transformations.delete_class.model_transform import (
     delete_model_class,
 )
+from metldata.builtin_transformations.registry import register_transformation
 from metldata.transform.base import (
     DataTransformer,
     SubmissionAnnotation,
@@ -81,3 +82,9 @@ DELETE_CLASS_TRANSFORMATION = TransformationDefinition[DeleteClassConfig](
     transform_model=transform_model,
     data_transformer_factory=DeleteClassTransformer,
 )
+
+
+@register_transformation("delete_class")
+def delete_class_transformation() -> TransformationDefinition[DeleteClassConfig]:
+    """Get the transformation definition for the delete_class transformation."""
+    return DELETE_CLASS_TRANSFORMATION

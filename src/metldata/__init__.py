@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,3 +15,10 @@
 #
 
 """Re-implementation based on schemapack."""
+
+from metldata.builtin_transformations.registry import (
+    get_transformation_registry,
+)
+from metldata.workflow.validate import validate_workflow_against_registry
+
+__all__ = ["get_transformation_registry", "validate_workflow_against_registry"]

@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,25 +23,7 @@ from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations import (
-    DELETE_CLASS_TRANSFORMATION,
-    DUPLICATE_CLASS_TRANSFORMATION,
-)
-from metldata.builtin_transformations.infer_relation.main import (
-    INFER_RELATION_TRANSFORMATION,
-)
-from metldata.builtin_transformations.merge_relations.main import (
-    MERGE_RELATIONS_TRANSFORMATION,
-)
-from metldata.builtin_transformations.rename_id_property.main import (
-    RENAME_ID_PROPERTY_TRANSFORMATION,
-)
-from metldata.builtin_transformations.replace_resource_ids.main import (
-    REPLACE_RESOURCE_IDS_TRANSFORMATION,
-)
-from metldata.builtin_transformations.transform_content.main import (
-    TRANSFORM_CONTENT_TRANSFORMATION,
-)
+from metldata.builtin_transformations.registry import get_transformation_registry
 from metldata.transform.base import TransformationDefinition
 from tests.fixtures.annotation import AccessionAnnotation, EmptySubmissionAnnotation
 from tests.fixtures.data import ADVANCED_DATA
@@ -50,15 +32,7 @@ from tests.fixtures.utils import BASE_DIR, read_yaml
 
 EXAMPLE_TRANSFORMATION_DIR = BASE_DIR / "example_transformations"
 
-TRANSFORMATIONS_BY_NAME: dict[str, TransformationDefinition] = {
-    "delete_class": DELETE_CLASS_TRANSFORMATION,
-    "duplicate_class": DUPLICATE_CLASS_TRANSFORMATION,
-    "infer_relation": INFER_RELATION_TRANSFORMATION,
-    "merge_relations": MERGE_RELATIONS_TRANSFORMATION,
-    "transform_content": TRANSFORM_CONTENT_TRANSFORMATION,
-    "rename_id_property": RENAME_ID_PROPERTY_TRANSFORMATION,
-    "replace_resource_ids": REPLACE_RESOURCE_IDS_TRANSFORMATION,
-}
+TRANSFORMATION_REGISTRY = get_transformation_registry()
 
 
 @dataclass(frozen=True)
@@ -83,7 +57,7 @@ def _read_test_case(
     *, transformation_name: str, case_name: str
 ) -> TransformationTestCase:
     """Read a test case for a transformation."""
-    transformation_definition = TRANSFORMATIONS_BY_NAME[transformation_name]
+    transformation_definition = TRANSFORMATION_REGISTRY[transformation_name]
     case_dir = EXAMPLE_TRANSFORMATION_DIR / transformation_name / case_name
     config_path = case_dir / "config.yaml"
     input_model_path = case_dir / "input.schemapack.yaml"
@@ -129,7 +103,7 @@ def _read_all_test_cases() -> list[TransformationTestCase]:
             transformation_name=transformation_name,
             case_name=case_name,
         )
-        for transformation_name in TRANSFORMATIONS_BY_NAME
+        for transformation_name in TRANSFORMATION_REGISTRY
         for case_name in [
             path.name
             for path in (EXAMPLE_TRANSFORMATION_DIR / transformation_name).iterdir()

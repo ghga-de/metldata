@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
+from metldata.builtin_transformations.registry import register_transformation
 from metldata.builtin_transformations.replace_resource_ids.assumptions import (
     check_model_assumptions,
 )
@@ -99,3 +100,11 @@ REPLACE_RESOURCE_IDS_TRANSFORMATION = TransformationDefinition[
     transform_model=transform_model,
     data_transformer_factory=ReplaceResourceIdsTransformer,
 )
+
+
+@register_transformation("replace_resource_ids")
+def get_replace_resource_ids_transformation() -> TransformationDefinition[
+    ReplaceResourceIdsConfig
+]:
+    """Get the replace resource ids transformation."""
+    return REPLACE_RESOURCE_IDS_TRANSFORMATION

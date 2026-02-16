@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,8 @@
 
 """A transformation to change the name of the id property in the model of a given class."""
 
-from metldata.builtin_transformations.rename_id_property.main import (  # noqa: F401
+from metldata.builtin_transformations.rename_id_property.main import (
     RENAME_ID_PROPERTY_TRANSFORMATION,
 )
+
+__all__ = ["RENAME_ID_PROPERTY_TRANSFORMATION"]

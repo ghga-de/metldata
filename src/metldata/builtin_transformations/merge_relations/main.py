@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +31,7 @@ from metldata.builtin_transformations.merge_relations.model_transform import (
     RelationSpecificationParams,
     merge_model_relations,
 )
+from metldata.builtin_transformations.registry import register_transformation
 from metldata.transform.base import (
     DataTransformer,
     SubmissionAnnotation,
@@ -104,3 +105,11 @@ MERGE_RELATIONS_TRANSFORMATION = TransformationDefinition[MergeRelationsConfig](
     transform_model=transform_model,
     data_transformer_factory=MergeRelationsTransformer,
 )
+
+
+@register_transformation("merge_relations")
+def get_merge_relations_transformation() -> TransformationDefinition[
+    MergeRelationsConfig
+]:
+    """Get the merge relations transformation."""
+    return MERGE_RELATIONS_TRANSFORMATION

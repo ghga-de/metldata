@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,5 +74,6 @@ class Workflow(BaseModel):
 
     operations: Sequence[WorkflowStep] = Field(
         default=...,
+        min_length=1,
         description="The ordered list of workflow steps to be applied to the input model.",
     )

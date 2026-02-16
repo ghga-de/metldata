@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
+from metldata.builtin_transformations.registry import register_transformation
 from metldata.builtin_transformations.rename_id_property.assumptions import (
     check_model_assumptions,
 )
@@ -94,3 +95,11 @@ RENAME_ID_PROPERTY_TRANSFORMATION = TransformationDefinition[RenameIdPropertyCon
     transform_model=transform_model,
     data_transformer_factory=RenameIdPropertyTransformer,
 )
+
+
+@register_transformation("rename_id_property")
+def get_rename_id_property_transformation() -> TransformationDefinition[
+    RenameIdPropertyConfig
+]:
+    """Get the rename id property transformation."""
+    return RENAME_ID_PROPERTY_TRANSFORMATION

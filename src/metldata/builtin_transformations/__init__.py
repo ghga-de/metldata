@@ -1,4 +1,4 @@
-# Copyright 2021 - 2025 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
+# Copyright 2021 - 2026 Universität Tübingen, DKFZ, EMBL, and Universität zu Köln
 # for the German Human Genome-Phenome Archive (GHGA)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,4 +21,19 @@ from metldata.builtin_transformations.delete_class import (
 )
 from metldata.builtin_transformations.duplicate_class import (
     DUPLICATE_CLASS_TRANSFORMATION,  # noqa: F401
+)
+from metldata.builtin_transformations.infer_relation import (
+    INFER_RELATION_TRANSFORMATION,  # noqa: F401
+)
+from metldata.builtin_transformations.merge_relations import (
+    MERGE_RELATIONS_TRANSFORMATION,  # noqa: F401
+)
+from metldata.builtin_transformations.rename_id_property import (
+    RENAME_ID_PROPERTY_TRANSFORMATION,  # noqa: F401
+)
+from metldata.builtin_transformations.replace_resource_ids import (
+    REPLACE_RESOURCE_IDS_TRANSFORMATION,  # noqa: F401
+)
+from metldata.builtin_transformations.transform_content import (
+    TRANSFORM_CONTENT_TRANSFORMATION,  # noqa: F401
 )
