@@ -21,10 +21,10 @@ classifiers = [
     "Intended Audience :: Developers",
 ]
 name = "metldata"
-version = "5.1.0"
+version = "5.1.1"
 description = "metldata - A framework for handling metadata based on ETL, CQRS, and event sourcing."
 dependencies = [
-    "schemapack >=4,<5",
+    "schemapack[schema-comparison] >=4.1,<5",
     "jinja2 >=3,<4",
 ]
 

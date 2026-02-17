@@ -29,9 +29,15 @@ click==8.3.1 \
     # via
     #   -c lock/requirements-dev.txt
     #   typer
-immutabledict==4.3.0 \
-    --hash=sha256:998d43d1dbc3a0e733ce4135c1c948aa7866c256761d3fa63d8627366502ca00 \
-    --hash=sha256:9a6ea13c6baacebdcecb3aed3f1fb571bc3d600777d87518f1d176cc8b207e9c
+greenery==3.3.3 \
+    --hash=sha256:c489d3d111ab49fc522e4796f349994d953d20ec8289aef107f2e7f240534d85 \
+    --hash=sha256:fb5f9439401ba01f256c7aff0aef9ecb482a3468e489532cfd8590743463d7c3
+    # via
+    #   -c lock/requirements-dev.txt
+    #   jsonsubschema
+immutabledict==4.3.1 \
+    --hash=sha256:c9facdc0ff30fdb8e35bd16532026cac472a549e182c94fa201b51b25e4bf7bf \
+    --hash=sha256:f844a669106cfdc73f47b1a9da003782fb17dc955a54c80972e0d93d1c63c514
     # via
     #   -c lock/requirements-dev.txt
     #   arcticfreeze
@@ -41,11 +47,18 @@ jinja2==3.1.6 \
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
+jsonref==1.1.0 \
+    --hash=sha256:32fe8e1d85af0fdefbebce950af85590b22b60f9e95443176adbde4e1ecea552 \
+    --hash=sha256:590dc7773df6c21cbf948b5dac07a72a251db28b0238ceecce0a2abfa8ec30a9
+    # via
+    #   -c lock/requirements-dev.txt
+    #   jsonsubschema
 jsonschema==4.26.0 \
     --hash=sha256:0c26707e2efad8aa1bfc5b7ce170f3fccc2e4918ff85989ba9ffa9facb2be326 \
     --hash=sha256:d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce
     # via
     #   -c lock/requirements-dev.txt
+    #   jsonsubschema
     #   schemapack
 jsonschema-specifications==2025.9.1 \
     --hash=sha256:98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe \
@@ -53,6 +66,12 @@ jsonschema-specifications==2025.9.1 \
     # via
     #   -c lock/requirements-dev.txt
     #   jsonschema
+jsonsubschema==0.0.7 \
+    --hash=sha256:4133bd1f7a2529b28aa7150f71bbcd5d6acf3663f0b83dedd9e6df71c4585779 \
+    --hash=sha256:852e0878842122a046fce5b3db1bfb801a26de20a2dfaebd8df20f366a762d2c
+    # via
+    #   -c lock/requirements-dev.txt
+    #   schemapack
 markdown-it-py==4.0.0 \
     --hash=sha256:87327c59b172c5011896038353a81343b6754500a08cd7a4973bb48c6d578147 \
     --hash=sha256:cb0a2b4aa34f932c007117b194e945bd74e0ec24133ceb5bac59009cda1cb9f3
@@ -158,6 +177,12 @@ mdurl==0.1.2 \
     # via
     #   -c lock/requirements-dev.txt
     #   markdown-it-py
+portion==2.6.1 \
+    --hash=sha256:44b1f7d57e052993c4157e519dc447e57b87a4e5e00a77c1c50e7044104e53c6 \
+    --hash=sha256:764d0be5479842f011feccc6f4bf80454dd944ef16309fceb2b5ae229cf05df3
+    # via
+    #   -c lock/requirements-dev.txt
+    #   jsonsubschema
 pydantic==2.12.5 \
     --hash=sha256:4d351024c75c0f085a9febbb665ce8c0c6ec5d30e903bdb6394b7ede26aebb49 \
     --hash=sha256:e561593fccf61e8a20fc46dfc2dfe075b8be7d0188df33f221ad1f0139180f9d
@@ -290,9 +315,9 @@ pydantic-core==2.41.5 \
     # via
     #   -c lock/requirements-dev.txt
     #   pydantic
-pydantic-settings==2.12.0 \
-    --hash=sha256:005538ef951e3c2a68e1c08b292b5f2e71490def8589d4221b95dab00dafcfd0 \
-    --hash=sha256:fddb9fd99a5b18da837b29710391e945b1e30c135477f484084ee513adb93809
+pydantic-settings==2.13.0 \
+    --hash=sha256:95d875514610e8595672800a5c40b073e99e4aae467fa7c8f9c263061ea2e1fe \
+    --hash=sha256:d67b576fff39cd086b595441bf9c75d4193ca9c0ed643b90360694d0f1240246
     # via
     #   -c lock/requirements-dev.txt
     #   schemapack
@@ -513,9 +538,9 @@ ruamel-yaml-clib==0.2.15 \
     # via
     #   -c lock/requirements-dev.txt
     #   ruamel-yaml
-schemapack==4.0.1 \
-    --hash=sha256:2f44f392f8c05e9440a012161e3aacb854ad1c63ab9853c66dde41a6e683e9c5 \
-    --hash=sha256:6ef352e984acdd7b71f48ea89c6189a77e0b594a28ef7ec422dc73a62d237018
+schemapack==4.1.0 \
+    --hash=sha256:52d7810f795de3ebb02093bc0e2b847dd7cb7dff0d0ac26ee31c794a145883b2 \
+    --hash=sha256:5610d56ab8c888ab42ac725678b2d72604885e28366b982a7f62756dedebd2df
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
@@ -525,9 +550,15 @@ shellingham==1.5.4 \
     # via
     #   -c lock/requirements-dev.txt
     #   typer
-typer==0.23.1 \
-    --hash=sha256:2070374e4d31c83e7b61362fd859aa683576432fd5b026b060ad6b4cd3b86134 \
-    --hash=sha256:3291ad0d3c701cbf522012faccfbb29352ff16ad262db2139e6b01f15781f14e
+sortedcontainers==2.4.0 \
+    --hash=sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88 \
+    --hash=sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0
+    # via
+    #   -c lock/requirements-dev.txt
+    #   portion
+typer==0.24.0 \
+    --hash=sha256:5fc435a9c8356f6160ed6e85a6301fdd6e3d8b2851da502050d1f92c5e9eddc8 \
+    --hash=sha256:f9373dc4eff901350694f519f783c29b6d7a110fc0dcc11b1d7e353b85ca6504
     # via
     #   -c lock/requirements-dev.txt
     #   schemapack
