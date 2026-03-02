@@ -2,14 +2,16 @@ Metldata is a framework for handling the entire lifetime of metadata by addressi
 a complex combination of challenges that makes it suitable especially for public
 archives for sensitive data:
 
-![Schematic reprensentation of challenges.](./images/challenges.png)
+![Schematic representation of challenges.](./images/challenges.png)
 **Figure 1| Overview of the combination of challenges during metadata handling.**
 
 ### Immutability
+
 It is guaranteed that data entries do not change over time making reproducibility
 possible without having to rely on local snapshots.
 
 ### Accessibility
+
 A stable accession is assigned to each resource. Together with the immutability
 property, this guarantees that you will always get the same data when querying with the
 same accession.
