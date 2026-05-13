@@ -47,6 +47,8 @@ class WorkflowStepHandler:
     def __init__(self, workflow_step: WorkflowStep, input_model: SchemaPack):
         self.workflow_step = workflow_step
         self.input_model = input_model
+        self.step_name = self.workflow_step.name
+        self.step_args = self.workflow_step.args
 
     def execute(
         self,
@@ -60,19 +62,18 @@ class WorkflowStepHandler:
 
         Raises a ValueError if the transformation is not found in the registry.
         """
-        step_name = self.workflow_step.name
-        step_args = self.workflow_step.args
-
-        if step_name not in transformation_registry:
+        if self.step_name not in transformation_registry:
             raise UnknownTransformationError(
-                f"Invalid transformation name. {step_name} does not exist in the "
+                f"Invalid transformation name. {self.step_name} does not exist in the "
                 "transformation registry."
             )
 
-        transformation_definition = transformation_registry[step_name]
+        transformation_definition = transformation_registry[self.step_name]
         return TransformationHandler(
             transformation_definition=transformation_definition,
-            transformation_config=transformation_definition.config_cls(**step_args),
+            transformation_config=transformation_definition.config_cls(
+                **self.step_args
+            ),
             input_model=self.input_model,
             validate_input=validate_input,
             validate_output=validate_output,
@@ -102,29 +103,27 @@ class WorkflowHandler[SubmissionAnnotation]:
         self.transformation_registry = transformation_registry
         self.input_model = input_model
 
+        self._transformation_handlers: list[TransformationHandler] = []
+        model = input_model
+        last_step = len(self.workflow.operations) - 1
+
+        for idx, step in enumerate(self.workflow.operations):
+            step_handler = WorkflowStepHandler(workflow_step=step, input_model=model)
+
+            transformation_handler = step_handler.execute(
+                transformation_registry,
+                validate_input=(idx == 0),
+                validate_output=(idx == last_step),
+            )
+            self._transformation_handlers.append(transformation_handler)
+            model = transformation_handler.transformed_model
+
+        self.output_model = model
+
     def run(self, data: DataPack, annotation: SubmissionAnnotation) -> WorkflowResult:
         """Executes the workflow, applying each transformation in sequence to the model
         and data, and returns the final model and data as a WorkflowResult.
         """
-        model = self.input_model
-
-        last_step = len(self.workflow.operations) - 1
-        for idx, step in enumerate(self.workflow.operations):
-            step_handler = WorkflowStepHandler(workflow_step=step, input_model=model)
-
-            # Collect and pass as kwargs.
-            # More concise and works correctly if there's only one step in the workflow
-            validation_args = {}
-            if idx == 0:
-                validation_args["validate_input"] = True
-            if idx == last_step:
-                validation_args["validate_output"] = True
-
-            transformation_handler = step_handler.execute(
-                self.transformation_registry, **validation_args
-            )
-
-            model = transformation_handler.transformed_model
-            data = transformation_handler.transform_data(data, annotation)
-
-        return WorkflowResult(model=model, data=data)
+        for handler in self._transformation_handlers:
+            data = handler.transform_data(data, annotation)
+        return WorkflowResult(model=self.output_model, data=data)

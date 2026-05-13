@@ -49,10 +49,10 @@ WORKFLOW_BY_NAME = [
     "ghga_aggregation_workflow",
 ]
 VALIDATION_WORKFLOWS = [
-    "invalid_input_model",
-    "invalid_intermediate_model",
-    "invalid_single_step_model",
-    "invalid_output_model",
+    "pre_transform_validation_failure",
+    "intermediate_post_transform_validation_failure",
+    "single_step_validation_failure",
+    "final_post_transform_validation_failure",
 ]
 TRANSFORMATION_REGISTRY = get_transformation_registry()
 

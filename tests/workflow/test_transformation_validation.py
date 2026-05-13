@@ -26,14 +26,20 @@ from metldata.workflow.handling import WorkflowHandler
 from tests.fixtures.workflow import VALIDATION_TEST_CASES, WorkflowTestCase
 
 EXPECTED_CALL_ARGS = {
-    "invalid_input_model": [{"validate_input": True, "validate_output": False}],
-    "invalid_intermediate_model": [
+    "pre_transform_validation_failure": [
         {"validate_input": True, "validate_output": False},
         {"validate_input": False, "validate_output": False},
         {"validate_input": False, "validate_output": True},
     ],
-    "invalid_single_step_model": [{"validate_input": True, "validate_output": True}],
-    "invalid_output_model": [
+    "intermediate_post_transform_validation_failure": [
+        {"validate_input": True, "validate_output": False},
+        {"validate_input": False, "validate_output": False},
+        {"validate_input": False, "validate_output": True},
+    ],
+    "single_step_validation_failure": [
+        {"validate_input": True, "validate_output": True}
+    ],
+    "final_post_transform_validation_failure": [
         {"validate_input": True, "validate_output": False},
         {"validate_input": False, "validate_output": False},
         {"validate_input": False, "validate_output": True},
@@ -84,7 +90,7 @@ def test_workflow_invalid_models(test_case: WorkflowTestCase, capture_constructo
     )
     exception_type = (
         PreTransformValidationError
-        if test_case.case_name == "invalid_input_model"
+        if test_case.case_name == "pre_transform_validation_failure"
         else PostTransformValidationError
     )
     with pytest.raises(exception_type):
