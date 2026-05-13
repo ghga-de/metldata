@@ -27,7 +27,7 @@ def run_workflow(
     workflow: Workflow,
     input_model: SchemaPack,
     data: DataPack,
-    annotation: object = None,
+    annotation: object | None,
 ) -> WorkflowResult:
     """Run a workflow end-to-end using the built-in transformation registry.
 
