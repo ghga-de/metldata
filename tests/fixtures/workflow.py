@@ -25,7 +25,7 @@ from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata import get_transformation_registry
+from metldata.builtin_transformations.registry import get_transformation_registry
 from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
 from tests.fixtures.annotation import AccessionAnnotation, EmptySubmissionAnnotation

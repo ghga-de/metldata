@@ -17,9 +17,15 @@
 
 from pydantic import ValidationError
 
+from metldata.builtin_transformations.registry import get_transformation_registry
 from metldata.transform.base import TransformationDefinition
 from metldata.workflow.base import Workflow
 from metldata.workflow.exceptions import WorkflowValidationError
+
+
+def validate_workflow(workflow: Workflow) -> None:
+    """Validate a workflow against the built-in transformation registry."""
+    validate_workflow_against_registry(workflow, get_transformation_registry())
 
 
 def validate_workflow_against_registry(
