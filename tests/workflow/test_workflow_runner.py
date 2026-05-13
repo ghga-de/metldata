@@ -13,34 +13,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tests for the public ``run_workflow`` wrapper.
+"""Tests for the public ``WorkflowRunner`` API.
 
-These verify that the wrapper composes ``WorkflowHandler`` construction and
-``run`` correctly against the built-in transformation registry, complementing
-the ``WorkflowHandler``-level tests in ``test_happy.py``.
+These verify that ``WorkflowRunner`` preserves the separation between model
+and data transformations against the built-in transformation registry,
+complementing the ``WorkflowHandler``-level tests in ``test_happy.py``.
 """
 
 import pytest
 
-from metldata import run_workflow
+from metldata import WorkflowRunner
 from tests.fixtures.workflow import WORKFLOW_TEST_CASES, WorkflowTestCase
 from tests.utils import compare_data, compare_model
 
 
 @pytest.mark.parametrize("test_case", WORKFLOW_TEST_CASES, ids=str)
-def test_run_workflow_matches_expected_outputs(test_case: WorkflowTestCase):
-    """``run_workflow`` should produce the expected transformed model and data."""
+def test_workflow_runner_separates_model_and_data(test_case: WorkflowTestCase):
+    """``WorkflowRunner`` should expose the transformed model eagerly and let
+    callers run data transformations independently on the same runner.
+    """
     if test_case.transformed_model is None or test_case.transformed_data is None:
         raise ValueError(
             f"Missing expected outputs for test case: {test_case.case_name}"
         )
 
-    result = run_workflow(
-        workflow=test_case.workflow,
-        input_model=test_case.input_model,
-        data=test_case.input_data,
-        annotation=test_case.annotation,
+    runner: WorkflowRunner = WorkflowRunner(
+        workflow=test_case.workflow, input_model=test_case.input_model
     )
 
-    compare_model(result.model, test_case.transformed_model)
-    compare_data(result.data, test_case.transformed_data)
+    compare_model(runner.model, test_case.transformed_model)
+
+    transformed_data = runner.run_workflow(
+        data=test_case.input_data, annotation=test_case.annotation
+    )
+    compare_data(transformed_data, test_case.transformed_data)

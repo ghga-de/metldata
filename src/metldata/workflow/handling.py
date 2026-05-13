@@ -17,22 +17,12 @@
 
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.transform.handling import TransformationHandler
 from metldata.workflow.base import Workflow, WorkflowStep
 from metldata.workflow.exceptions import UnknownTransformationError
-
-
-class WorkflowResult(BaseModel):
-    """Model and data after workflow execution."""
-
-    model_config = ConfigDict(frozen=True)
-
-    model: SchemaPack
-    data: DataPack
 
 
 class WorkflowStepHandler:
@@ -120,10 +110,11 @@ class WorkflowHandler[SubmissionAnnotation]:
 
         self.output_model = model
 
-    def run(self, data: DataPack, annotation: SubmissionAnnotation) -> WorkflowResult:
-        """Executes the workflow, applying each transformation in sequence to the model
-        and data, and returns the final model and data as a WorkflowResult.
+    def run(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
+        """Apply each transformation's data step in sequence and return the
+        resulting :class:`DataPack`. The transformed model is available on
+        :attr:`output_model`.
         """
         for handler in self._transformation_handlers:
             data = handler.transform_data(data, annotation)
-        return WorkflowResult(model=self.output_model, data=data)
+        return data

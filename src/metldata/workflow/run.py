@@ -13,32 +13,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""One-shot entry point for executing a workflow."""
+"""Public entry point for executing a workflow."""
 
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.registry import get_transformation_registry
 from metldata.workflow.base import Workflow
-from metldata.workflow.handling import WorkflowHandler, WorkflowResult
+from metldata.workflow.handling import WorkflowHandler
 
 
-def run_workflow(
-    workflow: Workflow,
-    input_model: SchemaPack,
-    data: DataPack,
-    annotation: object | None,
-) -> WorkflowResult:
-    """Run a workflow end-to-end using the built-in transformation registry.
+class WorkflowRunner[SubmissionAnnotation]:
+    """Public, registry-aware entry point for running a workflow.
 
-    Applies the sequence of transformations defined by ``workflow`` to the
-    given ``input_model`` and ``data`` and returns the transformed model and
-    data. ``annotation`` is forwarded to transformations that need submission
-    metadata and may be omitted when no transformation requires it.
+    Model transformations are applied eagerly during construction and exposed
+    via :attr:`model`. Data transformations are deferred to
+    :meth:`run_workflow`, which may be called once or many times against the
+    same transformed model.
     """
-    handler: WorkflowHandler = WorkflowHandler(
-        workflow=workflow,
-        transformation_registry=get_transformation_registry(),
-        input_model=input_model,
-    )
-    return handler.run(data=data, annotation=annotation)
+
+    def __init__(self, *, workflow: Workflow, input_model: SchemaPack):
+        self._handler: WorkflowHandler[SubmissionAnnotation] = WorkflowHandler(
+            workflow=workflow,
+            transformation_registry=get_transformation_registry(),
+            input_model=input_model,
+        )
+
+    @property
+    def model(self) -> SchemaPack:
+        """The transformed schema model produced by the workflow."""
+        return self._handler.output_model
+
+    def run_workflow(
+        self, *, data: DataPack, annotation: SubmissionAnnotation
+    ) -> DataPack:
+        """Apply the workflow's data transformations and return the result."""
+        return self._handler.run(data=data, annotation=annotation)

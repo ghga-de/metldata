@@ -16,12 +16,10 @@
 
 """Re-implementation based on schemapack."""
 
-from metldata.workflow.handling import WorkflowResult
-from metldata.workflow.run import run_workflow
+from metldata.workflow.run import WorkflowRunner
 from metldata.workflow.validate import validate_workflow
 
 __all__ = [
-    "WorkflowResult",
-    "run_workflow",
+    "WorkflowRunner",
     "validate_workflow",
 ]
