@@ -16,6 +16,8 @@
 
 """Defining workflow related exceptions."""
 
+from metldata.transform.handling import TransformationHandler
+
 
 class UnknownTransformationError(Exception):
     """Raised when a transformation name is not found in the transformation registry."""
@@ -27,3 +29,17 @@ class ModelNotFoundError(FileNotFoundError):
 
 class WorkflowValidationError(Exception):
     """Raised when a workflow contains operations that reference unknown or unregistered transformations."""
+
+
+class WorkflowExecutionError(Exception):
+    """Raised when a workflow executes fails due to an error during the execution of a
+    transformation.
+    """
+
+    def __init__(
+        self, *, transformation_handler: TransformationHandler, error: Exception
+    ):
+        """Initialize the workflow execution error."""
+        super().__init__(
+            f"Error occurred while executing workflow: {transformation_handler}: {error}"
+        )

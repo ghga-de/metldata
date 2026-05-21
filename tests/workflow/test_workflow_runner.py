@@ -32,10 +32,8 @@ def test_workflow_runner_separates_model_and_data(test_case: WorkflowTestCase):
     """``WorkflowRunner`` should expose the transformed model eagerly and let
     callers run data transformations independently on the same runner.
     """
-    if test_case.transformed_model is None or test_case.transformed_data is None:
-        raise ValueError(
-            f"Missing expected outputs for test case: {test_case.case_name}"
-        )
+    assert test_case.transformed_model is not None
+    assert test_case.transformed_data is not None
 
     runner: WorkflowRunner = WorkflowRunner(
         workflow=test_case.workflow, input_model=test_case.input_model

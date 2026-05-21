@@ -23,7 +23,7 @@ from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.registry import get_transformation_registry
+from metldata.builtin_transformations.registry import TRANSFORMATION_REGISTRY
 from metldata.transform.base import TransformationDefinition
 from tests.fixtures.annotation import AccessionAnnotation, EmptySubmissionAnnotation
 from tests.fixtures.data import ADVANCED_DATA
@@ -31,8 +31,6 @@ from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR, read_yaml
 
 EXAMPLE_TRANSFORMATION_DIR = BASE_DIR / "example_transformations"
-
-TRANSFORMATION_REGISTRY = get_transformation_registry()
 
 
 @dataclass(frozen=True)

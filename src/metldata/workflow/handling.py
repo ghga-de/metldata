@@ -15,6 +15,7 @@
 
 """Logic for executing workflows."""
 
+from collections.abc import Mapping
 from typing import Any
 
 from schemapack.spec.datapack import DataPack
@@ -22,7 +23,10 @@ from schemapack.spec.schemapack import SchemaPack
 
 from metldata.transform.handling import TransformationHandler
 from metldata.workflow.base import Workflow, WorkflowStep
-from metldata.workflow.exceptions import UnknownTransformationError
+from metldata.workflow.exceptions import (
+    UnknownTransformationError,
+    WorkflowExecutionError,
+)
 
 
 class WorkflowStepHandler:
@@ -42,7 +46,7 @@ class WorkflowStepHandler:
 
     def execute(
         self,
-        transformation_registry: dict[str, Any],
+        transformation_registry: Mapping[str, Any],
         *,
         validate_input: bool = False,
         validate_output: bool = False,
@@ -50,15 +54,16 @@ class WorkflowStepHandler:
         """Executes the workflow step by retrieving the corresponding transformation
         from the registry and initializing a TransformationHandler.
 
-        Raises a ValueError if the transformation is not found in the registry.
+        Raises a UnknownTransformationError if the transformation is not found in the registry.
         """
-        if self.step_name not in transformation_registry:
+        try:
+            transformation_definition = transformation_registry[self.step_name]
+        except KeyError as error:
             raise UnknownTransformationError(
                 f"Invalid transformation name. {self.step_name} does not exist in the "
                 "transformation registry."
-            )
+            ) from error
 
-        transformation_definition = transformation_registry[self.step_name]
         return TransformationHandler(
             transformation_definition=transformation_definition,
             transformation_config=transformation_definition.config_cls(
@@ -86,35 +91,48 @@ class WorkflowHandler[SubmissionAnnotation]:
     def __init__(
         self,
         workflow: Workflow,
-        transformation_registry: dict[str, Any],
+        transformation_registry: Mapping[str, Any],
         input_model: SchemaPack,
     ):
         self.workflow = workflow
         self.transformation_registry = transformation_registry
         self.input_model = input_model
 
+        # populated in place by _build_transformation_handlers, which is called during initialization
         self._transformation_handlers: list[TransformationHandler] = []
-        model = input_model
+        self.output_model = self._build_transformation_handlers()
+
+    def _build_transformation_handlers(self) -> SchemaPack:
+        """Execute each workflow step to build the transformation handlers and
+        return the final transformed model.
+        """
+        model = self.input_model
         last_step = len(self.workflow.operations) - 1
 
         for idx, step in enumerate(self.workflow.operations):
             step_handler = WorkflowStepHandler(workflow_step=step, input_model=model)
 
             transformation_handler = step_handler.execute(
-                transformation_registry,
+                self.transformation_registry,
                 validate_input=(idx == 0),
                 validate_output=(idx == last_step),
             )
             self._transformation_handlers.append(transformation_handler)
             model = transformation_handler.transformed_model
 
-        self.output_model = model
+        return model
 
     def run(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
         """Apply each transformation's data step in sequence and return the
         resulting :class:`DataPack`. The transformed model is available on
         :attr:`output_model`.
+        Raises a WorkflowExecutionError if any transformation raises an error during execution.
         """
         for handler in self._transformation_handlers:
-            data = handler.transform_data(data, annotation)
+            try:
+                data = handler.transform_data(data, annotation)
+            except Exception as error:
+                raise WorkflowExecutionError(
+                    transformation_handler=handler, error=error
+                ) from error
         return data

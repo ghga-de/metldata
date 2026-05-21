@@ -15,7 +15,8 @@
 
 """Example workflow templates."""
 
-from dataclasses import dataclass, field
+from collections.abc import Mapping
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -25,7 +26,7 @@ from schemapack import load_datapack, load_schemapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.registry import get_transformation_registry
+from metldata.builtin_transformations.registry import TRANSFORMATION_REGISTRY
 from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
 from tests.fixtures.annotation import AccessionAnnotation, EmptySubmissionAnnotation
@@ -54,7 +55,6 @@ VALIDATION_WORKFLOWS = [
     "single_step_validation_failure",
     "final_post_transform_validation_failure",
 ]
-TRANSFORMATION_REGISTRY = get_transformation_registry()
 
 
 @dataclass(frozen=False)
@@ -68,9 +68,7 @@ class WorkflowTestCase:
     transformed_model: SchemaPack | None
     transformed_data: DataPack | None
     annotation: BaseModel
-    transformation_registry: dict[str, Any] = field(
-        default_factory=lambda: TRANSFORMATION_REGISTRY
-    )
+    transformation_registry: Mapping[str, Any] = TRANSFORMATION_REGISTRY
 
     def __str__(self) -> str:  # noqa: D105
         return f"{self.case_name}"

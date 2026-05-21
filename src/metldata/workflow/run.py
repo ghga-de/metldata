@@ -18,7 +18,7 @@
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.registry import get_transformation_registry
+from metldata.builtin_transformations.registry import TRANSFORMATION_REGISTRY
 from metldata.workflow.base import Workflow
 from metldata.workflow.handling import WorkflowHandler
 
@@ -30,12 +30,14 @@ class WorkflowRunner[SubmissionAnnotation]:
     via :attr:`model`. Data transformations are deferred to
     :meth:`run_workflow`, which may be called once or many times against the
     same transformed model.
+
+    Raises a `WorkflowExecutionError` if any step raises an error during execution of the workflow.
     """
 
     def __init__(self, *, workflow: Workflow, input_model: SchemaPack):
         self._handler: WorkflowHandler[SubmissionAnnotation] = WorkflowHandler(
             workflow=workflow,
-            transformation_registry=get_transformation_registry(),
+            transformation_registry=TRANSFORMATION_REGISTRY,
             input_model=input_model,
         )
 

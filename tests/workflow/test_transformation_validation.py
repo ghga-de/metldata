@@ -22,28 +22,23 @@ from metldata.transform.exceptions import (
     PreTransformValidationError,
 )
 from metldata.transform.handling import TransformationHandler
+from metldata.workflow.exceptions import WorkflowExecutionError
 from metldata.workflow.handling import WorkflowHandler
 from tests.fixtures.workflow import VALIDATION_TEST_CASES, WorkflowTestCase
 
+_MULTI_STEP_CALL_ARGS = [
+    {"validate_input": True, "validate_output": False},
+    {"validate_input": False, "validate_output": False},
+    {"validate_input": False, "validate_output": True},
+]
+
 EXPECTED_CALL_ARGS = {
-    "pre_transform_validation_failure": [
-        {"validate_input": True, "validate_output": False},
-        {"validate_input": False, "validate_output": False},
-        {"validate_input": False, "validate_output": True},
-    ],
-    "intermediate_post_transform_validation_failure": [
-        {"validate_input": True, "validate_output": False},
-        {"validate_input": False, "validate_output": False},
-        {"validate_input": False, "validate_output": True},
-    ],
+    "pre_transform_validation_failure": _MULTI_STEP_CALL_ARGS,
+    "intermediate_post_transform_validation_failure": _MULTI_STEP_CALL_ARGS,
     "single_step_validation_failure": [
         {"validate_input": True, "validate_output": True}
     ],
-    "final_post_transform_validation_failure": [
-        {"validate_input": True, "validate_output": False},
-        {"validate_input": False, "validate_output": False},
-        {"validate_input": False, "validate_output": True},
-    ],
+    "final_post_transform_validation_failure": _MULTI_STEP_CALL_ARGS,
 }
 
 
@@ -81,7 +76,9 @@ def capture_constructor_args():
 
 
 @pytest.mark.parametrize("test_case", VALIDATION_TEST_CASES, ids=str)
-def test_workflow_invalid_models(test_case: WorkflowTestCase, capture_constructor_args):
+def test_workflow_invalid_models(
+    test_case: WorkflowTestCase, capture_constructor_args: CapturedContext
+):
     """Test validation using an invalid input, intermediate or output model."""
     handler: WorkflowHandler = WorkflowHandler(
         workflow=test_case.workflow,
@@ -93,7 +90,8 @@ def test_workflow_invalid_models(test_case: WorkflowTestCase, capture_constructo
         if test_case.case_name == "pre_transform_validation_failure"
         else PostTransformValidationError
     )
-    with pytest.raises(exception_type):
+    with pytest.raises(WorkflowExecutionError) as exc_info:
         handler.run(data=test_case.input_data, annotation=test_case.annotation)
+    assert isinstance(exc_info.value.__cause__, exception_type)
 
     assert capture_constructor_args.call_args == EXPECTED_CALL_ARGS[test_case.case_name]
