@@ -23,8 +23,52 @@ complementing the ``WorkflowHandler``-level tests in ``test_happy.py``.
 import pytest
 
 from metldata import WorkflowRunner
+from metldata.workflow.base import Workflow, WorkflowStep
+from metldata.workflow.exceptions import WorkflowExecutionError
+from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.workflow import WORKFLOW_TEST_CASES, WorkflowTestCase
 from tests.utils import compare_data, compare_model
+
+
+def test_workflow_runner_error_identifies_failing_step():
+    """WorkflowExecutionError names the correct step index and step name when a step fails."""
+    failing_step_index = 1
+    failing_step_name = "duplicate_class"
+
+    workflow = Workflow(
+        operations=[
+            WorkflowStep.model_validate(
+                {
+                    "name": "rename_id_property",
+                    "description": "step 0",
+                    "args": {"class_name": "File", "id_property_name": "accession"},
+                }
+            ),
+            WorkflowStep.model_validate(
+                {
+                    "name": "duplicate_class",
+                    "description": "step 1 — invalid: source class does not exist",
+                    "args": {
+                        "source_class_name": "NonExistentClass",
+                        "target_class_name": "FileCopy",
+                    },
+                }
+            ),
+            WorkflowStep.model_validate(
+                {
+                    "name": "delete_class",
+                    "description": "step 2",
+                    "args": {"class_name": "Dataset"},
+                }
+            ),
+        ]
+    )
+
+    with pytest.raises(WorkflowExecutionError) as error:
+        WorkflowRunner(workflow=workflow, input_model=ADVANCED_MODEL)
+
+    assert failing_step_index == error.value._step_index
+    assert failing_step_name == error.value._step_name
 
 
 @pytest.mark.parametrize("test_case", WORKFLOW_TEST_CASES, ids=str)

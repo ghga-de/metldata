@@ -37,3 +37,5 @@ class WorkflowExecutionError(Exception):
             f"Error occurred while executing workflow step {step_index} ('{step_name}'): {error}"
         )
         self.error = error
+        self._step_index = step_index
+        self._step_name = step_name
