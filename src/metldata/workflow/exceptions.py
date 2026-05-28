@@ -27,3 +27,15 @@ class ModelNotFoundError(FileNotFoundError):
 
 class WorkflowValidationError(Exception):
     """Raised when a workflow contains operations that reference unknown or unregistered transformations."""
+
+
+class WorkflowExecutionError(Exception):
+    """Raised when a workflow execution fails during model or data transformation."""
+
+    def __init__(self, *, step_index: int, step_name: str, error: Exception):
+        super().__init__(
+            f"Error occurred while executing workflow step {step_index} ('{step_name}'): {error}"
+        )
+        self.error = error
+        self._step_index = step_index
+        self._step_name = step_name

@@ -15,15 +15,23 @@
 
 """Workflow validation logic."""
 
+from collections.abc import Mapping
+
 from pydantic import ValidationError
 
+from metldata.builtin_transformations.registry import TRANSFORMATION_REGISTRY
 from metldata.transform.base import TransformationDefinition
 from metldata.workflow.base import Workflow
 from metldata.workflow.exceptions import WorkflowValidationError
 
 
-def validate_workflow_against_registry(
-    workflow: Workflow, transformation_registry: dict[str, TransformationDefinition]
+def validate_workflow(workflow: Workflow) -> None:
+    """Validate a workflow against the built-in transformation registry."""
+    _validate_workflow_against_registry(workflow, TRANSFORMATION_REGISTRY)
+
+
+def _validate_workflow_against_registry(
+    workflow: Workflow, transformation_registry: Mapping[str, TransformationDefinition]
 ) -> None:
     """Validate a workflow against a transformation registry.
 

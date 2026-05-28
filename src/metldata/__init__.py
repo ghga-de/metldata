@@ -16,9 +16,10 @@
 
 """Re-implementation based on schemapack."""
 
-from metldata.builtin_transformations.registry import (
-    get_transformation_registry,
-)
-from metldata.workflow.validate import validate_workflow_against_registry
+from metldata.workflow.run import WorkflowRunner
+from metldata.workflow.validate import validate_workflow
 
-__all__ = ["get_transformation_registry", "validate_workflow_against_registry"]
+__all__ = [
+    "WorkflowRunner",
+    "validate_workflow",
+]

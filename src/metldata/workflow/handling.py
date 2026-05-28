@@ -15,24 +15,18 @@
 
 """Logic for executing workflows."""
 
+from collections.abc import Mapping
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.transform.handling import TransformationHandler
 from metldata.workflow.base import Workflow, WorkflowStep
-from metldata.workflow.exceptions import UnknownTransformationError
-
-
-class WorkflowResult(BaseModel):
-    """Model and data after workflow execution."""
-
-    model_config = ConfigDict(frozen=True)
-
-    model: SchemaPack
-    data: DataPack
+from metldata.workflow.exceptions import (
+    UnknownTransformationError,
+    WorkflowExecutionError,
+)
 
 
 class WorkflowStepHandler:
@@ -47,10 +41,12 @@ class WorkflowStepHandler:
     def __init__(self, workflow_step: WorkflowStep, input_model: SchemaPack):
         self.workflow_step = workflow_step
         self.input_model = input_model
+        self.step_name = self.workflow_step.name
+        self.step_args = self.workflow_step.args
 
     def execute(
         self,
-        transformation_registry: dict[str, Any],
+        transformation_registry: Mapping[str, Any],
         *,
         validate_input: bool = False,
         validate_output: bool = False,
@@ -58,21 +54,21 @@ class WorkflowStepHandler:
         """Executes the workflow step by retrieving the corresponding transformation
         from the registry and initializing a TransformationHandler.
 
-        Raises a ValueError if the transformation is not found in the registry.
+        Raises a UnknownTransformationError if the transformation is not found in the registry.
         """
-        step_name = self.workflow_step.name
-        step_args = self.workflow_step.args
-
-        if step_name not in transformation_registry:
+        try:
+            transformation_definition = transformation_registry[self.step_name]
+        except KeyError as error:
             raise UnknownTransformationError(
-                f"Invalid transformation name. {step_name} does not exist in the "
+                f"Invalid transformation name. {self.step_name} does not exist in the "
                 "transformation registry."
-            )
+            ) from error
 
-        transformation_definition = transformation_registry[step_name]
         return TransformationHandler(
             transformation_definition=transformation_definition,
-            transformation_config=transformation_definition.config_cls(**step_args),
+            transformation_config=transformation_definition.config_cls.model_validate(
+                self.step_args
+            ),
             input_model=self.input_model,
             validate_input=validate_input,
             validate_output=validate_output,
@@ -95,36 +91,55 @@ class WorkflowHandler[SubmissionAnnotation]:
     def __init__(
         self,
         workflow: Workflow,
-        transformation_registry: dict[str, Any],
+        transformation_registry: Mapping[str, Any],
         input_model: SchemaPack,
     ):
         self.workflow = workflow
         self.transformation_registry = transformation_registry
         self.input_model = input_model
 
-    def run(self, data: DataPack, annotation: SubmissionAnnotation) -> WorkflowResult:
-        """Executes the workflow, applying each transformation in sequence to the model
-        and data, and returns the final model and data as a WorkflowResult.
+        # populated in place by _build_transformation_handlers, which is called during initialization
+        self._transformation_handlers: list[TransformationHandler] = []
+        self.output_model = self._build_transformation_handlers()
+
+    def _build_transformation_handlers(self) -> SchemaPack:
+        """Execute each workflow step to build the transformation handlers and
+        return the final transformed model.
+        Raises a WorkflowExecutionError if any step fails during model transformation.
         """
         model = self.input_model
-
         last_step = len(self.workflow.operations) - 1
+
         for idx, step in enumerate(self.workflow.operations):
             step_handler = WorkflowStepHandler(workflow_step=step, input_model=model)
-
-            # Collect and pass as kwargs.
-            # More concise and works correctly if there's only one step in the workflow
-            validation_args = {}
-            if idx == 0:
-                validation_args["validate_input"] = True
-            if idx == last_step:
-                validation_args["validate_output"] = True
-
-            transformation_handler = step_handler.execute(
-                self.transformation_registry, **validation_args
-            )
-
+            try:
+                transformation_handler = step_handler.execute(
+                    self.transformation_registry,
+                    validate_input=(idx == 0),
+                    validate_output=(idx == last_step),
+                )
+            except Exception as error:
+                raise WorkflowExecutionError(
+                    step_index=idx, step_name=step.name, error=error
+                ) from error
+            self._transformation_handlers.append(transformation_handler)
             model = transformation_handler.transformed_model
-            data = transformation_handler.transform_data(data, annotation)
 
-        return WorkflowResult(model=model, data=data)
+        return model
+
+    def run(self, data: DataPack, annotation: SubmissionAnnotation) -> DataPack:
+        """Apply each transformation's data step in sequence and return the
+        resulting :class:`DataPack`. The transformed model is available on
+        :attr:`output_model`.
+        Raises a WorkflowExecutionError if any transformation raises an error during execution.
+        """
+        for idx, handler in enumerate(self._transformation_handlers):
+            try:
+                data = handler.transform_data(data, annotation)
+            except Exception as error:
+                raise WorkflowExecutionError(
+                    step_index=idx,
+                    step_name=self.workflow.operations[idx].name,
+                    error=error,
+                ) from error
+        return data

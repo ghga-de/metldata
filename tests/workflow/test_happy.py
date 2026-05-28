@@ -30,7 +30,7 @@ def test_workflow_outputs(test_case: WorkflowTestCase):
         transformation_registry=test_case.transformation_registry,
         input_model=test_case.input_model,
     )
-    workflow_result = handler.run(
+    transformed_data = handler.run(
         data=test_case.input_data, annotation=test_case.annotation
     )
     if not test_case.transformed_data:
@@ -41,5 +41,5 @@ def test_workflow_outputs(test_case: WorkflowTestCase):
         raise ValueError(
             f"Could not read transformed model file for test case: {test_case.case_name}"
         )
-    compare_data(workflow_result.data, test_case.transformed_data)
-    compare_model(workflow_result.model, test_case.transformed_model)
+    compare_data(transformed_data, test_case.transformed_data)
+    compare_model(handler.output_model, test_case.transformed_model)

@@ -17,6 +17,7 @@
 """Registry builder for built-in transformations."""
 
 from collections.abc import Callable
+from types import MappingProxyType
 from typing import Any, TypeVar
 
 from metldata.transform.base import TransformationDefinition
@@ -39,6 +40,7 @@ def register_transformation(name: str) -> Callable[[Callable[[], T]], Callable[[
     return decorator
 
 
-def get_transformation_registry() -> dict[str, TransformationDefinition[Any]]:
-    """Get the registry of built-in transformations."""
-    return _TRANSFORMATION_REGISTRY.copy()
+# The registry of built-in transformations.
+TRANSFORMATION_REGISTRY: MappingProxyType[str, TransformationDefinition[Any]] = (
+    MappingProxyType(_TRANSFORMATION_REGISTRY)
+)

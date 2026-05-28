@@ -16,16 +16,29 @@
 
 """Test the workflow handling module."""
 
+from unittest.mock import patch
 
-def test_workflow_handler_input_model_invalid():
-    """Test."""
-    # test if the correct error message is returned if the workflow input model is not supported
-    pass
+import pytest
+
+from metldata.transform.exceptions import DataTransformationError
+from metldata.transform.handling import TransformationHandler
+from metldata.workflow.exceptions import WorkflowExecutionError
+from metldata.workflow.handling import WorkflowHandler
+from tests.fixtures.workflow import WORKFLOW_TEST_CASES
 
 
-# test to implement if we keep an output model registry, like supported egress models.
-def test_output_data_against_workflow_output_model():
-    """Test."""
-    # test if the correct error message is returned when the data at the end of the
-    # workflow execution fails to match the workflow output model
-    pass
+def test_run_raises_workflow_execution_error_on_transform_failure():
+    """WorkflowExecutionError is raised when transform_data fails."""
+    test_case = WORKFLOW_TEST_CASES[0]
+    handler: WorkflowHandler = WorkflowHandler(
+        workflow=test_case.workflow,
+        transformation_registry=test_case.transformation_registry,
+        input_model=test_case.input_model,
+    )
+    with patch.object(
+        TransformationHandler,
+        "transform_data",
+        side_effect=DataTransformationError("Error"),
+    ):
+        with pytest.raises(WorkflowExecutionError):
+            handler.run(data=test_case.input_data, annotation=test_case.annotation)

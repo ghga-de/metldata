@@ -15,6 +15,9 @@
 
 """Tests for validate_workflow_against_registry function."""
 
+from collections.abc import Mapping
+from types import MappingProxyType
+
 import pytest
 from pydantic import BaseModel, Field
 from schemapack.spec.datapack import DataPack
@@ -23,7 +26,7 @@ from schemapack.spec.schemapack import SchemaPack
 from metldata.transform.base import DataTransformer, TransformationDefinition
 from metldata.workflow.base import Workflow, WorkflowStep
 from metldata.workflow.exceptions import WorkflowValidationError
-from metldata.workflow.validate import validate_workflow_against_registry
+from metldata.workflow.validate import _validate_workflow_against_registry
 
 
 # Test configuration classes
@@ -108,17 +111,19 @@ def transformation_registry(
     simple_transformation: TransformationDefinition,
     another_transformation: TransformationDefinition,
     complex_transformation: TransformationDefinition,
-):
+) -> MappingProxyType[str, TransformationDefinition]:
     """Create a transformation registry with test transformations."""
-    return {
-        "simple_transform": simple_transformation,
-        "another_transform": another_transformation,
-        "complex_transform": complex_transformation,
-    }
+    return MappingProxyType(
+        {
+            "simple_transform": simple_transformation,
+            "another_transform": another_transformation,
+            "complex_transform": complex_transformation,
+        }
+    )
 
 
 def test_valid_workflow_single_operation(
-    transformation_registry: dict[str, TransformationDefinition],
+    transformation_registry: Mapping[str, TransformationDefinition],
 ):
     """Test validation succeeds for a valid workflow with a single operation."""
     workflow = Workflow(
@@ -131,11 +136,11 @@ def test_valid_workflow_single_operation(
         ]
     )
 
-    validate_workflow_against_registry(workflow, transformation_registry)
+    _validate_workflow_against_registry(workflow, transformation_registry)
 
 
 def test_valid_workflow_multiple_operations(
-    transformation_registry: dict[str, TransformationDefinition],
+    transformation_registry: Mapping[str, TransformationDefinition],
 ):
     """Test validation succeeds for a valid workflow with multiple operations."""
     workflow = Workflow(
@@ -158,11 +163,11 @@ def test_valid_workflow_multiple_operations(
         ]
     )
 
-    validate_workflow_against_registry(workflow, transformation_registry)
+    _validate_workflow_against_registry(workflow, transformation_registry)
 
 
 def test_valid_workflow_with_dict_args(
-    transformation_registry: dict[str, TransformationDefinition],
+    transformation_registry: Mapping[str, TransformationDefinition],
 ):
     """Test validation succeeds when args are provided as a dict (not config instance)."""
     workflow = Workflow(
@@ -175,11 +180,11 @@ def test_valid_workflow_with_dict_args(
         ]
     )
 
-    validate_workflow_against_registry(workflow, transformation_registry)
+    _validate_workflow_against_registry(workflow, transformation_registry)
 
 
 def test_config_with_optional_fields_omitted(
-    transformation_registry: dict[str, TransformationDefinition],
+    transformation_registry: Mapping[str, TransformationDefinition],
 ):
     """Test validation succeeds when optional fields are omitted."""
     workflow = Workflow(
@@ -193,11 +198,11 @@ def test_config_with_optional_fields_omitted(
         ]
     )
 
-    validate_workflow_against_registry(workflow, transformation_registry)
+    _validate_workflow_against_registry(workflow, transformation_registry)
 
 
 def test_unknown_transformation_name(
-    transformation_registry: dict[str, TransformationDefinition],
+    transformation_registry: Mapping[str, TransformationDefinition],
 ):
     """Test validation fails when workflow references an unknown transformation."""
     workflow = Workflow(
@@ -214,7 +219,7 @@ def test_unknown_transformation_name(
         WorkflowValidationError,
         match="Unknown transformation 'nonexistent_transform' referenced in workflow",
     ):
-        validate_workflow_against_registry(workflow, transformation_registry)
+        _validate_workflow_against_registry(workflow, transformation_registry)
 
 
 @pytest.mark.parametrize(
@@ -235,7 +240,7 @@ def test_unknown_transformation_name(
     ],
 )
 def test_invalid_simple_config(
-    args: dict, transformation_registry: dict[str, TransformationDefinition]
+    args: dict, transformation_registry: Mapping[str, TransformationDefinition]
 ):
     """Test validation fails when config for simple_transform is invalid."""
     workflow = Workflow(
@@ -252,11 +257,11 @@ def test_invalid_simple_config(
         WorkflowValidationError,
         match="Invalid configuration for transformation 'simple_transform'",
     ):
-        validate_workflow_against_registry(workflow, transformation_registry)
+        _validate_workflow_against_registry(workflow, transformation_registry)
 
 
 def test_invalid_operation(
-    transformation_registry: dict[str, TransformationDefinition],
+    transformation_registry: Mapping[str, TransformationDefinition],
 ):
     """Test validation fails on an invalid operation."""
     workflow = Workflow(
@@ -278,7 +283,7 @@ def test_invalid_operation(
         WorkflowValidationError,
         match="Unknown transformation 'nonexistent_transform' referenced in workflow",
     ):
-        validate_workflow_against_registry(workflow, transformation_registry)
+        _validate_workflow_against_registry(workflow, transformation_registry)
 
 
 def test_empty_transformation_registry():
@@ -296,4 +301,4 @@ def test_empty_transformation_registry():
     with pytest.raises(
         WorkflowValidationError, match="Transformation registry cannot be empty"
     ):
-        validate_workflow_against_registry(workflow, {})
+        _validate_workflow_against_registry(workflow, {})
