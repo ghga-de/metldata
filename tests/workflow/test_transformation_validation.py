@@ -90,8 +90,8 @@ def test_workflow_invalid_models(
         if test_case.case_name == "pre_transform_validation_failure"
         else PostTransformValidationError
     )
-    with pytest.raises(WorkflowExecutionError) as exc_info:
+    with pytest.raises(WorkflowExecutionError) as error_info:
         handler.run(data=test_case.input_data, annotation=test_case.annotation)
-    assert isinstance(exc_info.value.__cause__, exception_type)
+    assert isinstance(error_info.value.error, exception_type)
 
     assert capture_constructor_args.call_args == EXPECTED_CALL_ARGS[test_case.case_name]

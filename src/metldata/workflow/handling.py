@@ -66,8 +66,8 @@ class WorkflowStepHandler:
 
         return TransformationHandler(
             transformation_definition=transformation_definition,
-            transformation_config=transformation_definition.config_cls(
-                **self.step_args
+            transformation_config=transformation_definition.config_cls.model_validate(
+                self.step_args
             ),
             input_model=self.input_model,
             validate_input=validate_input,
@@ -105,18 +105,23 @@ class WorkflowHandler[SubmissionAnnotation]:
     def _build_transformation_handlers(self) -> SchemaPack:
         """Execute each workflow step to build the transformation handlers and
         return the final transformed model.
+        Raises a WorkflowExecutionError if any step fails during model transformation.
         """
         model = self.input_model
         last_step = len(self.workflow.operations) - 1
 
         for idx, step in enumerate(self.workflow.operations):
             step_handler = WorkflowStepHandler(workflow_step=step, input_model=model)
-
-            transformation_handler = step_handler.execute(
-                self.transformation_registry,
-                validate_input=(idx == 0),
-                validate_output=(idx == last_step),
-            )
+            try:
+                transformation_handler = step_handler.execute(
+                    self.transformation_registry,
+                    validate_input=(idx == 0),
+                    validate_output=(idx == last_step),
+                )
+            except Exception as error:
+                raise WorkflowExecutionError(
+                    step_index=idx, step_name=step.name, error=error
+                ) from error
             self._transformation_handlers.append(transformation_handler)
             model = transformation_handler.transformed_model
 
@@ -128,11 +133,13 @@ class WorkflowHandler[SubmissionAnnotation]:
         :attr:`output_model`.
         Raises a WorkflowExecutionError if any transformation raises an error during execution.
         """
-        for handler in self._transformation_handlers:
+        for idx, handler in enumerate(self._transformation_handlers):
             try:
                 data = handler.transform_data(data, annotation)
             except Exception as error:
                 raise WorkflowExecutionError(
-                    transformation_handler=handler, error=error
+                    step_index=idx,
+                    step_name=self.workflow.operations[idx].name,
+                    error=error,
                 ) from error
         return data
