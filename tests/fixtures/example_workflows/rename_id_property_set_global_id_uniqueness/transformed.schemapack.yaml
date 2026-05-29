@@ -48,3 +48,4 @@ classes:
         mandatory:
           origin: true
           target: true
+globallyUniqueIds: true

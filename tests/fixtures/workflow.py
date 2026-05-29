@@ -45,7 +45,7 @@ WORKFLOW_BY_NAME = [
     "infer_multiple",
     "duplicate_multiple_delete_one_embed_relation",
     "duplicate_infer_delete_merge",
-    "rename_id_property_multiple",
+    "rename_id_property_set_global_id_uniqueness",
     "rename_id_property_transform_content_update_resource_ids",
     "ghga_aggregation_workflow",
 ]
