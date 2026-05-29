@@ -34,6 +34,9 @@ from metldata.builtin_transformations.rename_id_property import (
 from metldata.builtin_transformations.replace_resource_ids import (
     REPLACE_RESOURCE_IDS_TRANSFORMATION,  # noqa: F401
 )
+from metldata.builtin_transformations.set_id_uniqueness_scope import (
+    SET_ID_UNIQUENESS_SCOPE_TRANSFORMATION,  # noqa: F401
+)
 from metldata.builtin_transformations.transform_content import (
     TRANSFORM_CONTENT_TRANSFORMATION,  # noqa: F401
 )
