@@ -17,3 +17,4 @@ example_data/README.md
 
 .readme_generation/README.md
 .readme_generation/readme_template.md
+.gitignore
