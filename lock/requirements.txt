@@ -23,12 +23,18 @@ attrs==26.1.0 \
     #   -c lock/requirements-dev.txt
     #   jsonschema
     #   referencing
-greenery==3.3.3 \
-    --hash=sha256:c489d3d111ab49fc522e4796f349994d953d20ec8289aef107f2e7f240534d85 \
-    --hash=sha256:fb5f9439401ba01f256c7aff0aef9ecb482a3468e489532cfd8590743463d7c3
+ghga-jsonsubschema==0.1.0 \
+    --hash=sha256:255720ee1aba01f5de139e699838ff1f969e6d9eb9cd9927674079567a7f93ff \
+    --hash=sha256:7153fc532f1cbcdaf08929cc146c94a7b9ff9d80f98ec964de0b0391befd18c8
     # via
     #   -c lock/requirements-dev.txt
-    #   jsonsubschema
+    #   schemapack
+greenery==4.2.2 \
+    --hash=sha256:6221d5727d19b4f46fc794635aa00b3dbbab33ed7ff1d686a0011d9197a4b7a0 \
+    --hash=sha256:df82131963230c9e9ff7d356eed7556626accef52c1c6c2abda8eb57565f7197
+    # via
+    #   -c lock/requirements-dev.txt
+    #   ghga-jsonsubschema
 immutabledict==4.3.1 \
     --hash=sha256:c9facdc0ff30fdb8e35bd16532026cac472a549e182c94fa201b51b25e4bf7bf \
     --hash=sha256:f844a669106cfdc73f47b1a9da003782fb17dc955a54c80972e0d93d1c63c514
@@ -46,13 +52,13 @@ jsonref==1.1.0 \
     --hash=sha256:590dc7773df6c21cbf948b5dac07a72a251db28b0238ceecce0a2abfa8ec30a9
     # via
     #   -c lock/requirements-dev.txt
-    #   jsonsubschema
+    #   ghga-jsonsubschema
 jsonschema==4.26.0 \
     --hash=sha256:0c26707e2efad8aa1bfc5b7ce170f3fccc2e4918ff85989ba9ffa9facb2be326 \
     --hash=sha256:d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce
     # via
     #   -c lock/requirements-dev.txt
-    #   jsonsubschema
+    #   ghga-jsonsubschema
     #   schemapack
 jsonschema-specifications==2025.9.1 \
     --hash=sha256:98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe \
@@ -60,12 +66,6 @@ jsonschema-specifications==2025.9.1 \
     # via
     #   -c lock/requirements-dev.txt
     #   jsonschema
-jsonsubschema==0.0.7 \
-    --hash=sha256:4133bd1f7a2529b28aa7150f71bbcd5d6acf3663f0b83dedd9e6df71c4585779 \
-    --hash=sha256:852e0878842122a046fce5b3db1bfb801a26de20a2dfaebd8df20f366a762d2c
-    # via
-    #   -c lock/requirements-dev.txt
-    #   schemapack
 markdown-it-py==4.2.0 \
     --hash=sha256:04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49 \
     --hash=sha256:9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a
@@ -176,7 +176,7 @@ portion==2.6.1 \
     --hash=sha256:764d0be5479842f011feccc6f4bf80454dd944ef16309fceb2b5ae229cf05df3
     # via
     #   -c lock/requirements-dev.txt
-    #   jsonsubschema
+    #   ghga-jsonsubschema
 pydantic==2.13.4 \
     --hash=sha256:45a282cde31d808236fd7ea9d919b128653c8b38b393d1c4ab335c62924d9aba \
     --hash=sha256:c40756b57adaa8b1efeeced5c196f3f3b7c435f90e84ea7f443901bec8099ef6
@@ -546,9 +546,9 @@ ruamel-yaml-clib==0.2.15 \
     # via
     #   -c lock/requirements-dev.txt
     #   ruamel-yaml
-schemapack==4.1.0 \
-    --hash=sha256:52d7810f795de3ebb02093bc0e2b847dd7cb7dff0d0ac26ee31c794a145883b2 \
-    --hash=sha256:5610d56ab8c888ab42ac725678b2d72604885e28366b982a7f62756dedebd2df
+schemapack==4.2.0 \
+    --hash=sha256:3a5ab965c3f0ec594d22b52e941e0b26f10075b68b4a4d59891c21558765a8e3 \
+    --hash=sha256:a08e0910a00798cf4fc6b730ddf0b34a342000f8a7d57d4b8418cb789af8b32c
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)

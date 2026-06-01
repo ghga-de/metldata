@@ -336,10 +336,14 @@ filelock==3.29.0 \
     #   python-discovery
     #   tox
     #   virtualenv
-greenery==3.3.3 \
-    --hash=sha256:c489d3d111ab49fc522e4796f349994d953d20ec8289aef107f2e7f240534d85 \
-    --hash=sha256:fb5f9439401ba01f256c7aff0aef9ecb482a3468e489532cfd8590743463d7c3
-    # via jsonsubschema
+ghga-jsonsubschema==0.1.0 \
+    --hash=sha256:255720ee1aba01f5de139e699838ff1f969e6d9eb9cd9927674079567a7f93ff \
+    --hash=sha256:7153fc532f1cbcdaf08929cc146c94a7b9ff9d80f98ec964de0b0391befd18c8
+    # via schemapack
+greenery==4.2.2 \
+    --hash=sha256:6221d5727d19b4f46fc794635aa00b3dbbab33ed7ff1d686a0011d9197a4b7a0 \
+    --hash=sha256:df82131963230c9e9ff7d356eed7556626accef52c1c6c2abda8eb57565f7197
+    # via ghga-jsonsubschema
 h11==0.16.0 \
     --hash=sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1 \
     --hash=sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86
@@ -380,12 +384,12 @@ jinja2==3.1.6 \
 jsonref==1.1.0 \
     --hash=sha256:32fe8e1d85af0fdefbebce950af85590b22b60f9e95443176adbde4e1ecea552 \
     --hash=sha256:590dc7773df6c21cbf948b5dac07a72a251db28b0238ceecce0a2abfa8ec30a9
-    # via jsonsubschema
+    # via ghga-jsonsubschema
 jsonschema==4.26.0 \
     --hash=sha256:0c26707e2efad8aa1bfc5b7ce170f3fccc2e4918ff85989ba9ffa9facb2be326 \
     --hash=sha256:d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce
     # via
-    #   jsonsubschema
+    #   ghga-jsonsubschema
     #   schemapack
 jsonschema-specifications==2025.9.1 \
     --hash=sha256:98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe \
@@ -395,10 +399,6 @@ jsonschema2md==1.7.0 \
     --hash=sha256:06c327866a845827bc08b98cbea70ec96f46c0f8b67cb5a6d9833078a78764d3 \
     --hash=sha256:d69a5b011bf355c005e3c18be4515ae46d2689b38b593ced8d03c5ab66ddbaf3
     # via -r lock/requirements-dev-template.in
-jsonsubschema==0.0.7 \
-    --hash=sha256:4133bd1f7a2529b28aa7150f71bbcd5d6acf3663f0b83dedd9e6df71c4585779 \
-    --hash=sha256:852e0878842122a046fce5b3db1bfb801a26de20a2dfaebd8df20f366a762d2c
-    # via schemapack
 librt==0.11.0 \
     --hash=sha256:05fb8fb2ab90e21c8d12ea240d744ad514da9baf381ebfa70d91d20d21713175 \
     --hash=sha256:070aa8c26c0a74774317a72df8851facc7f0f012a5b406557ac56992d92e1ec8 \
@@ -680,7 +680,7 @@ pluggy==1.6.0 \
 portion==2.6.1 \
     --hash=sha256:44b1f7d57e052993c4157e519dc447e57b87a4e5e00a77c1c50e7044104e53c6 \
     --hash=sha256:764d0be5479842f011feccc6f4bf80454dd944ef16309fceb2b5ae229cf05df3
-    # via jsonsubschema
+    # via ghga-jsonsubschema
 pre-commit==4.6.0 \
     --hash=sha256:718d2208cef53fdc38206e40524a6d4d9576d103eb16f0fec11c875e7716e9d9 \
     --hash=sha256:e2cf246f7299edcabcf15f9b0571fdce06058527f0a06535068a86d38089f29b
@@ -1171,9 +1171,9 @@ ruff==0.15.15 \
     --hash=sha256:df0c1c084f5f4be9812f61518a45c440d3c30d69ce4bf6c5270e66d38338f02a \
     --hash=sha256:f5294aab6356c81600fcdea3a62bb1b924dfd5e91767c12318d3f68f86af57cd
     # via -r lock/requirements-dev-template.in
-schemapack==4.1.0 \
-    --hash=sha256:52d7810f795de3ebb02093bc0e2b847dd7cb7dff0d0ac26ee31c794a145883b2 \
-    --hash=sha256:5610d56ab8c888ab42ac725678b2d72604885e28366b982a7f62756dedebd2df
+schemapack==4.2.0 \
+    --hash=sha256:3a5ab965c3f0ec594d22b52e941e0b26f10075b68b4a4d59891c21558765a8e3 \
+    --hash=sha256:a08e0910a00798cf4fc6b730ddf0b34a342000f8a7d57d4b8418cb789af8b32c
     # via metldata (pyproject.toml)
 setuptools==82.0.1 \
     --hash=sha256:7d872682c5d01cfde07da7bccc7b65469d3dca203318515ada1de5eda35efbf9 \
