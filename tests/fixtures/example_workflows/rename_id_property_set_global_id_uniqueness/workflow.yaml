@@ -15,3 +15,7 @@ operations:
         id_property_name: accession
       - class_name: Experiment
         id_property_name: accession
+  - name: set_id_uniqueness_scope
+    description: "Set global id uniqueness for the model"
+    args:
+      globally_unique_ids: true

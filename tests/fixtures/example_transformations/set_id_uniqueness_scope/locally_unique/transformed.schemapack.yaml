@@ -1,0 +1,11 @@
+schemapack: 4.2.0
+globallyUniqueIds: false
+classes:
+  File:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/File.schema.json
+  Sample:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Sample.schema.json
