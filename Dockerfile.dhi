@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # Define the non-dev base-image
-ARG BASE=dhi.io/python:3.13-alpine3.23
+ARG BASE=dhi.io/python:3.12-alpine3.23
 
 # BUILDER-BASE: a base image with updated packages using the socket firewall dev variant
 FROM ${BASE}-sfw-dev AS builder-base
@@ -43,7 +43,7 @@ RUN cp /usr/local/bin/opentelemetry-instrument /opt/runtime-bin/ 2>/dev/null || 
 
 # RUNNER: a container to run the service
 FROM ${BASE} AS runner
-COPY --from=dep-builder /usr/lib/python3.13 /usr/lib/python3.13
+COPY --from=dep-builder /usr/lib/python3.12 /usr/lib/python3.12
 COPY --from=dep-builder /opt/runtime-bin/ /usr/local/bin/
 
 # Base image already runs as non-root (65532), but we use 1000 to be consistent
