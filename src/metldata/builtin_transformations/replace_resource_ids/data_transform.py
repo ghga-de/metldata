@@ -25,7 +25,10 @@ from metldata.builtin_transformations.common.custom_types import (
     ResourceId,
 )
 from metldata.builtin_transformations.common.utils import data_to_dict
-from metldata.transform.exceptions import EvitableTransformationError
+from metldata.transform.exceptions import (
+    EvitableTransformationError,
+    InvalidAnnotationError,
+)
 
 
 def replace_data_resource_ids(
@@ -66,15 +69,18 @@ def _get_resource_accessions(*, class_name: str, annotation: BaseModel) -> Acces
     """Extract resource ids from annotations."""
     try:
         accession_map = annotation.model_dump()["accession_map"]
-    except KeyError as exc:
-        raise ValueError(
+    except (KeyError, TypeError) as exc:
+        raise InvalidAnnotationError(
             "The annotation is missing the required 'accession_map' field. "
             "Expected structure: {'accession_map': {<class_name>: {<old_id>: <new_id>, ...}, ...}}"
         ) from exc
 
     resource_accessions = accession_map.get(class_name)
     if resource_accessions is None:
-        raise ValueError(f"No accession map found for class '{class_name}'.")
+        raise InvalidAnnotationError(
+            f"No accession map found for class '{class_name}'. "
+            "Expected structure: {'accession_map': {<class_name>: {<old_id>: <new_id>, ...}, ...}}"
+        )
 
     return resource_accessions
 

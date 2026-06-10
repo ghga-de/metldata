@@ -1,0 +1,29 @@
+class_name: Provenance
+id_property_name: alias
+content_schema:
+  type: object
+  additionalProperties: false
+  properties:
+    note:
+      type: string
+  required:
+    - note
+relations:
+  - relation_property_name: derived_from_samples
+    targetClass: Sample
+    mandatory:
+      origin: false
+      target: false
+    multiple:
+      origin: false
+      target: true
+    target_resources: derived_from
+  - relation_property_name: derived_from_files
+    targetClass: File
+    mandatory:
+      origin: false
+      target: false
+    multiple:
+      origin: false
+      target: true
+    target_resources: derived_from

@@ -40,6 +40,10 @@ class ModelTransformationError(RuntimeError):
     """
 
 
+class InvalidAnnotationError(RuntimeError):
+    """Raised when the annotation provided to a transformation is missing required fields."""
+
+
 class DataTransformationError(RuntimeError):
     """Raised when a transformation failed when applied to data in datapack-format.
     This exception should only be raised when the error could not have been caught

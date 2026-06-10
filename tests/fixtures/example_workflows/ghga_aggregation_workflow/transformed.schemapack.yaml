@@ -1,4 +1,4 @@
-schemapack: 4.0.0
+schemapack: 4.2.0
 description: Metadata schema for the German Human Genome-Phenome Archive (GHGA)
 classes:
   DatasetStats:

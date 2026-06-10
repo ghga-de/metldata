@@ -1,0 +1,6 @@
+resources:
+  Biospecimen:
+    biosample_1:
+      tissue: blood
+    biosample_2:
+      tissue: adipose

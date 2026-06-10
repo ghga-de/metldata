@@ -1,0 +1,10 @@
+class_name: Biospecimen
+id_property_name: alias
+content_schema:
+  type: object
+  additionalProperties: false
+  properties:
+    tissue:
+      type: string
+  required:
+    - tissue

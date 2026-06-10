@@ -16,6 +16,9 @@
 
 """Built-in transformations"""
 
+from metldata.builtin_transformations.add_class import (
+    ADD_CLASS_TRANSFORMATION,  # noqa: F401
+)
 from metldata.builtin_transformations.delete_class import (
     DELETE_CLASS_TRANSFORMATION,  # noqa: F401
 )

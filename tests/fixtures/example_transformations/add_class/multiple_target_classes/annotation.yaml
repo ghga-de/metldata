@@ -1,0 +1,13 @@
+resources:
+  Provenance:
+    prov_1:
+      note: Derived from one sample and two files.
+      derived_from:
+        - sample_x
+        - file_a
+        - file_b
+    prov_2:
+      note: Derived from one sample and one file.
+      derived_from:
+        - sample_y
+        - file_c

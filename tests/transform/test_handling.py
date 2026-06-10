@@ -37,11 +37,13 @@ from metldata.transform.handling import (
     PreTransformValidationError,
     TransformationHandler,
 )
-from tests.fixtures.annotation import EMPTY_SUBMISSION_ANNOTATION
+from tests.fixtures.annotation import Annotation
 from tests.fixtures.data import INVALID_MINIMAL_DATA, MINIMAL_DATA
 from tests.fixtures.models import MINIMAL_MODEL
 
 pytestmark = pytest.mark.parametrize("validate", [True, False])
+
+EMPTY_SUBMISSION_ANNOTATION = Annotation()
 
 
 def test_transformation_handler_happy(validate: bool):
