@@ -50,6 +50,10 @@ def add_data_class(
     if class_name in modified_data["resources"]:
         raise EvitableTransformationError()
 
+    _validate_relation_targets_exist(
+        data=data, annotation_resources=annotation_resources, relations=relations
+    )
+
     modified_data["resources"][class_name] = {
         resource_id: {
             "content": _get_resource_content(
@@ -63,6 +67,69 @@ def add_data_class(
     }
 
     return DataPack.model_validate(modified_data)
+
+
+def _validate_relation_targets_exist(
+    *, data: DataPack, annotation_resources: dict, relations: list[RelationSpec]
+) -> None:
+    """Validate that all resource IDs referenced by relations exist in the data.
+
+    Since a single annotation field may reference resources belonging to several
+    target classes, referenced IDs are validated per field against the union of
+    resources of all that field's target classes, rather than per relation.
+    """
+    grouped_relations = _group_relations_by_target_resources(relations)
+    for target_resources_field, target_classes in grouped_relations.items():
+        referenced_ids = _referenced_ids(
+            annotation_resources=annotation_resources,
+            target_resources_field=target_resources_field,
+        )
+        existing_ids: set[str] = set()
+        for target_class in target_classes:
+            existing_ids.update(data.resources[target_class].keys())
+
+        missing_ids = referenced_ids - existing_ids
+        if missing_ids:
+            raise InvalidAnnotationError(
+                f"Annotation references non-existing resources for "
+                f"'{target_resources_field}': {missing_ids}"
+            )
+
+
+def _group_relations_by_target_resources(
+    relations: list[RelationSpec],
+) -> dict[str, list[str]]:
+    """Group relation specs by the annotation field holding their target IDs.
+
+    A single annotation field may hold IDs referring to resources of several
+    different target classes, so each field is mapped to the list of all
+    classes that field's relations may target.
+    """
+    grouped_relations: dict[str, list[str]] = {}
+    for relation in relations:
+        grouped_relations.setdefault(relation.target_resources, []).append(
+            relation.targetClass
+        )
+    return grouped_relations
+
+
+def _as_id_list(ids: list[str] | str | None) -> list[str]:
+    """Normalize a relation field value to a list of IDs."""
+    if ids is None:
+        return []
+    if isinstance(ids, str):
+        return [ids]
+    return ids
+
+
+def _referenced_ids(
+    *, annotation_resources: dict, target_resources_field: str
+) -> set[str]:
+    """Collect all IDs referenced via the given field across all annotated resources."""
+    referenced_ids: set[str] = set()
+    for resource in annotation_resources.values():
+        referenced_ids.update(_as_id_list(resource.get(target_resources_field)))
+    return referenced_ids
 
 
 def _get_resource_content(*, resource: dict, content_schema: dict) -> dict:
@@ -114,9 +181,7 @@ def _matched_target_ids(
     An annotation field whose IDs span several classes is partitioned by keeping, per
     relation spec, only the IDs present in that spec's ``targetClass``.
     """
-    referenced_ids = resource.get(relation.target_resources) or []
-    if isinstance(referenced_ids, str):
-        referenced_ids = [referenced_ids]
+    referenced_ids = _as_id_list(resource.get(relation.target_resources))
     target_class_resources = data.resources[relation.targetClass].keys()
     return [id_ for id_ in referenced_ids if id_ in target_class_resources]
 
