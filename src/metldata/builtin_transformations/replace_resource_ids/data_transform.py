@@ -69,7 +69,7 @@ def _get_resource_accessions(*, class_name: str, annotation: BaseModel) -> Acces
     """Extract resource ids from annotations."""
     try:
         accession_map = annotation.model_dump()["accession_map"]
-    except (KeyError, TypeError) as exc:
+    except KeyError as exc:
         raise InvalidAnnotationError(
             "The annotation is missing the required 'accession_map' field. "
             "Expected structure: {'accession_map': {<class_name>: {<old_id>: <new_id>, ...}, ...}}"

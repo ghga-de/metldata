@@ -27,7 +27,7 @@ class RelationSpec(ClassRelation):
 
     relation_property_name: str = Field(description="The name of the relation.")
     target_resources: str = Field(
-        description="Field in the new class's annotation holding the FK to the target resource."
+        description="Field in the new class's annotation holding the foreign key to the target resource."
     )
 
 

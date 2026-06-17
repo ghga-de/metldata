@@ -19,7 +19,6 @@ from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.add_class.config import (
     AddClassConfig,
-    RelationSpec,
 )
 from metldata.builtin_transformations.common.assumptions.path_assumptions import (
     check_class_does_not_exist,
@@ -30,16 +29,13 @@ from metldata.transform.exceptions import ModelAssumptionError
 
 def check_model_assumptions(model: SchemaPack, config: AddClassConfig) -> None:
     """Check model assumptions for the add class transformation."""
+    # Check that the new class does not already exist in the model
     check_class_does_not_exist(model=model, class_name=config.class_name)
     check_globally_unique_ids(model=model)
 
+    # Check that the target classes of relations exist in the model."""
     for relation in config.relations:
-        check_relation_target_exists(model=model, relation=relation)
-
-
-def check_relation_target_exists(model: SchemaPack, relation: RelationSpec) -> None:
-    """Check that the target class of a relation exists in the model."""
-    check_class_exists(model=model, class_name=relation.targetClass)
+        check_class_exists(model=model, class_name=relation.targetClass)
 
 
 def check_globally_unique_ids(model: SchemaPack) -> None:

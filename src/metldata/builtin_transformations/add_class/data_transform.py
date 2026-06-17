@@ -113,15 +113,6 @@ def _group_relations_by_target_resources(
     return grouped_relations
 
 
-def _as_id_list(ids: list[str] | str | None) -> list[str]:
-    """Normalize a relation field value to a list of IDs."""
-    if ids is None:
-        return []
-    if isinstance(ids, str):
-        return [ids]
-    return ids
-
-
 def _referenced_ids(
     *, annotation_resources: dict, target_resources_field: str
 ) -> set[str]:
@@ -130,6 +121,15 @@ def _referenced_ids(
     for resource in annotation_resources.values():
         referenced_ids.update(_as_id_list(resource.get(target_resources_field)))
     return referenced_ids
+
+
+def _as_id_list(ids: list[str] | str | None) -> list[str]:
+    """Normalize a relation field value to a list of IDs."""
+    if ids is None:
+        return []
+    if isinstance(ids, str):
+        return [ids]
+    return ids
 
 
 def _get_resource_content(*, resource: dict, content_schema: dict) -> dict:
