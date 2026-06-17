@@ -41,7 +41,7 @@ def add_data_class(
 
     try:
         annotation_resources = annotation.model_dump()["resources"][class_name]
-    except (KeyError, TypeError) as exc:
+    except KeyError as exc:
         raise InvalidAnnotationError(
             "The annotation is missing the required 'resources' field. "
             "Expected structure: {'resources': {<class_name>: {<resource_id>: {'content': {...}, 'relations': {...}}, ...}, ...}}"
