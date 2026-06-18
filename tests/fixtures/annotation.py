@@ -25,16 +25,10 @@ OldAccession: TypeAlias = str
 NewAccession: TypeAlias = str
 
 
-class EmptySubmissionAnnotation(BaseModel):
-    """An empty submission annotation model for testing purposes."""
-
-
-EMPTY_SUBMISSION_ANNOTATION = EmptySubmissionAnnotation()
-
-
-class AccessionAnnotation(BaseModel):
-    """A submission annotation model with an accession field.
-    Example: {`accession_map`:{`File`:{`file_a`: `TESTS0000000001`}}}
+class Annotation(BaseModel):
+    """Combined submission annotation carrying data for any built-in transformation.
+    Each transformation reads only the field it needs.
     """
 
-    accession_map: dict[ClassName, dict[OldAccession, NewAccession]]
+    accession_map: dict[ClassName, dict[OldAccession, NewAccession]] | None = None
+    resources: dict[ClassName, dict[str, dict]] | None = None

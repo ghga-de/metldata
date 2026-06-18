@@ -1,0 +1,8 @@
+resources:
+  Biospecimen:
+    biosample_1:
+      tissue: blood
+      sample_id: sample_x
+    biosample_2:
+      tissue: adipose
+      sample_id: sample_y

@@ -1,0 +1,20 @@
+class_name: Biospecimen
+id_property_name: alias
+content_schema:
+  type: object
+  additionalProperties: false
+  properties:
+    tissue:
+      type: string
+  required:
+    - tissue
+relations:
+  - relation_property_name: sample
+    targetClass: Sample
+    mandatory:
+      origin: false
+      target: true
+    multiple:
+      origin: false
+      target: false
+    target_resources: sample_id

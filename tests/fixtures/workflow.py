@@ -29,7 +29,7 @@ from schemapack.spec.schemapack import SchemaPack
 from metldata.builtin_transformations.registry import TRANSFORMATION_REGISTRY
 from metldata.workflow.base import Workflow, WorkflowTemplate
 from metldata.workflow.builder import WorkflowBuilder
-from tests.fixtures.annotation import AccessionAnnotation, EmptySubmissionAnnotation
+from tests.fixtures.annotation import Annotation
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR, read_yaml
@@ -48,6 +48,7 @@ WORKFLOW_BY_NAME = [
     "rename_id_property_set_global_id_uniqueness",
     "rename_id_property_transform_content_update_resource_ids",
     "ghga_aggregation_workflow",
+    "ghga_aggregation_workflow_with_pam",
 ]
 VALIDATION_WORKFLOWS = [
     "pre_transform_validation_failure",
@@ -111,9 +112,9 @@ def _read_test_case(
     )
     workflow = _get_workflow(workflow_path)
     annotation = (
-        AccessionAnnotation(**read_yaml(annotation_path))
+        Annotation(**read_yaml(annotation_path))
         if annotation_path.exists()
-        else EmptySubmissionAnnotation()
+        else Annotation()
     )
 
     return WorkflowTestCase(

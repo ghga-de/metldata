@@ -25,7 +25,7 @@ from schemapack.spec.schemapack import SchemaPack
 
 from metldata.builtin_transformations.registry import TRANSFORMATION_REGISTRY
 from metldata.transform.base import TransformationDefinition
-from tests.fixtures.annotation import AccessionAnnotation, EmptySubmissionAnnotation
+from tests.fixtures.annotation import Annotation
 from tests.fixtures.data import ADVANCED_DATA
 from tests.fixtures.models import ADVANCED_MODEL
 from tests.fixtures.utils import BASE_DIR, read_yaml
@@ -76,9 +76,9 @@ def _read_test_case(
     transformed_data = load_datapack(transformed_data_path)
     config = transformation_definition.config_cls(**read_yaml(config_path))
     annotation = (
-        AccessionAnnotation(**read_yaml(annotation_path))
+        Annotation(**read_yaml(annotation_path))
         if annotation_path.exists()
-        else EmptySubmissionAnnotation()
+        else Annotation()
     )
 
     return TransformationTestCase(

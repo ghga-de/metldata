@@ -1,0 +1,149 @@
+resources:
+  Study:
+    STUDY_A:
+      id: STUDY_A
+      title: The A Study
+      description: A study that is the A study
+      types:
+        - SYNTHETIC_GENOMICS
+        - WHOLE_GENOME_SEQUENCING
+      ega_accession: EGASTUDY12345
+      affiliations:
+        - Some Institute
+        - Some other Institute
+  Dataset:
+    DS_A:
+      id: DS_A
+      title: The complete-A dataset
+      description: An interesting dataset A of complete example set
+      types:
+        - A Type
+        - Another Type
+      ega_accession: EGADATASET12345
+      study_id: STUDY_A
+      dap_id: DAP_1
+      files:
+        - INDV_SF_1
+        - EXP_METHOD_SF_1
+        - RESEARCH_DATA_FILE_1
+        - RESEARCH_DATA_FILE_2
+        - RESEARCH_DATA_FILE_3
+        - PROCESSED_DATA_FILE_1
+        - PROCESSED_DATA_FILE_2
+    DS_B:
+      id: DS_B
+      title: The complete-B dataset
+      description: An interesting dataset B of complete example set
+      types:
+        - And another Type
+      ega_accession: EGADATASET12346
+      study_id: STUDY_A
+      dap_id: DAP_2
+      files:
+        - ANALYSIS_METHOD_SF_1
+        - RESEARCH_DATA_FILE_4
+        - RESEARCH_DATA_FILE_5
+        - RESEARCH_DATA_FILE_6
+        - RESEARCH_DATA_FILE_7
+        - RESEARCH_DATA_FILE_8
+        - RESEARCH_DATA_FILE_9
+  DataAccessPolicy:
+    DAP_1:
+      id: DAP_1
+      name: DAP 1
+      description: A Data Access Policy 1
+      text: This is a very permissible DAP
+      url: http://some/policy
+      duo_permission_id: DUO:0000007
+      duo_modifier_ids:
+        - DUO:0000043
+      ega_accession: EGADAP12345
+      dac_id: DAC_1
+    DAP_2:
+      id: DAP_2
+      name: DAP 2
+      description: A Data Access Policy 2
+      text: This is a very strict DAP
+      url: http://some/other/policy
+      duo_permission_id: DUO:0000004
+      duo_modifier_ids:
+        - DUO:0000026
+      ega_accession: EGADAP12346
+      dac_id: DAC_1
+  DataAccessCommittee:
+    DAC_1:
+      id: DAC_1
+      name: DAC 1
+      email: dac_institute_a@dac.dac
+      institute: institute_a
+      ega_accession: EGADAC12345
+  Publication:
+    PUB_1:
+      id: PUB_1
+      title: A paper of a study
+      abstract: This study aims finding findings.
+      authors:
+        - John Doe
+      year: 1965
+      journal: Journal of Studies
+      doi: 10.1234/abcd.5678
+      study_id: STUDY_A
+    PUB_2:
+      id: PUB_2
+      title: Another paper of the same study
+      abstract: This study aims finding more findings.
+      authors:
+        - John Doe
+      year: 1967
+      journal: Journal of Studies
+      doi: 10.9876/efgh.5432
+      study_id: STUDY_A
+accession_map:
+  DataAccessPolicy:
+    DAP_1: GHGAP39078595522073
+    DAP_2: GHGAP74385913061043
+  Experiment:
+    EXP_1: GHGAX13173356020149
+    EXP_2: GHGAX20628128281395
+  Study:
+    STUDY_A: GHGAS90595893121388
+    STUDY_B: GHGAS83708013118412
+  Sample:
+    SAMPLE_1: GHGAN40916564477704
+    SAMPLE_2: GHGAN95009105506931
+  ExperimentMethodSupportingFile:
+    EXP_METHOD_SF_1: GHGAF50031360829229
+  AnalysisMethodSupportingFile:
+    ANALYSIS_METHOD_SF_1: GHGAF63452619346923
+  AnalysisMethod:
+    ANALYSIS_METHOD_1: GHGAZ05327499072648
+  ExperimentMethod:
+    EXP_METHOD_1: GHGAQ73903495407713
+  Analysis:
+    ANALYSIS_1: GHGAR06714308553089
+    ANALYSIS_2: GHGAR22047943578622
+  ProcessDataFile:
+    PROCESSED_DATA_FILE_1: GHGAF60886013814437
+    PROCESSED_DATA_FILE_2: GHGAF72800304806670
+  Individual:
+    INDV_1: GHGAI82390199469794
+  ResearchDataFile:
+    RESEARCH_DATA_FILE_1: GHGAF92340426512426
+    RESEARCH_DATA_FILE_2: GHGAF83486778440393
+    RESEARCH_DATA_FILE_3: GHGAF92457618468357
+    RESEARCH_DATA_FILE_4: GHGAF49843811495133
+    RESEARCH_DATA_FILE_5: GHGAF61513295806667
+    RESEARCH_DATA_FILE_6: GHGAF27516027389054
+    RESEARCH_DATA_FILE_7: GHGAF16843085345544
+    RESEARCH_DATA_FILE_8: GHGAF07439123661122
+    RESEARCH_DATA_FILE_9: GHGAF45325417160362
+  Dataset:
+    DS_A: GHGAD74245202504286
+    DS_B: GHGAD84882883098593
+  DataAccessCommittee:
+    DAC_1: GHGAC10160329657595
+  Publication:
+    PUB_1: GHGAU48555233772598
+    PUB_2: GHGAU62255628048570
+  IndividualSupportingFile:
+    INDV_SF_1: GHGAF34257230533249
