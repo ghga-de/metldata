@@ -122,20 +122,20 @@ def lookup_resource_by_identifier(
         )
 
     resources = global_metadata[anchor_point.root_slot]
+    identifier_slot = anchor_point.identifier_slot
 
-    resources_dict = convert_resource_list_to_dict(
-        resources=resources, identifier_slot=anchor_point.identifier_slot
+    # Scan for the single matching resource and copy only that one. Building a dict of
+    # deep copies of the entire resource list here (as a previous implementation did)
+    # is O(N) per lookup and, since callers look resources up in loops, turns reference
+    # resolution and embedding into O(N^2) deep copies of the whole submission.
+    for resource in resources:
+        if resource.get(identifier_slot) == identifier:
+            return deepcopy(resource)
+
+    raise MetadataResourceNotFoundError(
+        f"Could not find resource with identifier '{identifier}' of class"
+        + f" '{class_name}' in the global metadata."
     )
-
-    if identifier not in resources_dict:
-        raise MetadataResourceNotFoundError(
-            f"Could not find resource with identifier '{identifier}' of class"
-            + f" '{class_name}' in the global metadata."
-        )
-
-    target_resource = resources_dict[identifier]
-
-    return target_resource
 
 
 def check_identifier_uniqueness(*, resources: list[Json], identifier_slot: str) -> None:
