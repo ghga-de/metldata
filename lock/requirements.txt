@@ -605,9 +605,9 @@ ghga-event-schemas==13.0.0 \
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
-ghga-service-commons==7.0.4 \
-    --hash=sha256:3f12718eb5e5d279e3f57b80f0a1677be2b5d635d12e45d0e878f3ecaaec1d0e \
-    --hash=sha256:f3457d2b2081aef18c2f83299d53344efe8089ec77ca7e9ab7abbb1e4641cf86
+ghga-service-commons==7.0.5 \
+    --hash=sha256:11719e9bf09370bac990316a6b953d1c8bf4e2d4aba23157bc8a29e9b007106b \
+    --hash=sha256:e57ca0835f047b1d64eb6c663969b255655fdcbd1bea7385496334a06e5687a3
     # via
     #   -c lock/requirements-dev.txt
     #   metldata (pyproject.toml)
