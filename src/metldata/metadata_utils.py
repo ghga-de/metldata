@@ -258,6 +258,41 @@ def get_resource_dict_of_class(
     )
 
 
+def index_resources_by_id(
+    *,
+    class_name: str,
+    global_metadata: Json,
+    anchor_points_by_target: dict[str, AnchorPoint],
+) -> dict[str, Json]:
+    """Build a mapping from identifier to resource for the given class.
+
+    Unlike `get_resource_dict_of_class`, the resources are returned as references into
+    `global_metadata` (no deep copy). This is much cheaper for large classes, but the
+    returned resources MUST be treated as read-only. Use it only when the resources are
+    merely read (e.g. for read-only graph traversal / aggregation).
+
+    Raises:
+        MetadataAnchorMismatchError:
+            if the provided metadata does not match the expected anchor points.
+    """
+    anchor_point = lookup_anchor_point(
+        class_name=class_name, anchor_points_by_target=anchor_points_by_target
+    )
+
+    if anchor_point.root_slot not in global_metadata:
+        raise MetadataAnchorMismatchError(
+            f"Could not find root slot of the anchor point '{anchor_point.root_slot}'"
+            + " in the global metadata."
+        )
+
+    return {
+        lookup_self_id(
+            resource=resource, identifier_slot=anchor_point.identifier_slot
+        ): resource
+        for resource in global_metadata[anchor_point.root_slot]
+    }
+
+
 def upsert_resources_in_metadata(
     *,
     resources: list[Json],
