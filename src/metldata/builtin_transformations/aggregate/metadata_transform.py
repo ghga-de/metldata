@@ -54,7 +54,7 @@ def execute_aggregation(
     output_data: list[Json] = []
     for input_element in input_anchor_data:
         result = ExpandingDict()
-        for operation, subgraph in zip(aggregation.operations, subgraphs):
+        for operation, subgraph in zip(aggregation.operations, subgraphs, strict=True):
             try:
                 aggregated = operation.function.func(
                     subgraph.terminal_nodes(data=input_element)
