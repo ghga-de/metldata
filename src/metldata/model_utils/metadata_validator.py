@@ -102,9 +102,7 @@ class MetadataValidator:
                         else None
                     ),
                     value=(
-                        error.instance
-                        if not isinstance(error.instance, dict)
-                        else None
+                        error.instance if not isinstance(error.instance, dict) else None
                     ),
                 )
                 for error in errors
