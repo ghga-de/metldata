@@ -181,7 +181,7 @@ def resolve_target_ids_passive_element(
         source_resource: The metadata resource to which the path element is applied.
         path_element: The passive path element to resolve.
         index: The resolution index for the current metadata snapshot.
-        anchor_points: The anchor points by target class.
+        anchor_points_by_target: The anchor points by target class.
 
     Returns:
         A list of target IDs that are targeted by the path element in context of the
