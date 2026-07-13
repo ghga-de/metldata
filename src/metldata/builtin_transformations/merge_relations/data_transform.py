@@ -62,7 +62,7 @@ def merge_data_relations(
             targetResources=frozenset().union(*targets.target_resources),
         )
         # add merged relations to resource relations
-        updated_relations = {**resource.relations, **{target_relation: merged_relation}}
+        updated_relations = {**resource.relations, target_relation: merged_relation}
 
         # remove individual relations that are merged from the resource
         remaining_relations = {

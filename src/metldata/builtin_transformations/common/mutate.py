@@ -40,10 +40,11 @@ from schemapack.spec.datapack import DataPack, Resource
 def set_class_resources(
     *, data: DataPack, class_name: str, resources: Mapping[ResourceId, Resource]
 ) -> DataPack:
-    """Return a new DataPack with the resources of ``class_name`` replaced.
+    """Return a new DataPack in which ``class_name`` holds the given resources.
 
-    All other classes are shared by reference with the input DataPack rather
-    than copied.
+    If the class already exists in the input DataPack, it is replaced;
+    otherwise it is added. All other classes are shared by reference with the
+    input DataPack rather than copied.
     """
     all_resources = dict(data.resources)
     all_resources[class_name] = FrozenDict(resources)

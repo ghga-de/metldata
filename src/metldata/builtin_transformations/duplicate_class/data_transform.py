@@ -17,7 +17,7 @@
 
 from schemapack.spec.datapack import DataPack
 
-from metldata.builtin_transformations.common.utils import data_to_dict
+from metldata.builtin_transformations.common.mutate import set_class_resources
 from metldata.transform.exceptions import EvitableTransformationError
 
 
@@ -34,12 +34,10 @@ def duplicate_data_class(
     Returns:
         A new DataPack with the source class content duplicated under the target class name.
     """
-    modified_data = data_to_dict(data)
-
     try:
-        source_class_resources = modified_data["resources"][source_class_name]
-        modified_data["resources"][target_class_name] = source_class_resources
+        source_class_resources = data.resources[source_class_name]
     except KeyError as exc:
         raise EvitableTransformationError() from exc
-
-    return DataPack.model_validate(modified_data)
+    return set_class_resources(
+        data=data, class_name=target_class_name, resources=source_class_resources
+    )
