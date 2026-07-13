@@ -51,6 +51,15 @@ def transform_data_content(
     if class_name not in data.resources:
         raise EvitableTransformationError()
 
+    # loop-invariant: the template and these class-level names do not depend on the
+    # individual resource, so compile/compute them once before iterating.
+    template = env.from_string(content_template_yaml)
+    id_property_name = schemapack.classes[class_name].id.propertyName
+    content_property_names = list(
+        schemapack.classes[class_name].content["properties"].keys()
+    )
+    relation_property_names = list(schemapack.classes[class_name].relations.keys())
+
     for resource_id in data.resources[class_name]:
         # while isolating and thus rooting the datapack here, the way this is applied
         # to all resources will result in a datapack that IS NOT rooted
@@ -66,14 +75,8 @@ def transform_data_content(
             embedding_profile=embedding_profile,
         )
 
-        id_property_name = schemapack.classes[class_name].id.propertyName
-        content_property_names = list(
-            schemapack.classes[class_name].content["properties"].keys()
-        )
-        relation_property_names = list(schemapack.classes[class_name].relations.keys())
-
         # evaluate data template using jinja
-        transformed_content = env.from_string(content_template_yaml).render(
+        transformed_content = template.render(
             original=denormalized_content,
             id_property_name=id_property_name,
             content_property_names=content_property_names,

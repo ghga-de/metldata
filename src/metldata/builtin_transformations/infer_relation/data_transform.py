@@ -26,6 +26,7 @@ from metldata.builtin_transformations.common.custom_types import (
 from metldata.builtin_transformations.common.path import RelationPath
 from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.infer_relation.resolve_path import (
+    build_passive_indexes,
     resolve_path,
 )
 from metldata.transform.exceptions import EvitableTransformationError
@@ -55,9 +56,16 @@ def infer_data_relation(
     # the target prefix refers to resources that will be modified by the transformation
     target_resources = get_class_resources(data=modified_data, class_name=class_name)
 
+    # build reverse indexes for the passive path elements once, reused for every
+    # source resource below (see resolve_path.build_passive_index)
+    passive_indexes = build_passive_indexes(data=data, path=relation_path)
+
     for resource_id, resource in target_resources.items():
         relation_target_ids = resolve_path(
-            data=data, source_resource_id=resource_id, path=relation_path
+            data=data,
+            source_resource_id=resource_id,
+            path=relation_path,
+            passive_indexes=passive_indexes,
         )
         target_ids = conditionally_unpack_target_ids(
             model=model,

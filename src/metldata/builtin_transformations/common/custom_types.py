@@ -37,3 +37,8 @@ MutableClassRelations: TypeAlias = dict[str, dict]
 type EmbeddingProfile = Mapping[str, "bool | EmbeddingProfile"] | None
 NewResourceId: TypeAlias = _NonEmptyStr
 AccessionMap: TypeAlias = dict[ResourceId, NewResourceId]
+# Maps each referenced (source) resource id to the set of resources that reference
+# it via one passive path element.
+PassiveIndex: TypeAlias = dict[ResourceId, set[ResourceId]]
+# Maps a passive element's (target class, property) pair to its reverse index.
+PassiveIndexes: TypeAlias = dict[tuple[str, str], PassiveIndex]
