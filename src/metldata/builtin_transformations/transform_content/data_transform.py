@@ -21,11 +21,14 @@ import yaml
 from jinja2 import StrictUndefined
 from jinja2.sandbox import SandboxedEnvironment
 from schemapack import denormalize, isolate_resource
-from schemapack.spec.datapack import DataPack
+from schemapack.spec.datapack import DataPack, Resource
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.common.custom_types import EmbeddingProfile
-from metldata.builtin_transformations.common.utils import data_to_dict
+from metldata.builtin_transformations.common.custom_types import (
+    EmbeddingProfile,
+    ResourceId,
+)
+from metldata.builtin_transformations.common.mutate import set_class_resources
 from metldata.transform.exceptions import EvitableTransformationError
 
 # configure with StrictUndefined so invalid property/dict access produces errors
@@ -46,8 +49,6 @@ def transform_data_content(
     embedding_profile: EmbeddingProfile,
 ) -> DataPack:
     """Denormalize data using the configured class as root and perform content data transformation."""
-    mutable_data = data_to_dict(data)
-
     if class_name not in data.resources:
         raise EvitableTransformationError()
 
@@ -60,7 +61,8 @@ def transform_data_content(
     )
     relation_property_names = list(schemapack.classes[class_name].relations.keys())
 
-    for resource_id in data.resources[class_name]:
+    updated_resources: dict[ResourceId, Resource] = {}
+    for resource_id, resource in data.resources[class_name].items():
         # while isolating and thus rooting the datapack here, the way this is applied
         # to all resources will result in a datapack that IS NOT rooted
         rooted_datapack = isolate_resource(
@@ -83,9 +85,17 @@ def transform_data_content(
             relation_property_names=relation_property_names,
         )
 
-        # replace resource content with the transformed version
-        mutable_data["resources"][class_name][resource_id]["content"] = yaml.safe_load(
-            transformed_content
+        # replace resource content with the transformed version; the rendered
+        # content comes from a user-supplied template, so it is validated (and
+        # thereby deeply frozen) on construction, while the resource's existing
+        # relations pass through by reference
+        updated_resources[resource_id] = Resource.model_validate(
+            {
+                "content": yaml.safe_load(transformed_content),
+                "relations": resource.relations,
+            }
         )
 
-    return DataPack.model_validate(mutable_data)
+    return set_class_resources(
+        data=data, class_name=class_name, resources=updated_resources
+    )

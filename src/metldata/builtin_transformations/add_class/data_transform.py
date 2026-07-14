@@ -17,10 +17,10 @@
 
 import jsonschema
 from pydantic import BaseModel
-from schemapack.spec.datapack import DataPack
+from schemapack.spec.datapack import DataPack, Resource
 
 from metldata.builtin_transformations.add_class.config import RelationSpec
-from metldata.builtin_transformations.common.utils import data_to_dict
+from metldata.builtin_transformations.common.mutate import set_class_resources
 from metldata.transform.exceptions import (
     DataTransformationError,
     EvitableTransformationError,
@@ -37,36 +37,52 @@ def add_data_class(
     relations: list[RelationSpec],
 ) -> DataPack:
     """Add a new class entry to the provided data."""
-    modified_data = data_to_dict(data)
+    annotation_resources = _get_annotation_resources(
+        annotation=annotation, class_name=class_name
+    )
 
-    try:
-        annotation_resources = annotation.model_dump()["resources"][class_name]
-    except KeyError as exc:
-        raise InvalidAnnotationError(
-            "The annotation is missing the required 'resources' field. "
-            "Expected structure: {'resources': {<class_name>: {<resource_id>: {'content': {...}, 'relations': {...}}, ...}, ...}}"
-        ) from exc
-
-    if class_name in modified_data["resources"]:
+    if class_name in data.resources:
         raise EvitableTransformationError()
 
     _validate_relation_targets_exist(
         data=data, annotation_resources=annotation_resources, relations=relations
     )
 
-    modified_data["resources"][class_name] = {
-        resource_id: {
-            "content": _get_resource_content(
-                resource=resource, content_schema=content_schema
-            ),
-            "relations": _get_resource_relations(
-                data=data, resource=resource, relations=relations
-            ),
-        }
+    # the new resources come from the annotation, i.e. from outside the datapack,
+    # so they are validated individually on construction
+    new_resources = {
+        resource_id: Resource.model_validate(
+            {
+                "content": _get_resource_content(
+                    resource=resource, content_schema=content_schema
+                ),
+                "relations": _get_resource_relations(
+                    data=data, resource=resource, relations=relations
+                ),
+            }
+        )
         for resource_id, resource in annotation_resources.items()
     }
 
-    return DataPack.model_validate(modified_data)
+    return set_class_resources(
+        data=data, class_name=class_name, resources=new_resources
+    )
+
+
+def _get_annotation_resources(
+    *, annotation: BaseModel, class_name: str
+) -> dict[str, dict]:
+    """Extract the new class's resources from the annotation."""
+    resources_by_class = getattr(annotation, "resources", None)
+    annotation_resources = (
+        resources_by_class.get(class_name) if resources_by_class is not None else None
+    )
+    if annotation_resources is None:
+        raise InvalidAnnotationError(
+            "The annotation is missing the required 'resources' field. "
+            "Expected structure: {'resources': {<class_name>: {<resource_id>: {'content': {...}, 'relations': {...}}, ...}, ...}}"
+        )
+    return annotation_resources
 
 
 def _validate_relation_targets_exist(
