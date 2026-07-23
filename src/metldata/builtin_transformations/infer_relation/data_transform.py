@@ -15,17 +15,18 @@
 
 "Logic for transforming data."
 
-from schemapack.spec.datapack import DataPack
+from arcticfreeze import FrozenDict
+from schemapack._internals.spec.datapack import ResourceRelation
+from schemapack.spec.datapack import DataPack, Resource
 from schemapack.spec.schemapack import ClassDefinition, ClassRelation, SchemaPack
 
 from metldata.builtin_transformations.common.custom_types import (
-    MutableClassResources,
-    MutableDatapack,
     ResourceId,
 )
+from metldata.builtin_transformations.common.mutate import set_class_resources
 from metldata.builtin_transformations.common.path import RelationPath
-from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.builtin_transformations.infer_relation.resolve_path import (
+    build_passive_indexes,
     resolve_path,
 )
 from metldata.transform.exceptions import EvitableTransformationError
@@ -48,36 +49,53 @@ def infer_data_relation(
         relation_name: The name of the relation to be added.
         relation_path: The path indicating the route by which the two classes are related to each other.
     """
-    modified_data = data_to_dict(data)
-
     referenced_class = relation_path.target
 
     # the target prefix refers to resources that will be modified by the transformation
-    target_resources = get_class_resources(data=modified_data, class_name=class_name)
+    target_resources = get_class_resources(data=data, class_name=class_name)
 
+    # build reverse indexes for the passive path elements once, reused for every
+    # source resource below (see resolve_path.build_passive_index)
+    passive_indexes = build_passive_indexes(data=data, path=relation_path)
+
+    # loop-invariant: the multiplicity of the new relation is defined by the model,
+    # not by individual resources, so look it up once before iterating.
+    class_definition = get_class_definition(model, class_name)
+    relation_spec = get_relation_specification(class_definition, relation_name)
+    expects_single_target = not relation_spec.multiple.target
+
+    updated_resources: dict[ResourceId, Resource] = {}
     for resource_id, resource in target_resources.items():
         relation_target_ids = resolve_path(
-            data=data, source_resource_id=resource_id, path=relation_path
+            data=data,
+            source_resource_id=resource_id,
+            path=relation_path,
+            passive_indexes=passive_indexes,
         )
         target_ids = conditionally_unpack_target_ids(
-            model=model,
-            class_name=class_name,
-            relation_name=relation_name,
+            expects_single_target=expects_single_target,
             relation_target_ids=relation_target_ids,
         )
-        # add a new relation to that resource
-        resource.setdefault("relations", {})[relation_name] = {
-            "targetClass": referenced_class,
-            "targetResources": target_ids,
-        }
-    return DataPack.model_validate(modified_data)
+        inferred_relation = ResourceRelation(
+            targetClass=referenced_class,
+            targetResources=target_ids,
+        )
+        # add inferred relation to that resource relations
+        updated_relations = {**resource.relations, relation_name: inferred_relation}
+        updated_resources[resource_id] = resource.model_copy(
+            update={"relations": FrozenDict(updated_relations)}
+        )
+
+    return set_class_resources(
+        data=data, class_name=class_name, resources=updated_resources
+    )
 
 
 def get_class_resources(
-    *, data: MutableDatapack, class_name: str
-) -> MutableClassResources:
+    *, data: DataPack, class_name: str
+) -> FrozenDict[ResourceId, Resource]:
     """Extract the resources of a given class from the dictionary."""
-    resources = data["resources"].get(class_name)
+    resources = data.resources.get(class_name)
     if not resources:
         raise EvitableTransformationError()
     return resources
@@ -85,9 +103,7 @@ def get_class_resources(
 
 def conditionally_unpack_target_ids(
     *,
-    model: SchemaPack,
-    class_name: str,
-    relation_name: str,
+    expects_single_target: bool,
     relation_target_ids: frozenset[ResourceId],
 ) -> frozenset[ResourceId] | ResourceId | None:
     """Unpack resource ID from set if a string is expected by the model multiplicity
@@ -97,13 +113,8 @@ def conditionally_unpack_target_ids(
     to contain a single item, but `resolve_path` returns multiple values. Such cases
     will trigger a validation error in post-transformation validation.
     """
-    class_definition = get_class_definition(model, class_name)
-
-    relation_spec = get_relation_specification(class_definition, relation_name)
-
     # If relation expects single target and relation_target_ids has 0 or 1 item,
     # return single item or None
-    expects_single_target = not relation_spec.multiple.target
     has_at_most_one_target = len(relation_target_ids) < 2
     if expects_single_target and has_at_most_one_target:
         return next(iter(relation_target_ids), None)

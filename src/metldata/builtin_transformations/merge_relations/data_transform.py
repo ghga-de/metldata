@@ -17,17 +17,21 @@
 
 from typing import NamedTuple
 
+from arcticfreeze import FrozenDict
+from schemapack._internals.spec.datapack import ResourceRelation
 from schemapack.spec.datapack import DataPack, Resource
 
 from metldata.builtin_transformations.common.custom_types import ResourceId
-from metldata.builtin_transformations.common.utils import data_to_dict
+from metldata.builtin_transformations.common.mutate import (
+    set_class_resources,
+)
 from metldata.transform.exceptions import EvitableTransformationError
 
 
 class Target(NamedTuple):
     """Model defining target elements."""
 
-    target_resources: list[set[ResourceId] | ResourceId]
+    target_resources: list[frozenset[ResourceId]]
     target_class: str
 
 
@@ -45,37 +49,45 @@ def merge_data_relations(
         target_relation: The name of the relation to merge into.
         source_relations: List of relation names to be merged.
     """
-    modified_data = data_to_dict(data)
-
     target_class_resources = data.resources.get(target_class)
     if target_class_resources is None:
         raise EvitableTransformationError()
 
-    modified_resources = modified_data["resources"][target_class]
-
+    updated_resources: dict[ResourceId, Resource] = {}
     for resource_id, resource in target_class_resources.items():
         targets = get_all_targets(resource, source_relations)
 
-        modified_resources[resource_id]["relations"][target_relation] = {
-            "targetClass": targets.target_class,
-            "targetResources": set().union(*targets.target_resources),
+        merged_relation = ResourceRelation(
+            targetClass=targets.target_class,
+            targetResources=frozenset().union(*targets.target_resources),
+        )
+        # drop the relations being merged away...
+        remaining_relations = {
+            name: relation
+            for name, relation in resource.relations.items()
+            if name not in source_relations
         }
+        # ...then add the newly merged relation
+        remaining_relations[target_relation] = merged_relation
 
-        # Remove source relations
-        for relation_name in source_relations:
-            del modified_resources[resource_id]["relations"][relation_name]
+        updated_resources[resource_id] = resource.model_copy(
+            update={"relations": FrozenDict(remaining_relations)}
+        )
 
-    return DataPack.model_validate(modified_data)
+    return set_class_resources(
+        data=data, class_name=target_class, resources=updated_resources
+    )
 
 
 def get_all_targets(resource: Resource, source_relations: list[str]) -> Target:
     """Get target resources and the target class of the merged relations."""
     try:
-        all_targets = []
-        for relation_name in source_relations:
-            target_resources = resource.relations[relation_name].targetResources
-            if target_resources is not None:
-                all_targets.append(target_resources)
+        # normalize every source relation's targets to a set, regardless of whether
+        # the raw value is a single id (str), a set of ids, or None
+        all_targets = [
+            resource.relations[relation_name].get_target_resources_as_set()
+            for relation_name in source_relations
+        ]
 
         # must be same across the merging relations
         relation_target_class = resource.relations[source_relations[0]].targetClass

@@ -15,16 +15,19 @@
 
 """Data transformation logic for the 'replace resource ids' transformation"""
 
+from collections.abc import Mapping
+
 from arcticfreeze import FrozenDict
 from pydantic import BaseModel
+
+# ResourceRelation is not re-exported via schemapack.spec.datapack
+from schemapack._internals.spec.datapack import ResourceRelation
 from schemapack.spec.datapack import DataPack, Resource
 
 from metldata.builtin_transformations.common.custom_types import (
     AccessionMap,
-    MutableDatapack,
     ResourceId,
 )
-from metldata.builtin_transformations.common.utils import data_to_dict
 from metldata.transform.exceptions import (
     EvitableTransformationError,
     InvalidAnnotationError,
@@ -38,42 +41,45 @@ def replace_data_resource_ids(
     annotation: BaseModel,
 ) -> DataPack:
     """Replace resource ids of a data class using annotations."""
-    modified_data = data_to_dict(data)
-
     resource_accessions = _get_resource_accessions(
         annotation=annotation, class_name=class_name
     )
 
-    original_resources = data.resources.get(class_name)
-    if original_resources is None:
+    if data.resources.get(class_name) is None:
         raise EvitableTransformationError()
 
-    updated_resources = _update_resources(
-        original_resources=original_resources,
-        resource_accessions=resource_accessions,
-        class_name=class_name,
-    )
+    all_resources = dict(data.resources)
 
-    modified_data["resources"][class_name] = updated_resources
-
-    _replace_ids_in_relations(
-        modified_data=modified_data,
+    # rewrite relations that reference the renamed class, in all classes;
+    # classes without such references keep their existing maps
+    rebuilt_classes = _replace_ids_in_relations(
         original_data=data,
-        target_class_name=class_name,
         resource_accessions=resource_accessions,
+        target_class_name=class_name,
     )
-    return DataPack.model_validate(modified_data)
+    all_resources.update(rebuilt_classes)
+
+    # re-key the renamed class itself; its resources are shared, only the keys
+    # change (using the rebuilt map in case the class references itself)
+    all_resources[class_name] = FrozenDict(
+        _update_resources(
+            original_resources=all_resources[class_name],
+            resource_accessions=resource_accessions,
+            class_name=class_name,
+        )
+    )
+
+    return data.model_copy(update={"resources": FrozenDict(all_resources)})
 
 
 def _get_resource_accessions(*, class_name: str, annotation: BaseModel) -> AccessionMap:
     """Extract resource ids from annotations."""
-    try:
-        accession_map = annotation.model_dump()["accession_map"]
-    except KeyError as exc:
+    accession_map = getattr(annotation, "accession_map", None)
+    if accession_map is None:
         raise InvalidAnnotationError(
             "The annotation is missing the required 'accession_map' field. "
             "Expected structure: {'accession_map': {<class_name>: {<old_id>: <new_id>, ...}, ...}}"
-        ) from exc
+        )
 
     resource_accessions = accession_map.get(class_name)
     if resource_accessions is None:
@@ -87,11 +93,15 @@ def _get_resource_accessions(*, class_name: str, annotation: BaseModel) -> Acces
 
 def _update_resources(
     *,
-    original_resources: FrozenDict[ResourceId, Resource],
+    original_resources: Mapping[ResourceId, Resource],
     resource_accessions: AccessionMap,
     class_name: str,
 ) -> dict[ResourceId, Resource]:
-    """Update resources with new resource ids."""
+    """Re-key the resources of the renamed class with their new resource ids.
+
+    The resources themselves are shared by reference; only the mapping keys
+    change.
+    """
     updated_resources = {
         new_id: original_resources[old_id]
         for old_id, new_id in resource_accessions.items()
@@ -108,45 +118,58 @@ def _update_resources(
 
 def _replace_ids_in_relations(
     *,
-    modified_data: MutableDatapack,
     original_data: DataPack,
     resource_accessions: AccessionMap,
     target_class_name: str,
-) -> None:
-    """Replace resource IDs in relations of the modified data.
+) -> dict[str, FrozenDict[ResourceId, Resource]]:
+    """Rebuild the resources whose relations reference the renamed class,
+    replacing the old target resource ids with the new ones.
 
-    Args:
-        modified_data (dict): Dictionary representation of the modified data.
-        original_data (DataPack): Original data.
-        target_class (str): Class name whose resource ids are updated.
+    Returns:
+        A mapping from class name to the new resource map of that class, for
+        every class in which at least one resource referenced
+        ``target_class_name``. Classes without such references are omitted, so
+        the caller keeps their existing resource maps (shared by reference).
     """
-    for class_name, class_resources in original_data.resources.items():
-        for resource_id, resource in class_resources.items():
-            relations = resource.relations
-            if not relations:
-                continue
+    rebuilt_classes: dict[str, FrozenDict[ResourceId, Resource]] = {}
 
-            for relation_name, relation_spec in resource.relations.items():
-                new_target_ids: str | set
-                if relation_spec.targetClass != target_class_name:
+    for class_name, class_resources in original_data.resources.items():
+        changed_resources: dict[ResourceId, Resource] = {}
+        for resource_id, resource in class_resources.items():
+            updated_relations: dict[str, ResourceRelation] = {}
+            for relation_name, relation in resource.relations.items():
+                if relation.targetClass != target_class_name:
                     continue
 
-                target_resources = relation_spec.targetResources
-
+                target_resources = relation.targetResources
                 if not target_resources:
                     continue
 
+                new_target_ids: frozenset[ResourceId] | ResourceId
                 if isinstance(target_resources, str):
                     new_target_ids = resource_accessions[target_resources]
-                elif isinstance(target_resources, frozenset):
-                    new_target_ids = {
+                else:
+                    new_target_ids = frozenset(
                         resource_accessions[target_resource]
                         for target_resource in target_resources
-                    }
+                    )
+                updated_relations[relation_name] = ResourceRelation(
+                    targetClass=target_class_name,
+                    targetResources=new_target_ids,
+                )
 
-                modified_data["resources"][class_name][resource_id]["relations"][
-                    relation_name
-                ] = {
-                    "targetClass": target_class_name,
-                    "targetResources": new_target_ids,
-                }
+            if updated_relations:
+                changed_resources[resource_id] = resource.model_copy(
+                    update={
+                        "relations": FrozenDict(
+                            {**resource.relations, **updated_relations}
+                        )
+                    }
+                )
+
+        if changed_resources:
+            rebuilt_classes[class_name] = FrozenDict(
+                {**class_resources, **changed_resources}
+            )
+
+    return rebuilt_classes

@@ -15,49 +15,71 @@
 
 """Data transformation logic for the 'delete class' transformation"""
 
-from schemapack.spec.datapack import DataPack
+from arcticfreeze import FrozenDict
+from schemapack.spec.datapack import DataPack, Resource
 
-from metldata.builtin_transformations.common.utils import data_to_dict
+from metldata.builtin_transformations.common.custom_types import ResourceId
 from metldata.transform.exceptions import EvitableTransformationError
 
 
 def delete_data_class(*, data: DataPack, class_name: str) -> DataPack:
     """Delete class from the provided data."""
-    modified_data = data_to_dict(data)
+    all_resources = dict(data.resources)
 
     try:
-        del modified_data["resources"][class_name]
+        # drop the deleted class
+        del all_resources[class_name]
     except KeyError as exc:
         raise EvitableTransformationError() from exc
 
-    _remove_relations_from_data(
-        modified_data=modified_data,
-        original_data=data,
-        target_class=class_name,
+    # replace the class maps in which resources referenced the deleted class;
+    # classes without such references keep their existing maps
+    rebuilt_classes = _remove_relations_from_data(
+        original_data=data, target_class=class_name
     )
-    return DataPack.model_validate(modified_data)
+    all_resources.update(rebuilt_classes)
+
+    return data.model_copy(update={"resources": FrozenDict(all_resources)})
 
 
 def _remove_relations_from_data(
-    *, modified_data: dict, original_data: DataPack, target_class: str
-) -> None:
-    """Remove relations associated to deleted class from the data.
+    *, original_data: DataPack, target_class: str
+) -> dict[str, FrozenDict[ResourceId, Resource]]:
+    """Rebuild the resources whose relations reference the deleted class.
 
     Args:
-        modified_data (dict): Dictionary representation of the data
         original_data (DataPack): Original data
         target_class (str): Name of the class to be deleted
+
+    Returns:
+        A mapping from class name to the new resource map of that class, for
+        every class in which at least one resource referenced ``target_class``.
+        Classes without such references are omitted, so the caller keeps their
+        existing resource maps (shared by reference).
     """
+    rebuilt_classes: dict[str, FrozenDict[ResourceId, Resource]] = {}
+
     for class_name, class_resources in original_data.resources.items():
         if class_name == target_class:
             continue
 
+        changed_resources: dict[ResourceId, Resource] = {}
         for resource_id, resource in class_resources.items():
-            filtered_relations = {
-                name: specification
-                for name, specification in resource.relations.items()
-                if specification.targetClass != target_class
+            remaining_relations = {
+                name: relation
+                for name, relation in resource.relations.items()
+                if relation.targetClass != target_class
             }
-            modified_data["resources"][class_name][resource_id]["relations"] = (
-                filtered_relations
+            # a shorter dict means at least one relation referenced the deleted
+            # class and was dropped, so this resource needs rebuilding
+            if len(remaining_relations) != len(resource.relations):
+                changed_resources[resource_id] = resource.model_copy(
+                    update={"relations": FrozenDict(remaining_relations)}
+                )
+
+        if changed_resources:
+            rebuilt_classes[class_name] = FrozenDict(
+                {**class_resources, **changed_resources}
             )
+
+    return rebuilt_classes
