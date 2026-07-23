@@ -86,9 +86,7 @@ def transform_data_content(
         )
 
         # replace resource content with the transformed version; the rendered
-        # content comes from a user-supplied template, so it is validated (and
-        # thereby deeply frozen) on construction, while the resource's existing
-        # relations pass through by reference
+        # content comes from a user-supplied template, so it is validated on construction
         updated_resources[resource_id] = Resource.model_validate(
             {
                 "content": yaml.safe_load(transformed_content),
