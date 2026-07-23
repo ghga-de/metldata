@@ -65,20 +65,17 @@ def _remove_relations_from_data(
 
         changed_resources: dict[ResourceId, Resource] = {}
         for resource_id, resource in class_resources.items():
-            if not any(
-                relation.targetClass == target_class
-                for relation in resource.relations.values()
-            ):
-                continue
-
             remaining_relations = {
                 name: relation
                 for name, relation in resource.relations.items()
                 if relation.targetClass != target_class
             }
-            changed_resources[resource_id] = resource.model_copy(
-                update={"relations": FrozenDict(remaining_relations)}
-            )
+            # a shorter dict means at least one relation referenced the deleted
+            # class and was dropped, so this resource needs rebuilding
+            if len(remaining_relations) != len(resource.relations):
+                changed_resources[resource_id] = resource.model_copy(
+                    update={"relations": FrozenDict(remaining_relations)}
+                )
 
         if changed_resources:
             rebuilt_classes[class_name] = FrozenDict(
