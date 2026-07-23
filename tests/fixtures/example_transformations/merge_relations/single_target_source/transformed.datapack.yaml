@@ -1,0 +1,21 @@
+datapack: 4.2.0
+resources:
+  Sample:
+    sample_x:
+      content:
+        description: Primary sample.
+    sample_y:
+      content: {}
+    sample_z:
+      content: {}
+  Dataset:
+    dataset_1:
+      content:
+        dac_contact: dac@example.org
+      relations:
+        samples:
+          targetClass: Sample
+          targetResources:
+            - sample_x
+            - sample_y
+            - sample_z

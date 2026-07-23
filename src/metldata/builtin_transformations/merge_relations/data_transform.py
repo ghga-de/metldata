@@ -31,7 +31,7 @@ from metldata.transform.exceptions import EvitableTransformationError
 class Target(NamedTuple):
     """Model defining target elements."""
 
-    target_resources: list[set[ResourceId] | ResourceId]
+    target_resources: list[frozenset[ResourceId]]
     target_class: str
 
 
@@ -83,11 +83,12 @@ def merge_data_relations(
 def get_all_targets(resource: Resource, source_relations: list[str]) -> Target:
     """Get target resources and the target class of the merged relations."""
     try:
-        all_targets = []
-        for relation_name in source_relations:
-            target_resources = resource.relations[relation_name].targetResources
-            if target_resources is not None:
-                all_targets.append(target_resources)
+        # normalize every source relation's targets to a set, regardless of whether
+        # the raw value is a single id (str), a set of ids, or None
+        all_targets = [
+            resource.relations[relation_name].get_target_resources_as_set()
+            for relation_name in source_relations
+        ]
 
         # must be same across the merging relations
         relation_target_class = resource.relations[source_relations[0]].targetClass
