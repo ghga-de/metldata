@@ -18,7 +18,7 @@
 from collections.abc import Mapping
 
 from arcticfreeze import FrozenDict
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter, ValidationError
 
 # ResourceRelation is not re-exported via schemapack.spec.datapack
 from schemapack._internals.spec.datapack import ResourceRelation
@@ -33,6 +33,11 @@ from metldata.transform.exceptions import (
     InvalidAnnotationError,
 )
 
+# validates that the accession map's old and new ids are non-empty strings
+# (AccessionMap keys and values are min_length=1), since the ids are otherwise
+# used as resource keys and relation targets without further validation downstream
+_ACCESSION_MAP_ADAPTER = TypeAdapter(AccessionMap)
+
 
 def replace_data_resource_ids(
     *,
@@ -45,13 +50,20 @@ def replace_data_resource_ids(
         annotation=annotation, class_name=class_name
     )
 
-    if data.resources.get(class_name) is None:
+    original_resources = data.resources.get(class_name)
+    if original_resources is None:
         raise EvitableTransformationError()
+
+    # validate up front so a missing mapping is reported
+    _assert_accession_map_is_complete(
+        original_resources=original_resources,
+        resource_accessions=resource_accessions,
+        class_name=class_name,
+    )
 
     all_resources = dict(data.resources)
 
-    # rewrite relations that reference the renamed class, in all classes;
-    # classes without such references keep their existing maps
+    # rewrite relations that reference the renamed class, in all classes
     rebuilt_classes = _replace_ids_in_relations(
         original_data=data,
         resource_accessions=resource_accessions,
@@ -59,17 +71,18 @@ def replace_data_resource_ids(
     )
     all_resources.update(rebuilt_classes)
 
-    # re-key the renamed class itself; its resources are shared, only the keys
-    # change (using the rebuilt map in case the class references itself)
-    all_resources[class_name] = FrozenDict(
-        _update_resources(
-            original_resources=all_resources[class_name],
-            resource_accessions=resource_accessions,
-            class_name=class_name,
-        )
+    # re-key the renamed class itself
+    all_resources[class_name] = _update_resources(
+        original_resources=all_resources[class_name],
+        resource_accessions=resource_accessions,
     )
 
-    return data.model_copy(update={"resources": FrozenDict(all_resources)})
+    datapack_update: dict[str, object] = {"resources": FrozenDict(all_resources)}
+    # if the datapack is rooted on the renamed class, the root resource is re-keyed
+    if data.rootClass == class_name and data.rootResource is not None:
+        datapack_update["rootResource"] = resource_accessions[data.rootResource]
+
+    return data.model_copy(update=datapack_update)
 
 
 def _get_resource_accessions(*, class_name: str, annotation: BaseModel) -> AccessionMap:
@@ -88,32 +101,67 @@ def _get_resource_accessions(*, class_name: str, annotation: BaseModel) -> Acces
             "Expected structure: {'accession_map': {<class_name>: {<old_id>: <new_id>, ...}, ...}}"
         )
 
-    return resource_accessions
+    return _validate_accession_ids(
+        resource_accessions=resource_accessions, class_name=class_name
+    )
+
+
+def _validate_accession_ids(
+    *, resource_accessions: object, class_name: str
+) -> AccessionMap:
+    """Validate that the accession map's old and new ids are non-empty strings.
+
+    The ids are otherwise used as resource keys and set-valued relation targets
+    without further validation downstream, so reject empty ids here at the boundary
+    rather than emitting an invalid datapack.
+
+    Raises:
+        InvalidAnnotationError: if any old or new id is not a non-empty string.
+    """
+    try:
+        return _ACCESSION_MAP_ADAPTER.validate_python(resource_accessions)
+    except ValidationError as error:
+        raise InvalidAnnotationError(
+            f"The accession map for class '{class_name}' contains invalid ids: {error}"
+        ) from error
+
+
+def _assert_accession_map_is_complete(
+    *,
+    original_resources: Mapping[ResourceId, Resource],
+    resource_accessions: AccessionMap,
+    class_name: str,
+) -> None:
+    """Ensure every resource of the renamed class has a new id in the accession map.
+
+    Raises:
+        ValueError: if any resource of the class is missing from the accession map.
+    """
+    missing_ids = set(original_resources) - set(resource_accessions)
+    if missing_ids:
+        raise ValueError(
+            f"The following original resource IDs from class '{class_name}' are missing"
+            f" in the annotation's accession map: {missing_ids}."
+        )
 
 
 def _update_resources(
     *,
     original_resources: Mapping[ResourceId, Resource],
     resource_accessions: AccessionMap,
-    class_name: str,
-) -> dict[ResourceId, Resource]:
+) -> FrozenDict[ResourceId, Resource]:
     """Re-key the resources of the renamed class with their new resource ids.
 
     The resources themselves are shared by reference; only the mapping keys
     change.
     """
-    updated_resources = {
-        new_id: original_resources[old_id]
-        for old_id, new_id in resource_accessions.items()
-        if old_id in original_resources
-    }
-    # Set operation uses the keys
-    missing_ids = set(original_resources) - set(resource_accessions)
-    if missing_ids:
-        raise ValueError(
-            f"The following original resource IDs from class '{class_name}' are missing in the annotation's accession map: {missing_ids}."
-        )
-    return updated_resources
+    return FrozenDict(
+        {
+            new_id: original_resources[old_id]
+            for old_id, new_id in resource_accessions.items()
+            if old_id in original_resources
+        }
+    )
 
 
 def _replace_ids_in_relations(

@@ -1,0 +1,8 @@
+datapack: 4.2.0
+resources:
+  Dataset:
+    dataset_1:
+      content:
+        dac_contact: dac@example.org
+rootClass: Dataset
+rootResource: dataset_1
