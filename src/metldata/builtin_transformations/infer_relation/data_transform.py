@@ -95,7 +95,7 @@ def get_class_resources(
 ) -> FrozenDict[ResourceId, Resource]:
     """Extract the resources of a given class from the dictionary."""
     resources = data.resources.get(class_name)
-    if not resources:
+    if resources is None:
         raise EvitableTransformationError()
     return resources
 

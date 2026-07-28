@@ -1,0 +1,25 @@
+# The 'Experiment' class -- the class the relation is inferred FOR -- has a slot
+# but zero resources. This is a valid datapack: schemapack's
+# MissingClassSlotValidationPlugin requires the slot to exist, not to be populated.
+# The transformation must treat it as a no-op rather than raising
+# EvitableTransformationError, which is what distinguishes `if resources is None`
+# from the earlier `if not resources` in infer_relation.get_class_resources.
+datapack: 4.2.0
+resources:
+  File:
+    file_a:
+      content:
+        filename: file_a.fastq
+        format: FASTQ
+        checksum: 1a5ac10ab42911dc0224172c118a326d9a4c03969112a2f3eb1ad971e96e92b8
+        size: 12321
+  Sample:
+    sample_x:
+      content:
+        description: Some sample.
+      relations:
+        files:
+          targetClass: File
+          targetResources:
+            - file_a
+  Experiment: {}
