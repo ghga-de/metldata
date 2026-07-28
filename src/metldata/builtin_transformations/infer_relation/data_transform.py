@@ -16,8 +16,7 @@
 "Logic for transforming data."
 
 from arcticfreeze import FrozenDict
-from schemapack._internals.spec.datapack import ResourceRelation
-from schemapack.spec.datapack import DataPack, Resource
+from schemapack.spec.datapack import DataPack, Resource, ResourceRelation
 from schemapack.spec.schemapack import ClassDefinition, ClassRelation, SchemaPack
 
 from metldata.builtin_transformations.common.custom_types import (

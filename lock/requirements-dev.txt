@@ -1106,9 +1106,9 @@ ruff==0.16.0 \
     --hash=sha256:e5115729eb08c585e5121978ba5d5b60caeae394ce21b9fb5e6cd33a1c6c9b1e \
     --hash=sha256:e95c448fca1fb2a18372a9440926c5a6ee789639bb975c72e7ae6d0b04218ab4
     # via -r lock/requirements-dev-template.in
-schemapack==4.2.0 \
-    --hash=sha256:3a5ab965c3f0ec594d22b52e941e0b26f10075b68b4a4d59891c21558765a8e3 \
-    --hash=sha256:a08e0910a00798cf4fc6b730ddf0b34a342000f8a7d57d4b8418cb789af8b32c
+schemapack==4.3.0 \
+    --hash=sha256:4db8816bd2d7fe883e2a7cdb84b42dcda5d4fceb5d8e0b131d46cf42b56c27c2 \
+    --hash=sha256:c6d338baa4cfa53ea40d9d2f627ee76a257c43682324451da79c68e5055ea8d4
     # via metldata (pyproject.toml)
 setuptools==83.0.0 \
     --hash=sha256:025bccbbf0fa05b6192bc64ae1e7b16e001fd6d6d4d5de03c97b1c1ade523bef \

@@ -21,8 +21,7 @@ from arcticfreeze import FrozenDict
 from pydantic import BaseModel, TypeAdapter
 
 # ResourceRelation is not re-exported via schemapack.spec.datapack
-from schemapack._internals.spec.datapack import ResourceRelation
-from schemapack.spec.datapack import DataPack, Resource
+from schemapack.spec.datapack import DataPack, Resource, ResourceRelation
 
 from metldata.builtin_transformations.common.custom_types import (
     AccessionMap,

@@ -18,8 +18,7 @@
 from typing import NamedTuple
 
 from arcticfreeze import FrozenDict
-from schemapack._internals.spec.datapack import ResourceRelation
-from schemapack.spec.datapack import DataPack, Resource
+from schemapack.spec.datapack import DataPack, Resource, ResourceRelation
 
 from metldata.builtin_transformations.common.custom_types import ResourceId
 from metldata.builtin_transformations.common.mutate import (
