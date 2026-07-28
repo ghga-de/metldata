@@ -16,16 +16,24 @@
 """Data transformation logic for the 'add class' transformation."""
 
 import jsonschema
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter
 from schemapack.spec.datapack import DataPack, Resource
 
 from metldata.builtin_transformations.add_class.config import RelationSpec
+from metldata.builtin_transformations.common.custom_types import (
+    AddedClassResources,
+)
 from metldata.builtin_transformations.common.mutate import set_class_resources
+from metldata.builtin_transformations.common.validation import (
+    validate_non_empty_annotation_ids,
+)
 from metldata.transform.exceptions import (
     DataTransformationError,
     EvitableTransformationError,
     InvalidAnnotationError,
 )
+
+_ANNOTATION_RESOURCES_ADAPTER = TypeAdapter(AddedClassResources)
 
 
 def add_data_class(
@@ -71,18 +79,23 @@ def add_data_class(
 
 def _get_annotation_resources(
     *, annotation: BaseModel, class_name: str
-) -> dict[str, dict]:
+) -> AddedClassResources:
     """Extract the new class's resources from the annotation."""
-    resources_by_class = getattr(annotation, "resources", None)
+    resources_by_class = getattr(annotation, "added_class_resources", None)
     annotation_resources = (
         resources_by_class.get(class_name) if resources_by_class is not None else None
     )
     if annotation_resources is None:
         raise InvalidAnnotationError(
-            "The annotation is missing the required 'resources' field. "
-            "Expected structure: {'resources': {<class_name>: {<resource_id>: {'content': {...}, 'relations': {...}}, ...}, ...}}"
+            "The annotation is missing the required 'added_class_resources' field. "
+            "Expected structure: {'added_class_resources': {<class_name>: {<resource_id>: {'content': {...}, 'relations': {...}}, ...}, ...}}"
         )
-    return annotation_resources
+    return validate_non_empty_annotation_ids(
+        _ANNOTATION_RESOURCES_ADAPTER,
+        annotation_resources,
+        class_name=class_name,
+        field_name="added_class_resources",
+    )
 
 
 def _validate_relation_targets_exist(

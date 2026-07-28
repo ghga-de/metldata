@@ -55,3 +55,4 @@ repos:
     hooks:
       - id: mypy
         args: [--no-warn-unused-ignores]
+        additional_dependencies: [pydantic]

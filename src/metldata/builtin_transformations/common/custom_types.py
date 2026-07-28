@@ -28,6 +28,9 @@ MutableClassRelations: TypeAlias = dict[str, dict]
 type EmbeddingProfile = Mapping[str, "bool | EmbeddingProfile"] | None
 NewResourceId: TypeAlias = _NonEmptyStr
 AccessionMap: TypeAlias = dict[ResourceId, NewResourceId]
+# Maps each new resource id of a class being added to its raw annotation data
+# supplied by the add_class transformation's annotation.
+AddedClassResources: TypeAlias = dict[ResourceId, dict]
 # Maps each referenced (source) resource id to the set of resources that reference
 # it via one passive path element.
 PassiveIndex: TypeAlias = dict[ResourceId, set[ResourceId]]

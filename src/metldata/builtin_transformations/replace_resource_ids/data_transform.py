@@ -18,7 +18,7 @@
 from collections.abc import Mapping
 
 from arcticfreeze import FrozenDict
-from pydantic import BaseModel, TypeAdapter, ValidationError
+from pydantic import BaseModel, TypeAdapter
 
 # ResourceRelation is not re-exported via schemapack.spec.datapack
 from schemapack._internals.spec.datapack import ResourceRelation
@@ -28,14 +28,15 @@ from metldata.builtin_transformations.common.custom_types import (
     AccessionMap,
     ResourceId,
 )
+from metldata.builtin_transformations.common.validation import (
+    validate_non_empty_annotation_ids,
+)
 from metldata.transform.exceptions import (
     EvitableTransformationError,
     InvalidAnnotationError,
 )
 
 # validates that the accession map's old and new ids are non-empty strings
-# (AccessionMap keys and values are min_length=1), since the ids are otherwise
-# used as resource keys and relation targets without further validation downstream
 _ACCESSION_MAP_ADAPTER = TypeAdapter(AccessionMap)
 
 
@@ -101,29 +102,12 @@ def _get_resource_accessions(*, class_name: str, annotation: BaseModel) -> Acces
             "Expected structure: {'accession_map': {<class_name>: {<old_id>: <new_id>, ...}, ...}}"
         )
 
-    return _validate_accession_ids(
-        resource_accessions=resource_accessions, class_name=class_name
+    return validate_non_empty_annotation_ids(
+        _ACCESSION_MAP_ADAPTER,
+        resource_accessions,
+        class_name=class_name,
+        field_name="accession_map",
     )
-
-
-def _validate_accession_ids(
-    *, resource_accessions: object, class_name: str
-) -> AccessionMap:
-    """Validate that the accession map's old and new ids are non-empty strings.
-
-    The ids are otherwise used as resource keys and set-valued relation targets
-    without further validation downstream, so reject empty ids here at the boundary
-    rather than emitting an invalid datapack.
-
-    Raises:
-        InvalidAnnotationError: if any old or new id is not a non-empty string.
-    """
-    try:
-        return _ACCESSION_MAP_ADAPTER.validate_python(resource_accessions)
-    except ValidationError as error:
-        raise InvalidAnnotationError(
-            f"The accession map for class '{class_name}' contains invalid ids: {error}"
-        ) from error
 
 
 def _assert_accession_map_is_complete(

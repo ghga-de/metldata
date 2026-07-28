@@ -15,16 +15,27 @@
 
 """Test workflow execution using pre-defined test cases."""
 
+from unittest.mock import patch
+
 import pytest
+from arcticfreeze import FrozenDict
+from schemapack.spec.datapack import DataPack
 
 from metldata.transform.exceptions import (
     PostTransformValidationError,
     PreTransformValidationError,
 )
 from metldata.transform.handling import TransformationHandler
-from metldata.workflow.exceptions import WorkflowExecutionError
+from metldata.workflow.exceptions import (
+    DataPackModelValidationError,
+    WorkflowExecutionError,
+)
 from metldata.workflow.handling import WorkflowHandler
-from tests.fixtures.workflow import VALIDATION_TEST_CASES, WorkflowTestCase
+from tests.fixtures.workflow import (
+    VALIDATION_TEST_CASES,
+    WORKFLOW_TEST_CASES,
+    WorkflowTestCase,
+)
 
 _MULTI_STEP_CALL_ARGS = [
     {"validate_input": True, "validate_output": False},
@@ -95,3 +106,70 @@ def test_workflow_invalid_models(
     assert isinstance(error_info.value.error, exception_type)
 
     assert capture_constructor_args.call_args == EXPECTED_CALL_ARGS[test_case.case_name]
+
+
+def _datapack_with_dangling_reference() -> DataPack:
+    """Build a datapack whose relation targets a non-existent resource id.
+
+    The dangling reference is introduced with ``model_copy`` so it bypasses DataPack
+    model validation, mimicking how the builtin transformations construct datapacks via
+    structural sharing. ``SchemaPackValidator`` does not catch this; only DataPack model
+    validation does.
+    """
+    valid = DataPack.model_validate(
+        {
+            "datapack": "4.2.0",
+            "resources": {
+                "Sample": {"sample_x": {"content": {}}},
+                "Dataset": {
+                    "dataset_1": {
+                        "content": {},
+                        "relations": {
+                            "sample": {
+                                "targetClass": "Sample",
+                                "targetResources": "sample_x",
+                            }
+                        },
+                    }
+                },
+            },
+        }
+    )
+    dataset = valid.resources["Dataset"]["dataset_1"]
+    dangling = dataset.relations["sample"].model_copy(
+        update={"targetResources": "DOES_NOT_EXIST"}
+    )
+    broken_dataset = dataset.model_copy(
+        update={"relations": FrozenDict({"sample": dangling})}
+    )
+    return valid.model_copy(
+        update={
+            "resources": FrozenDict(
+                {
+                    **valid.resources,
+                    "Dataset": FrozenDict({"dataset_1": broken_dataset}),
+                }
+            )
+        }
+    )
+
+
+def test_run_revalidates_final_datapack_through_datapack_model():
+    """The final datapack is re-validated through the DataPack model.
+
+    A referentially broken result (a relation targeting a non-existent resource) is
+    caught even though ``SchemaPackValidator`` does not check referential integrity, and
+    surfaces as a ``WorkflowExecutionError`` wrapping a ``DataPackModelValidationError``.
+    """
+    test_case = WORKFLOW_TEST_CASES[0]
+    handler: WorkflowHandler = WorkflowHandler(
+        workflow=test_case.workflow,
+        transformation_registry=test_case.transformation_registry,
+        input_model=test_case.input_model,
+    )
+    corrupt = _datapack_with_dangling_reference()
+    with patch.object(TransformationHandler, "transform_data", return_value=corrupt):
+        with pytest.raises(WorkflowExecutionError) as exc_info:
+            handler.run(data=test_case.input_data, annotation=test_case.annotation)
+
+    assert isinstance(exc_info.value.error, DataPackModelValidationError)
