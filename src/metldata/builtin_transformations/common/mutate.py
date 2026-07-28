@@ -47,5 +47,7 @@ def set_class_resources(
     input DataPack rather than copied.
     """
     all_resources = dict(data.resources)
-    all_resources[class_name] = FrozenDict(resources)
+    all_resources[class_name] = (
+        resources if isinstance(resources, FrozenDict) else FrozenDict(resources)
+    )
     return data.model_copy(update={"resources": FrozenDict(all_resources)})
