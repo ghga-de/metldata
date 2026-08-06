@@ -1,0 +1,6 @@
+schemapack: 4.2.0
+classes:
+  Dataset:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Dataset.schema.json

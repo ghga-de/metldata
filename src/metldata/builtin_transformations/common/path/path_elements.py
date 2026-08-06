@@ -47,10 +47,23 @@ class RelationPathElement(BaseModel):
         ),
     )
     source: str = Field(
-        default=..., description="The name of the source class that is referencing."
+        default=...,
+        description=(
+            "The name of the class at the start of this path element, i.e. the class"
+            + " the element is resolved from. This denotes traversal direction, not"
+            + " referencing direction: for an active element the source class holds the"
+            + " relation and references the target; for a passive element the source"
+            + " class is instead referenced by the target."
+        ),
     )
     target: str = Field(
-        default=..., description="The name of the target class that is referenced."
+        default=...,
+        description=(
+            "The name of the class at the end of this path element, i.e. the class the"
+            + " element resolves to. For an active element the target class is"
+            + " referenced by the source; for a passive element the target class holds"
+            + " the relation and references the source."
+        ),
     )
     property: str = Field(
         default=...,

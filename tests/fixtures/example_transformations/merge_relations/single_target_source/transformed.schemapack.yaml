@@ -1,0 +1,19 @@
+schemapack: 4.2.0
+classes:
+  Dataset:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Dataset.schema.json
+    relations:
+      samples:
+        targetClass: Sample
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: false
+  Sample:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/Sample.schema.json

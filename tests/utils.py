@@ -18,10 +18,16 @@
 import json
 from difflib import unified_diff
 
+from schemapack import dumps_datapack
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
-from metldata.builtin_transformations.common.utils import data_to_dict, model_to_dict
+from metldata.builtin_transformations.common.utils import model_to_dict
+
+
+def data_to_dict(data: DataPack) -> dict:
+    """Serialize a DataPack to a plain dictionary for comparison."""
+    return json.loads(dumps_datapack(data, yaml_format=False))
 
 
 def compare_model(transformed_model: SchemaPack, test_case_model: SchemaPack):

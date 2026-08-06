@@ -16,9 +16,29 @@
 
 """Defining workflow related exceptions."""
 
+import pydantic
+
 
 class UnknownTransformationError(Exception):
     """Raised when a transformation name is not found in the transformation registry."""
+
+
+class DataPackModelValidationError(Exception):
+    """Raised when the final datapack of a workflow fails DataPack model validation.
+
+    The builtin transformations build datapacks via structural sharing (``model_copy``),
+    which bypasses DataPack model validation. The workflow re-validates the final
+    datapack through the DataPack model to enforce the spec-level constraints that
+    ``SchemaPackValidator`` does not cover: field types, ``ResourceId`` constraints, and
+    referential integrity.
+    """
+
+    def __init__(self, *, validation_error: pydantic.ValidationError):
+        super().__init__(
+            "The final datapack of the workflow failed DataPack model validation:"
+            + f"\n{validation_error}"
+        )
+        self.error = validation_error
 
 
 class ModelNotFoundError(FileNotFoundError):

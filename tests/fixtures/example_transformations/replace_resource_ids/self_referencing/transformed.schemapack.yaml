@@ -1,0 +1,24 @@
+# identical to the input model: resource ids are not part of the model
+schemapack: 4.2.0
+classes:
+  File:
+    id:
+      propertyName: alias
+    content: ../../../example_content_schemas/File.schema.json
+    relations:
+      parent_file:
+        targetClass: File
+        multiple:
+          origin: true
+          target: false
+        mandatory:
+          origin: false
+          target: false
+      related_files:
+        targetClass: File
+        multiple:
+          origin: true
+          target: true
+        mandatory:
+          origin: false
+          target: false

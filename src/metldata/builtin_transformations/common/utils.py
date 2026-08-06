@@ -13,15 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helper functions to transform Schemapack models and Datapack data
-into JSON-serializable dictionaries, as well as thawing frozen structures.
+"""Helper functions to transform Schemapack models
+into JSON-serializable dictionaries.
 """
 
 import json
 from typing import Any
 
-from schemapack import dumps_datapack, dumps_schemapack
-from schemapack.spec.datapack import DataPack
+from schemapack import dumps_schemapack
 from schemapack.spec.schemapack import (
     ClassDefinition,
     ClassRelation,
@@ -37,11 +36,6 @@ from metldata.builtin_transformations.common.path.path_elements import (
 def model_to_dict(model: SchemaPack) -> dict[str, Any]:
     """Converts the provided SchemaPack model to a dictionary."""
     return json.loads(dumps_schemapack(model, yaml_format=False))
-
-
-def data_to_dict(data: DataPack) -> dict[str, Any]:
-    """Converts the provided DataPack data to a dictionary."""
-    return json.loads(dumps_datapack(data, yaml_format=False))
 
 
 def content_to_dict(class_def: ClassDefinition) -> dict[str, Any]:

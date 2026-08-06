@@ -1,0 +1,9 @@
+class_name: Dataset
+source_relations: [primary_sample, extra_samples]
+target_relation: samples
+mandatory:
+  origin: false
+  target: false
+multiple:
+  origin: true
+  target: true

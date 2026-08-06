@@ -1,4 +1,4 @@
-resources:
+added_class_resources:
   Biospecimen:
     biosample_1:
       tissue: blood

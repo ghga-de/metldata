@@ -31,4 +31,4 @@ class Annotation(BaseModel):
     """
 
     accession_map: dict[ClassName, dict[OldAccession, NewAccession]] | None = None
-    resources: dict[ClassName, dict[str, dict]] | None = None
+    added_class_resources: dict[ClassName, dict[str, dict]] | None = None

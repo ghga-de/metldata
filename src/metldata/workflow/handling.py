@@ -18,12 +18,14 @@
 from collections.abc import Mapping
 from typing import Any
 
+import pydantic
 from schemapack.spec.datapack import DataPack
 from schemapack.spec.schemapack import SchemaPack
 
 from metldata.transform.handling import TransformationHandler
 from metldata.workflow.base import Workflow, WorkflowStep
 from metldata.workflow.exceptions import (
+    DataPackModelValidationError,
     UnknownTransformationError,
     WorkflowExecutionError,
 )
@@ -142,4 +144,19 @@ class WorkflowHandler[SubmissionAnnotation]:
                     step_name=self.workflow.operations[idx].name,
                     error=error,
                 ) from error
+
+        # transformations build datapacks via model_copy, bypassing DataPack model
+        # validation; re-validate the final datapack once to enforce referential
+        # integrity and other spec-level constraints SchemaPackValidator does not cover
+        if self._transformation_handlers:
+            last_index = len(self.workflow.operations) - 1
+            try:
+                data = DataPack.model_validate(data.model_dump())
+            except pydantic.ValidationError as error:
+                raise WorkflowExecutionError(
+                    step_index=last_index,
+                    step_name=self.workflow.operations[last_index].name,
+                    error=DataPackModelValidationError(validation_error=error),
+                ) from error
+
         return data

@@ -1,4 +1,4 @@
-resources:
+added_class_resources:
   Study:
     STUDY_A:
       id: STUDY_A

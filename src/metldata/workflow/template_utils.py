@@ -36,12 +36,11 @@ def render_single_item(data: Any, item: Any) -> Any:
     """Recursively renders a variable named 'item' in a Json-compatible data structure."""
     if isinstance(data, str):
         return env.from_string(data).render(item=item)
-    elif isinstance(data, Mapping):
+    if isinstance(data, Mapping):
         return {key: render_single_item(value, item) for key, value in data.items()}
-    elif isinstance(data, list | tuple):
+    if isinstance(data, list | tuple):
         return [render_single_item(value, item) for value in data]
-    else:
-        return data
+    return data
 
 
 def render_items(data: dict[str, Any], items: list[Any]) -> list[dict[str, Any]]:

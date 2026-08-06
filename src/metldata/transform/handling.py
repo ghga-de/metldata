@@ -20,7 +20,7 @@ from typing import override
 
 import schemapack.exceptions
 from schemapack import SchemaPackValidator
-from schemapack._internals.validation.base import (
+from schemapack.plugins import (
     ClassValidationPlugin,
     GlobalValidationPlugin,
     ResourceValidationPlugin,
