@@ -22,9 +22,7 @@ import pytest
 
 from metldata.transform.exceptions import DataTransformationError
 from metldata.transform.handling import TransformationHandler
-from metldata.workflow.exceptions import (
-    WorkflowExecutionError,
-)
+from metldata.workflow.exceptions import WorkflowExecutionError
 from metldata.workflow.handling import WorkflowHandler
 from tests.fixtures.workflow import WORKFLOW_TEST_CASES
 
