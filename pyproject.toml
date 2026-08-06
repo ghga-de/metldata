@@ -27,7 +27,6 @@ dependencies = [
     "hexkit[akafka,mongodb] >= 9.0, < 10",
     "ghga-service-commons[api,auth] >= 8.0, < 9",
     "ghga-event-schemas ~= 13.0.0",
-    "httpx2 >= 2.9.1, < 3",
     "typer >= 0.25",
     "linkml == 1.6.1",
     "linkml-runtime == 1.6.0",

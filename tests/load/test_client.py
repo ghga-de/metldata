@@ -118,6 +118,9 @@ async def test_upload_artifacts_via_http_api(
 
     # ensure that the api was called with the expected data:
     assert len(observed_requests) == 1
+    assert (
+        str(observed_requests[0].url) == f"{config.loader_api_root}/rpc/load-artifacts"
+    )
     observed_artifacts = json.loads(observed_requests[0].content.decode("utf-8"))
     assert observed_artifacts == EXAMPLE_ARTIFACTS
     assert observed_requests[0].headers["Authorization"] == f"Bearer {token}"
